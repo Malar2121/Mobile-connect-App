@@ -6,6 +6,7 @@ const {
   getNotifications,
   markAsRead,
   deleteNotification,
+  registerDevice,
 } = require('../controllers/notificationController');
 
 const { protect } = require('../middleware/authMiddleware');
@@ -30,6 +31,12 @@ router.post('/create', createNotification);
 // Mark a notification as read
 // ──────────────────────────────────────────────────────────
 router.put('/read/:id', markAsRead);
+
+// ──────────────────────────────────────────────────────────
+// POST /api/notifications/register-device
+// Register/update current user's push notification token
+// ──────────────────────────────────────────────────────────
+router.post('/register-device', registerDevice);
 
 // ──────────────────────────────────────────────────────────
 // DELETE /api/notifications/:id

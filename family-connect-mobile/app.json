@@ -17,7 +17,17 @@
     "android": {
       "package": "com.familyconnect.mobile",
       "versionCode": 1,
-      "permissions": ["CAMERA"],
+      "permissions": [
+        "android.permission.CAMERA",
+        "android.permission.RECORD_AUDIO",
+        "android.permission.ACCESS_COARSE_LOCATION",
+        "android.permission.ACCESS_FINE_LOCATION"
+      ],
+      "config": {
+        "googleMaps": {
+          "apiKey": "AIzaSyAfRmf2wkp5_f_djfT1GWN0kclv0V7tlSg"
+        }
+      },
       "adaptiveIcon": {
         "foregroundImage": "./assets/adaptive-icon.png",
         "backgroundColor": "#ffffff"
@@ -52,6 +62,12 @@
         }
       ],
       "expo-font"
-    ]
+    ],
+    "extra": {
+      "eas": {
+        "projectId": "4cd32e66-d296-4935-a723-97652198ce5a"
+      }
+    },
+    "owner": "malaravan_21"
   }
 }

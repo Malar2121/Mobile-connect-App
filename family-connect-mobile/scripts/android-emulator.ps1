@@ -13,6 +13,7 @@ if (-not (Test-Path $adb)) {
 $env:ANDROID_HOME = $sdk
 $env:ANDROID_SDK_ROOT = $sdk
 $env:Path = "$(Join-Path $sdk 'platform-tools');$(Join-Path $sdk 'emulator');$env:Path"
+$env:NODE_ENV = 'development'
 $env:EXPO_PUBLIC_API_URL = 'http://10.0.2.2:5000'
 $env:REACT_NATIVE_PACKAGER_HOSTNAME = '10.0.2.2'
 

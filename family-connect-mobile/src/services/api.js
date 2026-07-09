@@ -1,6 +1,10 @@
 import axios from 'axios';
 
-const raw = process.env.EXPO_PUBLIC_API_URL || 'http://localhost:5000';
+const PRODUCTION_API_ORIGIN = 'https://mobile-connect-app-production.up.railway.app';
+const isDevelopment = process.env.NODE_ENV === 'development';
+const configuredApiUrl = (process.env.EXPO_PUBLIC_API_URL || '').trim();
+
+const raw = configuredApiUrl || (isDevelopment ? 'http://localhost:5000' : PRODUCTION_API_ORIGIN);
 
 /** Server origin without trailing slash (for Socket.IO, etc.). */
 export const API_ORIGIN = raw.replace(/\/$/, '');

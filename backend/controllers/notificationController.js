@@ -62,6 +62,50 @@ const createNotification = async (req, res) => {
 };
 
 // ══════════════════════════════════════════════════════════
+// POST /api/notifications/register-device
+// Register/update current user's FCM device token
+// ══════════════════════════════════════════════════════════
+const registerDevice = async (req, res) => {
+  try {
+    const { token, device } = req.body;
+    const normalizedToken = typeof token === 'string' ? token.trim() : '';
+    const normalizedDevice = typeof device === 'string' ? device.toLowerCase().trim() : '';
+
+    if (!normalizedToken) {
+      return res.status(400).json({ success: false, message: 'token is required' });
+    }
+
+    const allowedDevices = ['ios', 'android', 'web'];
+    if (!allowedDevices.includes(normalizedDevice)) {
+      return res.status(400).json({ success: false, message: 'device must be ios, android, or web' });
+    }
+
+    const user = await User.findById(req.user._id);
+    if (!user) {
+      return res.status(404).json({ success: false, message: 'User not found' });
+    }
+
+    const existingIndex = user.fcmTokens.findIndex((entry) => entry.token === normalizedToken);
+    if (existingIndex >= 0) {
+      user.fcmTokens[existingIndex].device = normalizedDevice;
+      user.fcmTokens[existingIndex].createdAt = new Date();
+    } else {
+      user.fcmTokens.push({ token: normalizedToken, device: normalizedDevice });
+    }
+
+    await user.save();
+
+    return res.status(200).json({
+      success: true,
+      message: existingIndex >= 0 ? 'Device token updated' : 'Device token registered',
+      data: { token: normalizedToken, device: normalizedDevice },
+    });
+  } catch (error) {
+    return res.status(500).json({ success: false, message: error.message });
+  }
+};
+
+// ══════════════════════════════════════════════════════════
 // GET /api/notifications
 // Get all notifications for the logged in user
 // ══════════════════════════════════════════════════════════
@@ -143,4 +187,5 @@ module.exports = {
   getNotifications,
   markAsRead,
   deleteNotification,
+  registerDevice,
 };

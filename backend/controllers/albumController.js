@@ -128,8 +128,11 @@ const shareAlbum = asyncHandler(async (req, res) => {
   const album = await Album.findOne({ _id: req.params.id, family: req.user.familyId });
   if (!album) return errorResponse(res, 'Album not found', 404);
 
+  const clientUrl = process.env.CLIENT_URL;
+  if (!clientUrl) return errorResponse(res, 'CLIENT_URL is not configured', 500);
+
   if (!album.shareLink) {
-    album.shareLink = `${process.env.CLIENT_URL}/shared-album/${uuidv4()}`;
+    album.shareLink = `${clientUrl}/shared-album/${uuidv4()}`;
   }
   album.isShared = true;
   await album.save();

@@ -6,7 +6,8 @@ $wifi = Get-NetIPAddress -AddressFamily IPv4 -ErrorAction SilentlyContinue |
   Where-Object { $_.InterfaceAlias -match 'Wi-?Fi' -and $_.IPAddress -notmatch '^169\.' } |
   Select-Object -First 1
 
-$ip = if ($wifi) { $wifi.IPAddress } else { 'localhost' }
+$env:NODE_ENV = 'development'
+$ip = if ($wifi) { $wifi.IPAddress } else { '127.0.0.1' }
 
 $env:EXPO_PUBLIC_API_URL = "http://${ip}:5000"
 $env:REACT_NATIVE_PACKAGER_HOSTNAME = $ip

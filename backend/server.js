@@ -28,11 +28,24 @@ const locationRoutes = require('./routes/locationRoutes');
 // ─── App setup ────────────────────────────────────────────────────────────
 const app = express();
 const server = http.createServer(app);
+const isDevelopment = process.env.NODE_ENV === 'development';
+const productionOrigin = 'https://mobile-connect-app-production.up.railway.app';
+const configuredClientOrigin = process.env.CLIENT_URL;
+const allowedOrigins = isDevelopment
+  ? [configuredClientOrigin, productionOrigin, 'http://localhost:3000', 'http://127.0.0.1:3000'].filter(Boolean)
+  : [configuredClientOrigin, productionOrigin].filter(Boolean);
+
+const corsOrigin = (origin, callback) => {
+  // Allow non-browser clients (no Origin header) and same-origin requests.
+  if (!origin) return callback(null, true);
+  if (allowedOrigins.includes(origin)) return callback(null, true);
+  return callback(new Error('Not allowed by CORS'));
+};
 
 // ─── Socket.io ───────────────────────────────────────────────────────────
 const io = new Server(server, {
   cors: {
-    origin: process.env.CLIENT_URL || '*',
+    origin: corsOrigin,
     methods: ['GET', 'POST'],
     credentials: true,
   },
@@ -51,7 +64,7 @@ initFirebase();
 app.use(helmet());
 app.use(
   cors({
-    origin: process.env.CLIENT_URL || '*',
+    origin: corsOrigin,
     credentials: true,
     methods: ['GET', 'POST', 'PUT', 'DELETE', 'PATCH', 'OPTIONS'],
     allowedHeaders: ['Content-Type', 'Authorization'],

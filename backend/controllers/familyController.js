@@ -199,7 +199,13 @@ const inviteMember = async (req, res) => {
       await family.save();
     }
 
-    const clientUrl = process.env.CLIENT_URL || 'http://localhost:3000';
+    const clientUrl = process.env.CLIENT_URL;
+    if (!clientUrl) {
+      return res.status(500).json({
+        success: false,
+        message: 'CLIENT_URL is not configured',
+      });
+    }
     const inviteLink = `${clientUrl}/join?code=${family.inviteCode}`;
 
     return res.status(200).json({
