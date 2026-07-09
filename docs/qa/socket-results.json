@@ -1,0 +1,40 @@
+{
+  "generatedAt": "2026-07-09T04:31:48.409Z",
+  "results": [
+    {
+      "name": "Connect with valid JWT (A)",
+      "status": "PASS",
+      "detail": "connected=true"
+    },
+    {
+      "name": "Connect with valid JWT (B)",
+      "status": "PASS",
+      "detail": "connected=true"
+    },
+    {
+      "name": "Realtime message broadcast to family room",
+      "status": "PASS",
+      "detail": "text=\"Hello over socket\""
+    },
+    {
+      "name": "REST message emits socket new_message",
+      "status": "PASS",
+      "detail": "text=\"REST broadcast\""
+    },
+    {
+      "name": "Typing indicator relayed",
+      "status": "PASS",
+      "detail": "from=Sock A"
+    },
+    {
+      "name": "Connection without token rejected",
+      "status": "PASS",
+      "detail": "err=Authentication token missing"
+    },
+    {
+      "name": "Connection with invalid token rejected",
+      "status": "PASS",
+      "detail": "err=Invalid or expired token"
+    }
+  ]
+}

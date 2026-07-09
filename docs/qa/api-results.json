@@ -1,0 +1,865 @@
+{
+  "summary": {
+    "generatedAt": "2026-07-09T04:30:20.710Z",
+    "base": "http://localhost:5000",
+    "total": 122,
+    "passed": 121,
+    "failed": 1
+  },
+  "results": [
+    {
+      "id": "TC-001",
+      "phase": "Auth",
+      "name": "Register new user returns 201 + tokens",
+      "status": "PASS",
+      "detail": "status=201"
+    },
+    {
+      "id": "TC-002",
+      "phase": "Auth",
+      "name": "Registered password not returned",
+      "status": "PASS",
+      "detail": "password field absent"
+    },
+    {
+      "id": "TC-003",
+      "phase": "Auth",
+      "name": "Duplicate email rejected (409)",
+      "status": "PASS",
+      "detail": "status=409"
+    },
+    {
+      "id": "TC-004",
+      "phase": "Auth",
+      "name": "Register missing fields rejected (400)",
+      "status": "PASS",
+      "detail": "status=400"
+    },
+    {
+      "id": "TC-005",
+      "phase": "Auth",
+      "name": "Weak password (<8) rejected",
+      "status": "PASS",
+      "detail": "status=500"
+    },
+    {
+      "id": "TC-006",
+      "phase": "Auth",
+      "name": "Invalid email format rejected",
+      "status": "PASS",
+      "detail": "status=500"
+    },
+    {
+      "id": "TC-007",
+      "phase": "Auth",
+      "name": "Login valid credentials (200)",
+      "status": "PASS",
+      "detail": "status=200"
+    },
+    {
+      "id": "TC-008",
+      "phase": "Auth",
+      "name": "Login wrong password rejected (401)",
+      "status": "PASS",
+      "detail": "status=401"
+    },
+    {
+      "id": "TC-009",
+      "phase": "Auth",
+      "name": "Login nonexistent user (401)",
+      "status": "PASS",
+      "detail": "status=401"
+    },
+    {
+      "id": "TC-010",
+      "phase": "Auth",
+      "name": "Login missing password (400)",
+      "status": "PASS",
+      "detail": "status=400"
+    },
+    {
+      "id": "TC-011",
+      "phase": "Auth",
+      "name": "GET /me with valid token (200)",
+      "status": "PASS",
+      "detail": "status=200"
+    },
+    {
+      "id": "TC-012",
+      "phase": "Auth",
+      "name": "GET /me no token (401)",
+      "status": "PASS",
+      "detail": "status=401"
+    },
+    {
+      "id": "TC-013",
+      "phase": "Auth",
+      "name": "GET /me malformed token (401)",
+      "status": "PASS",
+      "detail": "status=401"
+    },
+    {
+      "id": "TC-014",
+      "phase": "Auth",
+      "name": "GET /me tampered signature (401)",
+      "status": "PASS",
+      "detail": "status=401"
+    },
+    {
+      "id": "TC-015",
+      "phase": "Auth",
+      "name": "Refresh token issues new access (200)",
+      "status": "PASS",
+      "detail": "status=200"
+    },
+    {
+      "id": "TC-016",
+      "phase": "Auth",
+      "name": "Old refresh token rejected after rotation (401)",
+      "status": "PASS",
+      "detail": "status=401"
+    },
+    {
+      "id": "TC-017",
+      "phase": "Auth",
+      "name": "Refresh with invalid token (401)",
+      "status": "PASS",
+      "detail": "status=401"
+    },
+    {
+      "id": "TC-018",
+      "phase": "Auth",
+      "name": "Refresh missing token (400)",
+      "status": "PASS",
+      "detail": "status=400"
+    },
+    {
+      "id": "TC-019",
+      "phase": "Auth",
+      "name": "Unauthorized family access blocked (401)",
+      "status": "PASS",
+      "detail": "status=401"
+    },
+    {
+      "id": "TC-020",
+      "phase": "Auth",
+      "name": "Unauthorized events access blocked (401)",
+      "status": "PASS",
+      "detail": "status=401"
+    },
+    {
+      "id": "TC-021",
+      "phase": "Auth",
+      "name": "Unauthorized memories access blocked (401)",
+      "status": "PASS",
+      "detail": "status=401"
+    },
+    {
+      "id": "TC-022",
+      "phase": "Auth",
+      "name": "Unauthorized chat access blocked (401)",
+      "status": "PASS",
+      "detail": "status=401"
+    },
+    {
+      "id": "TC-023",
+      "phase": "Auth",
+      "name": "Unauthorized notifications access blocked (401)",
+      "status": "PASS",
+      "detail": "status=401"
+    },
+    {
+      "id": "TC-024",
+      "phase": "Auth",
+      "name": "Unauthorized location access blocked (401)",
+      "status": "PASS",
+      "detail": "status=401"
+    },
+    {
+      "id": "TC-025",
+      "phase": "Family",
+      "name": "my-family when none (404)",
+      "status": "PASS",
+      "detail": "status=404"
+    },
+    {
+      "id": "TC-026",
+      "phase": "Family",
+      "name": "Create family missing name (400)",
+      "status": "PASS",
+      "detail": "status=400"
+    },
+    {
+      "id": "TC-027",
+      "phase": "Family",
+      "name": "Create family (201) + admin role",
+      "status": "PASS",
+      "detail": "status=201"
+    },
+    {
+      "id": "TC-028",
+      "phase": "Family",
+      "name": "Creator promoted to admin",
+      "status": "PASS",
+      "detail": "role=admin"
+    },
+    {
+      "id": "TC-029",
+      "phase": "Family",
+      "name": "Cannot create 2nd family while in one (400)",
+      "status": "PASS",
+      "detail": "status=400"
+    },
+    {
+      "id": "TC-030",
+      "phase": "Family",
+      "name": "Get invite code (200)",
+      "status": "PASS",
+      "detail": "status=200"
+    },
+    {
+      "id": "TC-031",
+      "phase": "Family",
+      "name": "Invite by non-family user blocked (403)",
+      "status": "PASS",
+      "detail": "status=403"
+    },
+    {
+      "id": "TC-032",
+      "phase": "Family",
+      "name": "Join invalid code (404)",
+      "status": "PASS",
+      "detail": "status=404"
+    },
+    {
+      "id": "TC-033",
+      "phase": "Family",
+      "name": "Join missing code (400)",
+      "status": "PASS",
+      "detail": "status=400"
+    },
+    {
+      "id": "TC-034",
+      "phase": "Family",
+      "name": "Member joins via invite code (200)",
+      "status": "PASS",
+      "detail": "status=200"
+    },
+    {
+      "id": "TC-035",
+      "phase": "Family",
+      "name": "Join when already in a family (400)",
+      "status": "PASS",
+      "detail": "status=400"
+    },
+    {
+      "id": "TC-036",
+      "phase": "Family",
+      "name": "my-family lists members",
+      "status": "PASS",
+      "detail": "count=2"
+    },
+    {
+      "id": "TC-037",
+      "phase": "Family",
+      "name": "Admin cannot leave family (400)",
+      "status": "PASS",
+      "detail": "status=400"
+    },
+    {
+      "id": "TC-038",
+      "phase": "Family",
+      "name": "Non-admin regenerate ignored (code unchanged)",
+      "status": "PASS",
+      "detail": "same=true"
+    },
+    {
+      "id": "TC-039",
+      "phase": "FamilyTree",
+      "name": "GET family-tree responds 200",
+      "status": "PASS",
+      "detail": "status=200"
+    },
+    {
+      "id": "TC-040",
+      "phase": "FamilyTree",
+      "name": "H1: tree has nodes for real (non-seeded) family",
+      "status": "PASS",
+      "detail": "nodeCount=2 (expected >0 for >=2 members)"
+    },
+    {
+      "id": "TC-041",
+      "phase": "FamilyTree",
+      "name": "Update relationship for member",
+      "status": "PASS",
+      "detail": "status=200 msg=Relationship updated"
+    },
+    {
+      "id": "TC-042",
+      "phase": "FamilyTree",
+      "name": "Non-admin cannot edit others relationship (403)",
+      "status": "PASS",
+      "detail": "status=403"
+    },
+    {
+      "id": "TC-043",
+      "phase": "FamilyTree",
+      "name": "Invalid relationship type rejected (422)",
+      "status": "PASS",
+      "detail": "status=422"
+    },
+    {
+      "id": "TC-044",
+      "phase": "FamilyTree",
+      "name": "Tree access without family (403)",
+      "status": "PASS",
+      "detail": "status=403"
+    },
+    {
+      "id": "TC-045",
+      "phase": "Events",
+      "name": "Create event (201)",
+      "status": "PASS",
+      "detail": "status=201"
+    },
+    {
+      "id": "TC-046",
+      "phase": "Events",
+      "name": "Event auto-invites family as guests",
+      "status": "PASS",
+      "detail": "guests=2"
+    },
+    {
+      "id": "TC-047",
+      "phase": "Events",
+      "name": "Create event missing title (400)",
+      "status": "PASS",
+      "detail": "status=400"
+    },
+    {
+      "id": "TC-048",
+      "phase": "Events",
+      "name": "Create event without family (403)",
+      "status": "PASS",
+      "detail": "status=403"
+    },
+    {
+      "id": "TC-049",
+      "phase": "Events",
+      "name": "List events (200)",
+      "status": "PASS",
+      "detail": "count=1"
+    },
+    {
+      "id": "TC-050",
+      "phase": "Events",
+      "name": "Get event details (200)",
+      "status": "PASS",
+      "detail": "status=200"
+    },
+    {
+      "id": "TC-051",
+      "phase": "Events",
+      "name": "Get event details not found (404)",
+      "status": "PASS",
+      "detail": "status=404"
+    },
+    {
+      "id": "TC-052",
+      "phase": "Events",
+      "name": "Get event details malformed id (400)",
+      "status": "FAIL",
+      "detail": "status=500"
+    },
+    {
+      "id": "TC-053",
+      "phase": "Events",
+      "name": "RSVP accept (200)",
+      "status": "PASS",
+      "detail": "status=200"
+    },
+    {
+      "id": "TC-054",
+      "phase": "Events",
+      "name": "RSVP invalid status (400)",
+      "status": "PASS",
+      "detail": "status=400"
+    },
+    {
+      "id": "TC-055",
+      "phase": "Events",
+      "name": "RSVP by non-guest blocked (403/404)",
+      "status": "PASS",
+      "detail": "status=404"
+    },
+    {
+      "id": "TC-056",
+      "phase": "Events",
+      "name": "Update event as creator (200)",
+      "status": "PASS",
+      "detail": "status=200"
+    },
+    {
+      "id": "TC-057",
+      "phase": "Events",
+      "name": "Update event by non-creator member (403)",
+      "status": "PASS",
+      "detail": "status=403"
+    },
+    {
+      "id": "TC-058",
+      "phase": "Events",
+      "name": "Create poll (201)",
+      "status": "PASS",
+      "detail": "status=201"
+    },
+    {
+      "id": "TC-059",
+      "phase": "Events",
+      "name": "Create poll <2 options rejected (422)",
+      "status": "PASS",
+      "detail": "status=422"
+    },
+    {
+      "id": "TC-060",
+      "phase": "Events",
+      "name": "Get poll by event (200)",
+      "status": "PASS",
+      "detail": "status=200"
+    },
+    {
+      "id": "TC-061",
+      "phase": "Events",
+      "name": "Cast poll vote (200)",
+      "status": "PASS",
+      "detail": "status=200"
+    },
+    {
+      "id": "TC-062",
+      "phase": "Events",
+      "name": "Cast invalid vote (422)",
+      "status": "PASS",
+      "detail": "status=422"
+    },
+    {
+      "id": "TC-063",
+      "phase": "Events",
+      "name": "Close poll by non-owner (403)",
+      "status": "PASS",
+      "detail": "status=403"
+    },
+    {
+      "id": "TC-064",
+      "phase": "Events",
+      "name": "Close poll as admin (200)",
+      "status": "PASS",
+      "detail": "status=200"
+    },
+    {
+      "id": "TC-065",
+      "phase": "Events",
+      "name": "Vote on closed poll blocked (400)",
+      "status": "PASS",
+      "detail": "status=400"
+    },
+    {
+      "id": "TC-066",
+      "phase": "Memories",
+      "name": "Upload without file rejected (400/500)",
+      "status": "PASS",
+      "detail": "status=400"
+    },
+    {
+      "id": "TC-067",
+      "phase": "Memories",
+      "name": "List memories (200)",
+      "status": "PASS",
+      "detail": "status=200"
+    },
+    {
+      "id": "TC-068",
+      "phase": "Memories",
+      "name": "Like nonexistent memory (404)",
+      "status": "PASS",
+      "detail": "status=404"
+    },
+    {
+      "id": "TC-069",
+      "phase": "Memories",
+      "name": "Memory details not found (404)",
+      "status": "PASS",
+      "detail": "status=404"
+    },
+    {
+      "id": "TC-070",
+      "phase": "Memories",
+      "name": "Create album (201)",
+      "status": "PASS",
+      "detail": "status=201"
+    },
+    {
+      "id": "TC-071",
+      "phase": "Memories",
+      "name": "Create album missing title (422)",
+      "status": "PASS",
+      "detail": "status=422"
+    },
+    {
+      "id": "TC-072",
+      "phase": "Memories",
+      "name": "List albums paginated (200)",
+      "status": "PASS",
+      "detail": "status=200"
+    },
+    {
+      "id": "TC-073",
+      "phase": "Memories",
+      "name": "Get album detail (200)",
+      "status": "PASS",
+      "detail": "status=200"
+    },
+    {
+      "id": "TC-074",
+      "phase": "Memories",
+      "name": "Add media empty array rejected (400)",
+      "status": "PASS",
+      "detail": "status=400"
+    },
+    {
+      "id": "TC-075",
+      "phase": "Memories",
+      "name": "Share album returns link (200)",
+      "status": "PASS",
+      "detail": "status=200"
+    },
+    {
+      "id": "TC-076",
+      "phase": "Memories",
+      "name": "Update album by non-owner (403)",
+      "status": "PASS",
+      "detail": "status=403"
+    },
+    {
+      "id": "TC-077",
+      "phase": "Memories",
+      "name": "Delete album by non-owner (403)",
+      "status": "PASS",
+      "detail": "status=403"
+    },
+    {
+      "id": "TC-078",
+      "phase": "Chat",
+      "name": "Send text message (201)",
+      "status": "PASS",
+      "detail": "status=201"
+    },
+    {
+      "id": "TC-079",
+      "phase": "Chat",
+      "name": "Send empty message rejected (400)",
+      "status": "PASS",
+      "detail": "status=400"
+    },
+    {
+      "id": "TC-080",
+      "phase": "Chat",
+      "name": "Reply to message (201)",
+      "status": "PASS",
+      "detail": "status=201"
+    },
+    {
+      "id": "TC-081",
+      "phase": "Chat",
+      "name": "Reply to nonexistent target (400)",
+      "status": "PASS",
+      "detail": "status=400"
+    },
+    {
+      "id": "TC-082",
+      "phase": "Chat",
+      "name": "Get messages ordered + meta (200)",
+      "status": "PASS",
+      "detail": "count=2"
+    },
+    {
+      "id": "TC-083",
+      "phase": "Chat",
+      "name": "React to message (200)",
+      "status": "PASS",
+      "detail": "status=200"
+    },
+    {
+      "id": "TC-084",
+      "phase": "Chat",
+      "name": "React missing emoji (400)",
+      "status": "PASS",
+      "detail": "status=400"
+    },
+    {
+      "id": "TC-085",
+      "phase": "Chat",
+      "name": "Edit own message (200)",
+      "status": "PASS",
+      "detail": "status=200"
+    },
+    {
+      "id": "TC-086",
+      "phase": "Chat",
+      "name": "Edit others message blocked (403)",
+      "status": "PASS",
+      "detail": "status=403"
+    },
+    {
+      "id": "TC-087",
+      "phase": "Chat",
+      "name": "Pin message (200)",
+      "status": "PASS",
+      "detail": "status=200"
+    },
+    {
+      "id": "TC-088",
+      "phase": "Chat",
+      "name": "Get pinned messages (200)",
+      "status": "PASS",
+      "detail": "count=1"
+    },
+    {
+      "id": "TC-089",
+      "phase": "Chat",
+      "name": "Unpin message (200)",
+      "status": "PASS",
+      "detail": "status=200"
+    },
+    {
+      "id": "TC-090",
+      "phase": "Chat",
+      "name": "Star message (200)",
+      "status": "PASS",
+      "detail": "status=200 starred=true"
+    },
+    {
+      "id": "TC-091",
+      "phase": "Chat",
+      "name": "Get starred messages (200)",
+      "status": "PASS",
+      "detail": "count=1"
+    },
+    {
+      "id": "TC-092",
+      "phase": "Chat",
+      "name": "Search text (200)",
+      "status": "PASS",
+      "detail": "count=1"
+    },
+    {
+      "id": "TC-093",
+      "phase": "Chat",
+      "name": "Search regex metachar \"(.*)+\" no 500",
+      "status": "PASS",
+      "detail": "status=200"
+    },
+    {
+      "id": "TC-094",
+      "phase": "Chat",
+      "name": "Search regex metachar \"[\" no 500",
+      "status": "PASS",
+      "detail": "status=200"
+    },
+    {
+      "id": "TC-095",
+      "phase": "Chat",
+      "name": "Search regex metachar \"\\\" no 500",
+      "status": "PASS",
+      "detail": "status=200"
+    },
+    {
+      "id": "TC-096",
+      "phase": "Chat",
+      "name": "Search regex metachar \"((((\" no 500",
+      "status": "PASS",
+      "detail": "status=200"
+    },
+    {
+      "id": "TC-097",
+      "phase": "Chat",
+      "name": "Search by media type (200)",
+      "status": "PASS",
+      "detail": "status=200"
+    },
+    {
+      "id": "TC-098",
+      "phase": "Chat",
+      "name": "Delete own message (200)",
+      "status": "PASS",
+      "detail": "status=200"
+    },
+    {
+      "id": "TC-099",
+      "phase": "Chat",
+      "name": "Delete others message blocked (403)",
+      "status": "PASS",
+      "detail": "status=403"
+    },
+    {
+      "id": "TC-100",
+      "phase": "Chat",
+      "name": "Admin delete any message (200)",
+      "status": "PASS",
+      "detail": "status=200"
+    },
+    {
+      "id": "TC-101",
+      "phase": "Map",
+      "name": "Update location (200)",
+      "status": "PASS",
+      "detail": "status=200"
+    },
+    {
+      "id": "TC-102",
+      "phase": "Map",
+      "name": "Update location missing coords (400)",
+      "status": "PASS",
+      "detail": "status=400"
+    },
+    {
+      "id": "TC-103",
+      "phase": "Map",
+      "name": "Get family locations (200)",
+      "status": "PASS",
+      "detail": "count=1"
+    },
+    {
+      "id": "TC-104",
+      "phase": "Map",
+      "name": "Get member location (200)",
+      "status": "PASS",
+      "detail": "status=200"
+    },
+    {
+      "id": "TC-105",
+      "phase": "Map",
+      "name": "Get location none available (404)",
+      "status": "PASS",
+      "detail": "status=404"
+    },
+    {
+      "id": "TC-106",
+      "phase": "Map",
+      "name": "Send SOS alert (200)",
+      "status": "PASS",
+      "detail": "status=200"
+    },
+    {
+      "id": "TC-107",
+      "phase": "Map",
+      "name": "SOS missing coords (400)",
+      "status": "PASS",
+      "detail": "status=400"
+    },
+    {
+      "id": "TC-108",
+      "phase": "Notifications",
+      "name": "Get notifications (200)",
+      "status": "PASS",
+      "detail": "count=2"
+    },
+    {
+      "id": "TC-109",
+      "phase": "Notifications",
+      "name": "M2 FIX: /create by non-admin member BLOCKED (403)",
+      "status": "PASS",
+      "detail": "status=403"
+    },
+    {
+      "id": "TC-110",
+      "phase": "Notifications",
+      "name": "Create notification as admin (201)",
+      "status": "PASS",
+      "detail": "status=201"
+    },
+    {
+      "id": "TC-111",
+      "phase": "Notifications",
+      "name": "Create notification missing recipients (400)",
+      "status": "PASS",
+      "detail": "status=400"
+    },
+    {
+      "id": "TC-112",
+      "phase": "Notifications",
+      "name": "Mark notification read (200)",
+      "status": "PASS",
+      "detail": "status=200"
+    },
+    {
+      "id": "TC-113",
+      "phase": "Notifications",
+      "name": "Delete notification (200)",
+      "status": "PASS",
+      "detail": "status=200"
+    },
+    {
+      "id": "TC-114",
+      "phase": "Notifications",
+      "name": "Mark read nonexistent (404)",
+      "status": "PASS",
+      "detail": "status=404"
+    },
+    {
+      "id": "TC-115",
+      "phase": "Security",
+      "name": "NoSQL injection login blocked (not 200)",
+      "status": "PASS",
+      "detail": "status=500"
+    },
+    {
+      "id": "TC-116",
+      "phase": "Security",
+      "name": "Cross-family event access blocked (404)",
+      "status": "PASS",
+      "detail": "status=404"
+    },
+    {
+      "id": "TC-117",
+      "phase": "Security",
+      "name": "Cross-family memory scoping enforced",
+      "status": "PASS",
+      "detail": "status=404"
+    },
+    {
+      "id": "TC-118",
+      "phase": "Security",
+      "name": "Token signed with wrong secret rejected (401)",
+      "status": "PASS",
+      "detail": "status=401"
+    },
+    {
+      "id": "TC-119",
+      "phase": "Security",
+      "name": "Expired token rejected (401)",
+      "status": "PASS",
+      "detail": "status=401"
+    },
+    {
+      "id": "TC-120",
+      "phase": "Security",
+      "name": "Unknown route returns 404",
+      "status": "PASS",
+      "detail": "status=404"
+    },
+    {
+      "id": "TC-121",
+      "phase": "Security",
+      "name": "Health endpoint public (200)",
+      "status": "PASS",
+      "detail": "status=200"
+    },
+    {
+      "id": "TC-122",
+      "phase": "Family",
+      "name": "Non-admin member can leave family (200)",
+      "status": "PASS",
+      "detail": "status=200"
+    }
+  ]
+}

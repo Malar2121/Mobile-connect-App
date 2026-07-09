@@ -1,0 +1,104 @@
+import { api } from './api';
+
+function normalizeAxiosError(error) {
+  if (error.response) {
+    const msg =
+      error.response.data?.message ||
+      `Server error (${error.response.status})`;
+    const err = new Error(msg);
+    err.status = error.response.status;
+    return err;
+  }
+  if (error.request) {
+    return new Error(
+      'Network error. Check your connection and EXPO_PUBLIC_API_URL.',
+    );
+  }
+  return error instanceof Error ? error : new Error(String(error));
+}
+
+/**
+ * GET /api/family/my-family
+ * @returns {{ family: object, memberCount: number }}
+ */
+export async function getMyFamily() {
+  try {
+    const { data } = await api.get('/family/my-family');
+    if (!data.success || !data.data?.family) {
+      throw new Error(data.message || 'Could not load family');
+    }
+    return {
+      family: data.data.family,
+      memberCount: data.data.memberCount ?? data.data.family.members?.length ?? 0,
+    };
+  } catch (e) {
+    throw normalizeAxiosError(e);
+  }
+}
+
+/**
+ * POST /api/family/create
+ * @returns {{ family: object }}
+ */
+export async function createFamily(name) {
+  try {
+    const { data } = await api.post('/family/create', { name: name.trim() });
+    if (!data.success || !data.data?.family) {
+      throw new Error(data.message || 'Could not create family');
+    }
+    return { family: data.data.family };
+  } catch (e) {
+    throw normalizeAxiosError(e);
+  }
+}
+
+/**
+ * POST /api/family/join
+ * @returns {{ family: object }}
+ */
+export async function joinFamily(inviteCode) {
+  try {
+    const { data } = await api.post('/family/join', {
+      inviteCode: inviteCode.trim(),
+    });
+    if (!data.success || !data.data?.family) {
+      throw new Error(data.message || 'Could not join family');
+    }
+    return { family: data.data.family };
+  } catch (e) {
+    throw normalizeAxiosError(e);
+  }
+}
+
+/**
+ * POST /api/family/invite
+ * @param {boolean} [regenerate]
+ * @returns {{ familyName: string, inviteCode: string, inviteLink: string, expiresAt: null }}
+ */
+export async function createInviteCode(regenerate = false) {
+  try {
+    const body = regenerate ? { regenerate: true } : {};
+    const { data } = await api.post('/family/invite', body);
+    if (!data.success || !data.data?.inviteCode) {
+      throw new Error(data.message || 'Could not get invite code');
+    }
+    return data.data;
+  } catch (e) {
+    throw normalizeAxiosError(e);
+  }
+}
+
+/**
+ * DELETE /api/family/leave
+ */
+export async function leaveFamily() {
+  try {
+    const { data } = await api.delete('/family/leave');
+    if (!data.success) {
+      throw new Error(data.message || 'Could not leave family');
+    }
+    return data.data;
+  } catch (e) {
+    throw normalizeAxiosError(e);
+  }
+}

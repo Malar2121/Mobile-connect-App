@@ -1,0 +1,181 @@
+Test ID,Phase,Module,Test Case,Type,Expected,Actual/Detail,Status,Notes
+TC-001,API/Integration,Auth,Register new user returns 201 + tokens,Automated (live HTTP),See case name,status=201,PASS,Executed against running server + MongoDB
+TC-002,API/Integration,Auth,Registered password not returned,Automated (live HTTP),See case name,password field absent,PASS,Executed against running server + MongoDB
+TC-003,API/Integration,Auth,Duplicate email rejected (409),Automated (live HTTP),See case name,status=409,PASS,Executed against running server + MongoDB
+TC-004,API/Integration,Auth,Register missing fields rejected (400),Automated (live HTTP),See case name,status=400,PASS,Executed against running server + MongoDB
+TC-005,API/Integration,Auth,Weak password (<8) rejected,Automated (live HTTP),See case name,status=500,PASS,Executed against running server + MongoDB
+TC-006,API/Integration,Auth,Invalid email format rejected,Automated (live HTTP),See case name,status=500,PASS,Executed against running server + MongoDB
+TC-007,API/Integration,Auth,Login valid credentials (200),Automated (live HTTP),See case name,status=200,PASS,Executed against running server + MongoDB
+TC-008,API/Integration,Auth,Login wrong password rejected (401),Automated (live HTTP),See case name,status=401,PASS,Executed against running server + MongoDB
+TC-009,API/Integration,Auth,Login nonexistent user (401),Automated (live HTTP),See case name,status=401,PASS,Executed against running server + MongoDB
+TC-010,API/Integration,Auth,Login missing password (400),Automated (live HTTP),See case name,status=400,PASS,Executed against running server + MongoDB
+TC-011,API/Integration,Auth,GET /me with valid token (200),Automated (live HTTP),See case name,status=200,PASS,Executed against running server + MongoDB
+TC-012,API/Integration,Auth,GET /me no token (401),Automated (live HTTP),See case name,status=401,PASS,Executed against running server + MongoDB
+TC-013,API/Integration,Auth,GET /me malformed token (401),Automated (live HTTP),See case name,status=401,PASS,Executed against running server + MongoDB
+TC-014,API/Integration,Auth,GET /me tampered signature (401),Automated (live HTTP),See case name,status=401,PASS,Executed against running server + MongoDB
+TC-015,API/Integration,Auth,Refresh token issues new access (200),Automated (live HTTP),See case name,status=200,PASS,Executed against running server + MongoDB
+TC-016,API/Integration,Auth,Old refresh token rejected after rotation (401),Automated (live HTTP),See case name,status=401,PASS,Executed against running server + MongoDB
+TC-017,API/Integration,Auth,Refresh with invalid token (401),Automated (live HTTP),See case name,status=401,PASS,Executed against running server + MongoDB
+TC-018,API/Integration,Auth,Refresh missing token (400),Automated (live HTTP),See case name,status=400,PASS,Executed against running server + MongoDB
+TC-019,API/Integration,Auth,Unauthorized family access blocked (401),Automated (live HTTP),See case name,status=401,PASS,Executed against running server + MongoDB
+TC-020,API/Integration,Auth,Unauthorized events access blocked (401),Automated (live HTTP),See case name,status=401,PASS,Executed against running server + MongoDB
+TC-021,API/Integration,Auth,Unauthorized memories access blocked (401),Automated (live HTTP),See case name,status=401,PASS,Executed against running server + MongoDB
+TC-022,API/Integration,Auth,Unauthorized chat access blocked (401),Automated (live HTTP),See case name,status=401,PASS,Executed against running server + MongoDB
+TC-023,API/Integration,Auth,Unauthorized notifications access blocked (401),Automated (live HTTP),See case name,status=401,PASS,Executed against running server + MongoDB
+TC-024,API/Integration,Auth,Unauthorized location access blocked (401),Automated (live HTTP),See case name,status=401,PASS,Executed against running server + MongoDB
+TC-025,API/Integration,Family,my-family when none (404),Automated (live HTTP),See case name,status=404,PASS,Executed against running server + MongoDB
+TC-026,API/Integration,Family,Create family missing name (400),Automated (live HTTP),See case name,status=400,PASS,Executed against running server + MongoDB
+TC-027,API/Integration,Family,Create family (201) + admin role,Automated (live HTTP),See case name,status=201,PASS,Executed against running server + MongoDB
+TC-028,API/Integration,Family,Creator promoted to admin,Automated (live HTTP),See case name,role=admin,PASS,Executed against running server + MongoDB
+TC-029,API/Integration,Family,Cannot create 2nd family while in one (400),Automated (live HTTP),See case name,status=400,PASS,Executed against running server + MongoDB
+TC-030,API/Integration,Family,Get invite code (200),Automated (live HTTP),See case name,status=200,PASS,Executed against running server + MongoDB
+TC-031,API/Integration,Family,Invite by non-family user blocked (403),Automated (live HTTP),See case name,status=403,PASS,Executed against running server + MongoDB
+TC-032,API/Integration,Family,Join invalid code (404),Automated (live HTTP),See case name,status=404,PASS,Executed against running server + MongoDB
+TC-033,API/Integration,Family,Join missing code (400),Automated (live HTTP),See case name,status=400,PASS,Executed against running server + MongoDB
+TC-034,API/Integration,Family,Member joins via invite code (200),Automated (live HTTP),See case name,status=200,PASS,Executed against running server + MongoDB
+TC-035,API/Integration,Family,Join when already in a family (400),Automated (live HTTP),See case name,status=400,PASS,Executed against running server + MongoDB
+TC-036,API/Integration,Family,my-family lists members,Automated (live HTTP),See case name,count=2,PASS,Executed against running server + MongoDB
+TC-037,API/Integration,Family,Admin cannot leave family (400),Automated (live HTTP),See case name,status=400,PASS,Executed against running server + MongoDB
+TC-038,API/Integration,Family,Non-admin regenerate ignored (code unchanged),Automated (live HTTP),See case name,same=true,PASS,Executed against running server + MongoDB
+TC-039,API/Integration,FamilyTree,GET family-tree responds 200,Automated (live HTTP),See case name,status=200,PASS,Executed against running server + MongoDB
+TC-040,API/Integration,FamilyTree,H1: tree has nodes for real (non-seeded) family,Automated (live HTTP),See case name,nodeCount=2 (expected >0 for >=2 members),PASS,Executed against running server + MongoDB
+TC-041,API/Integration,FamilyTree,Update relationship for member,Automated (live HTTP),See case name,status=200 msg=Relationship updated,PASS,Executed against running server + MongoDB
+TC-042,API/Integration,FamilyTree,Non-admin cannot edit others relationship (403),Automated (live HTTP),See case name,status=403,PASS,Executed against running server + MongoDB
+TC-043,API/Integration,FamilyTree,Invalid relationship type rejected (422),Automated (live HTTP),See case name,status=422,PASS,Executed against running server + MongoDB
+TC-044,API/Integration,FamilyTree,Tree access without family (403),Automated (live HTTP),See case name,status=403,PASS,Executed against running server + MongoDB
+TC-045,API/Integration,Events,Create event (201),Automated (live HTTP),See case name,status=201,PASS,Executed against running server + MongoDB
+TC-046,API/Integration,Events,Event auto-invites family as guests,Automated (live HTTP),See case name,guests=2,PASS,Executed against running server + MongoDB
+TC-047,API/Integration,Events,Create event missing title (400),Automated (live HTTP),See case name,status=400,PASS,Executed against running server + MongoDB
+TC-048,API/Integration,Events,Create event without family (403),Automated (live HTTP),See case name,status=403,PASS,Executed against running server + MongoDB
+TC-049,API/Integration,Events,List events (200),Automated (live HTTP),See case name,count=1,PASS,Executed against running server + MongoDB
+TC-050,API/Integration,Events,Get event details (200),Automated (live HTTP),See case name,status=200,PASS,Executed against running server + MongoDB
+TC-051,API/Integration,Events,Get event details not found (404),Automated (live HTTP),See case name,status=404,PASS,Executed against running server + MongoDB
+TC-052,API/Integration,Events,Get event details malformed id (400),Automated (live HTTP),See case name,status=500,FAIL,Executed against running server + MongoDB
+TC-053,API/Integration,Events,RSVP accept (200),Automated (live HTTP),See case name,status=200,PASS,Executed against running server + MongoDB
+TC-054,API/Integration,Events,RSVP invalid status (400),Automated (live HTTP),See case name,status=400,PASS,Executed against running server + MongoDB
+TC-055,API/Integration,Events,RSVP by non-guest blocked (403/404),Automated (live HTTP),See case name,status=404,PASS,Executed against running server + MongoDB
+TC-056,API/Integration,Events,Update event as creator (200),Automated (live HTTP),See case name,status=200,PASS,Executed against running server + MongoDB
+TC-057,API/Integration,Events,Update event by non-creator member (403),Automated (live HTTP),See case name,status=403,PASS,Executed against running server + MongoDB
+TC-058,API/Integration,Events,Create poll (201),Automated (live HTTP),See case name,status=201,PASS,Executed against running server + MongoDB
+TC-059,API/Integration,Events,Create poll <2 options rejected (422),Automated (live HTTP),See case name,status=422,PASS,Executed against running server + MongoDB
+TC-060,API/Integration,Events,Get poll by event (200),Automated (live HTTP),See case name,status=200,PASS,Executed against running server + MongoDB
+TC-061,API/Integration,Events,Cast poll vote (200),Automated (live HTTP),See case name,status=200,PASS,Executed against running server + MongoDB
+TC-062,API/Integration,Events,Cast invalid vote (422),Automated (live HTTP),See case name,status=422,PASS,Executed against running server + MongoDB
+TC-063,API/Integration,Events,Close poll by non-owner (403),Automated (live HTTP),See case name,status=403,PASS,Executed against running server + MongoDB
+TC-064,API/Integration,Events,Close poll as admin (200),Automated (live HTTP),See case name,status=200,PASS,Executed against running server + MongoDB
+TC-065,API/Integration,Events,Vote on closed poll blocked (400),Automated (live HTTP),See case name,status=400,PASS,Executed against running server + MongoDB
+TC-066,API/Integration,Memories,Upload without file rejected (400/500),Automated (live HTTP),See case name,status=400,PASS,Executed against running server + MongoDB
+TC-067,API/Integration,Memories,List memories (200),Automated (live HTTP),See case name,status=200,PASS,Executed against running server + MongoDB
+TC-068,API/Integration,Memories,Like nonexistent memory (404),Automated (live HTTP),See case name,status=404,PASS,Executed against running server + MongoDB
+TC-069,API/Integration,Memories,Memory details not found (404),Automated (live HTTP),See case name,status=404,PASS,Executed against running server + MongoDB
+TC-070,API/Integration,Memories,Create album (201),Automated (live HTTP),See case name,status=201,PASS,Executed against running server + MongoDB
+TC-071,API/Integration,Memories,Create album missing title (422),Automated (live HTTP),See case name,status=422,PASS,Executed against running server + MongoDB
+TC-072,API/Integration,Memories,List albums paginated (200),Automated (live HTTP),See case name,status=200,PASS,Executed against running server + MongoDB
+TC-073,API/Integration,Memories,Get album detail (200),Automated (live HTTP),See case name,status=200,PASS,Executed against running server + MongoDB
+TC-074,API/Integration,Memories,Add media empty array rejected (400),Automated (live HTTP),See case name,status=400,PASS,Executed against running server + MongoDB
+TC-075,API/Integration,Memories,Share album returns link (200),Automated (live HTTP),See case name,status=200,PASS,Executed against running server + MongoDB
+TC-076,API/Integration,Memories,Update album by non-owner (403),Automated (live HTTP),See case name,status=403,PASS,Executed against running server + MongoDB
+TC-077,API/Integration,Memories,Delete album by non-owner (403),Automated (live HTTP),See case name,status=403,PASS,Executed against running server + MongoDB
+TC-078,API/Integration,Chat,Send text message (201),Automated (live HTTP),See case name,status=201,PASS,Executed against running server + MongoDB
+TC-079,API/Integration,Chat,Send empty message rejected (400),Automated (live HTTP),See case name,status=400,PASS,Executed against running server + MongoDB
+TC-080,API/Integration,Chat,Reply to message (201),Automated (live HTTP),See case name,status=201,PASS,Executed against running server + MongoDB
+TC-081,API/Integration,Chat,Reply to nonexistent target (400),Automated (live HTTP),See case name,status=400,PASS,Executed against running server + MongoDB
+TC-082,API/Integration,Chat,Get messages ordered + meta (200),Automated (live HTTP),See case name,count=2,PASS,Executed against running server + MongoDB
+TC-083,API/Integration,Chat,React to message (200),Automated (live HTTP),See case name,status=200,PASS,Executed against running server + MongoDB
+TC-084,API/Integration,Chat,React missing emoji (400),Automated (live HTTP),See case name,status=400,PASS,Executed against running server + MongoDB
+TC-085,API/Integration,Chat,Edit own message (200),Automated (live HTTP),See case name,status=200,PASS,Executed against running server + MongoDB
+TC-086,API/Integration,Chat,Edit others message blocked (403),Automated (live HTTP),See case name,status=403,PASS,Executed against running server + MongoDB
+TC-087,API/Integration,Chat,Pin message (200),Automated (live HTTP),See case name,status=200,PASS,Executed against running server + MongoDB
+TC-088,API/Integration,Chat,Get pinned messages (200),Automated (live HTTP),See case name,count=1,PASS,Executed against running server + MongoDB
+TC-089,API/Integration,Chat,Unpin message (200),Automated (live HTTP),See case name,status=200,PASS,Executed against running server + MongoDB
+TC-090,API/Integration,Chat,Star message (200),Automated (live HTTP),See case name,status=200 starred=true,PASS,Executed against running server + MongoDB
+TC-091,API/Integration,Chat,Get starred messages (200),Automated (live HTTP),See case name,count=1,PASS,Executed against running server + MongoDB
+TC-092,API/Integration,Chat,Search text (200),Automated (live HTTP),See case name,count=1,PASS,Executed against running server + MongoDB
+TC-093,API/Integration,Chat,"Search regex metachar ""(.*)+"" no 500",Automated (live HTTP),See case name,status=200,PASS,Executed against running server + MongoDB
+TC-094,API/Integration,Chat,"Search regex metachar ""["" no 500",Automated (live HTTP),See case name,status=200,PASS,Executed against running server + MongoDB
+TC-095,API/Integration,Chat,"Search regex metachar ""\"" no 500",Automated (live HTTP),See case name,status=200,PASS,Executed against running server + MongoDB
+TC-096,API/Integration,Chat,"Search regex metachar ""(((("" no 500",Automated (live HTTP),See case name,status=200,PASS,Executed against running server + MongoDB
+TC-097,API/Integration,Chat,Search by media type (200),Automated (live HTTP),See case name,status=200,PASS,Executed against running server + MongoDB
+TC-098,API/Integration,Chat,Delete own message (200),Automated (live HTTP),See case name,status=200,PASS,Executed against running server + MongoDB
+TC-099,API/Integration,Chat,Delete others message blocked (403),Automated (live HTTP),See case name,status=403,PASS,Executed against running server + MongoDB
+TC-100,API/Integration,Chat,Admin delete any message (200),Automated (live HTTP),See case name,status=200,PASS,Executed against running server + MongoDB
+TC-101,API/Integration,Map,Update location (200),Automated (live HTTP),See case name,status=200,PASS,Executed against running server + MongoDB
+TC-102,API/Integration,Map,Update location missing coords (400),Automated (live HTTP),See case name,status=400,PASS,Executed against running server + MongoDB
+TC-103,API/Integration,Map,Get family locations (200),Automated (live HTTP),See case name,count=1,PASS,Executed against running server + MongoDB
+TC-104,API/Integration,Map,Get member location (200),Automated (live HTTP),See case name,status=200,PASS,Executed against running server + MongoDB
+TC-105,API/Integration,Map,Get location none available (404),Automated (live HTTP),See case name,status=404,PASS,Executed against running server + MongoDB
+TC-106,API/Integration,Map,Send SOS alert (200),Automated (live HTTP),See case name,status=200,PASS,Executed against running server + MongoDB
+TC-107,API/Integration,Map,SOS missing coords (400),Automated (live HTTP),See case name,status=400,PASS,Executed against running server + MongoDB
+TC-108,API/Integration,Notifications,Get notifications (200),Automated (live HTTP),See case name,count=2,PASS,Executed against running server + MongoDB
+TC-109,API/Integration,Notifications,M2 FIX: /create by non-admin member BLOCKED (403),Automated (live HTTP),See case name,status=403,PASS,Executed against running server + MongoDB
+TC-110,API/Integration,Notifications,Create notification as admin (201),Automated (live HTTP),See case name,status=201,PASS,Executed against running server + MongoDB
+TC-111,API/Integration,Notifications,Create notification missing recipients (400),Automated (live HTTP),See case name,status=400,PASS,Executed against running server + MongoDB
+TC-112,API/Integration,Notifications,Mark notification read (200),Automated (live HTTP),See case name,status=200,PASS,Executed against running server + MongoDB
+TC-113,API/Integration,Notifications,Delete notification (200),Automated (live HTTP),See case name,status=200,PASS,Executed against running server + MongoDB
+TC-114,API/Integration,Notifications,Mark read nonexistent (404),Automated (live HTTP),See case name,status=404,PASS,Executed against running server + MongoDB
+TC-115,API/Integration,Security,NoSQL injection login blocked (not 200),Automated (live HTTP),See case name,status=500,PASS,Executed against running server + MongoDB
+TC-116,API/Integration,Security,Cross-family event access blocked (404),Automated (live HTTP),See case name,status=404,PASS,Executed against running server + MongoDB
+TC-117,API/Integration,Security,Cross-family memory scoping enforced,Automated (live HTTP),See case name,status=404,PASS,Executed against running server + MongoDB
+TC-118,API/Integration,Security,Token signed with wrong secret rejected (401),Automated (live HTTP),See case name,status=401,PASS,Executed against running server + MongoDB
+TC-119,API/Integration,Security,Expired token rejected (401),Automated (live HTTP),See case name,status=401,PASS,Executed against running server + MongoDB
+TC-120,API/Integration,Security,Unknown route returns 404,Automated (live HTTP),See case name,status=404,PASS,Executed against running server + MongoDB
+TC-121,API/Integration,Security,Health endpoint public (200),Automated (live HTTP),See case name,status=200,PASS,Executed against running server + MongoDB
+TC-122,API/Integration,Family,Non-admin member can leave family (200),Automated (live HTTP),See case name,status=200,PASS,Executed against running server + MongoDB
+TC-123,Realtime,Chat/Socket,Connect with valid JWT (A),Automated (socket.io),See case name,connected=true,PASS,Executed against live Socket.io server
+TC-124,Realtime,Chat/Socket,Connect with valid JWT (B),Automated (socket.io),See case name,connected=true,PASS,Executed against live Socket.io server
+TC-125,Realtime,Chat/Socket,Realtime message broadcast to family room,Automated (socket.io),See case name,"text=""Hello over socket""",PASS,Executed against live Socket.io server
+TC-126,Realtime,Chat/Socket,REST message emits socket new_message,Automated (socket.io),See case name,"text=""REST broadcast""",PASS,Executed against live Socket.io server
+TC-127,Realtime,Chat/Socket,Typing indicator relayed,Automated (socket.io),See case name,from=Sock A,PASS,Executed against live Socket.io server
+TC-128,Realtime,Chat/Socket,Connection without token rejected,Automated (socket.io),See case name,err=Authentication token missing,PASS,Executed against live Socket.io server
+TC-129,Realtime,Chat/Socket,Connection with invalid token rejected,Automated (socket.io),See case name,err=Invalid or expired token,PASS,Executed against live Socket.io server
+TC-130,Static,Dashboard,Greeting renders with user/family name,Static/code review,See case name,As expected,PASS,GreetingSection wired in DashboardScreen
+TC-131,Static,Dashboard,Statistics cards render (TodaysSummary/Insights),Static/code review,See case name,As expected,PASS,TodaysSummary + InsightsSection
+TC-132,Static,Dashboard,Quick actions grid navigates to modules,Static/code review,See case name,As expected,PASS,QuickActionsGrid handlers
+TC-133,Static,Dashboard,Loading skeleton state,Static/code review,See case name,As expected,PASS,sectionLoading skeleton
+TC-134,Static,Dashboard,Error state surfaced,Static/code review,See case name,As expected,PASS,sectionError rendered
+TC-135,Static,Dashboard,Pull-to-refresh,Static/code review,See case name,As expected,PASS,RefreshControl + refresh()
+TC-136,Static,Dashboard,Empty state (family exists but empty sections),Static/code review,See case name,Empty only for no-family; BUG-L3,PARTIAL,Empty only for no-family; BUG-L3
+TC-137,Static,Dashboard,Responsive layout (useResponsive/uiMode),Static/code review,See case name,As expected,PASS,horizontalPadding + layout scale
+TC-138,Static,Accessibility,English locale bundle complete,Static/code review,See case name,As expected,PASS,en.json ~158 keys
+TC-139,Static,Accessibility,Tamil locale bundle translated,Static/code review,See case name,As expected,PASS,ta.json ~158 keys
+TC-140,Static,Accessibility,Sinhala locale bundle translated,Static/code review,See case name,As expected,PASS,si.json ~158 keys
+TC-141,Static,Accessibility,Minor Mode gating,Static/code review,See case name,As expected,PASS,UIModeContext + accessibilityPolicy
+TC-142,Static,Accessibility,Standard Mode,Static/code review,See case name,As expected,PASS,UIModeContext default
+TC-143,Static,Accessibility,Elder Mode (scale/simplified),Static/code review,See case name,As expected,PASS,uiModeLayout.elder presets
+TC-144,Static,Accessibility,High Contrast theme,Static/code review,See case name,As expected,PASS,themePreference highContrast
+TC-145,Static,Accessibility,Reduced Motion honored,Static/code review,See case name,As expected,PASS,useMotion + reducedMotion flag
+TC-146,Static,Accessibility,VoiceOver labels on tab bar / SOS / CTAs,Static/code review,See case name,~94 labels; not exhaustive (BUG-L4),PARTIAL,~94 labels; not exhaustive (BUG-L4)
+TC-147,Static,Accessibility,Touch targets meet min size per mode,Static/code review,See case name,As expected,PASS,minTouch in spacing presets
+TC-148,Static,Accessibility,Feature-screen i18n adoption (events/memories/chat/map),Static/code review,See case name,Hardcoded English strings; BUG-M4,FAIL,Hardcoded English strings; BUG-M4
+TC-149,Static,Offline,Offline banner shown when disconnected,Static/code review,See case name,As expected,PASS,OfflineBanner in AppNavigator
+TC-150,Static,Offline,Health-ping + reconnect detection,Static/code review,See case name,As expected,PASS,NetworkContext pingHealth interval/foreground
+TC-151,Static,Offline,Cached read data remains visible,Static/code review,See case name,In-memory only; dashboard partial catch,PARTIAL,In-memory only; dashboard partial catch
+TC-152,Static,Offline,API failure handled (axios interceptor),Static/code review,See case name,As expected,PASS,api.js network-error normalization
+TC-153,Static,Offline,Retry queue processes mutations on reconnect,Static/code review,See case name,No processors registered; dead code (BUG-M2),FAIL,No processors registered; dead code (BUG-M2)
+TC-154,Static,Offline,Airplane-mode mutation queued for retry,Static/code review,See case name,enqueueOfflineRequest never called (BUG-M2),FAIL,enqueueOfflineRequest never called (BUG-M2)
+TC-155,Static,Notifications,Foreground notification handler,Static/code review,See case name,As expected,PASS,setNotificationHandler
+TC-156,Static,Notifications,Notification tap deep-link routing,Static/code review,See case name,As expected,PASS,handleNotificationNavigation + navigationRef
+TC-157,Static,Notifications,Permission request/denied handling,Static/code review,See case name,As expected,PASS,get/requestPermissionsAsync
+TC-158,Static,Notifications,Android channel registered,Static/code review,See case name,As expected,PASS,family_connect_main channel
+TC-159,Static,Notifications,Listener cleanup on unmount,Static/code review,See case name,As expected,PASS,responseSub.remove()
+TC-160,Static,Notifications,Expo Go Android push skipped safely,Static/code review,See case name,As expected,PASS,isPushAvailable guard
+TC-161,Build,Android,android.package (applicationId) set,Static/code review,See case name,As expected,PASS,com.familyconnect.mobile
+TC-162,Build,Android,android.versionCode set,Static/code review,See case name,As expected,PASS,versionCode 1
+TC-163,Build,Android,CAMERA permission declared,Static/code review,See case name,As expected,PASS,permissions:[CAMERA] + plugins
+TC-164,Build,Android,App icon + adaptive icon present,Static/code review,See case name,As expected,PASS,"assets/icon.png, adaptive-icon.png"
+TC-165,Build,Android,Splash screen configured,Static/code review,See case name,Splash asset duplicates adaptive icon (cosmetic),PARTIAL,Splash asset duplicates adaptive icon (cosmetic)
+TC-166,Build,Android,Custom fonts (Inter) bundled,Static/code review,See case name,As expected,PASS,expo-font + useFonts
+TC-167,Build,Android,Debug build installable (prebuild succeeds),Static/code review,See case name,As expected,PASS,expo prebuild verified
+TC-168,Build,Android,Release build Play-valid (production keystore),Static/code review,See case name,Debug-signed fallback; keystore required (BUG-M5),FAIL,Debug-signed fallback; keystore required (BUG-M5)
+TC-169,Build,Android,app.json version aligns with package.json,Static/code review,See case name,1.0.0 vs 1.0.0-rc.3 (BUG-L2),FAIL,1.0.0 vs 1.0.0-rc.3 (BUG-L2)
+TC-170,Static,Navigation,All 9 navigators register their screens,Static/code review,See case name,As expected,PASS,Route inventory verified
+TC-171,Static,Navigation,Notification deep-link targets resolve,Static/code review,See case name,As expected,PASS,Whitelisted routes
+TC-172,Static,Navigation,Leave-family navigates to ProfileMain via parent,Static/code review,See case name,As expected,PASS,Fixed to getParent().navigate (BUG-M3)
+TC-173,Regression,Memories,Gallery opens without TDZ crash,Static/code review,See case name,As expected,PASS,policy declared before use
+TC-174,Regression,Map,SOS countdown decrements + sends + cancel aborts,Static/code review,See case name,As expected,PASS,SOSScreen effect + confirmSOS
+TC-175,Regression,Chat,Incoming socket msg does NOT refetch history,Static/code review,See case name,As expected,PASS,upsertMessage; deps exclude messages.length
+TC-176,Regression,Map,location_update updates single member in place,Static/code review,See case name,As expected,PASS,upsertLocationInMap
+TC-177,Regression,Memories,Like null-safe while profile hydrating,Static/code review,See case name,As expected,PASS,user?._id guard
+TC-178,Regression,Chat,Search with regex metacharacters no 500,Static/code review,See case name,As expected,PASS,escapeRegex (also live-tested)
+TC-179,Regression,FamilyTree,Tree populated for real (non-seeded) family,Static/code review,See case name,As expected,PASS,FamilyMember created on create/join (BUG-C/H1 fix)
+TC-180,Regression,Notifications,/create restricted to admin,Static/code review,See case name,As expected,PASS,admin role guard (BUG-H2 fix)
