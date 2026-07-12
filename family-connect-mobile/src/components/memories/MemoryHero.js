@@ -1,5 +1,6 @@
 import React, { memo } from 'react';
-import { Image, StyleSheet, Text, View } from 'react-native';
+import { StyleSheet, Text, View } from 'react-native';
+import { Image } from 'expo-image';
 import { LinearGradient } from 'expo-linear-gradient';
 import { Video, ResizeMode } from 'expo-av';
 import { Avatar } from '../../design-system';
@@ -16,7 +17,7 @@ function MemoryHeroComponent({ memory, viewCount }) {
       {isVideo ? (
         <Video source={{ uri: memory.mediaUrl }} style={styles.media} useNativeControls resizeMode={ResizeMode.CONTAIN} />
       ) : (
-        <Image source={{ uri: memory.mediaUrl }} style={styles.media} resizeMode="cover" accessibilityLabel="Memory photo" />
+        <Image source={{ uri: memory.mediaUrl }} style={styles.media} contentFit="cover" accessibilityLabel="Memory photo" />
       )}
       <LinearGradient colors={['transparent', 'rgba(0,0,0,0.8)']} style={styles.overlay}>
         {memory.caption ? (

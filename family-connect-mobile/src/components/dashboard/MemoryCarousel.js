@@ -1,5 +1,6 @@
 import React, { memo } from 'react';
-import { Dimensions, Image, ScrollView, StyleSheet, Text, View } from 'react-native';
+import { Dimensions, ScrollView, StyleSheet, Text, View } from 'react-native';
+import { Image } from 'expo-image';
 import { LinearGradient } from 'expo-linear-gradient';
 import { Ionicons } from '@expo/vector-icons';
 import Animated, { FadeInDown } from 'react-native-reanimated';
@@ -25,13 +26,13 @@ function StoryCard({ memory, onPress, colors, layout, radii, isDark }) {
       <View style={[styles.story, { borderRadius: radii['2xl'], width: STORY_WIDTH }]}>
         {isVideo ? (
           <View style={styles.media}>
-            <Image source={{ uri: memory.mediaUrl }} style={styles.image} resizeMode="cover" />
+            <Image source={{ uri: memory.mediaUrl }} style={styles.image} contentFit="cover" />
             <View style={[styles.videoOverlay, { backgroundColor: colors.overlay }]}>
               <Ionicons name="play-circle" size={48} color="#fff" />
             </View>
           </View>
         ) : (
-          <Image source={{ uri: memory.mediaUrl }} style={styles.image} resizeMode="cover" />
+          <Image source={{ uri: memory.mediaUrl }} style={styles.image} contentFit="cover" />
         )}
         <LinearGradient
           colors={['transparent', 'rgba(0,0,0,0.75)']}

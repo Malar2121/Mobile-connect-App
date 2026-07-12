@@ -1,5 +1,6 @@
 import React, { memo, useEffect, useRef, useState } from 'react';
-import { Image, Modal, Pressable, StyleSheet, Text, View } from 'react-native';
+import { Modal, Pressable, StyleSheet, Text, View } from 'react-native';
+import { Image } from 'expo-image';
 import { Video, ResizeMode } from 'expo-av';
 import Animated, { useAnimatedStyle, useSharedValue, withTiming } from 'react-native-reanimated';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
@@ -12,6 +13,12 @@ function StoryViewerComponent({ memories, visible, initialIndex = 0, onClose }) 
   const [index, setIndex] = useState(initialIndex);
   const progress = useSharedValue(0);
   const timer = useRef(null);
+
+  useEffect(() => {
+    if (visible) {
+      setIndex(initialIndex);
+    }
+  }, [visible, initialIndex]);
 
   const memory = memories?.[index];
 
@@ -46,7 +53,7 @@ function StoryViewerComponent({ memories, visible, initialIndex = 0, onClose }) 
         {memory.mediaType === 'video' ? (
           <Video source={{ uri: memory.mediaUrl }} style={styles.media} resizeMode={ResizeMode.CONTAIN} shouldPlay />
         ) : (
-          <Image source={{ uri: memory.mediaUrl }} style={styles.media} resizeMode="contain" />
+          <Image source={{ uri: memory.mediaUrl }} style={styles.media} contentFit="contain" />
         )}
         {memory.caption ? <Text style={styles.caption}>{memory.caption}</Text> : null}
         <Pressable style={styles.tapLeft} onPress={() => setIndex((i) => Math.max(0, i - 1))} />

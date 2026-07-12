@@ -1,5 +1,6 @@
 import React, { memo } from 'react';
-import { Image, Pressable, StyleSheet, Text, View } from 'react-native';
+import { Pressable, StyleSheet, Text, View } from 'react-native';
+import { Image } from 'expo-image';
 import { Ionicons } from '@expo/vector-icons';
 import { Avatar } from '../../design-system';
 import { useTheme } from '../../hooks/useTheme';
@@ -15,7 +16,7 @@ function MemoryCardComponent({ memory, onPress, compact }) {
     <Pressable onPress={() => onPress?.(memory)} accessibilityRole="button" accessibilityLabel={memory.caption || 'Memory'}>
       <View style={[styles.row, { marginBottom: compact ? 8 : 12 }]}>
         <View style={[styles.thumb, { width: thumbSize, height: thumbSize, borderRadius: radii.lg, borderColor: colors.border }]}>
-          <Image source={{ uri: memory.mediaUrl }} style={styles.image} resizeMode="cover" />
+          <Image source={{ uri: memory.mediaUrl }} style={styles.image} contentFit="cover" />
           {isVideo ? (
             <View style={styles.play}>
               <Ionicons name="play" size={16} color="#fff" />
