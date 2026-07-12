@@ -45,7 +45,7 @@ export default function FamilyRolesScreen() {
         subtitle="Understand permissions at a glance"
         onBack={() => navigation.goBack()}
       />
-      <View style={{ paddingHorizontal: horizontalPadding, paddingBottom: 12 }}>
+      <View style={{ paddingBottom: 12 }}>
         <Text style={{ color: colors.textSecondary, fontSize: 14 * layout.fontScale, marginBottom: 12 }}>
           Role assignment requires a backend API. Roles are displayed based on each member&apos;s account role. Family
           owners are identified as the family creator with admin privileges.
@@ -58,7 +58,7 @@ export default function FamilyRolesScreen() {
         data={ROLE_DEFINITIONS}
         keyExtractor={(item) => item.id}
         renderItem={renderRole}
-        contentContainerStyle={{ paddingHorizontal: horizontalPadding, paddingBottom: 32 }}
+        contentContainerStyle={{ paddingBottom: 32 }}
         initialNumToRender={5}
       />
     </Screen>

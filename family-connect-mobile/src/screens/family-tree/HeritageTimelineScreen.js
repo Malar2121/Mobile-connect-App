@@ -30,7 +30,7 @@ export default function HeritageTimelineScreen() {
         data={heritageTimeline}
         keyExtractor={(item) => item.id}
         renderItem={({ item }) => <HeritageCard item={item} onPress={onPressItem} />}
-        contentContainerStyle={{ paddingHorizontal: horizontalPadding, paddingBottom: insets.bottom + 24 }}
+        contentContainerStyle={{ paddingBottom: insets.bottom + 24 }}
         refreshing={refreshing}
         onRefresh={refresh}
         initialNumToRender={12}

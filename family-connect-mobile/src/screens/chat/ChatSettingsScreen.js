@@ -22,7 +22,7 @@ export default function ChatSettingsScreen() {
     <Screen edges={['top']}>
       <PageHeader title="Chat settings" subtitle="Notifications & appearance" onBack={() => navigation.goBack()} />
 
-      <ScrollView contentContainerStyle={{ paddingHorizontal: horizontalPadding, paddingBottom: 40 }}>
+      <ScrollView contentContainerStyle={{ paddingBottom: 40 }}>
         <SectionTitle title="Notifications" />
         <SettingRow label="Mute chat" value={prefs.muted} onChange={setMuted} colors={colors} layout={layout} />
         <SettingRow 

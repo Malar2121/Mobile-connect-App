@@ -28,7 +28,7 @@ export default function TripHistoryScreen() {
     <Screen edges={['top']}>
       <PageHeader title="Trip history" subtitle="Timeline & routes" onBack={() => navigation.goBack()} />
 
-      <ScrollView contentContainerStyle={{ paddingHorizontal: horizontalPadding, paddingBottom: 40 }}>
+      <ScrollView contentContainerStyle={{ paddingBottom: 40 }}>
         {focusTrip ? (
           <>
             <TripCard trip={focusTrip} />

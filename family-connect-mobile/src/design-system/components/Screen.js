@@ -16,6 +16,7 @@ export function Screen({
   style,
   contentStyle,
   refreshControl,
+  noPadding,
 }) {
   const { colors, layout } = useTheme();
   const { isTablet, contentMaxWidth, horizontalPadding } = useResponsive();
@@ -25,7 +26,7 @@ export function Screen({
       style={[
         styles.content,
         {
-          paddingHorizontal: horizontalPadding,
+          paddingHorizontal: noPadding ? 0 : horizontalPadding,
           maxWidth: isTablet ? contentMaxWidth : undefined,
           alignSelf: isTablet ? 'center' : 'stretch',
           width: isTablet ? '100%' : undefined,

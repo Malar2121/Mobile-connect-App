@@ -85,7 +85,7 @@ export default function MemberProfileScreen() {
     <Screen edges={['top']}>
       <PageHeader title={member.fullName} subtitle="Member profile" onBack={() => navigation.goBack()} />
       <ScrollView contentContainerStyle={{ paddingBottom: 32 }} showsVerticalScrollIndicator={false}>
-        <View style={[styles.hero, { paddingHorizontal: horizontalPadding }]}>
+        <View style={styles.hero}>
           <Avatar uri={member.avatar} name={member.fullName} size={layout.avatarSize + 36} />
           <View style={styles.badges}>
             <RelationshipBadge label={member.relationshipLabel} />
@@ -99,13 +99,13 @@ export default function MemberProfileScreen() {
           </Text>
         </View>
 
-        <View style={[styles.stats, { paddingHorizontal: horizontalPadding }]}>
+        <View style={styles.stats}>
           <StatCard label="Participation" value={stats?.participation ?? 0} gradientKey="primary" />
           <StatCard label="Memories" value={stats?.memoriesShared ?? 0} gradientKey="warm" />
           <StatCard label="Events" value={stats?.eventsAttended ?? 0} gradientKey="cool" />
         </View>
 
-        <View style={{ paddingHorizontal: horizontalPadding }}>
+        <View >
           <SectionTitle title="Shared memories" subtitle={`${memberMemories.length} recent uploads`} />
           {memberMemories.length === 0 ? (
             <Card>

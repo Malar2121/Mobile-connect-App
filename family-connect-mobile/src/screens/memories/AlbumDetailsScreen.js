@@ -62,7 +62,7 @@ export default function AlbumDetailsScreen() {
   return (
     <Screen edges={['top']}>
       <PageHeader title={data?.album?.title ?? 'Album'} onBack={() => navigation.goBack()} />
-      <ScrollView contentContainerStyle={{ paddingHorizontal: horizontalPadding, paddingBottom: 32 }}>
+      <ScrollView contentContainerStyle={{ paddingBottom: 32 }}>
         <AlbumHeader album={data?.album} onShare={handleShare} canManage={isOwner} />
         {(data?.media ?? []).length === 0 ? (
           <Text style={{ color: '#64748B' }}>No media in this album yet. Add memories from memory details.</Text>

@@ -61,7 +61,7 @@ export default function TreeSettingsScreen() {
     <Screen edges={['top']}>
       <PageHeader title="Tree settings" subtitle="Display & accessibility" onBack={() => navigation.goBack()} />
 
-      <ScrollView contentContainerStyle={{ paddingHorizontal: horizontalPadding, paddingBottom: 40 }}>
+      <ScrollView contentContainerStyle={{ paddingBottom: 40 }}>
         <SectionTitle title="Visualization" />
         <SettingRow
           label="Generation labels"

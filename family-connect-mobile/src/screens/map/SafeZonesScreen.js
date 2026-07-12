@@ -51,7 +51,7 @@ export default function SafeZonesScreen() {
     <Screen edges={['top']}>
       <PageHeader title="Safe zones" subtitle="Home, school, office & more" onBack={() => navigation.goBack()} />
 
-      <ScrollView contentContainerStyle={{ paddingHorizontal: horizontalPadding, paddingBottom: 40 }}>
+      <ScrollView contentContainerStyle={{ paddingBottom: 40 }}>
         <Text style={{ color: colors.textSecondary, fontSize: 14 * layout.fontScale, marginBottom: 16, lineHeight: 22 }}>
           Add zones at your current location. Family members receive enter/exit alerts when location sharing is on.
         </Text>

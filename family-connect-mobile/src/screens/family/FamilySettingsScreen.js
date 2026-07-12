@@ -76,7 +76,7 @@ export default function FamilySettingsScreen() {
   return (
     <Screen edges={['top']}>
       <PageHeader title="Family settings" subtitle={family?.name} onBack={() => navigation.goBack()} />
-      <ScrollView contentContainerStyle={{ paddingHorizontal: horizontalPadding, paddingBottom: 32 }}>
+      <ScrollView contentContainerStyle={{ paddingBottom: 32 }}>
         {canManage ? (
           <Card>
             <TextField

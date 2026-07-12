@@ -41,7 +41,7 @@ export default function EventHistoryScreen() {
         data={history}
         keyExtractor={(item) => item.id}
         renderItem={renderItem}
-        contentContainerStyle={{ paddingHorizontal: horizontalPadding, paddingBottom: 32 }}
+        contentContainerStyle={{ paddingBottom: 32 }}
         onRefresh={refresh}
         refreshing={refreshing}
         ListHeaderComponent={

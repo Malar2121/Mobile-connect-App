@@ -117,7 +117,7 @@ export default function MemoryGalleryScreen({ navigation, route }) {
   }
 
   return (
-    <Screen edges={['top']} style={{ paddingHorizontal: 0 }}>
+    <Screen edges={['top']} noPadding>
       <View style={{ paddingHorizontal: horizontalPadding }}>
         <PageHeader
           title={title}

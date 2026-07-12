@@ -108,7 +108,7 @@ export default function RelationshipScreen() {
             data={members}
             keyExtractor={(item) => String(item._id)}
             renderItem={renderMember}
-            contentContainerStyle={{ paddingHorizontal: horizontalPadding, paddingBottom: 16 }}
+            contentContainerStyle={{ paddingBottom: 16 }}
             initialNumToRender={8}
             ListHeaderComponent={
               <Text style={{ color: colors.textSecondary, fontSize: 14 * layout.fontScale, marginBottom: 12 }}>
@@ -119,7 +119,7 @@ export default function RelationshipScreen() {
           />
 
           {selectedMember ? (
-            <View style={[styles.panel, { backgroundColor: colors.surface, borderTopColor: colors.border, paddingHorizontal: horizontalPadding }]}>
+            <View style={[styles.panel, { backgroundColor: colors.surface, borderTopColor: colors.border, }]}>
               <Text style={{ color: colors.text, fontFamily: 'Inter_700Bold', fontSize: 16 * layout.fontScale, marginBottom: 12 }}>
                 Assign relationship for {selectedMember.fullName}
               </Text>

@@ -97,7 +97,7 @@ export default function RelationshipEditorScreen() {
           data={members}
           keyExtractor={(item) => String(item._id)}
           renderItem={renderMember}
-          contentContainerStyle={{ paddingHorizontal: horizontalPadding, paddingBottom: 24 }}
+          contentContainerStyle={{ paddingBottom: 24 }}
           initialNumToRender={8}
           ListHeaderComponent={
             selectedMember ? (

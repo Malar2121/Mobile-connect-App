@@ -115,7 +115,7 @@ export default function MemoryDetailsScreen({ route, navigation }) {
   const tags = memory.tags ?? [];
 
   return (
-    <Screen edges={['top']} style={{ paddingHorizontal: 0 }}>
+    <Screen edges={['top']} noPadding>
       <View style={{ paddingHorizontal: horizontalPadding }}>
         <PageHeader title="Memory" onBack={() => navigation.goBack()} />
       </View>

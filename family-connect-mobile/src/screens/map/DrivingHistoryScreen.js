@@ -28,7 +28,7 @@ export default function DrivingHistoryScreen() {
         keyExtractor={(item) => item.id}
         ListHeaderComponent={<TravelStatsCard analytics={analytics} />}
         renderItem={({ item }) => <TripCard trip={item} onPress={() => navigation.navigate('TripHistory', { tripId: item.id })} />}
-        contentContainerStyle={{ paddingHorizontal: horizontalPadding, paddingBottom: insets.bottom + 24 }}
+        contentContainerStyle={{ paddingBottom: insets.bottom + 24 }}
         initialNumToRender={10}
       />
     </Screen>

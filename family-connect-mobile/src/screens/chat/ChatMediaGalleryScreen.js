@@ -23,7 +23,7 @@ export default function ChatMediaGalleryScreen() {
         data={media}
         numColumns={3}
         keyExtractor={(item) => String(item._id)}
-        contentContainerStyle={{ paddingHorizontal: horizontalPadding, paddingBottom: insets.bottom + 24 }}
+        contentContainerStyle={{ paddingBottom: insets.bottom + 24 }}
         initialNumToRender={15}
         renderItem={({ item }) => (
           <Pressable style={{ flex: 1 / 3, aspectRatio: 1, padding: 2 }}>

@@ -72,7 +72,7 @@ export default function FamilyPermissionsScreen() {
         subtitle="Family privacy & sharing"
         onBack={() => navigation.goBack()}
       />
-      <ScrollView contentContainerStyle={{ paddingHorizontal: horizontalPadding, paddingBottom: 32 }}>
+      <ScrollView contentContainerStyle={{ paddingBottom: 32 }}>
         <Text style={{ color: colors.textSecondary, fontSize: 14 * layout.fontScale, marginBottom: 16 }}>
           Configure how your family shares content. Settings are stored on-device until a backend permissions API is
           available.

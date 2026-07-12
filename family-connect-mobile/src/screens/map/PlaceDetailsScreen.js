@@ -41,7 +41,7 @@ export default function PlaceDetailsScreen() {
   return (
     <Screen edges={['top']}>
       <PageHeader title={zone?.label ?? 'Place'} subtitle="Safe zone details" onBack={() => navigation.goBack()} />
-      <ScrollView contentContainerStyle={{ paddingHorizontal: horizontalPadding, paddingBottom: 40 }}>
+      <ScrollView contentContainerStyle={{ paddingBottom: 40 }}>
         {zone ? <SafeZoneCard zone={zone} /> : null}
         <Text style={{ color: colors.textSecondary, fontSize: 14 * layout.fontScale, lineHeight: 22, marginTop: 16 }}>
           Coordinates: {zone?.latitude?.toFixed(5)}, {zone?.longitude?.toFixed(5)}

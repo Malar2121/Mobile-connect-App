@@ -51,7 +51,7 @@ export default function MemoriesHomeScreen() {
   }
 
   return (
-    <Screen edges={['top']} style={{ paddingHorizontal: 0 }}>
+    <Screen edges={['top']} noPadding>
       <View style={{ paddingHorizontal: horizontalPadding }}>
         <PageHeader title="Memories" subtitle="Digital family archive" large />
         {error ? <Text style={{ color: '#EF4444', marginBottom: 8 }}>{error}</Text> : null}

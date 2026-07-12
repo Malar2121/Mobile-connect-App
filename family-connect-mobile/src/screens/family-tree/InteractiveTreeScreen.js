@@ -36,7 +36,7 @@ export default function InteractiveTreeScreen() {
   }, []);
 
   return (
-    <Screen edges={['top']} style={{ paddingHorizontal: 0 }}>
+    <Screen edges={['top']} noPadding>
       <View style={styles.header}>
         <PageHeader
           title="Interactive tree"

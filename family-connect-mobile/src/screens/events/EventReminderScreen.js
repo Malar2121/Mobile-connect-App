@@ -92,7 +92,7 @@ export default function EventReminderScreen() {
   return (
     <Screen edges={['top']}>
       <PageHeader title="Reminders" subtitle="Never miss a family moment" onBack={() => navigation.goBack()} />
-      <ScrollView contentContainerStyle={{ paddingHorizontal: horizontalPadding, paddingBottom: 32 }}>
+      <ScrollView contentContainerStyle={{ paddingBottom: 32 }}>
         <Card>
           <View style={styles.row}>
             <Text style={{ color: colors.text, flex: 1, fontSize: 15 * layout.fontScale }}>Push notifications</Text>

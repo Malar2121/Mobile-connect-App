@@ -58,7 +58,7 @@ export default function EventsHomeScreen() {
   }
 
   return (
-    <Screen edges={['top']} style={{ paddingHorizontal: 0 }}>
+    <Screen edges={['top']} noPadding>
       <View style={{ paddingHorizontal: horizontalPadding }}>
         <PageHeader title="Events" subtitle="Smart family gatherings" large />
         {error ? <Text style={{ color: colors.error, marginBottom: 8 }}>{error}</Text> : null}

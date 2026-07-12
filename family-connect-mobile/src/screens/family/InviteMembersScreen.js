@@ -104,7 +104,7 @@ export default function InviteMembersScreen() {
         onBack={() => navigation.goBack()}
       />
       <ScrollView contentContainerStyle={{ paddingBottom: 32 }} showsVerticalScrollIndicator={false}>
-        <View style={{ paddingHorizontal: horizontalPadding }}>
+        <View >
           {loading ? (
             <Loader />
           ) : (

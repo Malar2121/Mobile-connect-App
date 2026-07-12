@@ -30,7 +30,7 @@ export default function RSVPManagementScreen() {
   return (
     <Screen edges={['top']}>
       <PageHeader title="RSVP management" subtitle={event?.title} onBack={() => navigation.goBack()} />
-      <ScrollView contentContainerStyle={{ paddingHorizontal: horizontalPadding, paddingBottom: 32 }}>
+      <ScrollView contentContainerStyle={{ paddingBottom: 32 }}>
         <RSVPCard event={event} showGuests />
       </ScrollView>
     </Screen>

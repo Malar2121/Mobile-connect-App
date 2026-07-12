@@ -104,7 +104,7 @@ export default function EventPollScreen() {
   return (
     <Screen edges={['top']}>
       <PageHeader title="Availability poll" subtitle="Doodle-style scheduling" onBack={() => navigation.goBack()} />
-      <ScrollView contentContainerStyle={{ paddingHorizontal: horizontalPadding, paddingBottom: 32 }}>
+      <ScrollView contentContainerStyle={{ paddingBottom: 32 }}>
         {loading ? (
           <Text style={{ color: colors.textSecondary }}>Loading poll…</Text>
         ) : pollData ? (

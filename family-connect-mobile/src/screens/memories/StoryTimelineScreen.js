@@ -28,7 +28,7 @@ export default function StoryTimelineScreen() {
         data={timeline}
         keyExtractor={(item) => item.label}
         renderItem={renderItem}
-        contentContainerStyle={{ paddingHorizontal: horizontalPadding, paddingBottom: 32 }}
+        contentContainerStyle={{ paddingBottom: 32 }}
         refreshControl={<RefreshControl refreshing={refreshing} onRefresh={refresh} />}
         initialNumToRender={6}
         maxToRenderPerBatch={8}

@@ -104,7 +104,7 @@ export default function NotificationsScreen({ navigation }) {
   }
 
   return (
-    <Screen edges={['top']} style={{ paddingHorizontal: 0 }}>
+    <Screen edges={['top']} noPadding>
       <View style={{ paddingHorizontal: layout.contentPadding }}>
         <PageHeader
           title="Notifications"

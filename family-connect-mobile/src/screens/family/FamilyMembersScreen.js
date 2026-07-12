@@ -74,7 +74,7 @@ export default function FamilyMembersScreen() {
         subtitle={`${members.length} in your family`}
         onBack={() => navigation.goBack()}
       />
-      <View style={{ paddingHorizontal: horizontalPadding, marginBottom: 12 }}>
+      <View style={{ marginBottom: 12 }}>
         <SearchBar value={query} onChangeText={setQuery} placeholder="Search members" accessibilityLabel="Search family members" />
       </View>
 
@@ -85,7 +85,7 @@ export default function FamilyMembersScreen() {
           data={filtered}
           keyExtractor={keyExtractor}
           renderItem={renderItem}
-          contentContainerStyle={[styles.list, { paddingHorizontal: horizontalPadding }]}
+          contentContainerStyle={styles.list}
           refreshControl={<RefreshControl refreshing={refreshing} onRefresh={refresh} />}
           initialNumToRender={8}
           maxToRenderPerBatch={10}

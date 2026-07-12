@@ -25,7 +25,7 @@ export default function DescendantsScreen() {
     <Screen edges={['top']}>
       <PageHeader title="Descendants" subtitle="Children & future generations" onBack={() => navigation.goBack()} />
 
-      <ScrollView contentContainerStyle={{ paddingHorizontal: horizontalPadding, paddingBottom: 40 }}>
+      <ScrollView contentContainerStyle={{ paddingBottom: 40 }}>
         {lineage.length ? (
           lineage.map((level) => (
             <View key={level.depth} style={{ marginBottom: layout.sectionGap }}>

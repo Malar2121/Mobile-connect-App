@@ -150,7 +150,7 @@ export default function EventDetailsScreen({ route, navigation }) {
   const mapQuery = event.location ? encodeURIComponent(event.location) : null;
 
   return (
-    <Screen edges={['top']} style={{ paddingHorizontal: 0 }}>
+    <Screen edges={['top']} noPadding>
       <View style={{ paddingHorizontal: horizontalPadding }}>
         <PageHeader title={event.title} onBack={() => navigation.goBack()} />
       </View>

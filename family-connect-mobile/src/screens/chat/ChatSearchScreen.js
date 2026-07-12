@@ -58,7 +58,7 @@ export default function ChatSearchScreen() {
   return (
     <Screen edges={['top']}>
       <PageHeader title="Search" subtitle="Text, media, links & more" onBack={() => navigation.goBack()} />
-      <View style={{ paddingHorizontal: horizontalPadding }}>
+      <View >
         <SearchBar value={query} onChangeText={setQuery} placeholder="Search messages…" />
         <View style={{ flexDirection: 'row', flexWrap: 'wrap', gap: 8, marginVertical: 12 }}>
           {SEARCH_FILTERS.map((f) => (
@@ -75,7 +75,7 @@ export default function ChatSearchScreen() {
         data={results}
         keyExtractor={(item) => String(item._id)}
         renderItem={({ item }) => <SearchResultCard message={item} query={query} onPress={onSelect} />}
-        contentContainerStyle={{ paddingHorizontal: horizontalPadding, paddingBottom: insets.bottom + 24 }}
+        contentContainerStyle={{ paddingBottom: insets.bottom + 24 }}
         initialNumToRender={12}
         ListEmptyComponent={
           !loading ? (

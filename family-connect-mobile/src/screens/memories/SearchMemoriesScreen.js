@@ -31,7 +31,7 @@ export default function SearchMemoriesScreen() {
         ListHeaderComponent={
           <SearchFilterBar query={query} onChangeQuery={setQuery} years={years} selectedYear={year} onYearChange={setYear} />
         }
-        contentContainerStyle={{ paddingHorizontal: horizontalPadding, paddingBottom: 32 }}
+        contentContainerStyle={{ paddingBottom: 32 }}
         renderItem={({ item }) => (
           <MemoryCard memory={item} onPress={(m) => navigation.navigate('MemoryDetails', { id: String(m._id) })} />
         )}

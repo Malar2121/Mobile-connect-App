@@ -52,7 +52,7 @@ export default function LegacyProfilesScreen() {
     <Screen edges={['top']}>
       <PageHeader title="Legacy profiles" subtitle="Remembrance pages" onBack={() => navigation.goBack()} />
 
-      <ScrollView contentContainerStyle={{ paddingHorizontal: horizontalPadding, paddingBottom: 40 }}>
+      <ScrollView contentContainerStyle={{ paddingBottom: 40 }}>
         {profiles.length ? (
           profiles.map((profile) => {
             const memberId = profile.memberId?._id || profile.memberId;

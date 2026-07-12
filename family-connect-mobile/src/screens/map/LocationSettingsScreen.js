@@ -68,7 +68,7 @@ export default function LocationSettingsScreen() {
     <Screen edges={['top']}>
       <PageHeader title={t('map.locationSettings')} subtitle={t('map.locationSubtitle')} onBack={() => navigation.goBack()} />
 
-      <ScrollView contentContainerStyle={{ paddingHorizontal: horizontalPadding, paddingBottom: 40 }}>
+      <ScrollView contentContainerStyle={{ paddingBottom: 40 }}>
         <SectionTitle title={t('map.shareLocation')} />
         <SettingRow
           label={t('map.shareLocation')}

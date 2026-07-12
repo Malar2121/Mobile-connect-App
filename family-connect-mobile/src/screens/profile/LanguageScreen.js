@@ -54,7 +54,7 @@ export default function LanguageScreen({ navigation }) {
         subtitle={t('language.subtitle')}
         onBack={() => navigation.goBack()}
       />
-      <View style={{ paddingHorizontal: horizontalPadding, paddingTop: 8 }}>
+      <View style={{ paddingTop: 8 }}>
         <SectionTitle title={t('profile.language')} />
         {SUPPORTED_LOCALES.map((option) => (
           <LanguageOption

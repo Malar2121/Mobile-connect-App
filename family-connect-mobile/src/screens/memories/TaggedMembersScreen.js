@@ -39,7 +39,7 @@ export default function TaggedMembersScreen() {
       <FlatList
         data={tagged}
         keyExtractor={(item) => String(item.member._id)}
-        contentContainerStyle={{ paddingHorizontal: horizontalPadding, paddingBottom: 32 }}
+        contentContainerStyle={{ paddingBottom: 32 }}
         renderItem={({ item }) => (
           <TaggedMemberCard
             member={item.member}

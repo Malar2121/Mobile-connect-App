@@ -18,7 +18,7 @@ export default function SharedAlbumsScreen() {
       <FlatList
         data={shared}
         keyExtractor={(item) => String(item._id)}
-        contentContainerStyle={{ paddingHorizontal: horizontalPadding, paddingBottom: 32 }}
+        contentContainerStyle={{ paddingBottom: 32 }}
         ListEmptyComponent={
           <Text style={{ color: '#64748B', textAlign: 'center', marginTop: 24 }}>
             No shared albums yet. Share an album from album details.

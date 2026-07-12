@@ -29,7 +29,7 @@ export default function SharedFilesScreen() {
           { key: 'audio', title: 'Audio', items: groups.audio, icon: 'mic' },
         ]}
         keyExtractor={(s) => s.key}
-        contentContainerStyle={{ paddingHorizontal: horizontalPadding, paddingBottom: insets.bottom + 24 }}
+        contentContainerStyle={{ paddingBottom: insets.bottom + 24 }}
         renderItem={({ item: section }) => (
           <View style={{ marginBottom: layout.sectionGap }}>
             <SectionTitle title={section.title} subtitle={`${section.items.length} files`} />

@@ -43,7 +43,7 @@ export default function ChatHomeScreen() {
   }
 
   return (
-    <Screen edges={['top']} style={{ paddingHorizontal: 0 }}>
+    <Screen edges={['top']} noPadding>
       <View style={{ paddingHorizontal: horizontalPadding }}>
         <PageHeader title="Chat" subtitle={family?.name ?? 'Family communication'} large />
       </View>

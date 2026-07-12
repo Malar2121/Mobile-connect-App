@@ -14,7 +14,7 @@ export default function QRInviteScreen() {
   return (
     <Screen edges={['top']}>
       <PageHeader title="QR invite" subtitle="Scan to join instantly" onBack={() => navigation.goBack()} />
-      <ScrollView contentContainerStyle={{ paddingHorizontal: horizontalPadding, paddingBottom: 32 }}>
+      <ScrollView contentContainerStyle={{ paddingBottom: 32 }}>
         <QRInviteCard inviteCode={inviteCode} inviteLink={inviteLink} />
         <Button
           title="Share invite"

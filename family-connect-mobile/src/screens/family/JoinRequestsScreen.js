@@ -62,7 +62,7 @@ export default function JoinRequestsScreen() {
         subtitle="Review pending family joins"
         onBack={() => navigation.goBack()}
       />
-      <ScrollView contentContainerStyle={{ paddingHorizontal: horizontalPadding, paddingBottom: 32 }}>
+      <ScrollView contentContainerStyle={{ paddingBottom: 32 }}>
         <Card>
           <View style={[styles.infoIcon, { backgroundColor: colors.primarySubtle, borderRadius: radii.lg }]}>
             <Ionicons name="information-circle-outline" size={28} color={colors.primary} />

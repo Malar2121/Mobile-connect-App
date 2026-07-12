@@ -30,7 +30,7 @@ export default function PinnedMessagesScreen() {
         data={pinned}
         keyExtractor={(item) => String(item._id)}
         renderItem={({ item }) => <SearchResultCard message={item} onPress={onSelect} />}
-        contentContainerStyle={{ paddingHorizontal: horizontalPadding, paddingBottom: insets.bottom + 24 }}
+        contentContainerStyle={{ paddingBottom: insets.bottom + 24 }}
         initialNumToRender={10}
       />
     </Screen>

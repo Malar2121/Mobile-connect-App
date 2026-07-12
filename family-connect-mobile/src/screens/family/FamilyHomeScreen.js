@@ -92,7 +92,7 @@ export default function FamilyHomeScreen() {
           onSettings={() => navigate('FamilySettings')}
         />
 
-        <View style={[styles.statsRow, { paddingHorizontal: horizontalPadding }]}>
+        <View style={styles.statsRow}>
           <FamilyStatCard label="Memories" value={analytics.totalMemories} icon="images-outline" onPress={() => navigation.getParent()?.navigate('Memories')} />
           <FamilyStatCard label="Events" value={analytics.totalEvents} icon="calendar-outline" onPress={() => navigation.getParent()?.navigate('Events')} />
           <FamilyStatCard label="This week" value={analytics.activityThisWeek} icon="pulse-outline" accent="#10B981" />
@@ -104,7 +104,7 @@ export default function FamilyHomeScreen() {
           <Loader />
         ) : (
           <>
-            <View style={{ paddingHorizontal: horizontalPadding }}>
+            <View >
               <SectionTitle title="Participation" subtitle="Real activity from your family" />
               <AnalyticsCard
                 title="Family analytics"

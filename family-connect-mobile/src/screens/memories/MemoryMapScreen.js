@@ -58,7 +58,7 @@ export default function MemoryMapScreen() {
             </View>
           )}
         </View>
-        <View style={{ paddingHorizontal: horizontalPadding, marginTop: 16 }}>
+        <View style={{ marginTop: 16 }}>
           {mappedMemories.map((item) => (
             <MemoryMapCard
               key={item.memory._id}

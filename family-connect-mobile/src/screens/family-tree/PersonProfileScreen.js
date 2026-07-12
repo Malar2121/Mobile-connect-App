@@ -62,7 +62,7 @@ export default function PersonProfileScreen() {
   }
 
   return (
-    <Screen edges={['top']} style={{ paddingHorizontal: 0 }}>
+    <Screen edges={['top']} noPadding>
       <View style={{ paddingHorizontal: horizontalPadding }}>
         <PageHeader title={person.name} subtitle={person.relationshipLabel} onBack={() => navigation.goBack()} />
       </View>

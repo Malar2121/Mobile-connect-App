@@ -26,7 +26,7 @@ export default function EmergencyContactsScreen() {
     <Screen edges={['top']}>
       <PageHeader title="Emergency contacts" subtitle="Called during SOS" onBack={() => navigation.goBack()} />
 
-      <ScrollView contentContainerStyle={{ paddingHorizontal: horizontalPadding, paddingBottom: 40 }} keyboardShouldPersistTaps="handled">
+      <ScrollView contentContainerStyle={{ paddingBottom: 40 }} keyboardShouldPersistTaps="handled">
         <Text style={{ color: colors.textSecondary, fontSize: 14 * layout.fontScale, marginBottom: 16, lineHeight: 22 }}>
           Stored on device until a family emergency contacts API is available.
         </Text>

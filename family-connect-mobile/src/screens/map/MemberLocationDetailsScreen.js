@@ -61,7 +61,7 @@ export default function MemberLocationDetailsScreen() {
   return (
     <Screen edges={['top']}>
       <PageHeader title={name} subtitle={summary?.travelStatus} onBack={() => navigation.goBack()} />
-      <ScrollView contentContainerStyle={{ paddingHorizontal: horizontalPadding, paddingBottom: 40 }}>
+      <ScrollView contentContainerStyle={{ paddingBottom: 40 }}>
         <Card style={{ alignItems: 'center', paddingVertical: 24 }}>
           <Avatar uri={location.user?.avatar ?? member?.avatar} name={name} size={72} />
           <View style={[styles.badge, { backgroundColor: summary?.online ? colors.success + '22' : colors.border, borderRadius: radii.full, marginTop: 12 }]}>

@@ -54,7 +54,7 @@ export default function FamilyTreeHomeScreen() {
   }
 
   return (
-    <Screen edges={['top']} style={{ paddingHorizontal: 0 }}>
+    <Screen edges={['top']} noPadding>
       <View style={{ paddingHorizontal: horizontalPadding }}>
         <PageHeader title="Family Tree" subtitle="Interactive heritage system" large />
         {error ? <Text style={{ color: colors.error ?? '#EF4444', marginBottom: 8 }}>{error}</Text> : null}

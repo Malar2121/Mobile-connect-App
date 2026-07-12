@@ -52,7 +52,7 @@ export default function AgendaScreen() {
   return (
     <Screen edges={['top']}>
       <PageHeader title="Agenda" subtitle="Grouped by date" onBack={() => navigation.goBack()} />
-      <View style={{ paddingHorizontal: horizontalPadding, marginBottom: 12 }}>
+      <View style={{ marginBottom: 12 }}>
         <EventSearchBar value={query} onChangeText={setQuery} />
         <View style={styles.chips}>
           {STATUS_FILTERS.map((f) => (
@@ -71,7 +71,7 @@ export default function AgendaScreen() {
         data={agendaGroups}
         keyExtractor={(item) => item.date}
         renderItem={renderGroup}
-        contentContainerStyle={{ paddingHorizontal: horizontalPadding, paddingBottom: 32 }}
+        contentContainerStyle={{ paddingBottom: 32 }}
         refreshControl={<RefreshControl refreshing={refreshing} onRefresh={refresh} />}
         ListEmptyComponent={
           !loading ? <Text style={{ color: colors.textSecondary, textAlign: 'center', marginTop: 24 }}>No events match your filters.</Text> : null

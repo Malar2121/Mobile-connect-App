@@ -67,7 +67,7 @@ export default function EventAttachmentsScreen() {
   return (
     <Screen edges={['top']}>
       <PageHeader title="Attachments" onBack={() => navigation.goBack()} />
-      <ScrollView contentContainerStyle={{ paddingHorizontal: horizontalPadding, paddingBottom: 32 }}>
+      <ScrollView contentContainerStyle={{ paddingBottom: 32 }}>
         <Text style={{ color: colors.textSecondary, marginBottom: 16, fontSize: 14 * layout.fontScale }}>
           Attach menus, tickets, or planning docs. (Note: using local URIs, true upload requires Cloudinary integration).
         </Text>

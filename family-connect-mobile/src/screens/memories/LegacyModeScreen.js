@@ -85,7 +85,7 @@ export default function LegacyModeScreen() {
   return (
     <Screen edges={['top']}>
       <PageHeader title="Legacy Mode" subtitle="Honoring those we love" onBack={() => navigation.goBack()} />
-      <ScrollView contentContainerStyle={{ paddingHorizontal: horizontalPadding, paddingBottom: 40 }}>
+      <ScrollView contentContainerStyle={{ paddingBottom: 40 }}>
         <LinearGradient
           colors={isDark ? ['#1A1528', '#2D2640'] : ['#FDF4FF', '#FFFFFF']}
           style={{ padding: 20, borderRadius: 20, marginBottom: 20 }}

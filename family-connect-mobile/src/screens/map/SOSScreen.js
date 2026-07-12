@@ -77,7 +77,7 @@ export default function SOSScreen() {
     <Screen edges={['top']}>
       <PageHeader title={t('map.sos')} subtitle={t('map.emergencyContacts')} onBack={() => navigation.goBack()} />
 
-      <ScrollView contentContainerStyle={{ paddingHorizontal: horizontalPadding, paddingBottom: 40, alignItems: 'center' }}>
+      <ScrollView contentContainerStyle={{ paddingBottom: 40, alignItems: 'center' }}>
         <Text style={{ color: colors.textSecondary, textAlign: 'center', lineHeight: 22, marginBottom: 24, fontSize: 15 * layout.fontScale }}>
           Sends your live location to all family members. You have {COUNTDOWN_SEC} seconds to cancel.
         </Text>

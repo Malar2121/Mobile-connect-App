@@ -39,7 +39,7 @@ export default function AlbumsScreen() {
     <Screen edges={['top']}>
       <PageHeader title="Albums" subtitle={`${albums.length} collections`} onBack={() => navigation.goBack()} />
       {showForm && !isMinor ? (
-        <View style={{ paddingHorizontal: horizontalPadding, marginBottom: 12 }}>
+        <View style={{ marginBottom: 12 }}>
           <TextField label="Album title" value={title} onChangeText={setTitle} placeholder="Summer reunion" />
           <Button title="Create album" onPress={handleCreate} loading={creating} style={{ marginTop: 8 }} />
         </View>
@@ -48,7 +48,7 @@ export default function AlbumsScreen() {
         data={albums}
         keyExtractor={(item) => String(item._id)}
         renderItem={({ item }) => (
-          <View style={{ paddingHorizontal: horizontalPadding }}>
+          <View >
             <AlbumCard album={item} onPress={(a) => navigation.navigate('AlbumDetails', { id: String(a._id) })} />
           </View>
         )}

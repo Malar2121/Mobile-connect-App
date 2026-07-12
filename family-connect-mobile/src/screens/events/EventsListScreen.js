@@ -91,7 +91,7 @@ export default function EventsListScreen({ navigation }) {
   }
 
   return (
-    <Screen edges={['top']} style={{ paddingHorizontal: 0 }}>
+    <Screen edges={['top']} noPadding>
       <View style={{ paddingHorizontal: layout.contentPadding }}>
         <PageHeader title="Events" subtitle={`${events.length} scheduled`} large />
         {error ? (

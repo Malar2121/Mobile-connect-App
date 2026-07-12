@@ -49,7 +49,7 @@ export default function VoiceMessageScreen() {
     <Screen edges={['top']}>
       <PageHeader title="Voice message" subtitle="Record & send" onBack={() => navigation.goBack()} />
 
-      <View style={{ paddingHorizontal: horizontalPadding, paddingTop: 24 }}>
+      <View style={{ paddingTop: 24 }}>
         <Text style={{ color: colors.textSecondary, fontSize: 15 * layout.fontScale, lineHeight: 22, marginBottom: 24 }}>
           Hold record, then send. Playback supports pause, speed control, and seek architecture via VoiceBubble.
         </Text>
