@@ -33,9 +33,13 @@ export default function VoiceMessageScreen() {
     const uri = recording.getURI();
     const duration = startRef.current ? Math.round((Date.now() - startRef.current) / 1000) : null;
     recordingRef.current = null;
+    
+    // Generate a simple simulated waveform
+    const waveform = Array.from({ length: 40 }, () => Math.floor(Math.random() * 100));
+
     if (uri) {
       await sendTextMessage('🎤 Voice message', {
-        mediaOptions: { mediaUri: uri, mimeType: 'audio/m4a', mediaType: 'audio', mediaDuration: duration },
+        mediaOptions: { mediaUri: uri, mimeType: 'audio/m4a', mediaType: 'audio', mediaDuration: duration, waveform },
       });
       navigation.navigate('Conversation');
     }
@@ -50,14 +54,10 @@ export default function VoiceMessageScreen() {
           Hold record, then send. Playback supports pause, speed control, and seek architecture via VoiceBubble.
         </Text>
 
-        <VoiceBubble uri={null} duration={0} isMine={false} />
+        <VoiceBubble uri={null} duration={0} isMine={false} waveform={[]} />
 
         <Button title="Start recording" onPress={startRecording} style={{ marginTop: 20 }} />
         <Button title="Stop & send" onPress={stopAndSend} variant="secondary" style={{ marginTop: 12 }} />
-
-        <Text style={{ color: colors.textTertiary, fontSize: 12, marginTop: 24 }}>
-          Audio uploads use POST /api/chat/send with mediaType audio. TODO: waveform generation from server metadata.
-        </Text>
       </View>
     </Screen>
   );

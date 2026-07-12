@@ -26,6 +26,7 @@ const getFamilyTree = asyncHandler(async (req, res) => {
     relationshipType: m.relationshipType,
     relatedTo: m.relatedTo ? String(m.relatedTo._id) : null,
     relatedToName: m.relatedTo?.fullName ?? null,
+    lifeEvents: m.lifeEvents || [],
   }));
 
   return successResponse(res, { nodes }, 'Family tree retrieved');

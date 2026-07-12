@@ -52,6 +52,21 @@ const familyMemberSchema = new mongoose.Schema(
       type: Boolean,
       default: true,
     },
+    lifeEvents: [
+      {
+        title: { type: String, required: true },
+        date: { type: Date, required: true },
+        description: String,
+        type: { type: String, enum: ['birth', 'marriage', 'graduation', 'milestone', 'other'], default: 'other' }
+      }
+    ],
+    privacySettings: {
+      type: Object,
+      default: {
+        shareLocation: true,
+        showOnlineStatus: true,
+      },
+    },
   },
   { timestamps: true }
 );

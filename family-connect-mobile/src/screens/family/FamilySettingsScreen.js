@@ -3,7 +3,7 @@ import { ScrollView, StyleSheet, Text, View } from 'react-native';
 import { useNavigation } from '@react-navigation/native';
 import { Screen, PageHeader, Card, Button, TextField, useToast, useDialog } from '../../design-system';
 import { useFamilyModuleData } from '../../hooks/useFamilyModuleData';
-import { leaveFamily } from '../../services/familyService';
+import { leaveFamily, updateFamily } from '../../services/familyService';
 import { loadFamilyMotto, saveFamilyMotto } from '../../utils/familyModuleHelpers';
 import { useFamily } from '../../contexts/FamilyContext';
 import { useTheme } from '../../hooks/useTheme';
@@ -18,6 +18,7 @@ export default function FamilySettingsScreen() {
   const { family, motto, setMotto, canManage, isOwner, familyId } = useFamilyModuleData();
   const { refreshFamily } = useFamily();
   const [localMotto, setLocalMotto] = useState(motto);
+  const [localName, setLocalName] = useState('');
   const [saving, setSaving] = useState(false);
   const [leaving, setLeaving] = useState(false);
 
@@ -27,18 +28,28 @@ export default function FamilySettingsScreen() {
     }
   }, [familyId]);
 
-  const saveMotto = useCallback(async () => {
+  useEffect(() => {
+    if (family?.name) {
+      setLocalName(family.name);
+    }
+  }, [family]);
+
+  const saveSettings = useCallback(async () => {
     setSaving(true);
     try {
       await saveFamilyMotto(familyId, localMotto);
       setMotto(localMotto);
-      toast.success('Family motto saved locally');
+      if (localName.trim() !== family?.name) {
+        await updateFamily({ name: localName.trim() });
+        await refreshFamily();
+      }
+      toast.success('Settings saved');
     } catch (e) {
-      toast.error(e.message || 'Could not save');
+      toast.error(e.message || 'Could not save settings');
     } finally {
       setSaving(false);
     }
-  }, [familyId, localMotto, setMotto, toast]);
+  }, [familyId, localMotto, localName, family?.name, setMotto, toast, refreshFamily]);
 
   const handleLeave = useCallback(async () => {
     const confirmed = await dialog.confirm({
@@ -54,9 +65,6 @@ export default function FamilySettingsScreen() {
       await leaveFamily();
       await refreshFamily();
       toast.success('You left the family');
-      // FamilySettings lives inside the Family stack (nested under ProfileStack as
-      // "FamilyModule"); ProfileMain is registered in the PARENT stack, so target
-      // the parent explicitly instead of relying on implicit navigate bubbling.
       (navigation.getParent() ?? navigation).navigate('ProfileMain');
     } catch (e) {
       toast.error(e.message || 'Could not leave family');
@@ -69,33 +77,39 @@ export default function FamilySettingsScreen() {
     <Screen edges={['top']}>
       <PageHeader title="Family settings" subtitle={family?.name} onBack={() => navigation.goBack()} />
       <ScrollView contentContainerStyle={{ paddingHorizontal: horizontalPadding, paddingBottom: 32 }}>
-        <Card>
-          <Text style={{ color: colors.textSecondary, fontSize: 13 * layout.fontScale, marginBottom: 8 }}>
-            Family name
-          </Text>
-          <Text style={{ color: colors.text, fontFamily: 'Inter_700Bold', fontSize: 20 * layout.fontScale }}>
-            {family?.name}
-          </Text>
-          <Text style={{ color: colors.textTertiary, fontSize: 11, marginTop: 10 }}>
-            TODO: Backend PATCH /api/family for name and photo updates.
-          </Text>
-        </Card>
-
         {canManage ? (
-          <Card style={{ marginTop: 12 }}>
+          <Card>
+            <TextField
+              label="Family name"
+              value={localName}
+              onChangeText={setLocalName}
+              placeholder="e.g. The Smith Family"
+            />
             <TextField
               label="Family motto (optional)"
               value={localMotto}
               onChangeText={setLocalMotto}
               placeholder="Together we grow stronger"
               multiline
+              style={{ marginTop: 12 }}
             />
-            <Button title="Save motto" onPress={saveMotto} loading={saving} style={{ marginTop: 12 }} />
-            <Text style={{ color: colors.textTertiary, fontSize: 11, marginTop: 8 }}>
-              Stored locally until family profile API is available.
-            </Text>
+            <Button title="Save changes" onPress={saveSettings} loading={saving} style={{ marginTop: 16 }} />
           </Card>
-        ) : null}
+        ) : (
+          <Card>
+            <Text style={{ color: colors.textSecondary, fontSize: 13 * layout.fontScale, marginBottom: 8 }}>
+              Family name
+            </Text>
+            <Text style={{ color: colors.text, fontFamily: 'Inter_700Bold', fontSize: 20 * layout.fontScale }}>
+              {family?.name}
+            </Text>
+            {motto ? (
+              <Text style={{ color: colors.textSecondary, fontSize: 14 * layout.fontScale, marginTop: 8 }}>
+                "{motto}"
+              </Text>
+            ) : null}
+          </Card>
+        )}
 
         <Card style={{ marginTop: 12 }}>
           <Text style={{ color: colors.text, fontFamily: 'Inter_600SemiBold', marginBottom: 12 }}>Administration</Text>

@@ -57,6 +57,13 @@ const eventSchema = new mongoose.Schema(
       ref: 'EventPoll',
     },
     guests: [guestSchema],
+    attachments: [{
+      name: String,
+      url: String,
+      type: { type: String, enum: ['image', 'document', 'video', 'other'] }
+    }],
+    recurrenceRule: { type: String }, // e.g., 'FREQ=WEEKLY;BYDAY=MO' (RRULE format)
+    reminders: [{ type: Number }], // minutes before event
   },
   {
     timestamps: true,

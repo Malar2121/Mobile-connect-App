@@ -24,6 +24,8 @@ const chatRoutes = require('./routes/chatRoutes');
 const notificationRoutes = require('./routes/notificationRoutes');
 const familyTreeRoutes = require('./routes/familyTreeRoutes');
 const locationRoutes = require('./routes/locationRoutes');
+const legacyRoutes = require('./routes/legacyRoutes');
+const webhookRoutes = require('./routes/webhookRoutes');
 
 // ─── App setup ────────────────────────────────────────────────────────────
 const app = express();
@@ -120,6 +122,8 @@ app.use('/api/chat', chatRoutes);
 app.use('/api/notifications', notificationRoutes);
 app.use('/api/family-tree', familyTreeRoutes);
 app.use('/api/location', locationRoutes);
+app.use('/api/legacy', legacyRoutes);
+app.use('/api/webhooks', webhookRoutes);
 
 // ─── 404 & Error Handlers ─────────────────────────────────────────────────
 app.use(notFound);

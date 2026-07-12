@@ -76,12 +76,42 @@ export async function uploadMemory(formData) {
 export async function likeMemory(memoryId) {
   try {
     const { data } = await api.post('/memories/like', { memoryId });
-    if (!data.success || !data.data) {
-      throw new Error(data.message || 'Could not update like');
+    if (!data.success) {
+      throw new Error(data.message || 'Could not like memory');
     }
     return data.data;
-  } catch (e) {
-    throw normalizeAxiosError(e);
+  } catch (error) {
+    throw normalizeAxiosError(error);
+  }
+}
+
+/**
+ * GET /api/memories/:id/comments
+ */
+export async function getMemoryComments(id) {
+  try {
+    const { data } = await api.get(`/memories/${id}/comments`);
+    if (!data.success) {
+      throw new Error(data.message || 'Could not fetch comments');
+    }
+    return data.data.comments;
+  } catch (error) {
+    throw normalizeAxiosError(error);
+  }
+}
+
+/**
+ * POST /api/memories/:id/comments
+ */
+export async function addMemoryComment(id, content) {
+  try {
+    const { data } = await api.post(`/memories/${id}/comments`, { content });
+    if (!data.success) {
+      throw new Error(data.message || 'Could not add comment');
+    }
+    return data.data.comment;
+  } catch (error) {
+    throw normalizeAxiosError(error);
   }
 }
 

@@ -3,7 +3,7 @@ import { ScrollView, Text } from 'react-native';
 import { useRoute, useNavigation } from '@react-navigation/native';
 import * as DocumentPicker from 'expo-document-picker';
 import { Button, Card, PageHeader, Screen, useToast } from '../../design-system';
-import { loadEventAttachments, saveEventAttachments } from '../../utils/eventModuleHelpers';
+import { updateEvent, getEventDetails } from '../../services/eventService';
 import { useTheme } from '../../hooks/useTheme';
 import { useResponsive } from '../../design-system';
 
@@ -19,7 +19,17 @@ export default function EventAttachmentsScreen() {
   const [saving, setSaving] = useState(false);
 
   useEffect(() => {
-    if (eventId) loadEventAttachments(eventId).then(setAttachments);
+    if (eventId) {
+      getEventDetails(eventId).then(res => {
+        if (res.event?.attachments) {
+          setAttachments(res.event.attachments);
+        } else if (res.attachments) {
+          setAttachments(res.attachments);
+        }
+      }).catch(() => {
+        // failed to load details
+      });
+    }
   }, [eventId]);
 
   const pickFile = useCallback(async () => {
@@ -30,11 +40,10 @@ export default function EventAttachmentsScreen() {
       if (!file) return;
       setAttachments((prev) => [
         {
-          id: Date.now().toString(),
           name: file.name,
-          uri: file.uri,
-          mimeType: file.mimeType,
-          addedAt: new Date().toISOString(),
+          url: file.uri, // Using local URI for now, would be uploaded to Cloudinary
+          type: file.mimeType?.startsWith('image/') ? 'image' : 
+                file.mimeType?.startsWith('video/') ? 'video' : 'document',
         },
         ...prev,
       ]);
@@ -46,8 +55,8 @@ export default function EventAttachmentsScreen() {
   const handleSave = useCallback(async () => {
     setSaving(true);
     try {
-      await saveEventAttachments(eventId, attachments);
-      toast.success('Attachments saved locally');
+      await updateEvent(eventId, { attachments });
+      toast.success('Attachments saved');
     } catch (e) {
       toast.error(e.message || 'Save failed');
     } finally {
@@ -60,18 +69,15 @@ export default function EventAttachmentsScreen() {
       <PageHeader title="Attachments" onBack={() => navigation.goBack()} />
       <ScrollView contentContainerStyle={{ paddingHorizontal: horizontalPadding, paddingBottom: 32 }}>
         <Text style={{ color: colors.textSecondary, marginBottom: 16, fontSize: 14 * layout.fontScale }}>
-          Attach menus, tickets, or planning docs. Stored on-device until backend file upload API is available.
+          Attach menus, tickets, or planning docs. (Note: using local URIs, true upload requires Cloudinary integration).
         </Text>
         <Button title="Add attachment" onPress={pickFile} />
-        {attachments.map((a) => (
-          <Card key={a.id} style={{ marginTop: 10 }}>
+        {attachments.map((a, i) => (
+          <Card key={a._id || i} style={{ marginTop: 10 }}>
             <Text style={{ color: colors.text, fontFamily: 'Inter_600SemiBold' }}>{a.name}</Text>
-            <Text style={{ color: colors.textTertiary, fontSize: 12 }}>{a.mimeType ?? 'file'}</Text>
+            <Text style={{ color: colors.textTertiary, fontSize: 12 }}>{a.type || 'file'}</Text>
           </Card>
         ))}
-        <Text style={{ color: colors.textTertiary, fontSize: 11, marginTop: 12 }}>
-          TODO: POST /api/events/:id/attachments for server-side storage.
-        </Text>
         <Button title="Save" onPress={handleSave} loading={saving} style={{ marginTop: 16 }} />
       </ScrollView>
     </Screen>

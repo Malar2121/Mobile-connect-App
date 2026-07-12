@@ -1,6 +1,7 @@
 import React, { useCallback, useEffect, useState } from 'react';
 import { ScrollView, StyleSheet, Switch, Text, View } from 'react-native';
 import { useRoute, useNavigation } from '@react-navigation/native';
+import * as Notifications from 'expo-notifications';
 import { Button, Card, PageHeader, Screen, TextField, useToast } from '../../design-system';
 import { ReminderCard } from '../../components/events';
 import { deriveReminders } from '../../utils/dashboardHelpers';
@@ -9,6 +10,14 @@ import { useEventsModuleData } from '../../hooks/useEventsModuleData';
 import { loadEventReminders, saveEventReminders } from '../../utils/eventModuleHelpers';
 import { useTheme } from '../../hooks/useTheme';
 import { useResponsive } from '../../design-system';
+
+Notifications.setNotificationHandler({
+  handleNotification: async () => ({
+    shouldShowAlert: true,
+    shouldPlaySound: true,
+    shouldSetBadge: false,
+  }),
+});
 
 export default function EventReminderScreen() {
   const route = useRoute();
@@ -31,14 +40,41 @@ export default function EventReminderScreen() {
     if (family?._id) loadEventReminders(family._id).then(setReminders);
   }, [family?._id]);
 
-  const addCustom = useCallback(() => {
+  useEffect(() => {
+    if (pushEnabled) {
+      Notifications.requestPermissionsAsync().then(({ status }) => {
+        if (status !== 'granted') {
+          toast.error('Push notifications permission denied.');
+          setPushEnabled(false);
+        }
+      });
+    }
+  }, [pushEnabled, toast]);
+
+  const addCustom = useCallback(async () => {
     if (!customTitle.trim()) return;
+    
+    if (pushEnabled) {
+      try {
+        await Notifications.scheduleNotificationAsync({
+          content: {
+            title: 'Family Connect Reminder',
+            body: customTitle.trim(),
+          },
+          trigger: { seconds: 60 }, // Demo: triggers in 60s
+        });
+        toast.success('Notification scheduled!');
+      } catch (e) {
+        toast.error('Failed to schedule push notification.');
+      }
+    }
+
     setReminders((prev) => [
       { id: Date.now().toString(), title: customTitle.trim(), type: 'custom', at: new Date().toISOString() },
       ...prev,
     ]);
     setCustomTitle('');
-  }, [customTitle]);
+  }, [customTitle, pushEnabled, toast]);
 
   const handleSave = useCallback(async () => {
     if (!family?._id) return;
@@ -63,7 +99,7 @@ export default function EventReminderScreen() {
             <Switch value={pushEnabled} onValueChange={setPushEnabled} accessibilityLabel="Push notifications" />
           </View>
           <Text style={{ color: colors.textTertiary, fontSize: 11, marginTop: 8 }}>
-            TODO: Backend scheduled reminders + expo-notifications integration for push delivery.
+            Note: Custom reminders added here will schedule a demo local notification in 60 seconds if push is enabled.
           </Text>
         </Card>
 

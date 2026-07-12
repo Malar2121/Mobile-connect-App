@@ -43,6 +43,14 @@ const memorySchema = new mongoose.Schema(
         ref: 'User',
       },
     ],
+    location: {
+      type: String,
+      trim: true,
+    },
+    coordinates: {
+      lat: { type: Number },
+      lng: { type: Number },
+    },
   },
   {
     timestamps: true,

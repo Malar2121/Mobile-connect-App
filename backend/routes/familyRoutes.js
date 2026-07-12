@@ -44,4 +44,23 @@ router.post('/invite', inviteMember);
 // ──────────────────────────────────────────────────────────
 router.delete('/leave', leaveFamily);
 
+const {
+  updateFamily,
+  updateMemberRole,
+  createJoinRequest,
+  getJoinRequests,
+  approveJoinRequest,
+  rejectJoinRequest,
+  addLifeEvent
+} = require('../controllers/familyController');
+
+router.patch('/', updateFamily);
+router.put('/members/:id/role', updateMemberRole);
+router.post('/members/:id/life-events', addLifeEvent);
+
+router.post('/join-requests', createJoinRequest);
+router.get('/join-requests', getJoinRequests);
+router.post('/join-requests/:id/approve', approveJoinRequest);
+router.post('/join-requests/:id/reject', rejectJoinRequest);
+
 module.exports = router;

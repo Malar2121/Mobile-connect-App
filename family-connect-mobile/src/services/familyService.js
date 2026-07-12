@@ -102,3 +102,73 @@ export async function leaveFamily() {
     throw normalizeAxiosError(e);
   }
 }
+
+export async function updateFamily(data) {
+  try {
+    const response = await api.patch('/family', data);
+    if (!response.data.success) throw new Error(response.data.message);
+    return response.data.data;
+  } catch (e) {
+    throw normalizeAxiosError(e);
+  }
+}
+
+export async function updateMemberRole(userId, role) {
+  try {
+    const response = await api.put(`/family/members/${userId}/role`, { role });
+    if (!response.data.success) throw new Error(response.data.message);
+    return response.data.data;
+  } catch (e) {
+    throw normalizeAxiosError(e);
+  }
+}
+
+export async function addLifeEvent(userId, lifeEvent) {
+  try {
+    const response = await api.post(`/family/members/${userId}/life-events`, lifeEvent);
+    if (!response.data.success) throw new Error(response.data.message);
+    return response.data.data;
+  } catch (e) {
+    throw normalizeAxiosError(e);
+  }
+}
+
+export async function createJoinRequest(familyId) {
+  try {
+    const response = await api.post('/family/join-requests', { familyId });
+    if (!response.data.success) throw new Error(response.data.message);
+    return response.data.data;
+  } catch (e) {
+    throw normalizeAxiosError(e);
+  }
+}
+
+export async function getJoinRequests() {
+  try {
+    const response = await api.get('/family/join-requests');
+    if (!response.data.success) throw new Error(response.data.message);
+    return response.data.data;
+  } catch (e) {
+    throw normalizeAxiosError(e);
+  }
+}
+
+export async function approveJoinRequest(requestId) {
+  try {
+    const response = await api.post(`/family/join-requests/${requestId}/approve`);
+    if (!response.data.success) throw new Error(response.data.message);
+    return response.data.data;
+  } catch (e) {
+    throw normalizeAxiosError(e);
+  }
+}
+
+export async function rejectJoinRequest(requestId) {
+  try {
+    const response = await api.post(`/family/join-requests/${requestId}/reject`);
+    if (!response.data.success) throw new Error(response.data.message);
+    return response.data.data;
+  } catch (e) {
+    throw normalizeAxiosError(e);
+  }
+}

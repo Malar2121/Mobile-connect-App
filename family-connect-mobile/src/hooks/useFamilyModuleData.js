@@ -9,6 +9,7 @@ import { getFamilyMemories } from '../services/memoryService';
 import { getFamilyLocations } from '../services/locationService';
 import { getNotifications } from '../services/notificationService';
 import { getAllMessages } from '../services/chatService';
+import { getJoinRequests } from '../services/familyService';
 import {
   buildFamilyAnalytics,
   buildFamilyTimeline,
@@ -33,6 +34,7 @@ export function useFamilyModuleData() {
   const [notifications, setNotifications] = useState([]);
   const [messages, setMessages] = useState([]);
   const [motto, setMotto] = useState('');
+  const [joinRequests, setJoinRequests] = useState([]);
 
   const familyId = family?._id;
 
@@ -45,13 +47,14 @@ export function useFamilyModuleData() {
       setNotifications([]);
       setMessages([]);
       setMotto('');
+      setJoinRequests([]);
       setLoading(false);
       return;
     }
 
     setError('');
     try {
-      const [tree, ev, mem, loc, notif, msgs, localMotto] = await Promise.all([
+      const [tree, ev, mem, loc, notif, msgs, localMotto, reqs] = await Promise.all([
         getFamilyTree().catch(() => []),
         getFamilyEvents().catch(() => []),
         getFamilyMemories().catch(() => []),
@@ -59,6 +62,7 @@ export function useFamilyModuleData() {
         getNotifications().catch(() => []),
         getAllMessages().catch(() => []),
         loadFamilyMotto(family._id),
+        getJoinRequests().catch(() => []),
       ]);
       setTreeNodes(tree);
       setEvents(ev);
@@ -67,6 +71,7 @@ export function useFamilyModuleData() {
       setNotifications(notif);
       setMessages(msgs);
       setMotto(localMotto);
+      setJoinRequests(reqs?.requests || reqs || []);
     } catch (e) {
       setError(e.message || 'Could not load family data.');
     } finally {
@@ -164,7 +169,8 @@ export function useFamilyModuleData() {
     inviteCode: family?.inviteCode ?? '',
     memberCount: members.length,
     onlineCount,
-    pendingJoinRequests: 0,
+    pendingJoinRequests: joinRequests.length,
+    joinRequests,
     timeline,
     analytics,
     uiMode,

@@ -101,14 +101,46 @@ export async function deleteEvent(id) {
 /**
  * PATCH /api/events/:id
  */
-export async function updateEvent(id, payload) {
+export async function updateEvent(eventId, eventData) {
   try {
-    const { data } = await api.patch(`/events/${encodeURIComponent(id)}`, payload);
-    if (!data.success || !data.data) {
+    const { data } = await api.patch(`/events/${eventId}`, eventData);
+    if (!data.success) {
       throw new Error(data.message || 'Could not update event');
     }
     return data.data;
-  } catch (e) {
-    throw normalizeAxiosError(e);
+  } catch (error) {
+    throw normalizeAxiosError(error);
+  }
+}
+
+/**
+ * GET /api/events/:id/comments
+ * Get comments for an event
+ */
+export async function getEventComments(eventId) {
+  try {
+    const { data } = await api.get(`/events/${eventId}/comments`);
+    if (!data.success) {
+      throw new Error(data.message || 'Could not fetch comments');
+    }
+    return data.data.comments;
+  } catch (error) {
+    throw normalizeAxiosError(error);
+  }
+}
+
+/**
+ * POST /api/events/:id/comments
+ * Add a comment to an event
+ */
+export async function addEventComment(eventId, content) {
+  try {
+    const { data } = await api.post(`/events/${eventId}/comments`, { content });
+    if (!data.success) {
+      throw new Error(data.message || 'Could not add comment');
+    }
+    return data.data.comment;
+  } catch (error) {
+    throw normalizeAxiosError(error);
   }
 }

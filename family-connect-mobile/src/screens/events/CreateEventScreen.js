@@ -53,6 +53,10 @@ export default function CreateEventScreen({ navigation }) {
 
     setLoading(true);
     try {
+      let recurrenceRule;
+      if (repeat === 'weekly') recurrenceRule = 'FREQ=WEEKLY';
+      else if (repeat === 'monthly') recurrenceRule = 'FREQ=MONTHLY';
+
       const created = await createEvent({
         title: t,
         description: description.trim() || undefined,
@@ -61,6 +65,7 @@ export default function CreateEventScreen({ navigation }) {
         endTime: endTime.trim() || undefined,
         location: location.trim() || undefined,
         image: image.trim() || undefined,
+        recurrenceRule,
       });
       await saveEventMeta(created._id, { category, repeat, privacy, maxParticipants: maxParticipants || null });
       toast.success('Event created');

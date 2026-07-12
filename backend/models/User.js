@@ -66,6 +66,15 @@ const userSchema = new mongoose.Schema(
       type: Date,
       default: Date.now,
     },
+    pushToken: {
+      type: String,
+    },
+    pushPreferences: {
+      chat: { type: Boolean, default: true },
+      events: { type: Boolean, default: true },
+      location: { type: Boolean, default: true },
+      memories: { type: Boolean, default: true },
+    },
   },
   {
     timestamps: true, // adds createdAt and updatedAt automatically

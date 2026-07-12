@@ -4,6 +4,8 @@ import { useNavigation } from '@react-navigation/native';
 import * as ImagePicker from 'expo-image-picker';
 import { PageHeader, Screen, SectionTitle } from '../../design-system';
 import { useChatModule } from '../../contexts/ChatModuleContext';
+import { useAuth } from '../../contexts/AuthContext';
+import { updateProfile } from '../../services/authService';
 import { useTheme } from '../../hooks/useTheme';
 import { useResponsive } from '../../design-system';
 
@@ -12,6 +14,7 @@ export default function ChatSettingsScreen() {
   const { horizontalPadding } = useResponsive();
   const { colors, layout } = useTheme();
   const { prefs, setMuted, setArchived, setWallpaper, messages } = useChatModule();
+  const { user, setUser } = useAuth();
 
   const starredCount = messages.filter((m) => (m.starredBy ?? []).length).length;
 
@@ -22,9 +25,20 @@ export default function ChatSettingsScreen() {
       <ScrollView contentContainerStyle={{ paddingHorizontal: horizontalPadding, paddingBottom: 40 }}>
         <SectionTitle title="Notifications" />
         <SettingRow label="Mute chat" value={prefs.muted} onChange={setMuted} colors={colors} layout={layout} />
-        <Text style={{ color: colors.textTertiary, fontSize: 12, marginBottom: 16 }}>
-          TODO: Custom notification sounds and mention-only alerts via backend push preferences.
-        </Text>
+        <SettingRow 
+          label="Push notifications" 
+          value={user?.pushPreferences?.chat ?? true} 
+          onChange={async (val) => {
+            try {
+              const updated = await updateProfile({ pushPreferences: { ...user.pushPreferences, chat: val } });
+              setUser(updated);
+            } catch (err) {
+              console.log('Failed to update push preferences', err);
+            }
+          }} 
+          colors={colors} 
+          layout={layout} 
+        />
 
         <SectionTitle title="Chat" />
         <SettingRow label="Archive chat" value={prefs.archived} onChange={setArchived} colors={colors} layout={layout} />

@@ -1,6 +1,7 @@
 const Family = require('../models/Family');
 const User = require('../models/User');
 const FamilyMember = require('../models/FamilyMember');
+const JoinRequest = require('../models/JoinRequest');
 const crypto = require('crypto');
 
 // ──────────────────────────────────────────────────────────
@@ -120,7 +121,6 @@ const joinFamilyByCode = async (req, res) => {
       return res.status(400).json({ success: false, message: 'Invite code is required' });
     }
 
-    // User can't join if they already belong to a family
     if (req.user.familyId) {
       return res.status(400).json({
         success: false,
@@ -128,39 +128,44 @@ const joinFamilyByCode = async (req, res) => {
       });
     }
 
-    // Find family by invite code
     const family = await Family.findOne({ inviteCode: inviteCode.trim().toUpperCase() });
     if (!family) {
       return res.status(404).json({ success: false, message: 'Invalid invite code' });
     }
 
-    // Prevent duplicate membership
     const alreadyMember = family.members.some(
       (memberId) => String(memberId) === String(req.user._id)
     );
     if (alreadyMember) {
-      return res.status(409).json({
-        success: false,
-        message: 'You are already a member of this family',
+      return res.status(409).json({ success: false, message: 'You are already a member' });
+    }
+
+    if (family.privacySettings?.requireApproval) {
+      // Create join request
+      const request = await JoinRequest.findOneAndUpdate(
+        { family: family._id, user: req.user._id },
+        { family: family._id, user: req.user._id, status: 'pending' },
+        { upsert: true, new: true, setDefaultsOnInsert: true }
+      );
+      return res.status(202).json({
+        success: true,
+        message: `Your request to join "${family.name}" has been sent to the admins.`,
+        data: { request }
       });
     }
 
-    // Add user to members array
+    // Instant join
     family.members.push(req.user._id);
     await family.save();
 
-    // Update user's familyId
     await User.findByIdAndUpdate(req.user._id, { familyId: family._id });
 
-    // Create the joining member's FamilyMember record so they appear in the
-    // family tree (relationship defaults to 'other' until edited).
     await FamilyMember.findOneAndUpdate(
       { family: family._id, user: req.user._id },
       { family: family._id, user: req.user._id, role: 'member', joinedVia: 'invite_code', isActive: true },
       { upsert: true, new: true, setDefaultsOnInsert: true },
     );
 
-    // Populate for response
     await family.populate('members', 'fullName email avatar role');
     await family.populate('createdBy', 'fullName email');
 
@@ -267,10 +272,160 @@ const leaveFamily = async (req, res) => {
   }
 };
 
+const updateFamily = async (req, res) => {
+  try {
+    if (!req.user.familyId) return res.status(403).json({ success: false, message: 'Not in a family' });
+    if (req.user.role !== 'admin') return res.status(403).json({ success: false, message: 'Admin only' });
+
+    const { name, photoUrl, privacySettings } = req.body;
+    const updateData = {};
+    if (name) updateData.name = name;
+    if (photoUrl !== undefined) updateData.photoUrl = photoUrl;
+    if (privacySettings) updateData.privacySettings = privacySettings;
+
+    const family = await Family.findByIdAndUpdate(req.user.familyId, updateData, { new: true });
+    res.status(200).json({ success: true, data: { family } });
+  } catch (error) {
+    res.status(500).json({ success: false, message: error.message });
+  }
+};
+
+const updateMemberRole = async (req, res) => {
+  try {
+    if (!req.user.familyId) return res.status(403).json({ success: false, message: 'Not in a family' });
+    if (req.user.role !== 'admin') return res.status(403).json({ success: false, message: 'Admin only' });
+
+    const targetUserId = req.params.id;
+    const { role } = req.body;
+    if (!['admin', 'parent', 'member', 'child'].includes(role)) {
+      return res.status(400).json({ success: false, message: 'Invalid role' });
+    }
+
+    // Update User model
+    await User.findByIdAndUpdate(targetUserId, { role });
+    // Update FamilyMember model
+    const familyMember = await FamilyMember.findOneAndUpdate(
+      { family: req.user.familyId, user: targetUserId },
+      { role },
+      { new: true }
+    );
+    res.status(200).json({ success: true, data: { familyMember } });
+  } catch (error) {
+    res.status(500).json({ success: false, message: error.message });
+  }
+};
+
+const addLifeEvent = async (req, res) => {
+  try {
+    if (!req.user.familyId) return res.status(403).json({ success: false, message: 'Not in a family' });
+    const targetUserId = req.params.id;
+    
+    // Only self or admin can add life events
+    if (String(req.user._id) !== targetUserId && req.user.role !== 'admin') {
+      return res.status(403).json({ success: false, message: 'Not authorized' });
+    }
+
+    const { title, date, description, type } = req.body;
+    const familyMember = await FamilyMember.findOne({ family: req.user.familyId, user: targetUserId });
+    if (!familyMember) return res.status(404).json({ success: false, message: 'Member not found' });
+
+    familyMember.lifeEvents.push({ title, date, description, type });
+    await familyMember.save();
+
+    res.status(200).json({ success: true, data: { familyMember } });
+  } catch (error) {
+    res.status(500).json({ success: false, message: error.message });
+  }
+};
+
+const createJoinRequest = async (req, res) => {
+  try {
+    const { familyId } = req.body;
+    if (req.user.familyId) return res.status(400).json({ success: false, message: 'Already in a family' });
+    
+    const request = await JoinRequest.findOneAndUpdate(
+      { family: familyId, user: req.user._id },
+      { family: familyId, user: req.user._id, status: 'pending' },
+      { upsert: true, new: true, setDefaultsOnInsert: true }
+    );
+    res.status(201).json({ success: true, data: { request } });
+  } catch (error) {
+    res.status(500).json({ success: false, message: error.message });
+  }
+};
+
+const getJoinRequests = async (req, res) => {
+  try {
+    if (!req.user.familyId) return res.status(403).json({ success: false, message: 'Not in a family' });
+    if (req.user.role !== 'admin') return res.status(403).json({ success: false, message: 'Admin only' });
+
+    const requests = await JoinRequest.find({ family: req.user.familyId, status: 'pending' })
+      .populate('user', 'fullName email avatar');
+    res.status(200).json({ success: true, data: { requests } });
+  } catch (error) {
+    res.status(500).json({ success: false, message: error.message });
+  }
+};
+
+const approveJoinRequest = async (req, res) => {
+  try {
+    if (!req.user.familyId || req.user.role !== 'admin') return res.status(403).json({ success: false, message: 'Admin only' });
+    
+    const request = await JoinRequest.findById(req.params.id);
+    if (!request || request.status !== 'pending' || String(request.family) !== String(req.user.familyId)) {
+      return res.status(404).json({ success: false, message: 'Invalid request' });
+    }
+
+    request.status = 'approved';
+    await request.save();
+
+    // Add user to family
+    const family = await Family.findById(req.user.familyId);
+    if (!family.members.includes(request.user)) {
+      family.members.push(request.user);
+      await family.save();
+    }
+    await User.findByIdAndUpdate(request.user, { familyId: req.user.familyId, role: 'member' });
+    await FamilyMember.findOneAndUpdate(
+      { family: req.user.familyId, user: request.user },
+      { family: req.user.familyId, user: request.user, role: 'member', joinedVia: 'admin_add', isActive: true },
+      { upsert: true, new: true, setDefaultsOnInsert: true }
+    );
+
+    res.status(200).json({ success: true, message: 'Approved' });
+  } catch (error) {
+    res.status(500).json({ success: false, message: error.message });
+  }
+};
+
+const rejectJoinRequest = async (req, res) => {
+  try {
+    if (!req.user.familyId || req.user.role !== 'admin') return res.status(403).json({ success: false, message: 'Admin only' });
+    
+    const request = await JoinRequest.findById(req.params.id);
+    if (!request || request.status !== 'pending' || String(request.family) !== String(req.user.familyId)) {
+      return res.status(404).json({ success: false, message: 'Invalid request' });
+    }
+
+    request.status = 'rejected';
+    await request.save();
+    res.status(200).json({ success: true, message: 'Rejected' });
+  } catch (error) {
+    res.status(500).json({ success: false, message: error.message });
+  }
+};
+
 module.exports = {
   createFamily,
   getMyFamily,
   joinFamilyByCode,
   inviteMember,
   leaveFamily,
+  updateFamily,
+  updateMemberRole,
+  addLifeEvent,
+  createJoinRequest,
+  getJoinRequests,
+  approveJoinRequest,
+  rejectJoinRequest,
 };

@@ -7,6 +7,8 @@ const {
   getMemoryDetails,
   likeMemory,
   deleteMemory,
+  getComments,
+  addComment,
 } = require('../controllers/memoryController');
 
 const { protect } = require('../middleware/authMiddleware');
@@ -35,6 +37,18 @@ router.get('/', getFamilyMemories);
 // Toggle like
 // ──────────────────────────────────────────────────────────
 router.post('/like', likeMemory);
+
+// ──────────────────────────────────────────────────────────
+// GET /api/memories/:id/comments
+// Get comments for a memory
+// ──────────────────────────────────────────────────────────
+router.get('/:id/comments', getComments);
+
+// ──────────────────────────────────────────────────────────
+// POST /api/memories/:id/comments
+// Add a comment to a memory
+// ──────────────────────────────────────────────────────────
+router.post('/:id/comments', addComment);
 
 // ──────────────────────────────────────────────────────────
 // GET /api/memories/:id

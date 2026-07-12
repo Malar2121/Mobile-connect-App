@@ -17,15 +17,17 @@ import { buildMemberStats, formatLastActive, isMemberOnline } from '../../utils/
 import { getUploaderId } from '../../utils/memoryHelpers';
 import { formatNotificationTime, getNotificationIcon } from '../../utils/notificationHelpers';
 import { useTheme } from '../../hooks/useTheme';
-import { useResponsive } from '../../design-system';
+import { useResponsive, Button, useToast } from '../../design-system';
+import { updateMemberRole } from '../../services/familyService';
 
 export default function MemberProfileScreen() {
   const navigation = useNavigation();
   const route = useRoute();
+  const toast = useToast();
   const { colors, layout, radii } = useTheme();
   const { horizontalPadding } = useResponsive();
   const memberId = route.params?.memberId;
-  const { members, memories, events, messages, notifications, loading, family } = useFamilyModuleData();
+  const { members, memories, events, messages, notifications, loading, family, canManage, refresh } = useFamilyModuleData();
 
   const member = useMemo(
     () => members.find((m) => String(m._id) === String(memberId)),
@@ -138,10 +140,36 @@ export default function MemberProfileScreen() {
             <PrivacyRow icon="location-outline" label="Location sharing" value={member.hasLocation ? 'Enabled' : 'Not shared'} colors={colors} layout={layout} />
             <PrivacyRow icon="images-outline" label="Album contributions" value={`${stats?.memoriesShared ?? 0} albums`} colors={colors} layout={layout} />
             <PrivacyRow icon="chatbubble-outline" label="Chat" value="Family chat enabled" colors={colors} layout={layout} />
-            <Text style={{ color: colors.textTertiary, fontSize: 11 * layout.fontScale, marginTop: 12 }}>
-              TODO: Per-member privacy settings require backend API.
-            </Text>
           </Card>
+
+          {canManage && (
+            <>
+              <SectionTitle title="Administration" subtitle="Manage member role" style={{ marginTop: 20 }} />
+              <Card>
+                <Text style={{ color: colors.textSecondary, fontSize: 13 * layout.fontScale, marginBottom: 8 }}>
+                  Current Role: {member.displayRole}
+                </Text>
+                <View style={{ flexDirection: 'row', gap: 8, flexWrap: 'wrap' }}>
+                  {['admin', 'parent', 'member', 'child'].map(r => (
+                    <Button 
+                      key={r}
+                      title={r.charAt(0).toUpperCase() + r.slice(1)} 
+                      variant={member.displayRole === r ? 'primary' : 'secondary'} 
+                      onPress={async () => {
+                        try {
+                          await updateMemberRole(memberId, r);
+                          toast.success(`Role updated to ${r}`);
+                          refresh();
+                        } catch(e) {
+                          toast.error(e.message);
+                        }
+                      }}
+                    />
+                  ))}
+                </View>
+              </Card>
+            </>
+          )}
         </View>
       </ScrollView>
     </Screen>

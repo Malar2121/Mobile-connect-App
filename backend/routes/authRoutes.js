@@ -6,6 +6,7 @@ const {
   refreshToken,
   logoutUser,
   getMe,
+  updateMe,
 } = require('../controllers/authController');
 const { protect } = require('../middleware/authMiddleware');
 
@@ -31,5 +32,8 @@ router.post('/logout', protect, logoutUser);
 
 // GET /api/auth/me
 router.get('/me', protect, getMe);
+
+// PATCH /api/auth/me
+router.patch('/me', protect, updateMe);
 
 module.exports = router;

@@ -25,6 +25,17 @@ const familySchema = new mongoose.Schema(
       unique: true,
       required: true,
     },
+    photoUrl: {
+      type: String,
+      default: '',
+    },
+    privacySettings: {
+      type: Object,
+      default: {
+        discoverable: false,
+        requireApproval: true,
+      },
+    },
   },
   {
     timestamps: true, // adds createdAt and updatedAt

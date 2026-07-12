@@ -1,5 +1,5 @@
 import React, { useCallback, useMemo, useState } from 'react';
-import { ScrollView, StyleSheet, Text, View, Linking } from 'react-native';
+import { ScrollView, StyleSheet, Text, View, Linking, TextInput } from 'react-native';
 import { useFocusEffect } from '@react-navigation/native';
 import { Ionicons } from '@expo/vector-icons';
 import {
@@ -22,7 +22,7 @@ import {
 } from '../../components/events';
 import { useAuth } from '../../contexts/AuthContext';
 import { useTheme } from '../../hooks/useTheme';
-import { getEventDetails, respondToEvent, deleteEvent } from '../../services/eventService';
+import { getEventDetails, respondToEvent, deleteEvent, getEventComments, addEventComment } from '../../services/eventService';
 import { getPollByEvent } from '../../services/pollService';
 import { getFamilyMemories } from '../../services/memoryService';
 import { formatEventDateLong, getMyRsvpStatus } from '../../utils/eventFormat';
@@ -31,7 +31,7 @@ import { useResponsive } from '../../design-system';
 
 export default function EventDetailsScreen({ route, navigation }) {
   const { id } = route.params ?? {};
-  const { colors, layout } = useTheme();
+  const { colors, layout, radii } = useTheme();
   const { horizontalPadding } = useResponsive();
   const toast = useToast();
   const dialog = useDialog();
@@ -41,6 +41,9 @@ export default function EventDetailsScreen({ route, navigation }) {
   const [event, setEvent] = useState(null);
   const [pollData, setPollData] = useState(null);
   const [memories, setMemories] = useState([]);
+  const [comments, setComments] = useState([]);
+  const [newComment, setNewComment] = useState('');
+  const [postingComment, setPostingComment] = useState(false);
   const [loading, setLoading] = useState(true);
   const [submitting, setSubmitting] = useState(null);
   const [deleting, setDeleting] = useState(false);
@@ -55,6 +58,12 @@ export default function EventDetailsScreen({ route, navigation }) {
         setPollData(poll);
       } catch {
         setPollData(null);
+      }
+      try {
+        const c = await getEventComments(id);
+        setComments(c);
+      } catch {
+        setComments([]);
       }
       try {
         const mem = await getFamilyMemories();
@@ -87,6 +96,20 @@ export default function EventDetailsScreen({ route, navigation }) {
       setSubmitting(null);
     }
   }, [id, load, toast]);
+
+  const handlePostComment = useCallback(async () => {
+    if (!newComment.trim()) return;
+    setPostingComment(true);
+    try {
+      const added = await addEventComment(id, newComment);
+      setComments((prev) => [...prev, added]);
+      setNewComment('');
+    } catch (e) {
+      toast.error(e.message || 'Failed to post comment');
+    } finally {
+      setPostingComment(false);
+    }
+  }, [id, newComment, toast]);
 
   const handleDelete = useCallback(async () => {
     const ok = await dialog.confirm({ title: 'Delete event?', message: 'This cannot be undone.', destructive: true, confirmLabel: 'Delete' });
@@ -193,10 +216,36 @@ export default function EventDetailsScreen({ route, navigation }) {
         <SectionTitle title="Gallery" style={{ marginTop: 20 }} />
         <EventGallery memories={memories} eventTitle={event.title} />
 
-        <SectionTitle title="Comments" subtitle="Architecture ready" style={{ marginTop: 20 }} />
-        <Card>
-          <Text style={{ color: colors.textTertiary, fontSize: 13 }}>TODO: Event comments API — thread UI prepared for Phase 5 integration.</Text>
-        </Card>
+        <SectionTitle title="Comments" subtitle={`${comments.length} comments`} style={{ marginTop: 20 }} />
+        <View style={{ marginTop: 8 }}>
+          {comments.map((c, idx) => (
+            <Card key={c._id || idx} style={{ marginBottom: 8, padding: 12 }}>
+              <View style={{ flexDirection: 'row', justifyContent: 'space-between' }}>
+                <Text style={{ color: colors.text, fontFamily: 'Inter_600SemiBold', fontSize: 13 }}>{c.author?.fullName}</Text>
+                <Text style={{ color: colors.textTertiary, fontSize: 11 }}>{new Date(c.createdAt).toLocaleDateString()}</Text>
+              </View>
+              <Text style={{ color: colors.textSecondary, fontSize: 14, marginTop: 4 }}>{c.content}</Text>
+            </Card>
+          ))}
+          <View style={{ flexDirection: 'row', marginTop: 8 }}>
+            <TextInput
+              style={{
+                flex: 1,
+                borderWidth: 1,
+                borderColor: colors.border,
+                borderRadius: radii.md,
+                paddingHorizontal: 12,
+                color: colors.text,
+                fontFamily: 'Inter_400Regular',
+              }}
+              placeholder="Add a comment..."
+              placeholderTextColor={colors.textTertiary}
+              value={newComment}
+              onChangeText={setNewComment}
+            />
+            <Button title="Post" onPress={handlePostComment} loading={postingComment} disabled={!newComment.trim()} style={{ marginLeft: 8 }} />
+          </View>
+        </View>
 
         <View style={{ marginTop: 20, gap: 10 }}>
           <Button title="RSVP management" variant="secondary" onPress={() => navigation.navigate('RSVPManagement', { id })} />

@@ -38,6 +38,10 @@ const messageSchema = new mongoose.Schema(
       type: Number,
       default: null,
     },
+    waveform: {
+      type: [Number],
+      default: [],
+    },
     documentName: {
       type: String,
       default: null,

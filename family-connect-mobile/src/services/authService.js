@@ -70,3 +70,18 @@ export async function getCurrentUser() {
     throw normalizeAxiosError(e);
   }
 }
+
+/**
+ * PATCH /api/auth/me
+ */
+export async function updateProfile(payload) {
+  try {
+    const { data } = await api.patch('/auth/me', payload);
+    if (!data.success || !data.data?.user) {
+      throw new Error(data.message || 'Could not update profile');
+    }
+    return data.data.user;
+  } catch (e) {
+    throw normalizeAxiosError(e);
+  }
+}

@@ -33,7 +33,7 @@ const sendPush = async ({ tokens, title, body, data = {} }) => {
 
 /**
  * Automatically create Notification items for an entire family array of Users
- * and push via FCM if tokens exist.
+ * and push via FCM / Expo if tokens exist.
  */
 const notifyFamilyMembers = async ({ familyId, excludeUserId, type, title, body, data = {} }) => {
   try {
@@ -43,6 +43,13 @@ const notifyFamilyMembers = async ({ familyId, excludeUserId, type, title, body,
     if (users.length === 0) return;
 
     for (const user of users) {
+      // Check pushPreferences based on type
+      let shouldPush = true;
+      if (type.startsWith('chat_') && user.pushPreferences?.chat === false) shouldPush = false;
+      if (type.startsWith('event_') && user.pushPreferences?.events === false) shouldPush = false;
+      if (type.startsWith('memory_') && user.pushPreferences?.memories === false) shouldPush = false;
+      if (type.startsWith('geofence_') && user.pushPreferences?.location === false) shouldPush = false;
+
       // 2. Insert into DB Notification model
       await Notification.create({
         recipient: user._id,
@@ -53,10 +60,35 @@ const notifyFamilyMembers = async ({ familyId, excludeUserId, type, title, body,
         data,
       });
 
-      // 3. Send via Push if appropriate
-      if (user.fcmTokens && user.fcmTokens.length > 0) {
-        const tokens = user.fcmTokens.map((t) => t.token);
-        await sendPush({ tokens, title, body, data });
+      if (shouldPush) {
+        // 3. Send via FCM if appropriate
+        if (user.fcmTokens && user.fcmTokens.length > 0) {
+          const tokens = user.fcmTokens.map((t) => t.token);
+          await sendPush({ tokens, title, body, data });
+        }
+
+        // 4. Send via Expo Push if appropriate
+        if (user.pushToken && user.pushToken.startsWith('ExponentPushToken')) {
+          try {
+            await fetch('https://exp.host/--/api/v2/push/send', {
+              method: 'POST',
+              headers: {
+                Accept: 'application/json',
+                'Accept-encoding': 'gzip, deflate',
+                'Content-Type': 'application/json',
+              },
+              body: JSON.stringify({
+                to: user.pushToken,
+                sound: 'default',
+                title,
+                body,
+                data,
+              }),
+            });
+          } catch (error) {
+            logger.error(`Expo push error: ${error.message}`);
+          }
+        }
       }
     }
   } catch (err) {

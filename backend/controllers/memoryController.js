@@ -1,4 +1,5 @@
 const Memory = require('../models/Memory');
+const Comment = require('../models/Comment');
 const { notifyFamilyMembers } = require('../services/notificationService');
 
 // ══════════════════════════════════════════════════════════
@@ -7,7 +8,7 @@ const { notifyFamilyMembers } = require('../services/notificationService');
 // ══════════════════════════════════════════════════════════
 const uploadMemory = async (req, res) => {
   try {
-    const { caption, tags, album } = req.body;
+    const { caption, tags, album, location, coordinates } = req.body;
     const { familyId, _id: userId, fullName } = req.user;
 
     if (!familyId) {
@@ -27,6 +28,15 @@ const uploadMemory = async (req, res) => {
         else parsedTags = [tags];
       }
     }
+    
+    let parsedCoordinates;
+    if (coordinates) {
+      try {
+        parsedCoordinates = typeof coordinates === 'string' ? JSON.parse(coordinates) : coordinates;
+      } catch (e) {
+        // ignore
+      }
+    }
 
     const isVideo = req.file.mimetype.startsWith('video/');
 
@@ -39,6 +49,8 @@ const uploadMemory = async (req, res) => {
       tags: parsedTags,
       album,
       likes: [],
+      location: location?.trim(),
+      coordinates: parsedCoordinates,
     });
 
     const populatedMemory = await memory.populate('uploadedBy', 'fullName email avatar');
@@ -174,6 +186,7 @@ const deleteMemory = async (req, res) => {
     }
 
     await Memory.deleteOne({ _id: id });
+    await Comment.deleteMany({ onModel: 'Memory', onDocument: id });
 
     return res.status(200).json({
       success: true,
@@ -185,10 +198,75 @@ const deleteMemory = async (req, res) => {
   }
 };
 
+// ══════════════════════════════════════════════════════════
+// GET /api/memories/:id/comments
+// Get comments for a memory
+// ══════════════════════════════════════════════════════════
+const getComments = async (req, res) => {
+  try {
+    const { id } = req.params;
+    const { familyId } = req.user;
+    
+    const memory = await Memory.findOne({ _id: id, familyId });
+    if (!memory) return res.status(404).json({ success: false, message: 'Memory not found' });
+
+    const comments = await Comment.find({ onModel: 'Memory', onDocument: id, family: familyId })
+      .populate('author', 'fullName avatar')
+      .sort({ createdAt: 1 });
+
+    return res.status(200).json({ success: true, data: { comments } });
+  } catch (error) {
+    return res.status(500).json({ success: false, message: error.message });
+  }
+};
+
+// ══════════════════════════════════════════════════════════
+// POST /api/memories/:id/comments
+// Add a comment to a memory
+// ══════════════════════════════════════════════════════════
+const addComment = async (req, res) => {
+  try {
+    const { id } = req.params;
+    const { content } = req.body;
+    const { familyId, _id: userId } = req.user;
+
+    if (!content) return res.status(400).json({ success: false, message: 'Content is required' });
+
+    const memory = await Memory.findOne({ _id: id, familyId });
+    if (!memory) return res.status(404).json({ success: false, message: 'Memory not found' });
+
+    const comment = await Comment.create({
+      author: userId,
+      family: familyId,
+      onModel: 'Memory',
+      onDocument: id,
+      content,
+    });
+
+    await comment.populate('author', 'fullName avatar');
+
+    // Notify participants
+    notifyFamilyMembers({
+      familyId,
+      excludeUserId: userId,
+      type: 'memory_comment',
+      title: 'New Memory Comment',
+      body: `${req.user.fullName} commented: ${content}`,
+      data: { memoryId: String(memory._id) },
+    });
+
+    return res.status(201).json({ success: true, data: { comment } });
+  } catch (error) {
+    return res.status(500).json({ success: false, message: error.message });
+  }
+};
+
 module.exports = {
   uploadMemory,
   getFamilyMemories,
   getMemoryDetails,
   likeMemory,
   deleteMemory,
+  getComments,
+  addComment,
 };

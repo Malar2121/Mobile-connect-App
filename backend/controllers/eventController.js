@@ -1,5 +1,6 @@
 const Event = require('../models/Event');
 const Family = require('../models/Family');
+const Comment = require('../models/Comment');
 const { notifyFamilyMembers } = require('../services/notificationService');
 
 // ══════════════════════════════════════════════════════════
@@ -8,7 +9,7 @@ const { notifyFamilyMembers } = require('../services/notificationService');
 // ══════════════════════════════════════════════════════════
 const createEvent = async (req, res) => {
   try {
-    const { title, description, date, startTime, endTime, location, image } = req.body;
+    const { title, description, date, startTime, endTime, location, image, recurrenceRule, reminders, attachments } = req.body;
     const { familyId, _id: userId, fullName } = req.user;
 
     if (!familyId) {
@@ -41,6 +42,9 @@ const createEvent = async (req, res) => {
       location,
       image,
       guests,
+      recurrenceRule,
+      reminders,
+      attachments,
     });
 
     // Async notify all remaining family members!
@@ -172,6 +176,7 @@ const deleteEvent = async (req, res) => {
     }
 
     await Event.deleteOne({ _id: id });
+    await Comment.deleteMany({ onModel: 'Event', onDocument: id });
 
     return res.status(200).json({
       success: true,
@@ -191,7 +196,7 @@ const updateEvent = async (req, res) => {
   try {
     const { id } = req.params;
     const { familyId, _id: userId, role } = req.user;
-    const { title, description, date, startTime, endTime, location, image } = req.body;
+    const { title, description, date, startTime, endTime, location, image, recurrenceRule, reminders, attachments } = req.body;
 
     const event = await Event.findOne({ _id: id, familyId });
 
@@ -210,6 +215,13 @@ const updateEvent = async (req, res) => {
     if (endTime !== undefined) event.endTime = endTime;
     if (location !== undefined) event.location = location;
     if (image !== undefined) event.image = image;
+    if (recurrenceRule !== undefined) event.recurrenceRule = recurrenceRule;
+    if (reminders !== undefined) event.reminders = reminders;
+    
+    if (attachments !== undefined) {
+      // If we are passing an entirely new array of attachments, overwrite.
+      event.attachments = attachments;
+    }
 
     await event.save();
 
@@ -223,6 +235,70 @@ const updateEvent = async (req, res) => {
   }
 };
 
+// ══════════════════════════════════════════════════════════
+// GET /api/events/:id/comments
+// Get comments for an event
+// ══════════════════════════════════════════════════════════
+const getComments = async (req, res) => {
+  try {
+    const { id } = req.params;
+    const { familyId } = req.user;
+    
+    // Check if event exists in this family
+    const event = await Event.findOne({ _id: id, familyId });
+    if (!event) return res.status(404).json({ success: false, message: 'Event not found' });
+
+    const comments = await Comment.find({ onModel: 'Event', onDocument: id, family: familyId })
+      .populate('author', 'fullName avatar')
+      .sort({ createdAt: 1 });
+
+    return res.status(200).json({ success: true, data: { comments } });
+  } catch (error) {
+    return res.status(500).json({ success: false, message: error.message });
+  }
+};
+
+// ══════════════════════════════════════════════════════════
+// POST /api/events/:id/comments
+// Add a comment to an event
+// ══════════════════════════════════════════════════════════
+const addComment = async (req, res) => {
+  try {
+    const { id } = req.params;
+    const { content } = req.body;
+    const { familyId, _id: userId } = req.user;
+
+    if (!content) return res.status(400).json({ success: false, message: 'Content is required' });
+
+    const event = await Event.findOne({ _id: id, familyId });
+    if (!event) return res.status(404).json({ success: false, message: 'Event not found' });
+
+    const comment = await Comment.create({
+      author: userId,
+      family: familyId,
+      onModel: 'Event',
+      onDocument: id,
+      content,
+    });
+
+    await comment.populate('author', 'fullName avatar');
+
+    // Notify participants
+    notifyFamilyMembers({
+      familyId,
+      excludeUserId: userId,
+      type: 'event_comment',
+      title: 'New Event Comment',
+      body: `${req.user.fullName} commented: ${content}`,
+      data: { eventId: String(event._id) },
+    });
+
+    return res.status(201).json({ success: true, data: { comment } });
+  } catch (error) {
+    return res.status(500).json({ success: false, message: error.message });
+  }
+};
+
 module.exports = {
   createEvent,
   getFamilyEvents,
@@ -230,4 +306,6 @@ module.exports = {
   respondToEvent,
   updateEvent,
   deleteEvent,
+  getComments,
+  addComment,
 };

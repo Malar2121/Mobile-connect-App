@@ -209,4 +209,25 @@ const getMe = async (req, res) => {
   }
 };
 
-module.exports = { registerUser, loginUser, refreshToken, logoutUser, getMe };
+// ══════════════════════════════════════════════════════════
+// PATCH /api/auth/me
+// ══════════════════════════════════════════════════════════
+const updateMe = async (req, res) => {
+  try {
+    const { pushPreferences, pushToken } = req.body;
+    const updateData = {};
+    if (pushPreferences) updateData.pushPreferences = pushPreferences;
+    if (pushToken !== undefined) updateData.pushToken = pushToken;
+
+    const user = await User.findByIdAndUpdate(req.user._id, { $set: updateData }, { new: true }).populate('familyId', 'name');
+    return res.status(200).json({
+      success: true,
+      message: 'User profile updated',
+      data: { user: sanitize(user) },
+    });
+  } catch (error) {
+    return res.status(500).json({ success: false, message: error.message });
+  }
+};
+
+module.exports = { registerUser, loginUser, refreshToken, logoutUser, getMe, updateMe };

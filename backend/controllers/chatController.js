@@ -55,7 +55,7 @@ async function populateMessage(message) {
 // POST /api/chat/send
 const sendMessage = async (req, res) => {
   try {
-    const { text, replyTo, mediaDuration, documentName, mediaType: bodyMediaType } = req.body;
+    const { text, replyTo, mediaDuration, documentName, mediaType: bodyMediaType, waveform: bodyWaveform } = req.body;
     const { familyId, _id: senderId, fullName } = req.user;
 
     if (!familyId) {
@@ -75,12 +75,22 @@ const sendMessage = async (req, res) => {
       }
     }
 
+    let parsedWaveform = [];
+    if (bodyWaveform) {
+      try {
+        parsedWaveform = typeof bodyWaveform === 'string' ? JSON.parse(bodyWaveform) : bodyWaveform;
+      } catch (err) {
+        // ignore parse error
+      }
+    }
+
     const newMessage = await Message.create({
       familyId,
       sender: senderId,
       text: text ? text.trim() : '',
       ...media,
       mediaDuration: mediaDuration ? Number(mediaDuration) : null,
+      waveform: Array.isArray(parsedWaveform) ? parsedWaveform : [],
       documentName: documentName || media.documentName,
       replyTo: replyTo || null,
       readBy: [senderId],

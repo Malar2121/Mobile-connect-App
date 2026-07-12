@@ -8,6 +8,8 @@ const {
   respondToEvent,
   updateEvent,
   deleteEvent,
+  getComments,
+  addComment,
 } = require('../controllers/eventController');
 
 const { protect } = require('../middleware/authMiddleware');
@@ -32,6 +34,18 @@ router.get('/', getFamilyEvents);
 // Accept or decline invitation
 // ──────────────────────────────────────────────────────────
 router.post('/respond', respondToEvent);
+
+// ──────────────────────────────────────────────────────────
+// GET /api/events/:id/comments
+// Get comments for an event
+// ──────────────────────────────────────────────────────────
+router.get('/:id/comments', getComments);
+
+// ──────────────────────────────────────────────────────────
+// POST /api/events/:id/comments
+// Add a comment to an event
+// ──────────────────────────────────────────────────────────
+router.post('/:id/comments', addComment);
 
 // ──────────────────────────────────────────────────────────
 // GET /api/events/:id

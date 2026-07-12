@@ -122,10 +122,27 @@ export default function PersonProfileScreen() {
           </>
         ) : null}
 
-        <SectionTitle title="Timeline" subtitle="Life events architecture" />
-        <Text style={{ color: colors.textTertiary, fontSize: 13, marginBottom: 16 }}>
-          TODO: Backend life-events API for births, marriages, and milestones per member.
-        </Text>
+        <SectionTitle title="Timeline" subtitle="Life events architecture" style={{ marginTop: 20 }} />
+        {person.lifeEvents && person.lifeEvents.length > 0 ? (
+          person.lifeEvents.map((evt, i) => (
+            <Card key={evt._id || i} style={{ marginBottom: 8 }}>
+              <View style={{ flexDirection: 'row', alignItems: 'center', gap: 8 }}>
+                <Ionicons name="calendar" size={16} color={colors.primary} />
+                <Text style={{ color: colors.text, fontFamily: 'Inter_600SemiBold' }}>{evt.title}</Text>
+              </View>
+              <Text style={{ color: colors.textSecondary, fontSize: 13, marginTop: 4 }}>
+                {new Date(evt.date).toLocaleDateString()} - {evt.type}
+              </Text>
+              {evt.description ? (
+                <Text style={{ color: colors.textSecondary, fontSize: 13, marginTop: 4 }}>{evt.description}</Text>
+              ) : null}
+            </Card>
+          ))
+        ) : (
+          <Text style={{ color: colors.textSecondary, fontSize: 13, marginBottom: 16 }}>
+            No life events recorded yet.
+          </Text>
+        )}
       </ScrollView>
     </Screen>
   );
