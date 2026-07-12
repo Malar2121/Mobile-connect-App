@@ -70,45 +70,17 @@ function TabItem({ item, focused, onPress, colors, isDark, onLayout, index, layo
     >
 
       {focused ? (
-
         <View
-
           style={[
-
             styles.activeBubble,
-
             {
-
               backgroundColor: colors.primarySubtle,
-
               borderColor: colors.primaryMuted,
-
-              borderRadius: radii.pill,
-
+              borderRadius: radii.full || 999,
             },
-
           ]}
-
         >
-
-          <Ionicons name={item.icon} size={20} color={colors.primary} />
-
-          <Text
-
-            style={[
-
-              styles.activeLabel,
-
-              { color: colors.primary, fontFamily: 'Inter_600SemiBold' },
-
-            ]}
-
-          >
-
-            {item.label}
-
-          </Text>
-
+          <Ionicons name={item.icon} size={23} color={colors.primary} />
         </View>
 
       ) : (
@@ -130,115 +102,25 @@ function TabItem({ item, focused, onPress, colors, isDark, onLayout, index, layo
 
 
 export function FloatingTabBar({ state, descriptors, navigation }) {
-
   const { colors, isDark, radii, shadows } = useTheme();
-
   const { reduceMotion } = useMotion();
-
   const tabConfig = useTabConfig();
-
-  const insets = useSafeAreaInsets();
-
-  const bubbleX = useSharedValue(0);
-
-  const bubbleW = useSharedValue(0);
-
-  const layouts = React.useRef({});
-
-
-
-  const onTabLayout = React.useCallback(
-
-    (index, event) => {
-
-      const { x, width } = event.nativeEvent.layout;
-
-      layouts.current[index] = { x, width };
-
-      if (state.index === index) {
-
-        bubbleX.value = reduceMotion ? x : withSpring(x, { damping: 18, stiffness: 220 });
-
-        bubbleW.value = reduceMotion ? width : withSpring(width, { damping: 18, stiffness: 220 });
-
-      }
-
-    },
-
-    [bubbleW, bubbleX, state.index, reduceMotion],
-
-  );
-
-
-
-  React.useEffect(() => {
-
-    const layout = layouts.current[state.index];
-
-    if (layout) {
-
-      bubbleX.value = reduceMotion ? layout.x : withSpring(layout.x, { damping: 18, stiffness: 220 });
-
-      bubbleW.value = reduceMotion ? layout.width : withSpring(layout.width, { damping: 18, stiffness: 220 });
-
-    }
-
-  }, [state.index, bubbleW, bubbleX, reduceMotion]);
-
-
-
-  const bubbleStyle = useAnimatedStyle(() => ({
-
-    transform: [{ translateX: bubbleX.value }],
-
-    width: bubbleW.value,
-
-  }));
-
-
-
-  return (
+  const insets = useSafeAreaInsets();  return (
 
     <View style={[styles.wrap, { paddingBottom: Math.max(insets.bottom, 12) }]} pointerEvents="box-none">
 
       <BlurView intensity={isDark ? 72 : 88} tint={isDark ? 'dark' : 'light'} style={[styles.blur, shadows.lg, { borderRadius: radii['3xl'] }]}>
 
         <View
-
           style={[
-
             styles.bar,
-
             {
-
               backgroundColor: colors.tabBar,
-
               borderColor: colors.tabBarBorder,
-
               borderRadius: radii['3xl'],
-
             },
-
           ]}
-
         >
-
-          <Animated.View
-
-            pointerEvents="none"
-
-            style={[
-
-              styles.slidingBubble,
-
-              bubbleStyle,
-
-              { backgroundColor: colors.primarySubtle, borderRadius: radii.xl },
-
-            ]}
-
-          />
-
           {state.routes.map((route, index) => {
 
             const focused = state.index === index;
@@ -280,19 +162,13 @@ export function FloatingTabBar({ state, descriptors, navigation }) {
                 index={index}
 
                 focused={focused}
-
                 onPress={onPress}
-
-                onLayout={onTabLayout}
+                onLayout={() => {}}
 
                 colors={colors}
-
                 isDark={isDark}
-
                 layout={{}}
-
                 radii={radii}
-
                 reduceMotion={reduceMotion}
 
               />
@@ -336,31 +212,16 @@ const styles = StyleSheet.create({
     position: 'relative',
 
     overflow: 'hidden',
-
   },
-
-  slidingBubble: { position: 'absolute', top: 8, bottom: 8, left: 0 },
-
   tab: { flex: 1, alignItems: 'center', justifyContent: 'center', minHeight: 48, zIndex: 1 },
 
   activeBubble: {
-
-    flexDirection: 'row',
-
     alignItems: 'center',
-
-    gap: 5,
-
-    paddingHorizontal: 10,
-
-    paddingVertical: 8,
-
+    justifyContent: 'center',
+    width: 44,
+    height: 44,
     borderWidth: StyleSheet.hairlineWidth,
-
   },
-
-  activeLabel: { fontSize: 11 },
-
   inactive: { padding: 8 },
 
 });
