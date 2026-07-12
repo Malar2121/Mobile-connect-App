@@ -42,8 +42,8 @@ export function useDashboardData() {
   const [notifications, setNotifications] = useState([]);
   const [messages, setMessages] = useState([]);
 
-  const loadSections = useCallback(async () => {
-    if (!family) {
+  const loadSections = useCallback(async (hasFamily) => {
+    if (!hasFamily) {
       setEvents([]);
       setMemories([]);
       setLocations([]);
@@ -74,13 +74,13 @@ export function useDashboardData() {
     } finally {
       setSectionLoading(false);
     }
-  }, [family]);
+  }, []);
 
   const refresh = useCallback(async () => {
     setRefreshing(true);
     try {
-      await refreshFamily();
-      await loadSections();
+      const data = await refreshFamily();
+      await loadSections(!!data?.family);
     } catch (e) {
       setSectionError(e.message || 'Could not load dashboard.');
     } finally {
@@ -90,7 +90,9 @@ export function useDashboardData() {
 
   useFocusEffect(
     useCallback(() => {
-      refreshFamily().finally(() => loadSections());
+      refreshFamily()
+        .then((data) => loadSections(!!data?.family))
+        .catch(() => loadSections(false));
     }, [refreshFamily, loadSections]),
   );
 
