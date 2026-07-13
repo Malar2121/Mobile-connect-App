@@ -30,7 +30,12 @@ export default function JoinFamilyScreen({ navigation }) {
 
     setLoading(true);
     try {
-      await joinFamily(trimmed);
+      const result = await joinFamily(trimmed);
+      if (result?.pending) {
+        toast.success(result.message || 'Join request sent. An admin must approve your request.');
+        navigation.goBack();
+        return;
+      }
       await refreshFamily();
       toast.success('Welcome to the family!');
       navigation.dispatch(CommonActions.navigate({ name: 'Dashboard' }));

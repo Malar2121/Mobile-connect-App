@@ -33,7 +33,7 @@ const sanitize = (user) => {
 // ══════════════════════════════════════════════════════════
 const registerUser = async (req, res) => {
   try {
-    const { fullName, email, password, role } = req.body;
+    const { fullName, email, password } = req.body;
 
     // Validate required fields
     if (!fullName || !email || !password) {
@@ -53,7 +53,7 @@ const registerUser = async (req, res) => {
     }
 
     // Create user (password is auto-hashed by the pre-save hook)
-    const user = await User.create({ fullName, email, password, role });
+    const user = await User.create({ fullName, email, password });
 
     const accessToken = generateAccessToken(user._id);
     const refreshToken = generateRefreshToken(user._id);

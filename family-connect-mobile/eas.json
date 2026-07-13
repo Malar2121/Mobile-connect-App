@@ -12,11 +12,17 @@
     },
     "preview": {
       "distribution": "internal",
+      "env": {
+        "EXPO_PUBLIC_API_URL": "https://mobile-connect-app-production.up.railway.app"
+      },
       "android": {
         "buildType": "apk"
       }
     },
     "production": {
+      "env": {
+        "EXPO_PUBLIC_API_URL": "https://mobile-connect-app-production.up.railway.app"
+      },
       "android": {
         "buildType": "app-bundle"
       }

@@ -54,17 +54,28 @@ export async function createFamily(name) {
 
 /**
  * POST /api/family/join
- * @returns {{ family: object }}
+ * @returns {{ family?: object, pending?: boolean, message?: string, request?: object }}
  */
 export async function joinFamily(inviteCode) {
   try {
-    const { data } = await api.post('/family/join', {
+    const response = await api.post('/family/join', {
       inviteCode: inviteCode.trim(),
     });
-    if (!data.success || !data.data?.family) {
+    const { data } = response;
+    if (!data.success) {
       throw new Error(data.message || 'Could not join family');
     }
-    return { family: data.data.family };
+    if (response.status === 202 || data.data?.request) {
+      return {
+        pending: true,
+        request: data.data?.request,
+        message: data.message || 'Join request sent. Waiting for admin approval.',
+      };
+    }
+    if (!data.data?.family) {
+      throw new Error(data.message || 'Could not join family');
+    }
+    return { family: data.data.family, pending: false };
   } catch (e) {
     throw normalizeAxiosError(e);
   }

@@ -381,7 +381,10 @@ const approveJoinRequest = async (req, res) => {
 
     // Add user to family
     const family = await Family.findById(req.user.familyId);
-    if (!family.members.includes(request.user)) {
+    const alreadyMember = family.members.some(
+      (memberId) => String(memberId) === String(request.user)
+    );
+    if (!alreadyMember) {
       family.members.push(request.user);
       await family.save();
     }

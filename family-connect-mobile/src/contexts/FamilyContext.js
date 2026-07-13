@@ -80,13 +80,16 @@ export function FamilyProvider({ children }) {
 
   const joinFamily = useCallback(
     async (inviteCode) => {
-      const { family: joined } = await familyService.joinFamily(inviteCode);
+      const result = await familyService.joinFamily(inviteCode);
+      if (result.pending) {
+        return result;
+      }
       await refreshUserProfile();
       applyFamilyData({
-        family: joined,
-        memberCount: joined.members?.length ?? 0,
+        family: result.family,
+        memberCount: result.family.members?.length ?? 0,
       });
-      return joined;
+      return result.family;
     },
     [applyFamilyData, refreshUserProfile],
   );
