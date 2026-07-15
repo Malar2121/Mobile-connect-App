@@ -1,12 +1,13 @@
-import React, { createContext, useCallback, useContext, useMemo, useState } from 'react';
+import React, { createContext, useCallback, useContext, useEffect, useMemo, useState } from 'react';
 import * as SecureStore from 'expo-secure-store';
-import { api, setAuthToken } from '../services/api';
+import { api, bindSessionExpiredCallback, setAuthToken } from '../services/api';
 import * as authService from '../services/authService';
 import { disconnectSocket } from '../socket/socketClient';
 
 const AuthContext = createContext(undefined);
 
 const TOKEN_KEY = 'fc_auth_token';
+const REFRESH_TOKEN_KEY = 'fc_refresh_token';
 
 export function AuthProvider({ children }) {
   const [token, setTokenState] = useState(null);
@@ -19,10 +20,20 @@ export function AuthProvider({ children }) {
     setAuthToken(null);
     try {
       await SecureStore.deleteItemAsync(TOKEN_KEY);
+      await SecureStore.deleteItemAsync(REFRESH_TOKEN_KEY);
     } catch {
       /* key may be missing */
     }
   }, []);
+
+  // If a silent token refresh ever fails (refresh token expired/invalid),
+  // the api layer calls this so the user is dropped back to the login screen
+  // instead of being stuck on a broken authenticated screen.
+  useEffect(() => {
+    bindSessionExpiredCallback(() => {
+      clearSession();
+    });
+  }, [clearSession]);
 
   React.useEffect(() => {
     let cancelled = false;
@@ -53,13 +64,17 @@ export function AuthProvider({ children }) {
   }, [clearSession]);
 
   const signIn = useCallback(async (email, password) => {
-    // Mock login for UI screenshot testing
-    const fakeToken = 'mock_token_123';
-    const fakeUser = { _id: 'u1', fullName: 'Malaravan T.', email: 'malaravan@family.app' };
-    setAuthToken(fakeToken);
-    await SecureStore.setItemAsync(TOKEN_KEY, fakeToken);
-    setTokenState(fakeToken);
-    setUser(fakeUser);
+    const { accessToken, refreshToken, user: profile } = await authService.loginUser(email, password);
+    if (!accessToken) {
+      throw new Error('Login response did not include an access token');
+    }
+    setAuthToken(accessToken);
+    await SecureStore.setItemAsync(TOKEN_KEY, accessToken);
+    if (refreshToken) {
+      await SecureStore.setItemAsync(REFRESH_TOKEN_KEY, refreshToken);
+    }
+    setTokenState(accessToken);
+    setUser(profile);
   }, []);
 
   const signUp = useCallback(async (name, email, password) => {

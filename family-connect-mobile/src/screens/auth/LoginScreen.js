@@ -20,17 +20,21 @@ export default function LoginScreen({ navigation }) {
   const { t } = useI18n();
   const toast = useToast();
   const { signIn } = useAuth();
-  const [email, setEmail] = useState('malaravan@family.app');
-  const [password, setPassword] = useState('password123');
+  const [email, setEmail] = useState('');
+  const [password, setPassword] = useState('');
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState('');
 
   async function handleLogin() {
     setLoading(true);
-    setTimeout(() => {
+    setError('');
+    try {
+      await signIn(email, password);
+    } catch (e) {
+      setError(e?.message || 'Login failed. Please try again.');
+    } finally {
       setLoading(false);
-      navigation.navigate('TwoFactorAuth');
-    }, 1000);
+    }
   }
 
   return (

@@ -20,9 +20,9 @@ export default function RegisterScreen({ navigation }) {
   const toast = useToast();
   const dialog = useDialog();
   const { signUp } = useAuth();
-  const [name, setName] = useState('Malaravan T.');
-  const [email, setEmail] = useState('malaravan@family.app');
-  const [password, setPassword] = useState('password123');
+  const [name, setName] = useState('');
+  const [email, setEmail] = useState('');
+  const [password, setPassword] = useState('');
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState('');
 

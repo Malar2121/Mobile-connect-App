@@ -4,6 +4,7 @@ import React, {
   useContext,
   useEffect,
   useMemo,
+  useRef,
   useState,
 } from 'react';
 import { useAuth } from './AuthContext';
@@ -22,6 +23,11 @@ export function FamilyProvider({ children }) {
   const [members, setMembers] = useState([]);
   const [loading, setLoading] = useState(false);
 
+  const authRef = useRef(isAuthenticated);
+  useEffect(() => {
+    authRef.current = isAuthenticated;
+  }, [isAuthenticated]);
+
   const applyFamilyData = useCallback((data) => {
     if (data?.family) {
       setFamily(data.family);
@@ -34,7 +40,7 @@ export function FamilyProvider({ children }) {
   }, []);
 
   const fetchFamily = useCallback(async () => {
-    if (!isAuthenticated) {
+    if (!authRef.current) {
       applyFamilyData(null);
       return null;
     }
@@ -53,7 +59,7 @@ export function FamilyProvider({ children }) {
     applyFamilyData(mockData);
     setLoading(false);
     return mockData;
-  }, [isAuthenticated, applyFamilyData]);
+  }, [applyFamilyData]);
 
   const refreshFamily = useCallback(() => fetchFamily(), [fetchFamily]);
 
@@ -102,7 +108,7 @@ export function FamilyProvider({ children }) {
       setMembers([]);
       setLoading(false);
     }
-  }, [isAuthenticated, fetchFamily]);
+  }, [isAuthenticated]);
 
   const value = useMemo(
     () => ({

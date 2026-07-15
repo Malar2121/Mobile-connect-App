@@ -1,5 +1,5 @@
-import React from 'react';
-import { ScrollView, StyleSheet, Text, View, Pressable } from 'react-native';
+import React, { useState } from 'react';
+import { Modal, ScrollView, StyleSheet, Text, View, Pressable } from 'react-native';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import { Ionicons } from '@expo/vector-icons';
 import { useNavigation } from '@react-navigation/native';
@@ -8,10 +8,16 @@ import { useAuth } from '../../contexts/AuthContext';
 import { GlassCard } from '../../design-system';
 
 export default function ChildDashboardScreen() {
-  const { colors, radii, spacing, typography, shadows } = useTheme();
+  const { colors, radii, spacing, typography, shadows, setUiMode } = useTheme();
   const insets = useSafeAreaInsets();
   const { user } = useAuth();
   const navigation = useNavigation();
+  const [showModeSwitch, setShowModeSwitch] = useState(false);
+
+  const MODES = [
+    { id: 'standard', label: 'Standard Mode', icon: 'phone-portrait-outline', desc: 'Full app access' },
+    { id: 'elder', label: 'Elder Mode', icon: 'accessibility-outline', desc: 'Larger text & simpler layout' },
+  ];
 
   return (
     <View style={[styles.root, { backgroundColor: colors.background, paddingTop: insets.top }]}>
@@ -21,9 +27,19 @@ export default function ChildDashboardScreen() {
       >
         {/* Fun Greeting */}
         <View style={[styles.header, { paddingHorizontal: spacing.lg, paddingVertical: spacing.xl }]}>
-          <Text style={[typography.h1, { color: colors.text }]}>
-            Hi, {user?.fullName?.split(' ')[0] || 'Buddy'}! 👋
-          </Text>
+          <View style={styles.headerRow}>
+            <Text style={[typography.h1, { color: colors.text, flex: 1 }]}>
+              Hi, {user?.fullName?.split(' ')[0] || 'Buddy'}! 👋
+            </Text>
+            <Pressable
+              onPress={() => setShowModeSwitch(true)}
+              style={[styles.settingsBtn, { backgroundColor: colors.surfaceSecondary, borderRadius: radii.full || 999 }]}
+              accessibilityLabel="Switch mode"
+              accessibilityRole="button"
+            >
+              <Ionicons name="settings-outline" size={22} color={colors.textSecondary} />
+            </Pressable>
+          </View>
           <Text style={[typography.body, { color: colors.textSecondary, marginTop: spacing.xs }]}>
             Your family is online and safe.
           </Text>
@@ -78,6 +94,51 @@ export default function ChildDashboardScreen() {
           </GlassCard>
         </View>
       </ScrollView>
+
+      {/* Mode Switch Modal */}
+      <Modal
+        visible={showModeSwitch}
+        transparent
+        animationType="slide"
+        onRequestClose={() => setShowModeSwitch(false)}
+      >
+        <View style={styles.modalOverlay}>
+          <Pressable style={styles.modalBackdrop} onPress={() => setShowModeSwitch(false)} />
+          <View style={[styles.modalSheet, { backgroundColor: colors.surface, borderRadius: radii['2xl'], paddingBottom: insets.bottom + 24 }]}>
+            <View style={[styles.modalHandle, { backgroundColor: colors.border }]} />
+            <Text style={[typography.h2, { color: colors.text, paddingHorizontal: spacing.lg, marginBottom: 8 }]}>
+              Switch Mode
+            </Text>
+            <Text style={{ color: colors.textSecondary, paddingHorizontal: spacing.lg, marginBottom: spacing.lg, fontSize: 14 }}>
+              Choose how you want to use Family Connect
+            </Text>
+            {MODES.map((mode) => (
+              <Pressable
+                key={mode.id}
+                style={[styles.modeRow, { borderColor: colors.border, marginHorizontal: spacing.lg }]}
+                onPress={() => { setUiMode(mode.id); setShowModeSwitch(false); }}
+                accessibilityRole="button"
+                accessibilityLabel={`Switch to ${mode.label}`}
+              >
+                <View style={[styles.modeIcon, { backgroundColor: colors.primarySubtle, borderRadius: radii.xl }]}>
+                  <Ionicons name={mode.icon} size={24} color={colors.primary} />
+                </View>
+                <View style={{ flex: 1 }}>
+                  <Text style={{ color: colors.text, fontFamily: 'Inter_700Bold', fontSize: 16 }}>{mode.label}</Text>
+                  <Text style={{ color: colors.textSecondary, fontSize: 13, marginTop: 2 }}>{mode.desc}</Text>
+                </View>
+                <Ionicons name="chevron-forward" size={20} color={colors.textTertiary} />
+              </Pressable>
+            ))}
+            <Pressable
+              style={[styles.cancelBtn, { borderColor: colors.border, marginHorizontal: spacing.lg, borderRadius: radii.lg }]}
+              onPress={() => setShowModeSwitch(false)}
+            >
+              <Text style={{ color: colors.textSecondary, fontFamily: 'Inter_600SemiBold', fontSize: 15 }}>Cancel</Text>
+            </Pressable>
+          </View>
+        </View>
+      </Modal>
     </View>
   );
 }
@@ -85,7 +146,9 @@ export default function ChildDashboardScreen() {
 const styles = StyleSheet.create({
   root: { flex: 1 },
   scroll: { flexGrow: 1 },
-  header: { alignItems: 'center' },
+  header: {},
+  headerRow: { flexDirection: 'row', alignItems: 'center' },
+  settingsBtn: { width: 40, height: 40, alignItems: 'center', justifyContent: 'center' },
   grid: {
     flexDirection: 'row',
     justifyContent: 'space-between',
@@ -126,5 +189,24 @@ const styles = StyleSheet.create({
     width: 12,
     height: 12,
     borderRadius: 6,
+  },
+  // Mode switch modal
+  modalOverlay: { flex: 1, justifyContent: 'flex-end' },
+  modalBackdrop: { ...StyleSheet.absoluteFillObject, backgroundColor: 'rgba(0,0,0,0.45)' },
+  modalSheet: { paddingTop: 12 },
+  modalHandle: { width: 40, height: 4, borderRadius: 2, alignSelf: 'center', marginBottom: 20 },
+  modeRow: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    gap: 14,
+    paddingVertical: 16,
+    borderBottomWidth: StyleSheet.hairlineWidth,
+  },
+  modeIcon: { width: 48, height: 48, alignItems: 'center', justifyContent: 'center' },
+  cancelBtn: {
+    marginTop: 16,
+    paddingVertical: 14,
+    alignItems: 'center',
+    borderWidth: StyleSheet.hairlineWidth,
   },
 });

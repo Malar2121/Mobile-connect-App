@@ -8,6 +8,7 @@ import {
   Inter_500Medium,
   Inter_600SemiBold,
   Inter_700Bold,
+  Inter_900Black,
 } from '@expo-google-fonts/inter';
 import { AuthProvider } from './src/contexts/AuthContext';
 import { FamilyProvider } from './src/contexts/FamilyContext';
@@ -28,6 +29,7 @@ function AppRoot() {
     Inter_500Medium,
     Inter_600SemiBold,
     Inter_700Bold,
+    Inter_900Black,
   });
 
   if (!fontsLoaded && !fontError) {
