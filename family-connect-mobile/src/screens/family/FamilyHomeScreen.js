@@ -67,13 +67,15 @@ export default function FamilyHomeScreen() {
   }
 
   return (
-    <Screen edges={['top']}>
-      <PageHeader
-        title="Family"
-        subtitle={family.name}
-        large
-        onBack={() => navigation.goBack()}
-      />
+    <Screen edges={['top']} noPadding>
+      <View style={{ paddingHorizontal: horizontalPadding }}>
+        <PageHeader
+          title="Family"
+          subtitle={family.name}
+          large
+          onBack={() => navigation.goBack()}
+        />
+      </View>
       <ScrollView
         showsVerticalScrollIndicator={false}
         contentContainerStyle={styles.scroll}
@@ -92,7 +94,7 @@ export default function FamilyHomeScreen() {
           onSettings={() => navigate('FamilySettings')}
         />
 
-        <View style={styles.statsRow}>
+        <View style={[styles.statsRow, { paddingHorizontal: horizontalPadding }]}>
           <FamilyStatCard label="Memories" value={analytics.totalMemories} icon="images-outline" onPress={() => navigation.getParent()?.navigate('Memories')} />
           <FamilyStatCard label="Events" value={analytics.totalEvents} icon="calendar-outline" onPress={() => navigation.getParent()?.navigate('Events')} />
           <FamilyStatCard label="This week" value={analytics.activityThisWeek} icon="pulse-outline" accent="#10B981" />
@@ -104,7 +106,7 @@ export default function FamilyHomeScreen() {
           <Loader />
         ) : (
           <>
-            <View >
+            <View style={{ paddingHorizontal: horizontalPadding }}>
               <SectionTitle title="Participation" subtitle="Real activity from your family" />
               <AnalyticsCard
                 title="Family analytics"

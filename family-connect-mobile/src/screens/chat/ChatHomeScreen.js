@@ -27,7 +27,7 @@ export default function ChatHomeScreen() {
   const navigation = useNavigation();
   const insets = useSafeAreaInsets();
   const { horizontalPadding } = useResponsive();
-  const { colors, layout, radii, isDark } = useTheme();
+  const { colors, layout, radii, isDark, uiMode } = useTheme();
   const { family, members, messages, loading, pinnedMessage, prefs, typingName, loadHistory } = useChatModule();
 
   const analytics = useMemo(() => getChatAnalytics(messages, members), [messages, members]);
@@ -38,6 +38,43 @@ export default function ChatHomeScreen() {
       <Screen edges={['top']}>
         <PageHeader title="Chat" subtitle="Family communication" large />
         <ChatSkeleton />
+      </Screen>
+    );
+  }
+
+  if (uiMode === 'minor') {
+    return (
+      <Screen edges={['top']}>
+        <View style={{ alignItems: 'center', marginTop: 40, paddingHorizontal: horizontalPadding }}>
+          <Text style={{ fontSize: 48 }}>👨‍👩‍👧‍👦</Text>
+          <Text style={{ color: colors.text, fontFamily: 'Inter_700Bold', fontSize: 28, marginTop: 24, textAlign: 'center' }}>
+            Family Chat
+          </Text>
+          <Text style={{ color: colors.textSecondary, fontSize: 18, marginTop: 12, textAlign: 'center' }}>
+            Talk to Mom, Dad, and the rest of the family!
+          </Text>
+          
+          <Pressable
+            onPress={() => navigate('Conversation')}
+            style={({ pressed }) => [
+              {
+                backgroundColor: '#3b82f6',
+                paddingVertical: 24,
+                paddingHorizontal: 48,
+                borderRadius: radii['3xl'],
+                marginTop: 64,
+                opacity: pressed ? 0.9 : 1,
+                alignItems: 'center',
+                width: '100%'
+              }
+            ]}
+          >
+            <Ionicons name="chatbubbles" size={40} color="#fff" />
+            <Text style={{ color: '#fff', fontSize: 24, fontWeight: 'bold', marginTop: 12 }}>
+              Open Chat
+            </Text>
+          </Pressable>
+        </View>
       </Screen>
     );
   }
@@ -63,12 +100,6 @@ export default function ChatHomeScreen() {
             <Text style={{ color: colors.primary, marginTop: 8, fontFamily: 'Inter_600SemiBold' }}>{typingName} is typing…</Text>
           ) : null}
         </LinearGradient>
-
-        {pinnedMessage ? (
-          <View style={{ marginBottom: 12 }}>
-            <PinnedBanner message={pinnedMessage} editedTexts={prefs.editedTexts} onPress={() => navigate('Conversation')} onUnpin={() => {}} />
-          </View>
-        ) : null}
 
         <SectionTitle title="Quick access" subtitle="Premium family messaging" />
         <View style={styles.grid}>

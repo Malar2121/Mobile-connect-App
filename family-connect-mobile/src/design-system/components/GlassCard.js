@@ -1,30 +1,25 @@
 import React from 'react';
 import { StyleSheet, View } from 'react-native';
-import { BlurView } from 'expo-blur';
 import { useTheme } from '../../hooks/useTheme';
 
 /**
- * Glassmorphism card — frosted blur surface (Telegram Premium / iOS style).
+ * Solid card replacing the previous glassmorphism effect.
  */
 export function GlassCard({
   children,
   style,
-  intensity,
   noPadding,
   borderless,
 }) {
-  const { colors, isDark, radii, layout, shadows } = useTheme();
+  const { colors, radii, layout, shadows } = useTheme();
 
   return (
-    <View style={[styles.wrap, shadows.sm, { borderRadius: radii['2xl'] }, style]}>
-      <BlurView
-        intensity={intensity ?? (isDark ? 56 : 80)}
-        tint={isDark ? 'dark' : 'light'}
+    <View style={[styles.wrap, shadows.md, { borderRadius: radii['2xl'] }, style]}>
+      <View
         style={[
-          styles.blur,
+          styles.solid,
           {
-            backgroundColor: colors.glass,
-            borderColor: borderless ? 'transparent' : colors.glassBorder,
+            backgroundColor: colors.surfaceElevated,
             borderRadius: radii['2xl'],
           },
         ]}
@@ -32,15 +27,17 @@ export function GlassCard({
         <View style={[styles.inner, noPadding && styles.noPad, !noPadding && { padding: layout.contentPadding }]}>
           {children}
         </View>
-      </BlurView>
+      </View>
     </View>
   );
 }
 
 const styles = StyleSheet.create({
-  wrap: { overflow: 'hidden' },
-  blur: {
-    borderWidth: StyleSheet.hairlineWidth,
+  wrap: { 
+    overflow: 'hidden',
+    backgroundColor: 'transparent',
+  },
+  solid: {
     overflow: 'hidden',
   },
   inner: {},

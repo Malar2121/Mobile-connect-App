@@ -103,13 +103,20 @@ function FamilyHeroCardComponent({
               <Text
                 style={{
                   color: colors.text,
-                  fontSize: 24 * layout.fontScale,
-                  fontFamily: 'Inter_700Bold',
-                  letterSpacing: -0.5,
-                  marginTop: 16,
+                  fontSize: layout.fontScale * 38,
+                  lineHeight: layout.fontScale * 42,
+                  fontFamily: 'Inter_900Black', // Fallback to Bold if Black isn't loaded, but styling implies extra heavy weight
+                  fontWeight: '900',
+                  letterSpacing: -1.5,
+                  marginTop: 20,
+                  marginBottom: 4,
                 }}
               >
                 {familyName}
+              </Text>
+
+              <Text style={{ color: colors.textSecondary, fontSize: 15, fontFamily: 'Inter_500Medium', marginBottom: 20 }}>
+                {memberCount} Members · {onlineCount} Online
               </Text>
 
               <View style={styles.statsRow}>

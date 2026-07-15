@@ -93,22 +93,24 @@ function ActionTile({ item, index, onPress, colors, gradients, layout, radii, ti
       entering={FadeInDown.delay(80 + index * 40).duration(420).springify()}
       style={{ width: tileWidth }}
     >
-      <DashboardPressable onPress={() => onPress(item)} accessibilityLabel={item.title}>
-        <LinearGradient
-          colors={
-            colors.isDark
-              ? ['rgba(79,86,217,0.2)', 'rgba(20,20,28,0.9)']
-              : ['rgba(238,240,255,0.95)', 'rgba(255,255,255,0.98)']
-          }
-          style={[
-            styles.tile,
-            {
-              borderColor: colors.border,
-              borderRadius: radii.xl,
-              minHeight: layout.minTouch + 36,
-            },
-          ]}
-        >
+      <DashboardPressable onPress={() => onPress(item)} style={{ width: '100%' }} accessibilityLabel={item.title}>
+          <LinearGradient
+            colors={
+              colors.isDark
+                ? ['rgba(79,86,217,0.15)', 'rgba(24,24,27,0.85)']
+                : ['rgba(238,240,255,0.85)', 'rgba(255,255,255,1)']
+            }
+            style={[
+              styles.tile,
+              {
+                borderColor: colors.border,
+                borderRadius: radii['2xl'],
+                minHeight: layout.minTouch + 44,
+                overflow: 'hidden',
+                width: '100%',
+              },
+            ]}
+          >
           <LinearGradient
             colors={gradient}
             style={[styles.iconBox, { borderRadius: radii.md }]}

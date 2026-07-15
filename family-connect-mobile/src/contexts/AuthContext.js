@@ -53,14 +53,13 @@ export function AuthProvider({ children }) {
   }, [clearSession]);
 
   const signIn = useCallback(async (email, password) => {
-    const { accessToken, user: nextUser } = await authService.loginUser(
-      email,
-      password,
-    );
-    setAuthToken(accessToken);
-    await SecureStore.setItemAsync(TOKEN_KEY, accessToken);
-    setTokenState(accessToken);
-    setUser(nextUser);
+    // Mock login for UI screenshot testing
+    const fakeToken = 'mock_token_123';
+    const fakeUser = { _id: 'u1', fullName: 'Malaravan T.', email: 'malaravan@family.app' };
+    setAuthToken(fakeToken);
+    await SecureStore.setItemAsync(TOKEN_KEY, fakeToken);
+    setTokenState(fakeToken);
+    setUser(fakeUser);
   }, []);
 
   const signUp = useCallback(async (name, email, password) => {

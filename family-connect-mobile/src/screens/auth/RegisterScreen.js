@@ -1,13 +1,14 @@
 import React, { useState } from 'react';
 import { KeyboardAvoidingView, Platform, Pressable, StyleSheet, Text, View } from 'react-native';
+import { Ionicons } from '@expo/vector-icons';
 import {
   Button,
   GradientBackground,
-  PageHeader,
   Screen,
   TextField,
   useDialog,
   useToast,
+  GlassCard,
 } from '../../design-system';
 import { useAuth } from '../../contexts/AuthContext';
 import { useTheme } from '../../hooks/useTheme';
@@ -19,9 +20,9 @@ export default function RegisterScreen({ navigation }) {
   const toast = useToast();
   const dialog = useDialog();
   const { signUp } = useAuth();
-  const [name, setName] = useState('');
-  const [email, setEmail] = useState('');
-  const [password, setPassword] = useState('');
+  const [name, setName] = useState('Malaravan T.');
+  const [email, setEmail] = useState('malaravan@family.app');
+  const [password, setPassword] = useState('password123');
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState('');
 
@@ -33,8 +34,9 @@ export default function RegisterScreen({ navigation }) {
       setError('Please fill in name, email, and password.');
       return;
     }
-    if (password.length < 8) {
-      setError('Password must be at least 8 characters.');
+    const passwordRegex = /[!@#$%^&*(),.?":{}|<>]/;
+    if (password.length < 8 || !passwordRegex.test(password)) {
+      setError('Password must be at least 8 characters and include a special character.');
       return;
     }
     setLoading(true);
@@ -60,53 +62,72 @@ export default function RegisterScreen({ navigation }) {
   return (
     <GradientBackground variant="auth">
       <Screen edges={['top', 'bottom']} style={{ backgroundColor: 'transparent' }}>
-        <PageHeader title="Join your family" onBack={() => navigation.goBack()} large />
         <KeyboardAvoidingView
           behavior={Platform.OS === 'ios' ? 'padding' : undefined}
           style={styles.flex}
         >
           <View style={[styles.inner, isTablet && styles.innerTablet]}>
-            {error ? (
-              <View style={[styles.errorBox, { backgroundColor: colors.errorMuted }]}>
-                <Text style={[styles.errorText, { color: colors.error }]}>{error}</Text>
+            <GlassCard noPadding={false} intensity={80}>
+              <View style={[styles.brandRow, { marginBottom: layout.sectionGap * 1.2 }]}>
+                <View style={[styles.logoRing, { backgroundColor: colors.primarySubtle }]}>
+                  <Ionicons name="person-add" size={32} color={colors.primary} />
+                </View>
+                <Text
+                  style={[
+                    styles.title,
+                    { color: colors.text, fontSize: layout.fontScale * 38, fontFamily: 'Inter_900Black', letterSpacing: -1 },
+                  ]}
+                >
+                  Join your family
+                </Text>
+                <Text style={[styles.sub, { color: colors.textSecondary, fontSize: 15 * layout.fontScale }]}>
+                  Create an account to connect
+                </Text>
               </View>
-            ) : null}
 
-            <TextField label="Name" value={name} onChangeText={setName} placeholder="Alex" />
-            <TextField
-              label="Email"
-              value={email}
-              onChangeText={setEmail}
-              placeholder="you@example.com"
-              keyboardType="email-address"
-              autoCapitalize="none"
-            />
-            <TextField
-              label="Password"
-              value={password}
-              onChangeText={setPassword}
-              placeholder="••••••••"
-              secureTextEntry
-              hint="At least 8 characters"
-            />
-            <Button
-              title="Create account"
-              onPress={handleRegister}
-              loading={loading}
-              disabled={loading}
-              size="lg"
-              style={styles.cta}
-            />
-            <Pressable
-              onPress={() => navigation.goBack()}
-              style={styles.linkWrap}
-              disabled={loading}
-              accessibilityRole="link"
-            >
-              <Text style={{ color: colors.primary, fontWeight: '600', fontSize: 15 * layout.fontScale }}>
-                Back to sign in
-              </Text>
-            </Pressable>
+              {error ? (
+                <View style={[styles.errorBox, { backgroundColor: colors.errorMuted }]}>
+                  <Text style={[styles.errorText, { color: colors.error }]}>{error}</Text>
+                </View>
+              ) : null}
+
+              <TextField label="Name" value={name} onChangeText={setName} placeholder="Alex" />
+              <TextField
+                label="Email"
+                value={email}
+                onChangeText={setEmail}
+                placeholder="you@example.com"
+                keyboardType="email-address"
+                autoCapitalize="none"
+              />
+              <TextField
+                label="Password"
+                value={password}
+                onChangeText={setPassword}
+                placeholder="••••••••"
+                secureTextEntry
+                hint="At least 8 chars & 1 special character"
+              />
+              <Button
+                title="Create account"
+                onPress={handleRegister}
+                loading={loading}
+                disabled={loading}
+                size="lg"
+                style={styles.cta}
+              />
+              <Pressable
+                onPress={() => navigation.goBack()}
+                style={styles.linkWrap}
+                disabled={loading}
+                accessibilityRole="link"
+              >
+                <Text style={{ color: colors.textSecondary, fontSize: 15 * layout.fontScale }}>
+                  Already have an account?{' '}
+                  <Text style={{ color: colors.primary, fontFamily: 'Inter_700Bold' }}>Sign in</Text>
+                </Text>
+              </Pressable>
+            </GlassCard>
           </View>
         </KeyboardAvoidingView>
       </Screen>
@@ -115,9 +136,20 @@ export default function RegisterScreen({ navigation }) {
 }
 
 const styles = StyleSheet.create({
-  flex: { flex: 1 },
-  inner: { flex: 1, maxWidth: 440, width: '100%', alignSelf: 'center' },
-  innerTablet: { paddingTop: 8 },
+  flex: { flex: 1, justifyContent: 'center' },
+  inner: { flex: 1, justifyContent: 'center', maxWidth: 440, width: '100%', alignSelf: 'center' },
+  innerTablet: { paddingVertical: 40 },
+  brandRow: { alignItems: 'center' },
+  logoRing: {
+    width: 72,
+    height: 72,
+    borderRadius: 36,
+    alignItems: 'center',
+    justifyContent: 'center',
+    marginBottom: 20,
+  },
+  title: { fontFamily: 'Inter_700Bold', fontWeight: '800', textAlign: 'center' },
+  sub: { textAlign: 'center', lineHeight: 22, marginTop: 8 },
   errorBox: { borderRadius: 12, padding: 12, marginBottom: 16 },
   errorText: { fontSize: 14, lineHeight: 20 },
   cta: { marginTop: 8 },

@@ -14,8 +14,9 @@ export function DashboardAnimatedNumber({ value, style, duration = 700 }) {
   const opacity = useSharedValue(0.4);
 
   useEffect(() => {
-    const start = display;
-    const diff = value - start;
+    const start = Number.isNaN(display) ? 0 : display;
+    const safeValue = Number.isNaN(Number(value)) ? 0 : Number(value);
+    const diff = safeValue - start;
     const startTime = Date.now();
 
     opacity.value = withTiming(1, { duration: 280 });

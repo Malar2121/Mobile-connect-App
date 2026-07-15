@@ -11,16 +11,16 @@ export const fontFamilies = {
 
 /** Base sizes before uiMode fontScale is applied */
 export const typeScale = {
-  display: { size: 34, lineHeight: 40, weight: 'bold', family: fontFamilies.bold },
-  headline: { size: 28, lineHeight: 34, weight: 'bold', family: fontFamilies.bold },
-  title1: { size: 22, lineHeight: 28, weight: '600', family: fontFamilies.semiBold },
-  title2: { size: 18, lineHeight: 24, weight: '600', family: fontFamilies.semiBold },
-  title3: { size: 16, lineHeight: 22, weight: '600', family: fontFamilies.semiBold },
+  display: { size: 42, lineHeight: 46, weight: '900', family: fontFamilies.bold, letterSpacing: -1 },
+  headline: { size: 32, lineHeight: 36, weight: '800', family: fontFamilies.bold, letterSpacing: -0.5 },
+  title1: { size: 24, lineHeight: 28, weight: '700', family: fontFamilies.bold, letterSpacing: -0.25 },
+  title2: { size: 20, lineHeight: 26, weight: '600', family: fontFamilies.semiBold },
+  title3: { size: 17, lineHeight: 22, weight: '600', family: fontFamilies.semiBold },
   body: { size: 16, lineHeight: 24, weight: '400', family: fontFamilies.regular },
   bodySmall: { size: 14, lineHeight: 20, weight: '400', family: fontFamilies.regular },
   caption: { size: 12, lineHeight: 16, weight: '500', family: fontFamilies.medium },
   label: { size: 13, lineHeight: 18, weight: '600', family: fontFamilies.semiBold },
-  overline: { size: 11, lineHeight: 14, weight: '600', family: fontFamilies.semiBold, letterSpacing: 0.8 },
+  overline: { size: 11, lineHeight: 14, weight: '700', family: fontFamilies.bold, letterSpacing: 1.2, textTransform: 'uppercase' },
 };
 
 export const chatTypography = {

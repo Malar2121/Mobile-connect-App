@@ -69,29 +69,33 @@ function TodaysSummaryComponent({ summary, onStatPress }) {
 
   return (
     <View style={{ marginBottom: layout.sectionGap }}>
-      <View style={{ paddingHorizontal: horizontalPadding }}>
+      <View style={{ paddingHorizontal: horizontalPadding, marginBottom: 12 }}>
         <SectionTitle title="Today's summary" subtitle="Your family at a glance" />
       </View>
-      <ScrollView
-        horizontal
-        showsHorizontalScrollIndicator={false}
-        contentContainerStyle={[styles.scroll, { paddingHorizontal: horizontalPadding }]}
+      <View
+        style={{
+          flexDirection: 'row',
+          flexWrap: 'wrap',
+          paddingHorizontal: horizontalPadding,
+          gap: 12,
+        }}
       >
         {SUMMARY_ITEMS.map((item, index) => (
-          <SummaryTile
-            key={item.key}
-            item={item}
-            value={summary[item.key] ?? 0}
-            index={index}
-            onPress={() => onStatPress?.(item.key)}
-            colors={colors}
-            isDark={isDark}
-            gradients={gradients}
-            layout={layout}
-            radii={radii}
-          />
+          <View key={item.key} style={{ width: '47%', flexGrow: 1 }}>
+            <SummaryTile
+              item={item}
+              value={summary[item.key] ?? 0}
+              index={index}
+              onPress={() => onStatPress?.(item.key)}
+              colors={colors}
+              isDark={isDark}
+              gradients={gradients}
+              layout={layout}
+              radii={radii}
+            />
+          </View>
         ))}
-      </ScrollView>
+      </View>
     </View>
   );
 }

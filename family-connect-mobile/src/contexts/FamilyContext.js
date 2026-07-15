@@ -40,18 +40,19 @@ export function FamilyProvider({ children }) {
     }
 
     setLoading(true);
-    try {
-      const data = await familyService.getMyFamily();
-      return applyFamilyData(data);
-    } catch (error) {
-      if (isNoFamilyError(error)) {
-        applyFamilyData(null);
-        return null;
-      }
-      throw error;
-    } finally {
-      setLoading(false);
-    }
+    // Mock family data for screenshots
+    const mockData = {
+      family: { _id: 'mock_family', name: 'The Malaravans', inviteCode: 'MLRV2026' },
+      members: [
+        { _id: 'u1', fullName: 'Malaravan T.', role: 'admin', avatar: 'https://images.unsplash.com/photo-1506794778202-cad84cf45f1d?auto=format&fit=crop&w=200&q=80' },
+        { _id: 'u2', fullName: 'Amma', role: 'member', avatar: 'https://images.unsplash.com/photo-1544005313-94ddf0286df2?auto=format&fit=crop&w=200&q=80' },
+        { _id: 'u3', fullName: 'Appa', role: 'member', avatar: 'https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?auto=format&fit=crop&w=200&q=80' },
+        { _id: 'u4', fullName: 'Sister', role: 'member', avatar: 'https://images.unsplash.com/photo-1517841905240-472988babdf9?auto=format&fit=crop&w=200&q=80' }
+      ]
+    };
+    applyFamilyData(mockData);
+    setLoading(false);
+    return mockData;
   }, [isAuthenticated, applyFamilyData]);
 
   const refreshFamily = useCallback(() => fetchFamily(), [fetchFamily]);

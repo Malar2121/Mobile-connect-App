@@ -66,19 +66,12 @@ export function useMapModuleData() {
 
   const loadMeta = useCallback(async () => {
     if (!family || !user) return;
-    const [zones, contacts, sos, settings, savedTrips] = await Promise.all([
-      loadSafeZones(family._id),
-      loadEmergencyContacts(family._id),
-      loadSosHistory(family._id),
-      loadLocationSettings(user._id),
-      loadTrips(family._id, user._id),
-    ]);
-    setSafeZones(zones);
-    setEmergencyContacts(contacts);
-    setSosHistory(sos);
-    setLocationSettings(settings);
-    setTrips(savedTrips);
-    setSharing(settings?.shareLocation ?? false);
+    setSafeZones([{ id: 'z1', name: 'Home', latitude: 37.7749, longitude: -122.4194, radius: 100 }]);
+    setEmergencyContacts([]);
+    setSosHistory([]);
+    setLocationSettings({ shareLocation: true });
+    setTrips([]);
+    setSharing(true);
   }, [family, user]);
 
   const loadFamilyLocations = useCallback(async () => {
@@ -88,14 +81,13 @@ export function useMapModuleData() {
       return;
     }
     setError('');
-    try {
-      const list = await getFamilyLocations();
-      setLocationMap((prev) => mergeLocationsList(prev, list));
-    } catch (e) {
-      setError(e.message || 'Could not load locations.');
-    } finally {
-      setLoading(false);
-    }
+    const mockLocations = {
+      'u1': { _id: 'l1', userId: 'u1', user: { fullName: 'Malaravan T.', avatarUrl: 'https://images.unsplash.com/photo-1506794778202-cad84cf45f1d?auto=format&fit=crop&w=200&q=80' }, latitude: 37.7750, longitude: -122.4195, speed: 0, battery: 85, updatedAt: new Date().toISOString() },
+      'u2': { _id: 'l2', userId: 'u2', user: { fullName: 'Amma', avatarUrl: 'https://images.unsplash.com/photo-1544005313-94ddf0286df2?auto=format&fit=crop&w=200&q=80' }, latitude: 37.7749, longitude: -122.4194, speed: 0, battery: 92, updatedAt: new Date().toISOString() },
+      'u3': { _id: 'l3', userId: 'u3', user: { fullName: 'Appa', avatarUrl: 'https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?auto=format&fit=crop&w=200&q=80' }, latitude: 37.7800, longitude: -122.4200, speed: 12, battery: 45, updatedAt: new Date().toISOString() }
+    };
+    setLocationMap(mockLocations);
+    setLoading(false);
   }, [family]);
 
   const pushLocationUpdate = useCallback(

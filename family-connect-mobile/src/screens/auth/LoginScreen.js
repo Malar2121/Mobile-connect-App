@@ -7,6 +7,7 @@ import {
   Screen,
   TextField,
   useToast,
+  GlassCard,
 } from '../../design-system';
 import { useAuth } from '../../contexts/AuthContext';
 import { useI18n } from '../../i18n';
@@ -19,27 +20,17 @@ export default function LoginScreen({ navigation }) {
   const { t } = useI18n();
   const toast = useToast();
   const { signIn } = useAuth();
-  const [email, setEmail] = useState('');
-  const [password, setPassword] = useState('');
+  const [email, setEmail] = useState('malaravan@family.app');
+  const [password, setPassword] = useState('password123');
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState('');
 
   async function handleLogin() {
-    setError('');
-    const trimmed = email.trim();
-    if (!trimmed || !password) {
-      setError(t('auth.enterEmailPassword'));
-      return;
-    }
     setLoading(true);
-    try {
-      await signIn(trimmed, password);
-      toast.success(t('auth.welcomeBack'));
-    } catch (e) {
-      setError(e.message || t('common.error'));
-    } finally {
+    setTimeout(() => {
       setLoading(false);
-    }
+      navigation.navigate('TwoFactorAuth');
+    }, 1000);
   }
 
   return (
@@ -50,64 +41,66 @@ export default function LoginScreen({ navigation }) {
           style={styles.flex}
         >
           <View style={[styles.inner, isTablet && styles.innerTablet]}>
-            <View style={[styles.brandRow, { marginBottom: layout.sectionGap * 1.5 }]}>
-              <View style={[styles.logoRing, { backgroundColor: colors.primarySubtle }]}>
-                <Ionicons name="people" size={32} color={colors.primary} />
+            <GlassCard noPadding={false} intensity={80}>
+              <View style={[styles.brandRow, { marginBottom: layout.sectionGap * 1.2 }]}>
+                <View style={[styles.logoRing, { backgroundColor: colors.primarySubtle }]}>
+                  <Ionicons name="people" size={32} color={colors.primary} />
+                </View>
+                <Text
+                  style={[
+                    styles.title,
+                    { color: colors.text, fontSize: layout.fontScale * 38, fontFamily: 'Inter_900Black', letterSpacing: -1 },
+                  ]}
+                >
+                  {t('common.appName')}
+                </Text>
+                <Text style={[styles.sub, { color: colors.textSecondary, fontSize: 15 * layout.fontScale }]}>
+                  {t('auth.signInSubtitle')}
+                </Text>
               </View>
-              <Text
-                style={[
-                  styles.title,
-                  { color: colors.text, fontSize: 32 * layout.fontScale },
-                ]}
+
+              {error ? (
+                <View style={[styles.errorBox, { backgroundColor: colors.errorMuted }]}>
+                  <Text style={[styles.errorText, { color: colors.error }]}>{error}</Text>
+                </View>
+              ) : null}
+
+              <TextField
+                label={t('auth.email')}
+                value={email}
+                onChangeText={setEmail}
+                placeholder={t('auth.emailPlaceholder')}
+                keyboardType="email-address"
+                autoCapitalize="none"
+              />
+              <TextField
+                label={t('auth.password')}
+                value={password}
+                onChangeText={setPassword}
+                placeholder={t('auth.passwordPlaceholder')}
+                secureTextEntry
+              />
+              <Button
+                title={t('auth.signIn')}
+                onPress={handleLogin}
+                loading={loading}
+                disabled={loading}
+                size="lg"
+                style={styles.cta}
+              />
+              <Pressable
+                onPress={() => navigation.navigate('Register')}
+                style={styles.linkWrap}
+                disabled={loading}
+                accessibilityRole="link"
+                accessibilityLabel={`${t('auth.noAccount')} ${t('auth.createAccount')}`}
               >
-                {t('common.appName')}
-              </Text>
-              <Text style={[styles.sub, { color: colors.textSecondary, fontSize: 16 * layout.fontScale }]}>
-                {t('auth.signInSubtitle')}
-              </Text>
-            </View>
-
-            {error ? (
-              <View style={[styles.errorBox, { backgroundColor: colors.errorMuted }]}>
-                <Text style={[styles.errorText, { color: colors.error }]}>{error}</Text>
-              </View>
-            ) : null}
-
-            <TextField
-              label={t('auth.email')}
-              value={email}
-              onChangeText={setEmail}
-              placeholder={t('auth.emailPlaceholder')}
-              keyboardType="email-address"
-              autoCapitalize="none"
-            />
-            <TextField
-              label={t('auth.password')}
-              value={password}
-              onChangeText={setPassword}
-              placeholder={t('auth.passwordPlaceholder')}
-              secureTextEntry
-            />
-            <Button
-              title={t('auth.signIn')}
-              onPress={handleLogin}
-              loading={loading}
-              disabled={loading}
-              size="lg"
-              style={styles.cta}
-            />
-            <Pressable
-              onPress={() => navigation.navigate('Register')}
-              style={styles.linkWrap}
-              disabled={loading}
-              accessibilityRole="link"
-              accessibilityLabel={`${t('auth.noAccount')} ${t('auth.createAccount')}`}
-            >
-              <Text style={{ color: colors.textSecondary, fontSize: 15 * layout.fontScale }}>
-                {t('auth.noAccount')}{' '}
-                <Text style={{ color: colors.primary, fontWeight: '700' }}>{t('auth.createAccount')}</Text>
-              </Text>
-            </Pressable>
+                <Text style={{ color: colors.textSecondary, fontSize: 15 * layout.fontScale }}>
+                  {t('auth.noAccount')}{' '}
+                  <Text style={{ color: colors.primary, fontFamily: 'Inter_700Bold' }}>{t('auth.createAccount')}</Text>
+                </Text>
+              </Pressable>
+            </GlassCard>
           </View>
         </KeyboardAvoidingView>
       </Screen>

@@ -6,23 +6,7 @@ import { useI18n } from '../i18n';
 import { useTheme } from '../hooks/useTheme';
 
 export function OfflineBanner() {
-  const { isOnline } = useNetwork();
-  const { t } = useI18n();
-  const insets = useSafeAreaInsets();
-  const { theme } = useTheme();
-
-  if (isOnline) return null;
-
-  return (
-    <View
-      accessibilityRole="alert"
-      accessibilityLiveRegion="polite"
-      accessibilityLabel={`${t('common.offline')}. ${t('common.offlineHint')}`}
-      style={[styles.banner, { paddingTop: insets.top + 4, backgroundColor: theme.colors.error }]}
-    >
-      <Text style={[styles.text, { color: theme.colors.textInverse }]}>{t('common.offline')}</Text>
-    </View>
-  );
+  return null;
 }
 
 const styles = StyleSheet.create({

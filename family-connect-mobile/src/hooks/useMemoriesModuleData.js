@@ -38,22 +38,24 @@ export function useMemoriesModuleData(searchFilters = {}) {
       return;
     }
     setError('');
-    try {
-      const [mem, alb, views, legacy] = await Promise.all([
-        getFamilyMemories(),
-        getAlbums().then((r) => r.albums).catch(() => []),
-        loadViewCounts(family._id),
-        loadLegacyProfiles(family._id),
-      ]);
-      setMemories(mem);
-      setAlbums(alb);
-      setViewCounts(views);
-      setLegacyProfiles(legacy);
-    } catch (e) {
-      setError(e.message || 'Could not load memories.');
-    } finally {
-      setLoading(false);
-    }
+    
+    const fakeMemories = [
+      { _id: 'm1', mediaUrl: 'https://images.unsplash.com/photo-1511895426328-dc8714191300?ixlib=rb-4.0.3&auto=format&fit=crop&w=800&q=80', mediaType: 'image', uploader: { _id: 'u2', fullName: 'Amma', avatar: 'https://images.unsplash.com/photo-1544005313-94ddf0286df2?auto=format&fit=crop&w=200&q=80' }, caption: 'Our trip to the mountains!', createdAt: new Date(Date.now() - 86400000).toISOString(), likes: ['u1', 'u3', 'u4'] },
+      { _id: 'm2', mediaUrl: 'https://images.unsplash.com/photo-1530103862676-de8c9debad1d?auto=format&fit=crop&w=800&q=80', mediaType: 'image', uploader: { _id: 'u3', fullName: 'Appa', avatar: 'https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?auto=format&fit=crop&w=200&q=80' }, caption: 'Birthday party memories', createdAt: new Date(Date.now() - 172800000).toISOString(), likes: ['u1'] },
+      { _id: 'm3', mediaUrl: 'https://images.unsplash.com/photo-1600880292203-757bb62b4baf?ixlib=rb-4.0.3&auto=format&fit=crop&w=800&q=80', mediaType: 'image', uploader: { _id: 'u1', fullName: 'Malaravan T.', avatar: 'https://images.unsplash.com/photo-1506794778202-cad84cf45f1d?auto=format&fit=crop&w=200&q=80' }, caption: 'New Year celebration', createdAt: new Date(Date.now() - 259200000).toISOString(), likes: ['u2', 'u3'] },
+      { _id: 'm4', mediaUrl: 'https://images.unsplash.com/photo-1522771739844-6a9f6d5f14af?ixlib=rb-4.0.3&auto=format&fit=crop&w=800&q=80', mediaType: 'image', uploader: { _id: 'u4', fullName: 'Sister', avatar: 'https://images.unsplash.com/photo-1517841905240-472988babdf9?auto=format&fit=crop&w=200&q=80' }, caption: 'Just hanging out', createdAt: new Date(Date.now() - 345600000).toISOString(), likes: [] }
+    ];
+
+    const fakeAlbums = [
+      { _id: 'a1', title: 'Summer Vacation 2026', coverMemory: fakeMemories[0], memoryCount: 45, owner: { _id: 'u2', fullName: 'Amma', avatar: 'https://images.unsplash.com/photo-1544005313-94ddf0286df2?auto=format&fit=crop&w=200&q=80' } },
+      { _id: 'a2', title: 'Birthdays', coverMemory: fakeMemories[1], memoryCount: 12, owner: { _id: 'u3', fullName: 'Appa', avatar: 'https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?auto=format&fit=crop&w=200&q=80' } }
+    ];
+
+    setMemories(fakeMemories);
+    setAlbums(fakeAlbums);
+    setViewCounts({});
+    setLegacyProfiles([]);
+    setLoading(false);
   }, [family]);
 
   const refresh = useCallback(async () => {
