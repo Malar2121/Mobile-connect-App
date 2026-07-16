@@ -14,6 +14,10 @@ const { protect } = require('../middleware/authMiddleware');
 // All notification routes require authentication
 router.use(protect);
 
+// Reject malformed ids with 400 before controllers run (BUG-L1 fix)
+const { objectIdParam } = require('../middleware/validateObjectId');
+router.param('id', objectIdParam);
+
 // ──────────────────────────────────────────────────────────
 // GET /api/notifications
 // Get all notifications for the logged in user

@@ -12,6 +12,10 @@ const { protect } = require('../middleware/authMiddleware');
 // All family routes require a valid JWT
 router.use(protect);
 
+// Reject malformed ids with 400 before controllers run (BUG-L1 fix)
+const { objectIdParam } = require('../middleware/validateObjectId');
+router.param('id', objectIdParam);
+
 // ──────────────────────────────────────────────────────────
 // POST /api/family/create
 // Create a new family (logged-in user becomes admin)
@@ -47,6 +51,7 @@ router.delete('/leave', leaveFamily);
 const {
   updateFamily,
   updateMemberRole,
+  updateMemberType,
   createJoinRequest,
   getJoinRequests,
   approveJoinRequest,
@@ -56,6 +61,7 @@ const {
 
 router.patch('/', updateFamily);
 router.put('/members/:id/role', updateMemberRole);
+router.put('/members/:id/type', updateMemberType);
 router.post('/members/:id/life-events', addLifeEvent);
 
 router.post('/join-requests', createJoinRequest);

@@ -29,7 +29,10 @@ export default function LoginScreen({ navigation }) {
     setLoading(true);
     setError('');
     try {
-      await signIn(email, password);
+      const result = await signIn(email, password);
+      if (result?.requires2FA) {
+        navigation.navigate('TwoFactorAuth', { tempToken: result.tempToken });
+      }
     } catch (e) {
       setError(e?.message || 'Login failed. Please try again.');
     } finally {

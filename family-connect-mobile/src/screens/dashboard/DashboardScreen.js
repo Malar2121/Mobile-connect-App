@@ -18,12 +18,14 @@ import { InsightsSection } from '../../components/dashboard/InsightsSection';
 import { SkeletonDashboard } from '../../components/dashboard/SkeletonDashboard';
 import { EmptyDashboard } from '../../components/dashboard/EmptyDashboard';
 import { useTheme } from '../../hooks/useTheme';
+import { useI18n } from '../../i18n';
 
 export default function DashboardScreen() {
   const navigation = useNavigation();
   const insets = useSafeAreaInsets();
   const toast = useToast();
   const { colors } = useTheme();
+  const { t } = useI18n();
   const [inviting, setInviting] = useState(false);
 
   const {
@@ -61,13 +63,13 @@ export default function DashboardScreen() {
         code = data.inviteCode;
       }
       await Clipboard.setStringAsync(code);
-      toast.success('Invite code copied to clipboard');
+      toast.success(t('profile.inviteCopied'));
     } catch (e) {
-      toast.error(e.message || 'Invite failed');
+      toast.error(e.message || t('common.error'));
     } finally {
       setInviting(false);
     }
-  }, [inviteCode, toast]);
+  }, [inviteCode, toast, t]);
 
   const navigateTab = useCallback(
     (route, screen, nestedScreen, params) => {
@@ -134,7 +136,7 @@ export default function DashboardScreen() {
       >
         <GreetingSection
           userName={user?.fullName}
-          familyName={noFamily ? 'Family Connect' : familyName}
+          familyName={noFamily ? t('common.appName') : familyName}
           unreadCount={unreadNotificationCount}
           onNotifications={() => navigation.navigate('Profile', { screen: 'Notifications' })}
           onSettings={() => navigation.navigate('Profile', { screen: 'ProfileMain' })}

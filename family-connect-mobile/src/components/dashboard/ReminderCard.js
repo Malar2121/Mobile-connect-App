@@ -7,6 +7,7 @@ import { SectionTitle } from '../../design-system';
 import { DashboardPressable } from './DashboardPressable';
 import { useTheme } from '../../hooks/useTheme';
 import { useResponsive } from '../../design-system';
+import { useI18n } from '../../i18n';
 
 const PRIORITY_COLORS = {
   high: ['#FF6B4A', '#F59E0B'],
@@ -17,12 +18,13 @@ const PRIORITY_COLORS = {
 function ReminderCardComponent({ reminders, onPressReminder, onViewAll }) {
   const { colors, layout, radii, isDark } = useTheme();
   const { horizontalPadding } = useResponsive();
+  const { t } = useI18n();
   const primary = reminders[0];
 
   if (!primary) {
     return (
       <View style={{ paddingHorizontal: horizontalPadding, marginBottom: layout.sectionGap }}>
-        <SectionTitle title="Today's reminder" />
+        <SectionTitle title={t('dashboard.todaysReminder')} />
         <View
           style={[
             styles.empty,
@@ -35,7 +37,7 @@ function ReminderCardComponent({ reminders, onPressReminder, onViewAll }) {
         >
           <Ionicons name="sunny-outline" size={28} color={colors.textTertiary} />
           <Text style={{ color: colors.textSecondary, marginTop: 8, fontSize: 14 * layout.fontScale }}>
-            No reminders for today — enjoy the calm.
+            {t('dashboard.noReminders')}
           </Text>
         </View>
       </View>
@@ -50,8 +52,8 @@ function ReminderCardComponent({ reminders, onPressReminder, onViewAll }) {
       style={{ paddingHorizontal: horizontalPadding, marginBottom: layout.sectionGap }}
     >
       <SectionTitle
-        title="Today's reminder"
-        actionLabel={reminders.length > 1 ? 'See all' : undefined}
+        title={t('dashboard.todaysReminder')}
+        actionLabel={reminders.length > 1 ? t('common.viewAll') : undefined}
         onAction={reminders.length > 1 ? onViewAll : undefined}
       />
       <DashboardPressable onPress={() => onPressReminder?.(primary.event)}>

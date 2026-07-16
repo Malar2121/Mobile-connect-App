@@ -5,6 +5,7 @@ import { Avatar, SectionTitle } from '../../design-system';
 import { DashboardAnimatedNumber } from './DashboardAnimatedNumber';
 import { useTheme } from '../../hooks/useTheme';
 import { useResponsive } from '../../design-system';
+import { useI18n } from '../../i18n';
 
 function InsightTile({ label, value, sub, colors, layout, radii, children }) {
   return (
@@ -100,17 +101,18 @@ function WeeklyGraph({ days, colors, radii }) {
 function InsightsSectionComponent({ insights, weeklyActivity }) {
   const { colors, layout, radii } = useTheme();
   const { horizontalPadding } = useResponsive();
+  const { t } = useI18n();
 
   return (
     <Animated.View
       entering={FadeInDown.delay(200).duration(520).springify()}
       style={{ paddingHorizontal: horizontalPadding, marginBottom: layout.sectionGap }}
     >
-      <SectionTitle title="Family insights" subtitle="Engagement from your real activity" />
+      <SectionTitle title={t('dashboard.familyInsights')} subtitle={t('dashboard.familyInsightsSubtitle')} />
 
       <View style={styles.grid}>
         <InsightTile
-          label="Most active"
+          label={t('dashboard.mostActive')}
           value={insights.mostActiveMember}
           colors={colors}
           layout={layout}
@@ -119,14 +121,14 @@ function InsightsSectionComponent({ insights, weeklyActivity }) {
           <Avatar uri={insights.mostActiveAvatar} name={insights.mostActiveMember} size={32} />
         </InsightTile>
         <InsightTile
-          label="Events this month"
+          label={t('dashboard.eventsThisMonth')}
           value={insights.eventsThisMonth}
           colors={colors}
           layout={layout}
           radii={radii}
         />
         <InsightTile
-          label="Memories uploaded"
+          label={t('dashboard.memoriesUploaded')}
           value={insights.memoriesThisMonth}
           sub={`${insights.totalMemories} total`}
           colors={colors}
@@ -134,14 +136,14 @@ function InsightsSectionComponent({ insights, weeklyActivity }) {
           radii={radii}
         />
         <InsightTile
-          label="Messages this week"
+          label={t('dashboard.messagesThisWeek')}
           value={insights.messagesThisWeek}
           colors={colors}
           layout={layout}
           radii={radii}
         />
         <InsightTile
-          label="RSVP participation"
+          label={t('dashboard.rsvpParticipation')}
           value={`${insights.participationPct}%`}
           sub="Across scheduled events"
           colors={colors}

@@ -36,9 +36,13 @@ export function canUseHighPrecisionLocation(uiMode) {
   return !isMinorMode(uiMode);
 }
 
-/** SOS requires guardian oversight in minor mode. */
+/**
+ * SOS is available in every mode: a child being able to call their
+ * guardians for help is the core of the child-safety requirement.
+ * The confirm flow still runs a cancellable countdown.
+ */
 export function canTriggerSOS(uiMode) {
-  return !isMinorMode(uiMode);
+  return true;
 }
 
 /** Restrict destructive or upload actions for minors. */

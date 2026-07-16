@@ -1,4 +1,5 @@
 import { api } from './api';
+import { enqueueOfflineRequest, isNetworkError } from '../utils/offlineQueue';
 
 function normalizeAxiosError(error) {
   if (error.response) {
@@ -77,6 +78,18 @@ export async function sendMessage(text, options = {}) {
     if (!data.success || !data.data) throw new Error(data.message || 'Could not send message');
     return data.data;
   } catch (e) {
+    // BUG-M2 fix: text messages sent while offline are queued and replayed
+    // by the offline queue once connectivity returns (media is not queued —
+    // local file URIs may not survive an app restart).
+    if (!options.mediaUri && isNetworkError(e) && text?.trim()) {
+      await enqueueOfflineRequest({
+        type: 'chat_message',
+        payload: { text: text.trim(), ...(options.replyTo ? { replyTo: String(options.replyTo) } : {}) },
+      }).catch(() => {});
+      const queuedErr = new Error('You are offline — the message was saved and will send automatically.');
+      queuedErr.queued = true;
+      throw queuedErr;
+    }
     throw normalizeAxiosError(e);
   }
 }

@@ -11,6 +11,7 @@ import { PinnedBanner } from '../../components/chat/PinnedBanner';
 import { getChatAnalytics } from '../../utils/chatModuleHelpers';
 import { useTheme } from '../../hooks/useTheme';
 import { useResponsive } from '../../design-system';
+import { useI18n } from '../../i18n';
 
 const SHORTCUTS = [
   { id: 'conversation', label: 'Open chat', icon: 'chatbubbles', screen: 'Conversation', primary: true },
@@ -25,6 +26,7 @@ const SHORTCUTS = [
 
 export default function ChatHomeScreen() {
   const navigation = useNavigation();
+  const { t } = useI18n();
   const insets = useSafeAreaInsets();
   const { horizontalPadding } = useResponsive();
   const { colors, layout, radii, isDark, uiMode } = useTheme();
@@ -36,7 +38,7 @@ export default function ChatHomeScreen() {
   if (loading && !messages.length) {
     return (
       <Screen edges={['top']}>
-        <PageHeader title="Chat" subtitle="Family communication" large />
+        <PageHeader title={t('chat.title')} subtitle={t('chat.subtitle')} large />
         <ChatSkeleton />
       </Screen>
     );
@@ -82,7 +84,7 @@ export default function ChatHomeScreen() {
   return (
     <Screen edges={['top']} noPadding>
       <View style={{ paddingHorizontal: horizontalPadding }}>
-        <PageHeader title="Chat" subtitle={family?.name ?? 'Family communication'} large />
+        <PageHeader title={t('chat.title')} subtitle={family?.name ?? t('chat.subtitle')} large />
       </View>
 
       <ScrollView
@@ -101,7 +103,7 @@ export default function ChatHomeScreen() {
           ) : null}
         </LinearGradient>
 
-        <SectionTitle title="Quick access" subtitle="Premium family messaging" />
+        <SectionTitle title={t('chat.quickAccess')} subtitle={t('chat.quickAccessSubtitle')} />
         <View style={styles.grid}>
           {SHORTCUTS.map((item) => (
             <Pressable

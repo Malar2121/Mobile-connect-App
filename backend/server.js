@@ -26,6 +26,7 @@ const familyTreeRoutes = require('./routes/familyTreeRoutes');
 const locationRoutes = require('./routes/locationRoutes');
 const legacyRoutes = require('./routes/legacyRoutes');
 const webhookRoutes = require('./routes/webhookRoutes');
+const safeZoneRoutes = require('./routes/safeZoneRoutes');
 
 // ─── App setup ────────────────────────────────────────────────────────────
 const app = express();
@@ -124,6 +125,7 @@ app.use('/api/family-tree', familyTreeRoutes);
 app.use('/api/location', locationRoutes);
 app.use('/api/legacy', legacyRoutes);
 app.use('/api/webhooks', webhookRoutes);
+app.use('/api/safezones', safeZoneRoutes);
 
 // ─── 404 & Error Handlers ─────────────────────────────────────────────────
 app.use(notFound);

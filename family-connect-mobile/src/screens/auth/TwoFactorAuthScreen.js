@@ -7,14 +7,15 @@ import { useTheme } from '../../hooks/useTheme';
 import { useAuth } from '../../contexts/AuthContext';
 import { OtpInput } from '../../components/auth/OtpInput';
 
-export default function TwoFactorAuthScreen({ navigation }) {
+export default function TwoFactorAuthScreen({ navigation, route }) {
   const { colors, layout } = useTheme();
   const { isTablet } = useResponsive();
   const { t } = useI18n();
   const toast = useToast();
-  
-  const { signIn } = useAuth();
-  
+
+  const { completeTwoFactorSignIn } = useAuth();
+  const tempToken = route?.params?.tempToken;
+
   const [code, setCode] = useState('');
   const [loading, setLoading] = useState(false);
 
@@ -23,17 +24,22 @@ export default function TwoFactorAuthScreen({ navigation }) {
       toast.error('Please enter the full 6-digit code');
       return;
     }
+    if (!tempToken) {
+      toast.error('Your sign-in session expired. Please log in again.');
+      navigation.goBack();
+      return;
+    }
     setLoading(true);
-    // Simulate API delay
-    setTimeout(async () => {
-      setLoading(false);
+    try {
+      // On success AuthContext gains a token and AppNavigator switches stacks
+      await completeTwoFactorSignIn(tempToken, code);
       toast.success('Verification successful');
-      // Mock login to bypass real auth and enter the dashboard
-      await signIn('malaravan@family.app', 'password123').catch(() => {
-        // even if it fails due to no backend, we can manually set the context 
-        // wait, we should just set user and token directly if signIn fails
-      });
-    }, 1000);
+    } catch (e) {
+      toast.error(e?.message || 'Invalid verification code');
+      setCode('');
+    } finally {
+      setLoading(false);
+    }
   }
 
   return (
@@ -58,7 +64,7 @@ export default function TwoFactorAuthScreen({ navigation }) {
                   Verify
                 </Text>
                 <Text style={[styles.sub, { color: colors.textSecondary, fontSize: 15 * layout.fontScale }]}>
-                  Enter the 6-digit code sent to your device
+                  Enter the 6-digit code from your authenticator app
                 </Text>
               </View>
 

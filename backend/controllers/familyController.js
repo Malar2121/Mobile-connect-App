@@ -62,7 +62,7 @@ const createFamily = async (req, res) => {
     );
 
     // Populate members for the response
-    await family.populate('members', 'fullName email avatar role');
+    await family.populate('members', 'fullName email avatar role memberType dateOfBirth');
     await family.populate('createdBy', 'fullName email');
 
     return res.status(201).json({
@@ -89,7 +89,7 @@ const getMyFamily = async (req, res) => {
     }
 
     const family = await Family.findById(req.user.familyId)
-      .populate('members', 'fullName email avatar role lastSeen createdAt')
+      .populate('members', 'fullName email avatar role memberType dateOfBirth lastSeen createdAt')
       .populate('createdBy', 'fullName email avatar');
 
     if (!family) {
@@ -166,7 +166,7 @@ const joinFamilyByCode = async (req, res) => {
       { upsert: true, new: true, setDefaultsOnInsert: true },
     );
 
-    await family.populate('members', 'fullName email avatar role');
+    await family.populate('members', 'fullName email avatar role memberType dateOfBirth');
     await family.populate('createdBy', 'fullName email');
 
     return res.status(200).json({
@@ -315,6 +315,68 @@ const updateMemberRole = async (req, res) => {
   }
 };
 
+// ══════════════════════════════════════════════════════════
+// PUT /api/family/members/:id/type
+// Admin sets a member's type (adult/child/elder) and optional
+// date of birth. Drives the client UI mode and the safety
+// tracking policy for children and elders.
+// ══════════════════════════════════════════════════════════
+const updateMemberType = async (req, res) => {
+  try {
+    if (!req.user.familyId) return res.status(403).json({ success: false, message: 'Not in a family' });
+    if (req.user.role !== 'admin') return res.status(403).json({ success: false, message: 'Admin only' });
+
+    const targetUserId = req.params.id;
+    const { memberType, dateOfBirth } = req.body;
+
+    if (!['adult', 'child', 'elder'].includes(memberType)) {
+      return res.status(400).json({ success: false, message: 'memberType must be adult, child or elder' });
+    }
+
+    const target = await User.findOne({ _id: targetUserId, familyId: req.user.familyId });
+    if (!target) {
+      return res.status(404).json({ success: false, message: 'Member not found in your family' });
+    }
+
+    target.memberType = memberType;
+    target.elderMode = memberType === 'elder';
+    if (dateOfBirth !== undefined) {
+      const parsed = dateOfBirth ? new Date(dateOfBirth) : null;
+      if (parsed && Number.isNaN(parsed.getTime())) {
+        return res.status(400).json({ success: false, message: 'Invalid dateOfBirth' });
+      }
+      target.dateOfBirth = parsed;
+    }
+    await target.save({ validateBeforeSave: false });
+
+    const io = req.app.get('io');
+    if (io) {
+      io.to(`family_${req.user.familyId}`).emit('member_type_changed', {
+        userId: target._id,
+        memberType,
+      });
+    }
+
+    return res.status(200).json({
+      success: true,
+      message: 'Member type updated',
+      data: {
+        user: {
+          _id: target._id,
+          fullName: target.fullName,
+          memberType: target.memberType,
+          dateOfBirth: target.dateOfBirth,
+        },
+      },
+    });
+  } catch (error) {
+    if (error.name === 'CastError') {
+      return res.status(400).json({ success: false, message: 'Invalid member id' });
+    }
+    return res.status(500).json({ success: false, message: error.message });
+  }
+};
+
 const addLifeEvent = async (req, res) => {
   try {
     if (!req.user.familyId) return res.status(403).json({ success: false, message: 'Not in a family' });
@@ -423,6 +485,7 @@ module.exports = {
   leaveFamily,
   updateFamily,
   updateMemberRole,
+  updateMemberType,
   addLifeEvent,
   createJoinRequest,
   getJoinRequests,

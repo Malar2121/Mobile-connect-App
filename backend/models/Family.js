@@ -29,11 +29,15 @@ const familySchema = new mongoose.Schema(
       type: String,
       default: '',
     },
+    // The invite code itself is the gate for joining (FR-06). Admin
+    // approval of joins is an opt-in extra — defaulting it to true turns
+    // every invite-code join into a pending request and breaks the
+    // documented instant-join flow.
     privacySettings: {
       type: Object,
       default: {
         discoverable: false,
-        requireApproval: true,
+        requireApproval: false,
       },
     },
   },

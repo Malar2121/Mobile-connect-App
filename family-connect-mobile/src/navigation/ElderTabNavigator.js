@@ -1,9 +1,7 @@
 import React, { useCallback } from 'react';
 import { createBottomTabNavigator } from '@react-navigation/bottom-tabs';
 import { createNativeStackNavigator } from '@react-navigation/native-stack';
-import FamilyDashboard from '../screens/dashboard/FamilyDashboard';
-import EventsNavigator from './EventsNavigator';
-import MemoriesNavigator from './MemoriesNavigator';
+import ElderDashboardScreen from '../screens/dashboard/ElderDashboardScreen';
 import ChatNavigator from './ChatNavigator';
 import MapNavigator from './MapNavigator';
 import ProfileScreen from '../screens/profile/ProfileScreen';
@@ -13,27 +11,19 @@ import NotificationsScreen from '../screens/notifications/NotificationsScreen';
 import LanguageScreen from '../screens/profile/LanguageScreen';
 import SecurityScreen from '../screens/profile/SecurityScreen';
 import FamilyNavigator from './FamilyNavigator';
-import FamilyTreeNavigator from './FamilyTreeNavigator';
 import { FloatingTabBar } from '../components/navigation/FloatingTabBar';
 import { useTabConfig } from '../hooks/useTabConfig';
 
 const Tab = createBottomTabNavigator();
 const ProfileStack = createNativeStackNavigator();
 
-function EventsNavigatorWrapper() {
-  return <EventsNavigator />;
-}
-
-function MemoriesNavigatorWrapper() {
-  return <MemoriesNavigator />;
-}
-
-function ProfileNavigator() {
+// Same profile stack as the standard app so elders can still manage
+// family, language, security and notifications.
+function ElderProfileNavigator() {
   return (
     <ProfileStack.Navigator screenOptions={{ headerShown: false }}>
       <ProfileStack.Screen name="ProfileMain" component={ProfileScreen} />
       <ProfileStack.Screen name="FamilyModule" component={FamilyNavigator} />
-      <ProfileStack.Screen name="FamilyTreeModule" component={FamilyTreeNavigator} />
       <ProfileStack.Screen name="CreateFamily" component={CreateFamilyScreen} />
       <ProfileStack.Screen name="JoinFamily" component={JoinFamilyScreen} />
       <ProfileStack.Screen name="Notifications" component={NotificationsScreen} />
@@ -43,7 +33,12 @@ function ProfileNavigator() {
   );
 }
 
-function TabNavigatorInner() {
+/**
+ * Elder mode navigation: only four large targets — Home, Chat, Map, Profile.
+ * Events/Memories/Family-tree remain reachable through the profile hub,
+ * keeping the tab bar uncluttered for elder users.
+ */
+function ElderTabNavigatorInner() {
   const tabConfig = useTabConfig();
   const tabLabels = Object.fromEntries(tabConfig.map((t) => [t.route, t.label]));
   const renderTabBar = useCallback((props) => <FloatingTabBar {...props} />, []);
@@ -64,16 +59,14 @@ function TabNavigatorInner() {
         },
       }}
     >
-      <Tab.Screen name="Dashboard" component={FamilyDashboard} options={{ title: tabLabels.Dashboard }} />
-      <Tab.Screen name="Events" component={EventsNavigatorWrapper} options={{ title: tabLabels.Events }} />
-      <Tab.Screen name="Memories" component={MemoriesNavigatorWrapper} options={{ title: tabLabels.Memories }} />
+      <Tab.Screen name="Dashboard" component={ElderDashboardScreen} options={{ title: tabLabels.Dashboard }} />
       <Tab.Screen name="Chat" component={ChatNavigator} options={{ title: tabLabels.Chat }} />
       <Tab.Screen name="Map" component={MapNavigator} options={{ title: tabLabels.Map }} />
-      <Tab.Screen name="Profile" component={ProfileNavigator} options={{ title: tabLabels.Profile }} />
+      <Tab.Screen name="Profile" component={ElderProfileNavigator} options={{ title: tabLabels.Profile }} />
     </Tab.Navigator>
   );
 }
 
-export default function TabNavigator() {
-  return <TabNavigatorInner />;
+export default function ElderTabNavigator() {
+  return <ElderTabNavigatorInner />;
 }

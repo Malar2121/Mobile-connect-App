@@ -18,7 +18,9 @@ import { getUploaderId } from '../../utils/memoryHelpers';
 import { formatNotificationTime, getNotificationIcon } from '../../utils/notificationHelpers';
 import { useTheme } from '../../hooks/useTheme';
 import { useResponsive, Button, useToast } from '../../design-system';
-import { updateMemberRole } from '../../services/familyService';
+import { updateMemberRole, updateMemberType } from '../../services/familyService';
+
+const MEMBER_TYPE_LABEL = { adult: 'Adult', child: 'Child', elder: 'Elder' };
 
 export default function MemberProfileScreen() {
   const navigation = useNavigation();
@@ -161,6 +163,35 @@ export default function MemberProfileScreen() {
                           toast.success(`Role updated to ${r}`);
                           refresh();
                         } catch(e) {
+                          toast.error(e.message);
+                        }
+                      }}
+                    />
+                  ))}
+                </View>
+              </Card>
+
+              <SectionTitle
+                title="Member type"
+                subtitle="Child accounts get the kids UI and tracking; elders get the simplified UI"
+                style={{ marginTop: 20 }}
+              />
+              <Card>
+                <Text style={{ color: colors.textSecondary, fontSize: 13 * layout.fontScale, marginBottom: 8 }}>
+                  Current type: {MEMBER_TYPE_LABEL[member.memberType] ?? 'Adult'}
+                </Text>
+                <View style={{ flexDirection: 'row', gap: 8, flexWrap: 'wrap' }}>
+                  {['adult', 'child', 'elder'].map((type) => (
+                    <Button
+                      key={type}
+                      title={MEMBER_TYPE_LABEL[type]}
+                      variant={(member.memberType ?? 'adult') === type ? 'primary' : 'secondary'}
+                      onPress={async () => {
+                        try {
+                          await updateMemberType(memberId, type);
+                          toast.success(`Member type updated to ${MEMBER_TYPE_LABEL[type]}`);
+                          refresh();
+                        } catch (e) {
                           toast.error(e.message);
                         }
                       }}

@@ -1,10 +1,10 @@
 {
   "summary": {
-    "generatedAt": "2026-07-09T04:30:20.710Z",
+    "generatedAt": "2026-07-16T10:11:23.877Z",
     "base": "http://localhost:5000",
     "total": 122,
-    "passed": 121,
-    "failed": 1
+    "passed": 122,
+    "failed": 0
   },
   "results": [
     {
@@ -368,8 +368,8 @@
       "id": "TC-052",
       "phase": "Events",
       "name": "Get event details malformed id (400)",
-      "status": "FAIL",
-      "detail": "status=500"
+      "status": "PASS",
+      "detail": "status=400"
     },
     {
       "id": "TC-053",

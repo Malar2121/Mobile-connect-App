@@ -25,6 +25,10 @@ const locationSchema = new mongoose.Schema(
     heading: { type: Number, default: null },
     speed: { type: Number, default: null },
     battery: { type: Number, default: null },
+    // Adults may pause sharing; children/elders cannot (enforced in controller)
+    isSharing: { type: Boolean, default: true },
+    // Safe zones the user is currently inside — used to detect enter/exit
+    currentZoneIds: [{ type: mongoose.Schema.Types.ObjectId, ref: 'SafeZone' }],
   },
   {
     timestamps: true,

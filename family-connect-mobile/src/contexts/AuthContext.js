@@ -63,8 +63,7 @@ export function AuthProvider({ children }) {
     };
   }, [clearSession]);
 
-  const signIn = useCallback(async (email, password) => {
-    const { accessToken, refreshToken, user: profile } = await authService.loginUser(email, password);
+  const establishSession = useCallback(async ({ accessToken, refreshToken, user: profile }) => {
     if (!accessToken) {
       throw new Error('Login response did not include an access token');
     }
@@ -77,8 +76,23 @@ export function AuthProvider({ children }) {
     setUser(profile);
   }, []);
 
-  const signUp = useCallback(async (name, email, password) => {
-    await authService.registerUser(name, email, password);
+  const signIn = useCallback(async (email, password) => {
+    const result = await authService.loginUser(email, password);
+    // 2FA-enabled accounts must complete a TOTP challenge before tokens issue
+    if (result.requires2FA) {
+      return { requires2FA: true, tempToken: result.tempToken };
+    }
+    await establishSession(result);
+    return { requires2FA: false };
+  }, [establishSession]);
+
+  const completeTwoFactorSignIn = useCallback(async (tempToken, code) => {
+    const result = await authService.loginWith2FA(tempToken, code);
+    await establishSession(result);
+  }, [establishSession]);
+
+  const signUp = useCallback(async (name, email, password, memberType = 'adult') => {
+    await authService.registerUser(name, email, password, memberType);
   }, []);
 
   const signOut = useCallback(async () => {
@@ -100,11 +114,12 @@ export function AuthProvider({ children }) {
       hydrated,
       isAuthenticated: Boolean(token),
       signIn,
+      completeTwoFactorSignIn,
       signUp,
       signOut,
       setUser,
     }),
-    [token, user, hydrated, signIn, signUp, signOut],
+    [token, user, hydrated, signIn, completeTwoFactorSignIn, signUp, signOut],
   );
 
   return <AuthContext.Provider value={value}>{children}</AuthContext.Provider>;

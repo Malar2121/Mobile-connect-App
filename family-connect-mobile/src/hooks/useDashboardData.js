@@ -139,73 +139,31 @@ export function useDashboardData() {
     [events, memories, locations],
   );
 
+  const noFamily = !familyLoading && !family;
+
   return {
-    family: { _id: 'mock_family', name: 'The Malaravans', inviteCode: 'MLRV2026' },
-    members: [
-      { _id: 'u1', fullName: 'Malaravan T.', role: 'admin', avatar: 'https://images.unsplash.com/photo-1506794778202-cad84cf45f1d?auto=format&fit=crop&w=200&q=80' },
-      { _id: 'u2', fullName: 'Amma', role: 'member', avatar: 'https://images.unsplash.com/photo-1544005313-94ddf0286df2?auto=format&fit=crop&w=200&q=80' },
-      { _id: 'u3', fullName: 'Appa', role: 'member', avatar: 'https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?auto=format&fit=crop&w=200&q=80' },
-      { _id: 'u4', fullName: 'Sister', role: 'member', avatar: 'https://images.unsplash.com/photo-1517841905240-472988babdf9?auto=format&fit=crop&w=200&q=80' }
-    ],
-    familyLoading: false,
-    sectionLoading: false,
-    refreshing: false,
-    sectionError: '',
-    refresh: async () => {},
-    user: { _id: 'u1', fullName: 'Malaravan T.', role: 'admin', avatar: 'https://images.unsplash.com/photo-1506794778202-cad84cf45f1d?auto=format&fit=crop&w=200&q=80' },
-    uiMode: 'standard',
-    noFamily: false,
-    familyName: 'The Malaravans',
-    inviteCode: 'MLRV2026',
-    memberCount: 4,
-    liveCount: 3,
-    upcomingEvents: [
-      { _id: 'e1', title: "Sister's Graduation", date: new Date(Date.now() + 86400000).toISOString(), location: 'University Hall' },
-      { _id: 'e2', title: "Family Dinner", date: new Date(Date.now() + 172800000).toISOString(), location: 'Home' }
-    ],
-    recentMemories: [
-      { _id: 'm1', mediaUrl: 'https://images.unsplash.com/photo-1511895426328-dc8714191300?ixlib=rb-4.0.3&auto=format&fit=crop&w=800&q=80', mediaType: 'image', caption: 'Summer trip!', uploader: { _id: 'u2', fullName: 'Amma', avatar: 'https://images.unsplash.com/photo-1544005313-94ddf0286df2?auto=format&fit=crop&w=200&q=80' }, createdAt: new Date(Date.now() - 86400000).toISOString() },
-      { _id: 'm2', mediaUrl: 'https://images.unsplash.com/photo-1530103862676-de8c9debad1d?auto=format&fit=crop&w=800&q=80', mediaType: 'image', caption: 'Birthday party', uploader: { _id: 'u3', fullName: 'Appa', avatar: 'https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?auto=format&fit=crop&w=200&q=80' }, createdAt: new Date(Date.now() - 172800000).toISOString() },
-      { _id: 'm3', mediaUrl: 'https://images.unsplash.com/photo-1600880292203-757bb62b4baf?ixlib=rb-4.0.3&auto=format&fit=crop&w=800&q=80', mediaType: 'image', caption: 'New Year', uploader: { _id: 'u1', fullName: 'Malaravan T.', avatar: 'https://images.unsplash.com/photo-1506794778202-cad84cf45f1d?auto=format&fit=crop&w=200&q=80' }, createdAt: new Date(Date.now() - 259200000).toISOString() }
-    ],
-    reminders: [
-      { _id: 'r1', title: 'RSVP for Family Dinner', type: 'rsvp', date: new Date(Date.now() + 172800000).toISOString() }
-    ],
-    activityFeed: [
-      { id: 'a1', title: 'Amma added 3 new photos', time: '2 hours ago', icon: 'images' },
-      { id: 'a2', title: 'Appa arrived at Safe Zone: Home', time: '4 hours ago', icon: 'location' }
-    ],
-    insights: {
-      mostActiveMember: 'Appa',
-      mostActiveAvatar: 'https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?auto=format&fit=crop&w=200&q=80',
-      eventsThisMonth: 4,
-      memoriesThisMonth: 12,
-      totalMemories: 142,
-      messagesThisWeek: 87,
-      participationPct: 95
-    },
-    weeklyActivity: [
-      { key: 'Sun', label: 'S', count: 12, pct: 0.3, isToday: false },
-      { key: 'Mon', label: 'M', count: 25, pct: 0.6, isToday: false },
-      { key: 'Tue', label: 'T', count: 42, pct: 1.0, isToday: false },
-      { key: 'Wed', label: 'W', count: 18, pct: 0.4, isToday: false },
-      { key: 'Thu', label: 'T', count: 30, pct: 0.7, isToday: false },
-      { key: 'Fri', label: 'F', count: 15, pct: 0.35, isToday: false },
-      { key: 'Sat', label: 'S', count: 35, pct: 0.8, isToday: true },
-    ],
-    todaySummary: {
-      todayEvents: 0,
-      newMemories: 3,
-      unreadMessages: 5,
-      unreadNotifications: 2,
-      activeMembers: 3,
-    },
-    stats: {
-      events: 5,
-      memories: 42,
-      photos: 40,
-      locations: 4,
-    },
-    unreadNotificationCount: 2,
+    family,
+    members: members ?? [],
+    familyLoading,
+    sectionLoading,
+    refreshing,
+    sectionError,
+    refresh,
+    user,
+    uiMode,
+    noFamily,
+    familyName: family?.name ?? '',
+    inviteCode: family?.inviteCode ?? '',
+    memberCount: members?.length ?? 0,
+    liveCount,
+    upcomingEvents,
+    recentMemories,
+    reminders,
+    activityFeed,
+    insights,
+    weeklyActivity,
+    todaySummary,
+    stats: family ? stats : EMPTY_STATS,
+    unreadNotificationCount: todaySummary.unreadNotifications,
   };
 }

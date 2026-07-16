@@ -3,6 +3,7 @@ import { KeyboardAvoidingView, Platform, Pressable, StyleSheet, Text, View } fro
 import { Ionicons } from '@expo/vector-icons';
 import {
   Button,
+  Chip,
   GradientBackground,
   Screen,
   TextField,
@@ -23,8 +24,15 @@ export default function RegisterScreen({ navigation }) {
   const [name, setName] = useState('');
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
+  const [memberType, setMemberType] = useState('adult');
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState('');
+
+  const MEMBER_TYPES = [
+    { id: 'adult', label: 'Adult', icon: 'person-outline' },
+    { id: 'child', label: 'Child', icon: 'shield-outline' },
+    { id: 'elder', label: 'Elder', icon: 'accessibility-outline' },
+  ];
 
   async function handleRegister() {
     setError('');
@@ -41,7 +49,7 @@ export default function RegisterScreen({ navigation }) {
     }
     setLoading(true);
     try {
-      await signUp(n, em, password);
+      await signUp(n, em, password, memberType);
       toast.success('Account created successfully');
       const go = await dialog.confirm({
         title: 'Account created',
@@ -108,6 +116,28 @@ export default function RegisterScreen({ navigation }) {
                 secureTextEntry
                 hint="At least 8 chars & 1 special character"
               />
+              <Text style={{ color: colors.textSecondary, fontSize: 13 * layout.fontScale, marginBottom: 8 }}>
+                I am a…
+              </Text>
+              <View style={styles.chipRow}>
+                {MEMBER_TYPES.map((type) => (
+                  <Chip
+                    key={type.id}
+                    label={type.label}
+                    selected={memberType === type.id}
+                    onPress={() => setMemberType(type.id)}
+                    accessibilityLabel={type.label}
+                    accessibilityState={{ selected: memberType === type.id }}
+                    icon={
+                      <Ionicons
+                        name={type.icon}
+                        size={14}
+                        color={memberType === type.id ? colors.textInverse : colors.primary}
+                      />
+                    }
+                  />
+                ))}
+              </View>
               <Button
                 title="Create account"
                 onPress={handleRegister}
@@ -152,6 +182,7 @@ const styles = StyleSheet.create({
   sub: { textAlign: 'center', lineHeight: 22, marginTop: 8 },
   errorBox: { borderRadius: 12, padding: 12, marginBottom: 16 },
   errorText: { fontSize: 14, lineHeight: 20 },
+  chipRow: { flexDirection: 'row', flexWrap: 'wrap', gap: 8, marginBottom: 16 },
   cta: { marginTop: 8 },
   linkWrap: { marginTop: 24, alignItems: 'center' },
 });

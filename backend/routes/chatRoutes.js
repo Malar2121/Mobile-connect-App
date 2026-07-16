@@ -20,6 +20,10 @@ const { chatUpload } = require('../config/cloudinary');
 
 router.use(protect);
 
+// Reject malformed ids with 400 before controllers run (BUG-L1 fix)
+const { objectIdParam } = require('../middleware/validateObjectId');
+router.param('id', objectIdParam);
+
 router.post('/send', chatUpload.single('media'), sendMessage);
 router.get('/messages', getFamilyMessages);
 router.get('/search', searchMessages);

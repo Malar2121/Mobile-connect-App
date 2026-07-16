@@ -5,6 +5,41 @@ let socket = null;
 let activeToken = null;
 const locationListeners = new Set();
 
+// Generic relay for additional real-time events (zone alerts, SOS,
+// safe-zone changes...) — mirrors the location relay pattern.
+const eventListeners = new Map(); // event name -> Set<callback>
+const attachedEvents = new Set();
+
+function relayEvent(event, payload) {
+  const set = eventListeners.get(event);
+  if (!set) return;
+  set.forEach((cb) => {
+    try {
+      cb(payload);
+    } catch {
+      /* listener error */
+    }
+  });
+}
+
+function attachEventRelay(sock, event) {
+  if (!sock || attachedEvents.has(event)) return;
+  attachedEvents.add(event);
+  sock.on(event, (payload) => relayEvent(event, payload));
+}
+
+/**
+ * Subscribe to any server-emitted socket event
+ * (e.g. 'zone_alert', 'sos_alert', 'safezones_changed').
+ * @returns {() => void} unsubscribe
+ */
+export function subscribeSocketEvent(event, callback) {
+  if (!eventListeners.has(event)) eventListeners.set(event, new Set());
+  eventListeners.get(event).add(callback);
+  if (socket) attachEventRelay(socket, event);
+  return () => eventListeners.get(event)?.delete(callback);
+}
+
 const SOCKET_OPTIONS = {
   transports: ['websocket'],
   autoConnect: false,
@@ -74,6 +109,7 @@ export function connectSocket(token) {
   }
 
   attachLocationRelay(socket);
+  eventListeners.forEach((_set, event) => attachEventRelay(socket, event));
 
   if (!socket.connected) {
     socket.connect();
@@ -89,6 +125,7 @@ export function disconnectSocket() {
   if (socket) {
     socket.removeAllListeners();
     socket._locationRelayAttached = false;
+    attachedEvents.clear();
     socket.disconnect();
     socket = null;
     activeToken = null;

@@ -17,6 +17,7 @@ export function normalizeLocation(raw) {
     heading: raw.heading != null ? Number(raw.heading) : null,
     speed: raw.speed != null ? Number(raw.speed) : null,
     battery: raw.battery != null ? Number(raw.battery) : null,
+    memberType: (user && typeof user === 'object' ? user.memberType : null) ?? raw.memberType ?? null,
     updatedAt: raw.updatedAt ?? raw.lastUpdated ?? raw.createdAt ?? null,
   };
 }

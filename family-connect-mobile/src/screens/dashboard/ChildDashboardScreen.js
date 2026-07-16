@@ -5,6 +5,7 @@ import { Ionicons } from '@expo/vector-icons';
 import { useNavigation } from '@react-navigation/native';
 import { useTheme } from '../../hooks/useTheme';
 import { useAuth } from '../../contexts/AuthContext';
+import { useDashboardData } from '../../hooks/useDashboardData';
 import { GlassCard } from '../../design-system';
 
 export default function ChildDashboardScreen() {
@@ -12,6 +13,7 @@ export default function ChildDashboardScreen() {
   const insets = useSafeAreaInsets();
   const { user } = useAuth();
   const navigation = useNavigation();
+  const { liveCount, members } = useDashboardData();
   const [showModeSwitch, setShowModeSwitch] = useState(false);
 
   const MODES = [
@@ -70,9 +72,11 @@ export default function ChildDashboardScreen() {
 
         {/* Emergency/SOS Button */}
         <View style={{ paddingHorizontal: spacing.lg, marginTop: spacing.xl }}>
-          <Pressable 
+          <Pressable
             style={[styles.sosButton, shadows.md, { backgroundColor: '#f87171', borderRadius: radii['3xl'], padding: spacing.xl }]}
-            onPress={() => alert('SOS Alert Sent to Parents!')}
+            onPress={() => navigation.navigate('Map', { screen: 'SOSScreen' })}
+            accessibilityRole="button"
+            accessibilityLabel="I need help — open SOS"
           >
             <Ionicons name="alert-circle" size={40} color="#fff" />
             <Text style={styles.sosText}>I Need Help</Text>
@@ -83,13 +87,15 @@ export default function ChildDashboardScreen() {
         <View style={{ paddingHorizontal: spacing.lg, marginTop: spacing.xl }}>
           <GlassCard style={{ padding: spacing.lg, borderRadius: radii['2xl'] }}>
             <View style={{ flexDirection: 'row', alignItems: 'center' }}>
-              <View style={[styles.statusDot, { backgroundColor: '#4ade80' }]} />
+              <View style={[styles.statusDot, { backgroundColor: liveCount > 0 ? '#4ade80' : colors.border }]} />
               <Text style={[typography.h3, { color: colors.text, marginLeft: spacing.sm }]}>
-                Mom & Dad are Home
+                {liveCount > 0
+                  ? `${liveCount} family ${liveCount === 1 ? 'member is' : 'members are'} sharing location`
+                  : 'No one is sharing location right now'}
               </Text>
             </View>
             <Text style={[typography.caption, { color: colors.textSecondary, marginTop: spacing.xs, marginLeft: spacing.xl }]}>
-              Last updated 5 mins ago
+              {members?.length ? `${members.length} people in your family` : 'Ask a parent to add you to a family'}
             </Text>
           </GlassCard>
         </View>

@@ -5,9 +5,13 @@ import * as Location from 'expo-location';
 import { Ionicons } from '@expo/vector-icons';
 import { PageHeader, Screen, Avatar, Card } from '../../design-system';
 import { useMapModule } from '../../contexts/MapModuleContext';
-import { memberLocationSummary } from '../../utils/mapModuleHelpers';
+import { LocationTimeline } from '../../components/map';
+import { memberLocationSummary, haversineKm, formatDistance } from '../../utils/mapModuleHelpers';
+import { getLocationHistory } from '../../services/locationService';
 import { useTheme } from '../../hooks/useTheme';
 import { useResponsive } from '../../design-system';
+
+const TYPE_LABEL = { child: '🧒 Child — tracked', elder: '👴 Elder — tracked', adult: null };
 
 export default function MemberLocationDetailsScreen() {
   const navigation = useNavigation();
@@ -17,9 +21,37 @@ export default function MemberLocationDetailsScreen() {
   const { colors, layout, radii } = useTheme();
   const { locationMap, myLocation, members } = useMapModule();
   const [address, setAddress] = useState('');
+  const [history, setHistory] = useState(null);
 
   const location = locationMap[userId];
   const member = members?.find((m) => String(m._id) === userId);
+  const memberType = location?.memberType ?? member?.memberType ?? 'adult';
+
+  // Server-persisted 24h trail (guardians see children/elders, self sees self)
+  useEffect(() => {
+    if (!userId) return;
+    getLocationHistory(userId, 24)
+      .then((data) => setHistory(data))
+      .catch(() => setHistory(null));
+  }, [userId]);
+
+  const trailItems = useMemo(() => {
+    const points = history?.points ?? [];
+    if (!points.length) return [];
+    return points
+      .slice(-12)
+      .reverse()
+      .map((p, i, arr) => {
+        const prev = arr[i + 1];
+        const moved = prev ? haversineKm(prev.latitude, prev.longitude, p.latitude, p.longitude) : null;
+        return {
+          id: String(p._id ?? p.recordedAt),
+          title: `${p.latitude.toFixed(4)}, ${p.longitude.toFixed(4)}`,
+          subtitle: moved != null ? `Moved ${formatDistance(moved)}` : 'Trail start',
+          time: new Date(p.recordedAt).toLocaleTimeString([], { hour: 'numeric', minute: '2-digit' }),
+        };
+      });
+  }, [history]);
   const myLat = myLocation?.latitude;
   const myLng = myLocation?.longitude;
 
@@ -69,6 +101,11 @@ export default function MemberLocationDetailsScreen() {
               {summary?.online ? 'Online' : 'Offline'} · {summary?.lastActive}
             </Text>
           </View>
+          {TYPE_LABEL[memberType] ? (
+            <View style={[styles.badge, { backgroundColor: colors.primaryMuted ?? colors.border, borderRadius: radii.full, marginTop: 8 }]}>
+              <Text style={{ color: colors.primary, fontFamily: 'Inter_600SemiBold', fontSize: 12 }}>{TYPE_LABEL[memberType]}</Text>
+            </View>
+          ) : null}
         </Card>
 
         <InfoRow icon="location" label="Address" value={address || 'Resolving address…'} colors={colors} />
@@ -83,6 +120,12 @@ export default function MemberLocationDetailsScreen() {
           <Ionicons name="navigate" size={20} color="#fff" />
           <Text style={{ color: '#fff', fontFamily: 'Inter_600SemiBold', marginLeft: 8 }}>Open in Maps</Text>
         </Pressable>
+
+        {trailItems.length > 0 ? (
+          <View style={{ marginTop: 24 }}>
+            <LocationTimeline items={trailItems} title="Last 24 hours" subtitle={`${history?.points?.length ?? 0} recorded points`} />
+          </View>
+        ) : null}
       </ScrollView>
     </Screen>
   );

@@ -8,6 +8,7 @@ import { NotificationRegistrar } from '../components/NotificationRegistrar';
 import AuthNavigator from './AuthNavigator';
 import TabNavigator from './TabNavigator';
 import ChildTabNavigator from './ChildTabNavigator';
+import ElderTabNavigator from './ElderTabNavigator';
 import { navigationRef } from './navigationRef';
 
 export default function AppNavigator() {
@@ -25,7 +26,13 @@ export default function AppNavigator() {
       <OfflineBanner />
       {isAuthenticated ? (
         <NotificationRegistrar>
-          {uiMode === 'minor' ? <ChildTabNavigator /> : <TabNavigator />}
+          {uiMode === 'minor' ? (
+            <ChildTabNavigator />
+          ) : uiMode === 'elder' ? (
+            <ElderTabNavigator />
+          ) : (
+            <TabNavigator />
+          )}
         </NotificationRegistrar>
       ) : (
         <AuthNavigator />

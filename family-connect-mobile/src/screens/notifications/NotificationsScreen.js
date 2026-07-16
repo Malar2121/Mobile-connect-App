@@ -12,6 +12,7 @@ import {
 } from '../../design-system';
 import { NotificationItem } from '../../components/NotificationItem';
 import { useTheme } from '../../hooks/useTheme';
+import { useI18n } from '../../i18n';
 import { getNotifications, markNotificationRead } from '../../services/notificationService';
 import {
   countUnread,
@@ -21,6 +22,7 @@ import {
 
 export default function NotificationsScreen({ navigation }) {
   const { colors, layout, uiMode } = useTheme();
+  const { t } = useI18n();
   const [notifications, setNotifications] = useState([]);
   const [loading, setLoading] = useState(true);
   const [refreshing, setRefreshing] = useState(false);
@@ -170,7 +172,7 @@ export default function NotificationsScreen({ navigation }) {
   if (loading && !refreshing) {
     return (
       <Screen edges={['top']}>
-        <PageHeader title="Notifications" onBack={() => navigation.goBack()} />
+        <PageHeader title={t('notifications.title')} onBack={() => navigation.goBack()} />
         <Skeleton variant="list-row" count={5} />
       </Screen>
     );
@@ -180,7 +182,7 @@ export default function NotificationsScreen({ navigation }) {
     <Screen edges={['top']} noPadding>
       <View style={{ paddingHorizontal: layout.contentPadding }}>
         <PageHeader
-          title="Notifications"
+          title={t('notifications.title')}
           subtitle={unreadCount > 0 ? `${unreadCount} unread` : 'All caught up'}
           onBack={() => navigation.goBack()}
           large
@@ -209,7 +211,7 @@ export default function NotificationsScreen({ navigation }) {
         ListEmptyComponent={
           <EmptyState
             icon="notifications-off-outline"
-            title="No notifications"
+            title={t('notifications.empty')}
             description="When your family shares events, memories, or messages, you'll see them here."
             compact
           />

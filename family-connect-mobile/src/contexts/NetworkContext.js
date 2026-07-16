@@ -2,6 +2,7 @@ import React, { createContext, useCallback, useContext, useEffect, useMemo, useS
 import { AppState } from 'react-native';
 import { API_ORIGIN, bindNetworkStatusCallback } from '../services/api';
 import { flushOfflineQueue } from '../utils/offlineQueue';
+import { registerOfflineProcessors } from '../utils/offlineProcessors';
 
 const NetworkContext = createContext({
   isOnline: true,
@@ -32,6 +33,7 @@ export function NetworkProvider({ children }) {
   }, []);
 
   useEffect(() => {
+    const unregister = registerOfflineProcessors();
     bindNetworkStatusCallback(setIsOnline);
     refreshConnectivity();
     const interval = setInterval(refreshConnectivity, 60_000);
@@ -39,6 +41,7 @@ export function NetworkProvider({ children }) {
       if (state === 'active') refreshConnectivity();
     });
     return () => {
+      unregister();
       bindNetworkStatusCallback(null);
       clearInterval(interval);
       sub.remove();

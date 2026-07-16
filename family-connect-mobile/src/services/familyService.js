@@ -123,6 +123,23 @@ export async function updateMemberRole(userId, role) {
   }
 }
 
+/**
+ * PUT /api/family/members/:id/type — admin only.
+ * @param {'adult'|'child'|'elder'} memberType
+ * @param {string} [dateOfBirth] ISO date string
+ */
+export async function updateMemberType(userId, memberType, dateOfBirth) {
+  try {
+    const body = { memberType };
+    if (dateOfBirth !== undefined) body.dateOfBirth = dateOfBirth;
+    const response = await api.put(`/family/members/${userId}/type`, body);
+    if (!response.data.success) throw new Error(response.data.message);
+    return response.data.data;
+  } catch (e) {
+    throw normalizeAxiosError(e);
+  }
+}
+
 export async function addLifeEvent(userId, lifeEvent) {
   try {
     const response = await api.post(`/family/members/${userId}/life-events`, lifeEvent);
