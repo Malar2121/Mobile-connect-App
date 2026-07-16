@@ -4,10 +4,12 @@ import Animated, { FadeInDown } from 'react-native-reanimated';
 import { Button, EmptyState } from '../../design-system';
 import { useTheme } from '../../hooks/useTheme';
 import { useResponsive } from '../../design-system';
+import { useI18n } from '../../i18n';
 
 function EmptyDashboardComponent({ onCreateFamily, onJoinFamily }) {
   const { layout } = useTheme();
   const { horizontalPadding } = useResponsive();
+  const { t } = useI18n();
 
   return (
     <Animated.View
@@ -16,12 +18,12 @@ function EmptyDashboardComponent({ onCreateFamily, onJoinFamily }) {
     >
       <EmptyState
         icon="home-outline"
-        title="Welcome to your family home"
-        description="Create or join a family space to unlock events, memories, chat, live map, and a shared activity feed — all in one place."
+        title={t('dashboard.emptyTitle')}
+        description={t('dashboard.emptyDescription')}
       />
       <View style={styles.actions}>
-        <Button title="Create family" onPress={onCreateFamily} size="lg" />
-        <Button title="Join with invite code" variant="secondary" onPress={onJoinFamily} style={{ marginTop: 12 }} />
+        <Button title={t('profile.createFamily')} onPress={onCreateFamily} size="lg" />
+        <Button title={t('dashboard.joinWithCode')} variant="secondary" onPress={onJoinFamily} style={{ marginTop: 12 }} />
       </View>
     </Animated.View>
   );

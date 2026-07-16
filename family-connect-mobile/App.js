@@ -8,8 +8,9 @@ import {
   Inter_500Medium,
   Inter_600SemiBold,
   Inter_700Bold,
+  Inter_900Black,
 } from '@expo-google-fonts/inter';
-import { AuthProvider } from './src/contexts/AuthContext';
+import { AuthProvider, useAuth } from './src/contexts/AuthContext';
 import { FamilyProvider } from './src/contexts/FamilyContext';
 import { NetworkProvider } from './src/contexts/NetworkContext';
 import { UIModeProvider, useUIMode } from './src/contexts/UIModeContext';
@@ -22,12 +23,27 @@ function ThemedStatusBar() {
   return <StatusBar style={resolvedScheme === 'dark' ? 'light' : 'dark'} />;
 }
 
+// Keeps the UI mode in sync with the account's server-side member type:
+// child accounts are locked into minor mode, elders default to elder mode.
+function MemberTypeSync() {
+  const { user } = useAuth();
+  const { applyMemberType, ready } = useUIMode();
+
+  React.useEffect(() => {
+    if (!ready || !user) return;
+    applyMemberType(user.memberType ?? 'adult');
+  }, [ready, user, applyMemberType]);
+
+  return null;
+}
+
 function AppRoot() {
   const [fontsLoaded, fontError] = useFonts({
     Inter_400Regular,
     Inter_500Medium,
     Inter_600SemiBold,
     Inter_700Bold,
+    Inter_900Black,
   });
 
   if (!fontsLoaded && !fontError) {
@@ -41,6 +57,7 @@ function AppRoot() {
   return (
     <AuthProvider>
       <FamilyProvider>
+        <MemberTypeSync />
         <ThemedStatusBar />
         <AppNavigator />
       </FamilyProvider>

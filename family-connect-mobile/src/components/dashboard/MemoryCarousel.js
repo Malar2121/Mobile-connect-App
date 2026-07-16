@@ -10,6 +10,7 @@ import { useTheme } from '../../hooks/useTheme';
 import { useResponsive } from '../../design-system';
 import { getUploader, getLikeCount } from '../../utils/dashboardHelpers';
 import { formatMemoryDate } from '../../utils/memoryHelpers';
+import { useI18n } from '../../i18n';
 
 const STORY_WIDTH = Dimensions.get('window').width * 0.72;
 
@@ -66,6 +67,7 @@ function StoryCard({ memory, onPress, colors, layout, radii, isDark }) {
 function MemoryCarouselComponent({ memories, onMemoryPress, onViewAll }) {
   const { colors, layout, radii, isDark } = useTheme();
   const { horizontalPadding } = useResponsive();
+  const { t } = useI18n();
 
   return (
     <Animated.View
@@ -74,9 +76,9 @@ function MemoryCarouselComponent({ memories, onMemoryPress, onViewAll }) {
     >
       <View style={{ paddingHorizontal: horizontalPadding }}>
         <SectionTitle
-          title="Recent memories"
-          subtitle="Story-style family moments"
-          actionLabel={memories.length ? 'View all' : undefined}
+          title={t('dashboard.recentMemories')}
+          subtitle={t('dashboard.recentMemoriesSubtitle')}
+          actionLabel={memories.length ? t('common.viewAll') : undefined}
           onAction={memories.length ? onViewAll : undefined}
         />
       </View>

@@ -17,12 +17,14 @@ import {
 import { deriveReminders } from '../../utils/dashboardHelpers';
 import { useTheme } from '../../hooks/useTheme';
 import { useResponsive } from '../../design-system';
+import { useI18n } from '../../i18n';
 
 export default function EventsHomeScreen() {
   const navigation = useNavigation();
   const insets = useSafeAreaInsets();
   const { colors, layout } = useTheme();
   const { horizontalPadding } = useResponsive();
+  const { t } = useI18n();
   const {
     loading,
     refreshing,
@@ -51,7 +53,7 @@ export default function EventsHomeScreen() {
   if (loading && !refreshing) {
     return (
       <Screen edges={['top']}>
-        <PageHeader title="Events" subtitle="Your family calendar" large />
+        <PageHeader title={t('events.title')} subtitle={t('events.subtitle')} large />
         <EventSkeleton />
       </Screen>
     );
@@ -60,7 +62,7 @@ export default function EventsHomeScreen() {
   return (
     <Screen edges={['top']} noPadding>
       <View style={{ paddingHorizontal: horizontalPadding }}>
-        <PageHeader title="Events" subtitle="Smart family gatherings" large />
+        <PageHeader title={t('events.title')} subtitle={t('events.subtitle2')} large />
         {error ? <Text style={{ color: colors.error, marginBottom: 8 }}>{error}</Text> : null}
         {insights.nextCountdown ? (
           <CountdownCard label="Next event" value={insights.nextCountdown} style={{ marginBottom: 12 }} />
@@ -75,7 +77,7 @@ export default function EventsHomeScreen() {
         <EventsQuickActions onNavigate={navigate} isMinor={isMinor} />
         <EventInsightsCard insights={insights} />
 
-        <SectionTitle title="Today's events" subtitle={`${todayEvents.length} scheduled`} />
+        <SectionTitle title={t('events.todayEvents')} subtitle={t('events.scheduled', { count: todayEvents.length })} />
         {todayEvents.length === 0 ? (
           <Text style={{ color: colors.textSecondary, marginBottom: 16 }}>Nothing on the calendar today.</Text>
         ) : (
@@ -84,7 +86,7 @@ export default function EventsHomeScreen() {
           ))
         )}
 
-        <SectionTitle title="Reminders" subtitle="Upcoming family moments" style={{ marginTop: 8 }} />
+        <SectionTitle title={t('events.reminders')} subtitle={t('events.upcomingMoments')} style={{ marginTop: 8 }} />
         {reminders.slice(0, 3).map((r) => (
           <ReminderCard
             key={r.id}
@@ -93,7 +95,7 @@ export default function EventsHomeScreen() {
           />
         ))}
 
-        <SectionTitle title="Pending RSVPs" subtitle={`${pendingRsvpEvents.length} need your reply`} style={{ marginTop: 8 }} />
+        <SectionTitle title={t('events.pendingRsvps')} subtitle={t('events.needReply', { count: pendingRsvpEvents.length })} style={{ marginTop: 8 }} />
         {pendingRsvpEvents.length === 0 ? (
           <Text style={{ color: colors.textSecondary, marginBottom: 16 }}>You're all caught up.</Text>
         ) : (
@@ -102,7 +104,7 @@ export default function EventsHomeScreen() {
           ))
         )}
 
-        <SectionTitle title="Upcoming" subtitle="Next on your calendar" style={{ marginTop: 8 }} />
+        <SectionTitle title={t('events.upcoming')} subtitle={t('events.nextOnCalendar')} style={{ marginTop: 8 }} />
         {upcomingEvents.length === 0 ? (
           <EmptyEvents onCreate={() => navigate('CreateEvent')} isMinor={isMinor} />
         ) : (
@@ -117,7 +119,7 @@ export default function EventsHomeScreen() {
 
         {pastEvents.length > 0 ? (
           <>
-            <SectionTitle title="Recently completed" style={{ marginTop: 8 }} />
+            <SectionTitle title={t('events.recentlyCompleted')} style={{ marginTop: 8 }} />
             {pastEvents.slice(0, 2).map((e) => (
               <EventCard key={e._id} event={e} userId={userId} onPress={() => navigate('EventDetails', { id: String(e._id) })} compact />
             ))}

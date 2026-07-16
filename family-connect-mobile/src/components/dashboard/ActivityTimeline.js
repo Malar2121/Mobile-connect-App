@@ -5,6 +5,7 @@ import Animated, { FadeInDown } from 'react-native-reanimated';
 import { Avatar, SectionTitle } from '../../design-system';
 import { useTheme } from '../../hooks/useTheme';
 import { useResponsive } from '../../design-system';
+import { useI18n } from '../../i18n';
 
 function TimelineItem({ item, isLast, colors, layout, radii }) {
   return (
@@ -62,13 +63,14 @@ function TimelineItem({ item, isLast, colors, layout, radii }) {
 function ActivityTimelineComponent({ items }) {
   const { colors, layout, radii } = useTheme();
   const { horizontalPadding } = useResponsive();
+  const { t } = useI18n();
 
   return (
     <Animated.View
       entering={FadeInDown.delay(180).duration(520).springify()}
       style={{ paddingHorizontal: horizontalPadding, marginBottom: layout.sectionGap }}
     >
-      <SectionTitle title="Family activity" subtitle="Live timeline from your family" />
+      <SectionTitle title={t('dashboard.familyActivity')} subtitle={t('dashboard.familyActivitySubtitle')} />
 
       {items.length === 0 ? (
         <View

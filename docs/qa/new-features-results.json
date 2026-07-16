@@ -1,0 +1,248 @@
+{
+  "ranAt": "2026-07-16T10:07:31.933Z",
+  "base": "http://localhost:5000",
+  "pass": 40,
+  "fail": 0,
+  "results": [
+    {
+      "id": "NF-01",
+      "name": "Register accepts memberType child/elder",
+      "ok": true,
+      "detail": ""
+    },
+    {
+      "id": "NF-02",
+      "name": "Self-registration cannot claim admin role",
+      "ok": true,
+      "detail": "role=member"
+    },
+    {
+      "id": "NF-03",
+      "name": "Family created",
+      "ok": true,
+      "detail": ""
+    },
+    {
+      "id": "NF-04a",
+      "name": "child joined family",
+      "ok": true,
+      "detail": "status=200"
+    },
+    {
+      "id": "NF-04b",
+      "name": "elder joined family",
+      "ok": true,
+      "detail": "status=200"
+    },
+    {
+      "id": "NF-05",
+      "name": "Family members expose memberType",
+      "ok": true,
+      "detail": ""
+    },
+    {
+      "id": "NF-06",
+      "name": "Admin can set member type + dateOfBirth",
+      "ok": true,
+      "detail": ""
+    },
+    {
+      "id": "NF-07",
+      "name": "Non-admin cannot set member type",
+      "ok": true,
+      "detail": ""
+    },
+    {
+      "id": "NF-08",
+      "name": "Child cannot create safe zone",
+      "ok": true,
+      "detail": ""
+    },
+    {
+      "id": "NF-09",
+      "name": "Parent/admin creates safe zone",
+      "ok": true,
+      "detail": ""
+    },
+    {
+      "id": "NF-10",
+      "name": "Safe zone rejects invalid coordinates",
+      "ok": true,
+      "detail": ""
+    },
+    {
+      "id": "NF-11",
+      "name": "Members can list safe zones",
+      "ok": true,
+      "detail": ""
+    },
+    {
+      "id": "NF-12",
+      "name": "Outsider (no family) cannot list zones",
+      "ok": true,
+      "detail": ""
+    },
+    {
+      "id": "NF-13",
+      "name": "Location update works",
+      "ok": true,
+      "detail": ""
+    },
+    {
+      "id": "NF-14",
+      "name": "Entering zone records zone membership",
+      "ok": true,
+      "detail": ""
+    },
+    {
+      "id": "NF-15",
+      "name": "Geofence enter notification created",
+      "ok": true,
+      "detail": ""
+    },
+    {
+      "id": "NF-16",
+      "name": "Exiting zone clears zone membership",
+      "ok": true,
+      "detail": ""
+    },
+    {
+      "id": "NF-17",
+      "name": "Location update rejects invalid coordinates",
+      "ok": true,
+      "detail": ""
+    },
+    {
+      "id": "NF-18",
+      "name": "Self can read own history (points recorded)",
+      "ok": true,
+      "detail": "points=3"
+    },
+    {
+      "id": "NF-19",
+      "name": "Parent can read child history",
+      "ok": true,
+      "detail": ""
+    },
+    {
+      "id": "NF-20",
+      "name": "Outsider cannot read history",
+      "ok": true,
+      "detail": ""
+    },
+    {
+      "id": "NF-21",
+      "name": "History rejects malformed id with 400",
+      "ok": true,
+      "detail": ""
+    },
+    {
+      "id": "NF-22",
+      "name": "Child cannot pause sharing (safety policy)",
+      "ok": true,
+      "detail": ""
+    },
+    {
+      "id": "NF-23",
+      "name": "Elder cannot pause sharing (safety policy)",
+      "ok": true,
+      "detail": ""
+    },
+    {
+      "id": "NF-24",
+      "name": "Adult can pause sharing",
+      "ok": true,
+      "detail": ""
+    },
+    {
+      "id": "NF-25",
+      "name": "Paused member hidden from family locations",
+      "ok": true,
+      "detail": ""
+    },
+    {
+      "id": "NF-26",
+      "name": "Family locations expose memberType",
+      "ok": true,
+      "detail": ""
+    },
+    {
+      "id": "NF-27",
+      "name": "Malformed event id returns 400 (BUG-L1)",
+      "ok": true,
+      "detail": "status=400"
+    },
+    {
+      "id": "NF-28",
+      "name": "Malformed legacy id returns 400 (BUG-L1)",
+      "ok": true,
+      "detail": "status=400"
+    },
+    {
+      "id": "NF-29",
+      "name": "Geofence webhook requires auth",
+      "ok": true,
+      "detail": ""
+    },
+    {
+      "id": "NF-30",
+      "name": "2FA setup returns secret + otpauth URL",
+      "ok": true,
+      "detail": ""
+    },
+    {
+      "id": "NF-31",
+      "name": "2FA verify rejects wrong code",
+      "ok": true,
+      "detail": ""
+    },
+    {
+      "id": "NF-32",
+      "name": "2FA verify accepts valid code",
+      "ok": true,
+      "detail": ""
+    },
+    {
+      "id": "NF-33",
+      "name": "Login with 2FA returns tempToken, no access token",
+      "ok": true,
+      "detail": ""
+    },
+    {
+      "id": "NF-34",
+      "name": "2FA login rejects wrong code",
+      "ok": true,
+      "detail": ""
+    },
+    {
+      "id": "NF-35",
+      "name": "2FA login issues tokens with valid code",
+      "ok": true,
+      "detail": ""
+    },
+    {
+      "id": "NF-36",
+      "name": "Access token rejected as 2FA session token",
+      "ok": true,
+      "detail": ""
+    },
+    {
+      "id": "NF-37",
+      "name": "2FA disable works with valid code",
+      "ok": true,
+      "detail": ""
+    },
+    {
+      "id": "NF-38",
+      "name": "Login returns tokens again after 2FA disable",
+      "ok": true,
+      "detail": ""
+    },
+    {
+      "id": "NF-39",
+      "name": "Safe zone deleted",
+      "ok": true,
+      "detail": ""
+    }
+  ]
+}

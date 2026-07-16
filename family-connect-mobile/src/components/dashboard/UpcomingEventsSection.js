@@ -13,6 +13,7 @@ import {
   getEventRsvpProgress,
 } from '../../utils/dashboardHelpers';
 import { formatEventDateShort } from '../../utils/eventFormat';
+import { useI18n } from '../../i18n';
 
 function EventCard({ event, index, onPress, colors, layout, radii, gradients, isDark }) {
   const category = inferEventCategory(event.title);
@@ -100,14 +101,15 @@ function EventCard({ event, index, onPress, colors, layout, radii, gradients, is
 function UpcomingEventsSectionComponent({ events, onEventPress, onViewAll, onAddEvent }) {
   const { colors, layout, radii, gradients, isDark } = useTheme();
   const { horizontalPadding } = useResponsive();
+  const { t } = useI18n();
 
   return (
     <View style={{ marginBottom: layout.sectionGap }}>
       <View style={{ paddingHorizontal: horizontalPadding }}>
         <SectionTitle
-          title="Upcoming events"
-          subtitle={events.length ? `${events.length} on the calendar` : 'Nothing scheduled'}
-          actionLabel={events.length ? 'View all' : undefined}
+          title={t('dashboard.upcomingEvents')}
+          subtitle={events.length ? t('dashboard.onCalendar', { count: events.length }) : t('dashboard.nothingScheduled')}
+          actionLabel={events.length ? t('common.viewAll') : undefined}
           onAction={events.length ? onViewAll : undefined}
         />
       </View>
@@ -127,10 +129,10 @@ function UpcomingEventsSectionComponent({ events, onEventPress, onViewAll, onAdd
             >
               <Ionicons name="calendar-outline" size={32} color={colors.primary} />
               <Text style={{ color: colors.text, fontFamily: 'Inter_600SemiBold', marginTop: 10 }}>
-                Plan your next gathering
+                {t('dashboard.planGathering')}
               </Text>
               <Text style={{ color: colors.textSecondary, fontSize: 13, marginTop: 4 }}>
-                Tap to create a family event
+                {t('dashboard.tapCreateEvent')}
               </Text>
             </View>
           </DashboardPressable>

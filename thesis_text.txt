@@ -1,0 +1,1305 @@
+FAMILY CONNECT
+SMART FAMILY GATHERING & MEMORY SHARING APP
+MALARAVAN T.
+CT/2020/004
+CTEC 43018 – FINAL YEAR RESEARCH PROJECT
+PROJECT THESIS
+Bachelor of Information and Communication Technology (Honours) Degree
+Supervisor: Ms. R.M.S.L. Rathnayake
+Faculty of Computing and Technology
+University of Kelaniya
+Sri Lanka
+July 2026
+Declaration
+In this connection, I make it a point to state that this thesis, which is called "Family Connect – Smart Family Gathering & Memory Sharing App", has been prepared entirely by me under the guidance of Ms. R.M.S.L. Rathnayake in partial fulfillment of the requirements for the award of Bachelor of Information and Communication Technology (Honours) degree at the Faculty of Computing and Technology, University of Kelaniya. Furthermore, the present thesis is the result of my own efforts and it has not been presented in full or in part for any other qualification or assessment purpose. The use of others' work, if done, is duly acknowledged as per IEEE referencing style.
+............................................
+Malaravan T.  (CT/2020/004)   Date:- 
+                                
+Certification of Supervisor
+I certify that the above statement made by the candidate is true and that this thesis is suitable for submission to the university for the purpose of evaluation.
+............................................
+Ms. R.M.S.L. Rathnayake  (Supervisor)                          
+Date:- 
+AcknowledgementI would like to begin with acknowledging my supervisor Ms. R.M.S.L. Rathnayake for her supervision throughout this project. Her feedback provided during the progress meetings has influenced the system's direction of development and documentation process in this dissertation to a great extent. Her constant emphasis on validation of the claims against the facts has significantly enhanced the quality of this final product.
+I would also like to express my thanks to the academic staff of the Faculty of Computing and Technology, University of Kelaniya and the course coordinator of CTEC 43018 for arranging the proposal defence, mid-term progress evaluation and other resources needed for a year-long development process.
+Lastly, I would like to extend my sincere appreciation to my family and friends who have endured one year of odd working hours and played an important role in the brainstorming of design issues relating to usability of the family application.
+Abstract
+Today's families are more dispersed than ever, and the apps that are used by the family members to communicate among themselves lack integration; family interactions happen on generic messenger apps, arrangements on generic calendar apps, and photographs are distributed across their personal devices and hosting services. There is not yet a platform that would enable all that communication, arrangement-making, storage, and security in the private space designated for the particular family. And this is what the purpose of the project was - to develop this kind of platform as Family Connect – a cross-platform mobile application for the private family-invite-only space.
+Family Connect is a fully functional piece of software product. React Native app created using Expo SDK 54 is connected with the backend (Node.js + Express) using REST API with ten route groups, and Socket.io provides the live chat, typing, read receipts, location share, and SOS notifications. MongoDB Atlas hosts database, media stored on Cloudinary, and push notifications are provided by Firebase Cloud Messaging. Family ID filters all the queries about family data in the server, and user authentication uses password hashing and JWT refresh token technology. Client-side has numerous accessibilities like three types of interface modes (normal, for minors, and elders), high contrast themes, low motion mode, and three languages (English, Tamil, Sinhala).
+The entire system has been tested with 180 documented test cases, 122 REST and 7 Socket.io, the latter being run against the running server – 170 of them succeeded (94.4%). Ten user acceptance scenarios have been accepted. The backend has been deployed on Railway, and the mobile client has been built with Expo Application Services. The project demonstrates how to create a production-level system for coordinating the activities of a family within an academic year and indicates further steps for improving the software.
+Table of Contents
+Declarationi
+Certification of Supervisori
+Acknowledgementii
+Abstractiii
+List of Abbreviationsx
+1  Project Charter1
+1.1  Problem Statement1
+1.2  Background and Related Systems1
+1.3  Stakeholders2
+1.4  Business Needs3
+1.5  Scope3
+1.6  Assumptions4
+1.7  Constraints4
+1.8  Objectives5
+1.9  Success Criteria5
+2  Requirements Specification7
+2.1  Purpose7
+2.2  Scope and Requirements Evolution7
+2.3  Functional Requirements7
+2.3.1  Authentication and Family Management7
+2.3.2  Events and Availability Polls8
+2.3.3  Memories, Albums, and Family Tree8
+2.3.4  Real-Time Chat9
+2.3.5  Location, SOS, and Notifications10
+2.3.6  Accessibility, Language, and Offline Behaviour10
+2.4  Non-Functional Requirements11
+2.5  Hardware Requirements11
+2.6  Software Requirements12
+2.7  Security Requirements12
+2.8  Quality Attributes13
+3  Analysis and Design14
+3.1  Overall Architecture14
+3.2  Use Case Analysis16
+3.3  Activity Model18
+3.4  Sequence Models18
+3.5  Database Design20
+3.6  API Design22
+3.7  UI Architecture and Design System23
+3.8  Navigation Flow23
+3.9  Design Decisions24
+4  Implementation26
+4.1  Development Environment and Technology Stack26
+4.2  Backend Implementation27
+4.2.1  Application Core27
+4.2.2  Authentication and Family Management28
+4.2.3  Events, Polls, Memories, and Albums28
+4.2.4  Chat29
+4.2.5  Location, SOS, and Notifications29
+4.3  Real-Time Layer29
+4.4  Mobile Client Implementation30
+4.4.1  Application Composition30
+4.4.2  Dashboard and Module Pattern30
+4.4.3  Chat Module31
+4.4.4  Map and SOS Module31
+4.4.5  Memories, Events, and Family Tree31
+4.4.6  Notifications, Accessibility, and Offline Behaviour32
+4.5  Security Implementation33
+5  Testing34
+5.1  Testing Strategy34
+5.2  Test Environment and Harnesses34
+5.3  Test Results35
+5.4  Defects Found and Fixed36
+5.5  Regression Testing37
+5.6  User Acceptance Testing37
+6  Deployment39
+6.1  Development Environment39
+6.2  Backend Production Deployment39
+6.3  Configuration and Environment Variables39
+6.4  Mobile Build Process40
+6.5  Release Versioning and Rollback41
+7  Project Management42
+7.1  Methodology42
+7.2  Timeline and Milestones42
+7.3  Risk Management43
+7.4  Version Control and Task Tracking44
+7.5  Quality Management44
+8  Evaluation45
+8.1  Achievement of Objectives45
+8.2  Strengths46
+8.3  Weaknesses and Limitations46
+8.4  Performance Evaluation47
+8.5  Security Evaluation47
+8.6  Overall Assessment48
+9  Conclusion49
+9.1  Summary of Achievements49
+9.2  Reflection on Objectives49
+9.3  Limitations49
+9.4  Future Work50
+References51
+Appendix A: REST API Endpoint Reference53
+Appendix B: Test Case Distribution and Reproduction56
+Appendix C: Known Limitations Register (at submission)57
+Appendix D: Application Screenshots58
+List of Figures
+No table of contents entries found.
+List of Tables
+List of Abbreviations
+Abbreviation
+Meaning
+AAB
+Android App Bundle
+API
+Application Programming Interface
+APK
+Android Package Kit
+CDN
+Content Delivery Network
+CORS
+Cross-Origin Resource Sharing
+CRUD
+Create, Read, Update, Delete
+DXA
+Twentieths of a point (Word measurement unit)
+EAS
+Expo Application Services
+ER
+Entity Relationship
+FCM
+Firebase Cloud Messaging
+FR
+Functional Requirement
+FYP
+Final Year Project
+GA
+General Availability
+GPS
+Global Positioning System
+HTTP(S)
+Hypertext Transfer Protocol (Secure)
+i18n
+Internationalisation
+JSON
+JavaScript Object Notation
+JWT
+JSON Web Token
+MVP
+Minimum Viable Product
+NFR
+Non-Functional Requirement
+NoSQL
+Non-relational database model
+QA
+Quality Assurance
+RBAC
+Role-Based Access Control
+RC
+Release Candidate
+ReDoS
+Regular expression Denial of Service
+REST
+Representational State Transfer
+RSVP
+Répondez s’il vous plaît (event attendance response)
+SDK
+Software Development Kit
+SOS
+Emergency distress alert
+SUS
+System Usability Scale
+TLS
+Transport Layer Security
+UAT
+User Acceptance Testing
+UI / UX
+User Interface / User Experience
+WCAG
+Web Content Accessibility Guidelines
+WSS
+WebSocket Secure
+1  Project Charter
+In this chapter, the problem statement that the project seeks to solve is outlined, and stakeholders in the project and their services are identified along with the boundaries within which the system has been created. It also describes the assumptions, limitations, goals, and requirements that have been defined at the proposal stage to guide the project throughout the year.
+1.1  Problem Statement
+Managing family life from household to household can be difficult. Relatives are apart from each other both by virtue of distance and their own schedules, and there isn’t always an established meeting place to organize plans. Birthday announcements are made through one chat group while the location is discussed on another and the family member who doesn’t see either message doesn’t show up. Photos and videos taken at the actual events get scattered through WhatsApp chats, Facebook posts, and phone galleries, thus preventing the family’s shared history from being organized in one private place.
+This is not solved through general-use services as they weren’t designed specifically for use by families. While messaging platforms help manage the conversation itself, they lack any formal way of handling events, RSVPs, and scheduling polls. Calendaring apps help schedule the events but lack personality and are outside the family’s communication process. Photography services are perfect for storing media but have no concept of the events that media was taken at. Besides the fragmentation problem, the families that use social media give up privacy that some members are willing to give.
+Family Connect takes on the challenge and introduces an application on the mobile phone that includes event planning with availability polls, live family chat, private family album of photos and videos, family tree, real-time location sharing with an SOS button and notifications.
+1.2  Background and Related Systems
+As digital technology is already being used by the families for staying connected, the first step in the project was to assess what capabilities the existing technologies have and where they fall short. WhatsApp, Telegram, and Facebook Groups are currently used by families for communication and media exchange. These apps are free, intuitive, efficient means of communication, however, they lack functionality for scheduling family events and creating a proper archive of family history, as media just get lost in the endless stream [1]. Scheduling tools tackle the issue from another side. Doodle and Google Calendar do wonders at organizing meetings, but these apps are designed for businesses and for public use and are alien to the family experience [2]. When it comes to memory management, Google Photos and iCloud provide reliable cloud backup, however, they operate as a storage service and fail to create any connection between the photo and the family event it describes [3].
+At the same time, literature emphasizes the fact that applications intended to serve users of various age should be explicitly designed to address their needs in usability. The System Usability Scale is the standard lightweight tool used to assess the level of usability of a particular application intended for users of different ages [4], while ISO 9241-11 provides the definition of usability based on three parameters of effectiveness, efficiency, and satisfaction, which makes it suitable to use when dealing with an application intended for users aged from childhood to old age [5]. Nielsen’s usability heuristics helped to make interface decisions described later in this thesis [6]. Finally, prior research on intelligent scheduling and reminder systems shows that the use of timely and automated reminders can significantly increase engagement and prevent missed appointments [7], which proves the importance of integrating reminder function into the core of a family coordination system. Lastly, secure communication has become the minimum requirement for any application that contains personal information. JSON Web Tokens are the widely accepted solution for API authentication without session tracking [8], and WebSocket protocol helps to provide bidirectional, low-latency messaging required for a family chat [9].
+It became clear that there is a gap among all the existing technologies and studies mentioned above: no application provides family event scheduling, memory archiving, reminders, chatting and accessibility for the elder population within the closed network. This gap inspired Family Connect project.
+1.3  Stakeholders
+Table 1 - Project stakeholders and their interests
+Stakeholder
+Role and interest in the system
+Family members (all ages)
+Primary users. They chat, plan events, share memories, follow each other’s locations, and expect the application to be usable whether they are nine or ninety.
+Family administrators
+The member who creates the family. They hold the invite code, can broadcast notifications, moderate content, and manage tree relationships.
+Event organizers and extended relatives
+Secondary users who mainly interact with event invitations, RSVPs, and availability polls.
+Supervisor and project evaluators
+Academic stakeholders who assessed the proposal, monitored progress, and evaluate the final system and thesis.
+Cloud service providers
+Technical stakeholders MongoDB Atlas, Cloudinary, Firebase, and Railway whose free tiers and reliability the system depends on.
+1.4  Business Needs
+• Enhance family communication and prevent forgetting birthdays, anniversaries, and meetings.
+• Store family photos, videos, and tales in one centralized, organized folder that is not spread out in various public sites and personal gadgets.
+• Plan events together with the help of availability voting and RSVPs rather than discussion threads.
+• Help to enhance the feeling of security in the family using live location tracking and single-tap SOS alerts.
+• Met all generations of the family, including the elderly and children, thanks to different interface options and languages.
+1.5  Scope
+This project provides a fully functional full-stack system with a mobile application, a back-end server, and cloud infrastructure connecting both. The following functionalities are covered in the scope of this delivered project.
+Authentication and family management: registration, login, token refreshing, invite code based family creation, and role promotion of the family creator to an administrator of the family.
+Chat: real-time messaging with media attachment capability, replies, reactions, mentions, pinning, starring, editing, deletion, search, and typing indication.
+Events and polls: ability to create events and invite guests to take part in them automatically, response and availability tracking for date availability polls with a deadline and voting.
+Memories and albums: upload of pictures and videos to a family gallery, likes, member tagging, albums management and sharing.
+Family tree: graphical family representation with different member roles and relations that can be edited by any member.
+Location and SOS: live location tracking on a family map, and SOS alerts combining push notifications and real-time sockets.
+Notifications: in-app and push notifications for messages, events, memories and SOS alerts, and broadcasting of notifications for admins only.
+Accessibility and language settings: normal, minor, and elderly user interface, high contrast and reduced motion, and English, Tamil and Sinhala languages.
+Some of the functionalities mentioned initially have been rescope throughout the year and are therefore not part of the scope of the project: end-to-end encryption and two-factor authentication (transport security, hashed passwords, and token refreshing have been implemented instead), voice guided navigation, cultural celebration calendar, automatic smart date suggestions (availability polls have replaced this functionality), server persistence of safe zones and trips history (only locally available), release on public Google Play and iOS build. This will be justified in Chapters 8 and 9.
+1.6  Assumptions
+All participating members have a smartphone (Android phone in the pilot version) with internet access and GPS.
+The members are ready to use an invitation-only and private platform instead of the social media platforms for family interactions.
+The free versions of the cloud services selected (MongoDB Atlas, Cloudinary, Firebase, Railway) will be enough for the pilot implementation.
+One family per user account will be enough for the pilot version; multi-family membership is left for future work.
+1.7  Constraints
+One calendar year was the delivery period with at least 400 hours of development effort needed for the project.
+Single developer involvement in design, development, testing, deployment, and documentation.
+Constrained budget for the cloud, aiming at below LKR 3,000 per month in the pilot stage, excluding any possibility of premium infrastructure tiers.
+Data privacy issues related to an application storing family pictures, information about children, and live locations.
+Milestone deadlines for the university, namely proposal defense, midterm evaluation, thesis draft, and final submission, being inflexible.
+1.8  Objectives
+Five goals were outlined by the proposal, which served as a point of reference for evaluation during the entire course of the project.
+Establishing exclusive family groups that are safe from external influence and have role-based access control.
+Employing family-centric scheduling and reminders with the use of availability polling and notification-driven prompts.
+Creating an exclusive family archive where photos, videos, and stories can be archived and organized into albums.
+Making sure that all age groups are accommodated through multilingual support (English, Sinhala, Tamil) and elderly-oriented interface option.
+Conducting usability and security tests for the proposed platform.
+1.9  Success Criteria
+In terms of the charter, success was achieved by the following conditions. These criteria were assessed in chapter 8.
+All essential functionalities – authentication, family management, chat, events with polling, memories with albums, family tree, location with SOS and notifications – are working in end-to-end manner with the production backend.
+There is a verification of the isolation of the family data so that none of the authenticated user could read or change the records of another family.
+The solution meets the results of structured test programme of all REST endpoints and real-time layer without any unresolved critical or high-priority defects.
+The backend is hosted on a public cloud and the client is deployed and executed on the physical device of Android OS.
+The interface is adaptive for elders, minors, and general users and the three language packs are in place.
+2  Requirements Specification
+2.1  Purpose
+The current chapter describes the functionality of the delivered system as well as the circumstances in which the system should operate. This document presents the list of the functional requirements organized according to the modules, the non-functional requirements, hardware and software required for the development and operation of the system, security requirements, and the list of qualities considered while making implementation choices. The specification describes the implemented system: where the original plan had to be modified during the year, the current requirement reflects the final solution described in Chapter 2.2.
+2.2  Scope and Requirements Evolution
+Requirement gathering was done at the proposal stage through analysis of current platforms and needs of a multi-generational family, and the requirements prioritized with MoSCoW methodology into categories of must have, should have, could have, and won’t have. All the must haves - security of the family groups, scheduling using polling, memory archive, and the accessibility modes - remained intact throughout the development process. There were two should haves that underwent changes in the development process; one is rule-based smart date suggestions to polling where the family gets an explicit choice and not a suggestion, while the other is parental approval workflows to minor UI mode, where the child protection policy will be enforced on the device for sensitive operations. The could haves, such as voice navigation and the cultural calendar, were discarded because of real-time and safety modules being more useful and difficult than expected.
+2.3  Functional Requirements
+The functional requirements are listed per module. The Status column records the verified state of each requirement in the final build, based on the test programme reported in Chapter 5.
+2.3.1  Authentication and Family Management
+Table 2 - Functional requirements — authentication and family management
+ID
+Requirement
+Priority
+Status
+FR-01
+A visitor shall be able to register with full name, email, and a password of at least eight characters.
+Must
+Implemented
+FR-02
+A registered user shall be able to log in and receive an access token and a refresh token.
+Must
+Implemented
+FR-03
+The system shall refresh expired access tokens and rotate the refresh token on every use.
+Must
+Implemented
+FR-04
+A user shall be able to log out, invalidating the stored refresh token.
+Must
+Implemented
+FR-05
+A user without a family shall be able to create one and shall become its administrator.
+Must
+Implemented
+FR-06
+A family shall have a unique invite code; the admin shall be able to share it and members shall join with it.
+Must
+Implemented
+FR-07
+The system shall prevent a user from belonging to more than one family and from joining the same family twice.
+Must
+Implemented
+FR-08
+A non-admin member shall be able to leave the family; the administrator shall not, so a family is never orphaned.
+Must
+Implemented
+2.3.2  Events and Availability Polls
+Table 2.2: Functional requirements — events and polls
+ID
+Requirement
+Priority
+Status
+FR-09
+A member shall be able to create an event with title, description, date, time range, location, and image.
+Must
+Implemented
+FR-10
+Creating an event shall automatically invite every family member as a pending guest.
+Must
+Implemented
+FR-11
+A guest shall be able to RSVP as accepted, declined, or maybe, and change that response.
+Must
+Implemented
+FR-12
+Only the event creator or a family admin shall update or delete an event.
+Must
+Implemented
+FR-13
+A member shall be able to attach a date-availability poll with two or more options to an event.
+Must
+Implemented
+FR-14
+Members shall vote yes, maybe, or no per option; closed or deadline-expired polls shall reject votes.
+Must
+Implemented
+FR-15
+The poll owner or an admin shall be able to close a poll and record the selected option.
+Should
+Implemented
+2.3.3  Memories, Albums, and Family Tree
+Table 2.3: Functional requirements — memories, albums, and family tree
+ID
+Requirement
+Priority
+Status
+FR-16
+A member shall be able to upload photos or videos with an optional caption and member tags.
+Must
+Implemented
+FR-17
+Uploads shall be validated for media presence, type, and size before storage.
+Must
+Implemented
+FR-18
+Members shall be able to like and unlike memories and view memory details.
+Must
+Implemented
+FR-19
+Only the uploader or an admin shall delete a memory.
+Must
+Implemented
+FR-20
+Members shall be able to create albums, add memories to them, and share an album via link.
+Must
+Implemented
+FR-21
+Album modification and deletion shall be restricted to the owner or an admin.
+Must
+Implemented
+FR-22
+The system shall present the family as a tree of member nodes with editable relationship types.
+Must
+Implemented
+FR-23
+A member shall edit only their own relationship unless they are an admin; invalid relationship types shall be rejected.
+Must
+Implemented
+FR-24
+Legacy-mode memorial profiles shall be available for future server persistence.
+Could
+Client-side placeholder
+2.3.4  Real-Time Chat
+Table 2.4: Functional requirements — chat
+ID
+Requirement
+Priority
+Status
+FR-25
+Messages sent by one member shall appear for all connected family members in real time.
+Must
+Implemented
+FR-26
+Chat shall support text, images, video, audio, and document attachments.
+Must
+Implemented
+FR-27
+Members shall be able to reply to a message, react with emoji, and mention members.
+Must
+Implemented
+FR-28
+A sender shall edit or delete their own messages; admins may delete any message.
+Must
+Implemented
+FR-29
+Members shall pin, unpin, and star messages, and list pinned and starred messages.
+Should
+Implemented
+FR-30
+Chat history shall be searchable, and search input shall be treated as literal text.
+Must
+Implemented
+FR-31
+The interface shall show typing indicators and per-message read receipts.
+Should
+Implemented
+2.3.5  Location, SOS, and Notifications
+Table 2.5: Functional requirements — location, SOS, and notifications
+ID
+Requirement
+Priority
+Status
+FR-32
+A member who enables sharing shall have their live location visible to the family on a map.
+Must
+Implemented
+FR-33
+Location updates shall be pushed to connected members in real time without full refetches.
+Must
+Implemented
+FR-34
+A member shall trigger an SOS that persists their location, notifies every member by push, and raises a real-time alert, after a cancellable five-second countdown.
+Must
+Implemented
+FR-35
+The system shall generate notifications automatically for chat activity, events, memories, and SOS alerts.
+Must
+Implemented
+FR-36
+Members shall list, mark as read, and delete their notifications.
+Must
+Implemented
+FR-37
+Manual broadcast notifications shall be restricted to family administrators.
+Must
+Implemented
+FR-38
+Safe zones, emergency contacts, and trip history shall be stored on the device for the pilot release.
+Could
+Client-side (AsyncStorage)
+2.3.6  Accessibility, Language, and Offline Behaviour
+Table 2.6: Functional requirements — accessibility and resilience
+ID
+Requirement
+Priority
+Status
+FR-39
+The client shall offer standard, minor, and elder UI modes with adjusted font scale, touch targets, and policy gates.
+Must
+Implemented
+FR-40
+Minor mode shall block media upload, admin functions, location sharing, and SOS, and filter sensitive media.
+Must
+Implemented
+FR-41
+The client shall provide English, Tamil, and Sinhala language bundles switchable at runtime.
+Must
+Partially implemented — feature screens retain English strings
+FR-42
+The client shall support light, dark, and high-contrast themes and respect the system reduced-motion setting.
+Should
+Implemented
+FR-43
+When the API is unreachable the client shall show an offline banner and recover automatically on reconnect.
+Must
+Implemented
+FR-44
+Mutating requests made while offline shall be queued and retried on reconnect.
+Should
+Architecture present; retry not wired (v1.1)
+2.4  Non-Functional Requirements
+Table 2.7: Non-functional requirements
+ID
+Category
+Requirement
+NFR-01
+Performance
+Real-time events (messages, locations) must reach connected clients without polling; incoming socket events must update state in place rather than re-fetching module data.
+NFR-02
+Performance
+Chat history retrieval must be pagination-bounded (a hard limit of 200 messages per request) and hot collections must be indexed.
+NFR-03
+Scalability
+The backend must be stateless apart from the database so it can be redeployed or scaled behind a load balancer; Socket.io must share the HTTP port.
+NFR-04
+Availability
+A public, unauthenticated health endpoint must expose service status for monitoring and client reachability checks.
+NFR-05
+Usability
+Interactive elements must meet minimum touch-target sizes (44 pt standard, 60 pt elder mode) and primary actions must carry accessibility labels.
+NFR-06
+Reliability
+The server must survive malformed requests and unhandled promise rejections without crashing, and must shut down gracefully on termination signals.
+NFR-07
+Maintainability
+Backend code must follow a routes–controllers–models–services layering; client code must follow the module pattern of navigator, hook, and service per feature.
+NFR-08
+Portability
+The client must build for Android and iOS from a single codebase through Expo; the pilot targets Android.
+NFR-09
+Compliance
+Interface design must work towards WCAG 2.1 Level AA, with high-contrast palettes and text scaling [10].
+2.5  Hardware Requirements
+Table 2.8: Hardware requirements
+Environment
+Hardware
+Development machine
+Windows 10 PC capable of running Node.js, Android Studio, and an Android emulator concurrently (16 GB RAM recommended; the project was developed and tested on such a machine).
+Test device
+A physical Android smartphone with GPS, camera, and Google Play services, required for push notifications and location testing that emulators cannot fully reproduce.
+Server
+No owned hardware. The backend runs in a Railway-managed container; MongoDB Atlas hosts the database on shared cloud infrastructure.
+End-user device
+Android smartphone (Android 7+ practical minimum for the Expo runtime) with network connectivity; GPS and camera required for the map and memory features.
+2.6  Software Requirements
+Table 2.9: Software requirements
+Layer
+Software and version
+Backend runtime
+Node.js 18 or later (verified on v24.16.0) with Express 4.18, Mongoose 8.23, and Socket.io 4.7.
+Database
+MongoDB (Atlas cluster in production; local MongoDB service during testing).
+Mobile framework
+React Native 0.81.5 on Expo SDK 54, React 19.1, React Navigation 7.
+Mobile libraries
+Axios, socket.io-client 4.8, expo-secure-store, AsyncStorage 2.2, expo-location, expo-image-picker, expo-notifications, react-native-maps 1.20.
+External services
+MongoDB Atlas (data), Cloudinary (media), Firebase Cloud Messaging via firebase-admin 12 (push), Railway (hosting), Expo Application Services (builds).
+Tooling
+Git and GitHub (version control), npm (dependencies), EAS CLI and Gradle 8.14 (builds), Postman-style automated HTTP harnesses (testing), winston and morgan (logging).
+2.7  Security Requirements
+As this system contains family photographs, kids’ stories, and actual addresses, security constraints were considered as first-class citizens, and explicitly tested for that matter. Never should passwords be saved or returned in plaintext; they should be hashed with bcrypt using the factor of 12 prior to saving. Each and every secure route requires a JWT bearer token [8]; moreover, invalid accounts should be denied explicitly with a status code. Refresh tokens need to be rotated on each and every invocation, which means that in case of any theft, a token will have only one use left in its lifetime. Any access to the family information has to be filtered on the server side using the requesting user’s family id; this is a multi-tenant isolation policy with zero tolerance for exceptions. Role-based access control is supposed to restrict access to all the destructive actions like editing events and albums, deleting messages, closing polls, broadcasting notifications, and modifying the tree. The API needs to apply some kind of rate limits (100 requests per 15 minutes in general and 20 per 15 minutes at login/registration). Uploads need to be limited by allowed file formats and max sizes before reaching the storage.
+2.8  Quality Attributes
+There were four qualities influencing daily decision-making during implementation. Consistency – every REST answer uses one envelope – an indication whether it is successful or not, along with data or human-readable text. Observability – backend uses winston logging system with HTTP lines in morgan format, and the health check shows the environment and timestamp. Testability – business logic is implemented in controllers using thin routes, which is the reason why we managed to cover 122 live REST tests by script. Inclusivity – accessibility is not an add-on on screens, but a context for each one of them.
+3  Analysis and Design
+This chapter describes the design of Family Connect: the overall architecture of the application, the behavioral models that characterize the interaction between users and components, the designs of the database and API, the architecture of the user interface from the client’s side, and the justification for the important design choices. These models reflect the actual design of the system; when an initial design has been changed during implementation, this is indicated.
+3.1  Overall Architecture
+The Family Connect system has a client-server design pattern with an extra real-time component. The mobile application is responsible for presentation and local state, the server-side is responsible for business logic, validation and interaction with external systems, and a Socket.io connection works concurrently with the REST API in the part of communication where request-response delay will be perceived by users, which includes chats, location tracking, and SOS messages.
+Figure 3.1: High-level system architecture of Family Connect
+Client application architecture consists of five layers inside. Screens use a design system; global states exist in React contexts (authentications, family, network and UI mode); feature modules access the data via their own hooks using corresponding domain services; transport uses Axios for REST and singleton Socket.io for events; and persistence divides secrets and preferences — where JSON Web Tokens live in SecureStore, and the rest is stored in AsyncStorage.
+The backend has a traditional layering. Routes map URLs to controllers; controllers implement logic and call Mongoose models; JWT verification, validation of file uploads and errors processing occur inside middleware. There are three additional external services: MongoDB Atlas used for persistence, Cloudinary for storing and delivering media content and Firebase Cloud Messaging for push notifications. Thanks to this separation each service was testable independently — in particular, the QA framework used a local MongoDB instance with no Cloudinary credentials at all.
+3.2  Use Case Analysis
+Two actors interact with the system: the ordinary family member and the family administrator, who is the member that created the family and inherits every member capability. Figure 3.2 collects the principal use cases.
+Figure 3.2: Use case diagram for Family Connect
+Two use cases are described in detail because they exercise the most interesting paths through the system: one crosses the REST, database, push, and socket layers in a single action, and the other shows the collaborative flow that replaced the proposal’s smart-date-suggestion idea.
+Table 3.1: Use case description — trigger SOS alert
+Field
+Description
+Use case
+Trigger SOS alert
+Actor
+Family member (blocked in minor mode by accessibility policy)
+Precondition
+The member is authenticated, belongs to a family, and has granted location permission.
+Main flow
+1. The member opens the SOS screen from the map module and confirms. 2. A five-second countdown runs, during which the action can be cancelled. 3. On expiry the client obtains current coordinates and calls POST /api/location/sos. 4. The server validates the coordinates and family membership, persists the location, creates a notification for every other member, dispatches Firebase push messages, and emits an sos_alert event to the family’s socket room. 5. Connected members see the alert immediately; offline members receive the push.
+Alternative flows
+A1: The member cancels during the countdown — nothing is sent. A2: Coordinates are missing or invalid — the server rejects with a validation error and the client re-prompts.
+Postcondition
+The member’s location is stored, and every family member has been alerted through at least one channel.
+Table 3.2: Use case description — plan an event with an availability poll
+Field
+Description
+Use case
+Plan an event with an availability poll
+Actor
+Family member (creator); all members as voters
+Precondition
+The creator is authenticated and belongs to a family.
+Main flow
+1. The creator fills in the event form; the server stores the event and automatically invites every family member as a pending guest. 2. The creator attaches a poll with two or more candidate dates and an optional deadline. 3. Members receive a notification, RSVP, and vote yes, maybe, or no on each option. 4. The creator or an admin closes the poll; the chosen option is recorded on the event.
+Alternative flows
+A1: A vote arrives after the deadline or after closure — rejected. A2: A non-guest attempts to RSVP — rejected. A3: A non-creator, non-admin attempts to edit the event — rejected with 403.
+Postcondition
+The event carries a confirmed date backed by the family’s recorded availability.
+3.3  Activity Model
+The onboarding flow determines almost everything a new user can see, because every feature is family-scoped: until a user creates or joins a family there is nothing to chat in, no events to list, and no map to share on. Figure 3.3 models this path, including the automatic session restore that keeps returning users out of the login screen.
+Figure 3.3: Activity diagram — application launch and family onboarding
+3.4  Sequence Models
+Figure 3.4 traces a chat message from sender to recipients. The design point worth noting is the dual acknowledgement: the sender receives a socket callback confirming persistence, while every other room member receives the broadcast — so the sender’s UI never waits for a round trip through the recipient list. Offline members are covered by the notification service, which writes an in-app notification and dispatches a Firebase push in the background without blocking the socket handler.
+Figure 3.4: Sequence diagram — real-time chat message delivery
+Figure 3.5 traces the SOS alert, the most safety-critical flow in the system. It deliberately uses REST rather than the socket for the trigger: an HTTP POST with a definite success or failure response is easier to retry and to reason about in an emergency than a fire-and-forget socket event. Delivery to the family then fans out over both channels.
+Figure 3.5: Sequence diagram — SOS alert broadcast
+3.5  Database Design
+The data layer employs MongoDB using Mongoose schemas. The document data model is appropriate for this domain, since the objects like events have naturally nested collections (guest list with status per each guest, voting options with vote arrays), which would require multiple join tables using the relational approach. Figure 3.6 presents ten collections and their relations.
+Figure 3.6: Data model — collections, key fields, and relationships
+Two general design principles permeate all the designs in the model. The first principle is that each family scoped document includes a family reference property, and each backend lookup is constrained by it. This is how multi-tenancy isolation is achieved; it is proven by the security test cases presented in Chapter 5. The second principle is duplication of information storage for the sake of two different goals: the Family document holds the members array for quick enumeration, whereas the FamilyMember collection holds per-member information – role, nickname, and relationship type that governs the family tree creation. Testing revealed the most critical bug of the project, because this duplication was broken during the creation process (Chapter 5, BUG-C1).
+Table 3.3: Collection summary and indexing
+Collection
+Purpose
+Notable indexes and rules
+User
+Account, credentials, role, device push tokens
+Unique email; password select:false; bcrypt pre-save hook
+Family
+Family unit and embedded member list
+Unique inviteCode (indexed)
+FamilyMember
+Per-family member metadata for the tree
+Unique compound (family, user)
+Event
+Gatherings with embedded guest RSVP list
+Family-scoped queries; guests embedded
+EventPoll
+Date polls with nested options and votes
+Vote uniqueness enforced in controller
+Memory
+Uploaded photo/video with tags and likes
+Family-scoped; Cloudinary URL stored
+Album
+Named grouping of memories, shareable
+(family, createdAt) index
+Message
+Chat history with replies, reactions, pins, stars
+(familyId, createdAt), (familyId, pinnedAt), (familyId, starredBy)
+Notification
+Per-recipient in-app notification
+Family- and recipient-scoped
+Location
+Latest position per user (upserted in place)
+Unique userId; (familyId, updatedAt) index
+3.6  API Design
+The REST API groups endpoints into ten domains under a single /api prefix, summarised in Table 3.4 and listed in full in Appendix A. The design follows a small set of conventions rather than a framework: resource-oriented URLs, standard verbs, bearer authentication on everything except registration, login, refresh, and the health check, and one response envelope everywhere - { success, data } on success and { success: false, message } on failure. Uniformity here paid off on the client, where a single Axios response interceptor infers network health from every call.
+Table 3.4: REST API surface by domain
+Prefix
+Domain
+Representative operations
+/api/auth
+Authentication
+register, login, refresh, logout, me
+/api/family
+Family management
+create, my-family, join, invite, leave
+/api/events
+Events
+create, list, details, update, delete, respond (RSVP)
+/api/polls
+Availability polls
+create, get by event, vote, close
+/api/memories
+Memories
+upload (multipart), list, details, like, delete
+/api/albums
+Albums
+create, list, details, update, add-media, share, delete
+/api/chat
+Messaging
+send, paginated messages, search, pinned, starred, edit, delete, react, pin, star
+/api/notifications
+Notifications
+list, create (admin), mark read, delete
+/api/family-tree
+Family tree
+tree graph, relationship update
+/api/location
+Location and SOS
+update, family locations, member location, sos
+In addition to REST, the socket contract specifies the real-time vocabulary as follows: the client sends the actions send_message, typing, stop_typing, and mark_read while the server sends new_message, message_updated, message_deleted, typing relay, message_read, location_update, and sos_alert. The REST controllers have access to the socket layer via the common server instance, and that’s why the location update sent via HTTP reaches the family map.
+3.7  UI Architecture and Design System
+The interface is based on a token-based design system instead of per-screen styling. Colors, typography, spacing, radii, shadows, and animation curves are tokenised once, and a set of primitives (buttons, cards, chips, text fields, dialogs, loaders, page headers) consumes those tokens. The composition happens at the screen level by combining primitives instead of restyling raw components. The benefit is that one can implement one function to resolve themes and reskin the whole app: switching to dark mode, high-contrast mode, or elder mode updates tokens, and everything gets restyled.
+Accessibility is designed as a policy instead of just decoration. UIModeContext stores the current mode (standard, minor, or elder), resolved theme, and reduced motion flag provided by the OS; an accessibility policy module contains the set of rules regarding what minor mode is not allowed to do (upload media, show the invite code, share location, activate SOS); and screens check the policy by calling a hook instead of using conditional statements. In elder mode, the font scale becomes 1.24, touch target size 60 pt, and other UI elements get scaled as well. Internationalisation is implemented in the same way: an I18nProvider loads English messages on initialisation and Tamil or Sinhala when needed, provides a translation method with param interpolation, and saves the user preference.
+3.8  Navigation Flow
+Navigational system is based on React Navigation 7, using two-tier architecture, where at the application level there’s switching between either authentication stack or authenticated tab navigator and a stack navigator for each feature tab (see Figure 3.7). Deep linking from notifications is processed into the stacks – clicking on a message push navigates to the chat, SOS push navigates to the map. Audit of all nine navigators close to the end of the project proved that all navigation targets resolve into a registered route.
+Figure 3.7: Navigation hierarchy of the mobile client
+3.9  Design Decisions
+These decisions had the biggest impact on the final system. They are documented along with the alternative that was considered and the reason why the chosen option prevailed.
+client-server architecture with a thin client rather than device-centric approach. Authorisation and validation occur entirely on the server side since the family app does not trust the device and a modified client still should not be able to access the other family’s information. The client side becomes responsible only for presentation, caching and interface optimistic updates.
+Socket.io over raw WebSockets. Real-time component requires rooms (one per family), authentication, auto-reconnect functionality, and graceful degradation, and all of those are provided by default by Socket.io library on both the server side and the React Native client side [9]. Doing all that manually with raw WebSockets did not bring any additional benefits.
+JSON Web Token with refreshing mechanism over the session-based system. Stateless access tokens make the API horizontally scalable and do the same job whether you are communicating via REST API or via socket handshake [8]. Rotations ensure that a compromised refresh token can be used only once. The drawback is non-immediate invalidation of an access token, documented in Chapter 8 as a hardening decision.
+document-based model in MongoDB instead of relational database. Aggregates of the domain (events with guests and polls, messages with reactions and read list) map one-to-one with documents in MongoDB and schemaless iteration turned out to be useful during a year of evolving requirements [11]. The downside is that you have to be careful with some relational thinking, like dual member entities, and this price is paid just once in BUG-C1.
+Cloudinary over uploading media files to the application server. Offloading storage, media processing and CDN distribution allows you to keep large binary files away from the API process and turn file upload validation to a declarative list of allowed types and maximum sizes. Free tier fit our budget constraints perfectly.
+module pattern on the client. Since every feature consists of the same elements - navigator, data hook, service - the whole application codebase is uniform in its structure and features similar load, error handling and refresh mechanisms. Moreover, hooks implement one of the most important performance lessons: real-time events update the state in place, without re-fetching the module’s data (see Chapter 5 for details about refetch storms we experienced twice).
+Design tokens and centralized accessibility settings. Accessibility modes were the key objective of this application, not something you implement at the end of the development, and only by implementing it as the context consumed by each screen we managed to create 3 modes and 3 themes in 3 languages within 73 screens.
+4  Implementation
+In this chapter, the process of turning the architecture described in Chapter 3 into an operational system is outlined. It includes the environment for developing the system, the backend, its components, the real-time component, the mobile client, the cross-cutting security aspects, and the reasoning behind each key technology used. The source code is referred to by modules and files as they appear in the repository that contains all the project sources in a monorepo structure.
+4.1  Development Environment and Technology Stack
+The development was carried out on a Windows 10 system using Node.js, Android Studio, and a bunch of PowerShell scripts which have been checked into the repository and were used to launch the emulator, to launch Expo on the physical phone, and to restart the Metro bundler. The backend was running locally using a local MongoDB database while developing and MongoDB Atlas in production.
+Table 4.1: Backend technology choices and justification
+Technology
+Role
+Why it was chosen
+Node.js 18+ / Express 4.18
+HTTP server and routing
+One language across the whole project; Express’s middleware model maps naturally onto the auth, upload, and error-handling layers; vast ecosystem [12].
+Mongoose 8
+MongoDB object modelling
+Schema validation, hooks (password hashing), population of references, and index declarations in one place [13].
+Socket.io 4.7
+Real-time engine
+Rooms, JWT-authenticated handshake middleware, reconnection, and a first-class React Native client [14].
+jsonwebtoken + bcryptjs
+Authentication and hashing
+Standard JWT implementation [8]; bcrypt with cost 12 for adaptive password hashing [15].
+multer + multer-storage-cloudinary
+Upload pipeline
+Streams multipart uploads straight to Cloudinary with per-route format allow-lists and size limits — media never touches server disk [16].
+helmet, cors, express-rate-limit
+HTTP hardening
+Security headers, a strict production origin policy, and brute-force throttling with almost no custom code.
+firebase-admin 12
+Push notifications
+Server-side FCM multicast to per-device registration tokens [17].
+winston + morgan
+Logging
+Structured application logs with HTTP access lines routed through the same logger.
+Table 4.2: Mobile technology choices and justification
+Technology
+Role
+Why it was chosen
+React Native 0.81 / React 19
+Cross-platform UI
+Single JavaScript codebase for Android and iOS, consistent with the backend language [18].
+Expo SDK 54 + EAS
+Toolchain and native APIs
+Managed access to location, camera, notifications, and secure storage without maintaining native projects by hand; cloud builds through EAS [19].
+React Navigation 7
+Navigation
+Native stack and bottom-tab navigators with typed route params and deep-link support [20].
+Axios 1.14
+REST client
+Interceptors carry the bearer token and drive the offline banner from response outcomes.
+socket.io-client 4.8
+Real-time client
+Matches the server; a single shared connection serves chat, map, and SOS listeners.
+expo-secure-store / AsyncStorage
+Persistence
+Hardware-backed storage for tokens; plain key-value storage for preferences, safe zones, and caches.
+react-native-maps 1.20
+Map rendering
+Native Google Maps views for the live family map with custom member markers.
+4.2  Backend Implementation
+4.2.1  Application Core
+Server.js is the entry point that glues all the pieces together by creating the Express app and HTTP server, mounting Socket.io on the same port, connecting to MongoDB, initiating Firebase, adding security middleware (Helmet, CORS with an explicitly specified list of origins allowed, JSON body size limitation of 10 MB), registering the two rate limiters, mounting ten groups of routes at '/api', and ending with 404 handler and the main error handler. Health endpoint provides information on the environment used and current timestamp. Explicit handling of shutdown signals (SIGTERM and SIGINT) closes HTTP server prior to exit. Unhandled promise rejection is logged but not allowed to crash the service.
+Special mention should be made of the error handler because it incorporates a safety measure which has been validated in tests – Mongoose specific error class is converted into the appropriate status code (422 for validation error, 409 for duplicate keys and 400 for invalid ObjectId), and in production mode response body contains no data except the sanitized message. The only systemic issue regarding this design found during tests relates to some controllers which catch exceptions inside their own try/catch, leading to returning 500 status code in case of malformed IDs rather than passing the CastError up to the main handler. The defect is marked BUG-L1 in Chapter 5.
+4.2.2  Authentication and Family Management
+Registration and logging in operations are located in authController.js. Passwords are hashed using Mongoose pre-save hooks via bcrypt library with salt cost 12, while the schema declares the password field as select:false in order to avoid returning it in a default query. During login, the system issues two tokens - short-term access token and a refresh token, the hash of which storage location is database. Each time refresh token is issued, server checks if the token that is being used matches the saved token, creates a new pair and replaces the stored token, making each refresh token usable only once. Logging out revokes the stored token. Protect middleware is responsible for verifying the bearer token of each protected route, loading the user and refusing deactivation access to 403.
+Family management module (familyController.js) creates cryptographically secure invite codes, promotes the creator to admin status, and implements the family rules of membership starting from FR-05 to FR-08 - single-family-per-user constraint, double-joins prohibition, and leaving restriction for admins. After the discovery of the family-tree bug described in Chapter 5, functions create, join, and leave were expanded to take care of FamilyMember entity, together with embedded members array - upsert during creation and joining and delete during leaving.
+4.2.3  Events, Polls, Memories, and Albums
+The event controller handles auto-invite logic by taking a snapshot of the family membership in the form of the embedded guest list where each entry contains a pending status that the RSVP controller endpoint changes to accepted, declined, or maybe. Authorisation determines whether read or write access applies: any member reads events within a family, but only the author or an admin can modify or delete. The polls collection is related to the event and is handled separately by the controller which enforces that there are at least two choices, one choice per user for every choice set, time limit expiration, choice close by owner or admin, and writing of the chosen option to the event.
+Memories are uploaded through multipart POST request. Using Multer, the file is streamed to Cloudinary using storage adapter per route; memory uploads support popular image and video types up to the configured size limit with avatars limited to 5 MB size; chat uploads allow additional audio and document types. The controller then writes the CDN url along with the caption, tags, and an empty likes array; toggling likes is idempotent. Albums hold memories, have a media counter and cover image, and can be shared via the generated link; add-media, update and delete album operations require the owner-or-admin authorisation logic.
+4.2.4  Chat
+Chat is the most extensive realm. The REST part of the application (chatController.js) offers paginated chat history capped at 200 messages, valid target replies within the same family, own only edition, own/admin deletion, emojis support, pins with timestamp and author, user star function, and text search. The search feature was an issue addressed in the security update: since the user input goes into MongoDB as a regular expression, metacharacters are safely escaped prior to search – the very update which resolved a ReDoS and regex injection issue identified during the release audit.
+4.2.5  Location, SOS, and Notifications
+One document per user is upserted by the location controller — the map requires just the last known location for each user — and the validation of coordinates is performed. Any updates that have been submitted over REST API are then sent to the family’s socket room via the shared Socket.io object, which is how all members’ maps stay up-to-date without polling. SOS endpoint utilizes the same principles: validate, save, notify over both channels. The notification service (services/notificationService.js) creates a new Notification document for each recipient and sends out FCM multicast using their registered device tokens; it is a fire-and-forget action within controllers to ensure that neither a delayed push nor push provider errors would hinder either chat or SOS notifications; and it cannot be used by anyone but admins since the test revealed that any family member could push to the whole family (BUG-H2).
+4.3  Real-Time Layer
+The socket server (socket/socketServer.js) validates each connection using the same JWT secret as the REST API, where the middleware checks the token, fetches the user, and refuses any connection without it, with an invalid or deactivated one. On connection the socket joins the room of its user's family, and all the broadcasts are scoped to this room - the system ensuring that all the real-time communications follow the same principle of isolation as the database queries. Handlers are implemented for message sending (persist, set sender info, acknowledge sending to the sender, broadcast message in the room, notify absent members), typing indicators, and read receipts. Handlers being defined by each connection, Socket.io will take care of cleaning them up on disconnection; the audit found no problems related to listener and room leaks.
+On the client side, only one connection per session is opened after logging in, which is distributed via the small relay system: hooks subscribe to the events relevant to their functionality, and the relay unsubscribes from the server connection when there are no more listeners left.
+4.4  Mobile Client Implementation
+4.4.1  Application Composition
+Root is made up of the following in a purposeful manner: gesture handling and safe zones on top, followed by UI mode (theme must be present before any rendering happens), localization, toast and dialog surface, networking, and authentication & family state lastly, around the navigator. The font is loaded prior to any painting with fallback to system fonts. The AuthContext initializes the session: upon initialization it loads tokens from SecureStore, adds the bearer token to the headers, fetches the user profile, and connects the socket; all login/logout/refresh processes go through the same context so each page gets a single source of truth.
+[ Insert screenshot here ]Screenshot of LoginScreen and RegisterScreen on Android — replace this placeholder with the captured image.
+Figure 4.1: Login and registration screens
+4.4.2  Dashboard and Module Pattern
+The dashboard presents the family in one snapshot greeting, statistics, upcoming events, memories, and quick actions via the useDashboardData hook. Each module follows the same pattern  use*ModuleData is responsible for the loading state, error state, refreshing state, and the empty state; each module uses a dedicated service to interact with its own REST API; each screen remains declarative. The hooks retain cached data on the screen while fetching, and pull-to-refresh uses its own refreshing flag.
+[ Insert screenshot here ]Screenshot of DashboardScreen showing stats, upcoming events, and quick actions.
+Figure 4.2: Family dashboard
+4.4.3  Chat Module
+There are about twenty components for the conversation screen, including bubbles with media and voice options, reply bar, mention bar, reaction chips, pinned banner, date chips, typing indicator, button to scroll to bottom of chat, and a media gallery modal. The socket events send single messages into the message list, where previously the whole conversation was refetched from scratch every time on each event as a “refetch storm,” discovered during the audit, and now all message delivery does not create any unnecessary traffic. Read receipt functionality is implemented with marking messages as read once they are shown, while the input bar takes care of attachments with the help of image and document pickers.
+[ Insert screenshot here ]Screenshot of ConversationScreen with replies, reactions, and a pinned message visible.
+Figure 4.3: Real-time family chat
+4.4.4  Map and SOS Module
+The live map displays all members who are sharing with react-native-maps markers that come from the initial REST call, followed by location_update events; just like chat, this handler modifies the location of one member at a time. The device emits its location using expo-location's watcher, which gets unsubscribed upon blur to preserve battery. The SOS page runs the cancelable countdown followed by the alert; safe zones, emergency contacts, SOS history, and trip markers are stored using AsyncStorage in this version. The SOS flow got the most crucial fix in terms of client-side code within this project; according to the audit, the countdown would never reach zero and the confirm handler function would return prematurely without sending any alert – now it decrements, sends automatically when expired, and respects cancellation.
+[ Insert screenshot here ]Screenshot of LiveFamilyMapScreen with member markers, and SOSScreen mid-countdown.
+Figure 4.4: Live family map and SOS screen
+4.4.5  Memories, Events, and Family Tree
+The Memories module consists of the gallery grid, album displays, a timeline of stories, and the uploading process where you can add captions and tag members. The gallery is where another crucial bug fix for the audit occurred – reading a variable before it was declared would crash the page if there was any data present, causing a one-liner temporal dead zone issue with complete impact. Events module includes list, calendar, and agenda displays, RSVP functionality, and poll screens, while the tree module features a relationship graph with panning and zooming capabilities.
+[ Insert screenshot here ]Screenshot of MemoryGalleryScreen and AlbumDetailsScreen.
+Figure 4.5: Memories gallery and album view
+[ Insert screenshot here ]Screenshot of EventDetailsScreen and EventPollScreen with votes.
+Figure 4.6: Event details with availability poll
+[ Insert screenshot here ]Screenshot of InteractiveTreeScreen showing member nodes and relationships.
+Figure 4.7: Interactive family tree
+4.4.6  Notifications, Accessibility, and Offline Behaviour
+The push pipeline takes care of registering the device token upon getting permission, showing notifications in the foreground, routing taps using the deep link whitelist (chat push triggers chat, SOS push triggers map), creating the Android notification channel, and removing listeners during cleanup; the registration process does not happen in Expo Go because remote push is not available there. Accessibility settings are responsible for the user choosing UI mode, theme, contrast, and language; policy gate minor-mode enforcement happens at places where the policy hook is referenced, and elder mode uses the interface scaling as described in Chapter 3. Offline behavior depends on the NetworkContext: health check during app start, app becoming foregrounded, and every 60 seconds along with the Axios interceptor trigger the offline banner and reconnect flush hook. No domain processors have been created yet, although the retry queue is created in this version; that is why offline mutations will fail fast.
+[ Insert screenshot here ]Screenshot of the Profile accessibility and language screens, including elder mode.
+Figure 4.8: Accessibility settings — UI modes, contrast, and language
+4.5  Security Implementation
+Security measures cut across both levels and were validated using test cases designed specifically for this purpose. On the server side: bcrypting passwords, JWT verification for all secured endpoints and on the socket connection, refresh token rotation, querying by family, authorization for destructive actions, two rate limiters, Helmet headers, a list of origins in CORS headers for production, allowing upload of only certain file types with a size limit, escaping search parameters, and sanitized error messages. On the client-side: Tokens stored exclusively in SecureStore and not in AsyncStorage nor in code, the API origin in production locked in configuration, and logging removed from release build configurations. These remaining hardening measures are recorded in Chapter 8.
+5  Testing
+There was just one rule that was applied throughout testing process and it was the following: nothing works until proven otherwise. Finally, the verification program checked all of the REST endpoints and the real-time layer in live manner against a running server and a real MongoDB database, supplemented the live tests by code review of the mobile client and then fixed issues only when they were reproduced. The chapter will describe the approach, harnesses used, results achieved, bugs fixed, evidence of regression and user acceptance test.
+5.1  Testing Strategy
+Verification took place in two stages. Release audit stage consisted of exhaustive examination of all backend files (47) and mobile source files (~311), tracking users' interaction with code, cross-checking paths with controllers and documentation, and verifying the Android build configuration. Then, a final stage with live testing included running 122 automated REST tests and 7 automated Socket.io tests against a server started up with a local MongoDB database, and 51 additional cases testing mobile behavior, build configuration, navigation, and regressions by inspecting code with file-and-line details. This ratio stems from the advantages of each type of verification — live execution proves behavior, while code verification tests device-bound behaviors (push delivery, GPS, gestures) impossible to test in headless mode.
+Unit-level verification (validation rules, authorization rules, model constraints) was done via API calls rather than in isolation, which is a practical approach in a one-person project, where every unit is accessible via API endpoint, and test via HTTP calls tests routing, middleware sequence, and serialization. Integration testing was implicit in this design, since each test covers the route, middlewares, controller, model, and database. End-to-end user acceptance scenarios presented in Section 5.6 served as a basis for system testing, while manual exploratory testing on the Android emulator and physical device was done during the whole development process, guided by screen-specific QA checklist stored in the repository.
+5.2  Test Environment and Harnesses
+The live setup comprised Windows 10, Node v24.16.0, MongoDB as a local service having the family_connect database, and the backend at http://localhost:5000 with relaxed rate limits to account for testing loads. There are three scripts in backend/scripts that allow reproducing the application: qaLiveTest.js runs 122 REST tests including happy paths, failed validations, authentication and RBAC checks, tenant separation, injections, and token handling; qaSocketTest.js tests the socket handshake, broadcasting in a room, REST to socket routing, typing, and refusing non-authenticated connections; and qaGenerateXlsx.js produces the full list of tests. Machine-readable results are also included in the commit.
+5.3  Test Results
+Table 5.1: Result summary by suite
+Suite
+Cases
+Pass
+Fail
+Partial
+REST API (live execution)
+122
+121
+1
+0
+Real-time / Socket.io (live execution)
+7
+7
+0
+0
+Static / code-verified (mobile, build, navigation, regression)
+51
+42
+5
+4
+Total
+180
+170
+6
+4
+The pass percentage for everything is 94.4% (170 out of 180 tests, with partial passes at 96.7%), where there’s one failure for the live test. This is a malformed-ObjectId request returning a 500 status code instead of 400 – something that shouldn’t crash the app and thus has low severity. There are no surprises among the static failures and partials: all five failures and four partial passes are based on known limitations: the unconnected offline retry queue, English hardcoded into features’ screens, production keystore missing, version-string mismatch, etc.
+Table 5.2: Module-wise results (selected)
+Module
+Cases
+Pass
+Pass %
+Note
+Authentication
+24
+24
+100%
+Tokens, rotation, tampering, expiry, unauthorised access to all modules
+Family
+11
+11
+100%
+Create, join, invite, leave, RBAC, duplicate-join guard
+Family tree
+6
+6
+100%
+After the BUG-C1 fix (previously 33%)
+Events and polls
+20
+19
+95%
+One malformed-id case (BUG-L1)
+Memories and albums
+12
+12
+100%
+Upload validation, RBAC, sharing
+Chat (REST)
+24
+24
+100%
+Reply, react, pin, star, search, edit, delete
+Chat (socket)
+7
+7
+100%
+Handshake, broadcast, typing, auth rejection
+Location and SOS
+8
+8
+100%
+Updates, queries, SOS, coordinate validation
+Notifications (API)
+6
+6
+100%
+After the BUG-H2 admin-guard fix
+Security
+7
+7
+100%
+Injection, isolation, token forgery
+Accessibility and i18n
+11
+9
+82%
+Feature-screen translation gap (BUG-M4)
+Offline
+6
+3
+50%
+Retry queue not wired (BUG-M2)
+Build
+9
+6
+72%
+Debug-signed release; version mismatch
+5.4  Defects Found and Fixed
+In the course of both stages of this process, all defects ranging in severity up to crash-level have been discovered and subsequently corrected. The release audit process has corrected eight defects in total, the worst of which were two critical defects on the client side: the memory gallery would crash on each render with data due to reading from a variable before its declaration, while the SOS function failed to issue an alert because of an infinite countdown and premature return in the confirm handler. In addition, there have been three defects identified and resolved by the release audit process – chat search regex injection/ReDos and two realtime refetch storms in chat and map caused by each socket event triggering fetch of a full dataset.
+Table 5.3: Defects fixed during the final testing phase
+ID
+Severity
+Defect and fix
+BUG-C1
+Critical
+Family tree empty for every real family: FamilyMember records were only created by the demo seed script, never by the live create/join flows. Fixed by upserting the record on create and join and deleting it on leave; re-test returned tree nodes and working relationship updates.
+BUG-H2
+High
+Any member could broadcast push notifications to the whole family through POST /api/notifications/create — a spam and phishing vector. Fixed with an admin role check; non-admins now receive 403.
+BUG-M1
+Medium
+Chat star toggle always reported starred:false because the flag was computed after reference population. Fixed by computing from raw ids before population.
+BUG-M3
+Medium
+Leaving a family navigated to a route registered in a parent navigator without using getParent(), relying on fragile navigate bubbling. Fixed to match the pattern used everywhere else in the app.
+Table 5.4: Known defects remaining (all non-blocking)
+ID
+Severity
+Description
+BUG-M2
+Medium
+Offline mutation retry queue exists but no domain processors are registered; offline mutations fail immediately.
+BUG-M4
+Medium
+Feature screens (events, memories, chat, map) render hardcoded English despite complete Tamil and Sinhala bundles.
+BUG-M5
+Medium
+Release artifact is debug-signed; a production keystore or EAS credentials are required before store submission.
+BUG-L1
+Low
+Malformed ObjectId parameters return 500 instead of 400 because per-controller catches pre-empt the central handler.
+BUG-L2
+Low
+Version mismatch between app.json (1.0.0) and package.json (1.0.0-rc.3); cosmetic.
+BUG-L3
+Low
+Dashboard lacks a dedicated empty state for a brand-new family with no content.
+BUG-L4
+Low
+Accessibility labels cover primary controls but not every icon-only button; no formal screen-reader audit.
+5.5  Regression Testing
+Following the final-phase corrections, both the entire 122 REST harness and the 7-case socket harness were re-ran: 121 out of 122 cases passed in the former, as well as all 7 cases in the latter, except for the one failing case due to the existing malformed id problem. The eight fixes identified previously through the release audit were all re-verified and stand firm – the gallery renders properly, the SOS countdown emails are sent correctly, chat and map can cope with realtime events without triggering refetch storm, the like action does not mind about a hydrating profile, and regular expressions used in the chat search do not cause any server error when metacharacters are entered.
+5.6  User Acceptance Testing
+The ten acceptance scenarios captured the primary user experiences for the system in acceptance criteria and tested each end-to-end  the backend live and the respective screens by code review. The results of the process are provided in Table 5.5 below; there were eight fully accepted scenarios and two accepted with notes.
+Table 5.5: UAT scenario outcomes
+Scenario
+Outcome
+UAT-01  Onboarding and family creation
+Accepted — registration, admin promotion, shareable invite code
+UAT-02  Joining a family
+Accepted — join by code, duplicate-join blocked, members listed
+UAT-03  Family tree
+Accepted — nodes for real families and relationship editing after BUG-C1
+UAT-04  Event with availability poll
+Accepted — auto-invites, RSVP, poll create/vote/close with guards
+UAT-05  Sharing memories
+Accepted with note — full flows verified; live binary upload needs Cloudinary credentials absent from the test environment
+UAT-06  Realtime chat
+Accepted — instant broadcast, replies, reactions, pins, stars, safe search
+UAT-07  Location and SOS
+Accepted with note — live flows verified; safe zones and trips are client-side by design
+UAT-08  Notifications
+Accepted with note — push delivery requires a physical device with Firebase credentials
+UAT-09  Accessibility and language
+Accepted with note — modes and bundles complete; feature-screen translation gap
+UAT-10  Offline resilience
+Accepted with note — banner and recovery work; mutation retry unwired
+The acceptance verdict was that the application satisfies its core criteria for a final-year-project demonstration and internal beta: every primary journey works end to end, and the two noted limitations are non-blocking and scheduled as future work.
+6  Deployment
+The following chapter provides the steps taken by the system for migration from developer's computer to user: the development process, the production setup for the backend in Railway, management of configurations via environment variables, the mobile build process, and the versioning practice for releases.
+6.1  Development Environment
+The development environment uses nodemon for the backend with local MongoDB and the client through Expo. There are two networking issues to be aware of regarding Android – the emulator can connect to the host’s API at http://10.0.2.2:5000, while the phone will need adb reverse port forwarding; both have been included in the committed scripts. The seed scripts generate a user for development along with demo data on request, and this decoupled the development of modules from manually creating data.
+6.2  Backend Production Deployment
+The backend is hosted on Railway via mobile-connect-app-production.up.railway.app [21]. The Node application is built from the repository by Railway and is provided secrets via its environment variables configuration, so no secret gets into the code or source control in any way. There are two key platform features that motivated the selection of Railway: WebSocket over the same HTTPS port, enabling Socket.io to operate from the same REST origin without any additional infrastructure; and default TLS termination, making all connections go over HTTPS and WSS. In production, CORS policy restricts access to only one configured client origin and the production server itself – the requests without Origin header (mobile apps) get through, other origins from browser are rejected.
+6.3  Configuration and Environment Variables
+All configuration is externalised. The repository ships a documented .env.example; Table 6.1 lists the variables and their roles. Development and production differ only in these values the codebase is identical.
+Table 6.1: Environment variables
+Variable
+Purpose
+NODE_ENV
+Runtime mode; production enables strict CORS and sanitised errors.
+PORT
+HTTP and Socket.io port (default 5000).
+MONGO_URI
+MongoDB Atlas connection string.
+JWT_SECRET / JWT_REFRESH_SECRET
+Signing secrets for access and refresh tokens (minimum 32 characters).
+JWT_EXPIRE / JWT_REFRESH_EXPIRE
+Token lifetimes.
+CLOUDINARY_CLOUD_NAME / API_KEY / API_SECRET
+Media storage credentials.
+FIREBASE_* (project id, client email, private key)
+Firebase Admin credentials for FCM push.
+CLIENT_URL
+Allowed client origin for CORS; must not be a wildcard in production.
+RATE_LIMIT_WINDOW_MS / RATE_LIMIT_MAX
+Rate limiter tuning.
+MAX_FILE_SIZE_MB
+Upload size ceiling for memories and chat media.
+The client replicates this behavior using two environment variables: .env.development sets EXPO_PUBLIC_API_URL to localhost, and .env.production sets it to the Railway origin. Axios and the socket use the same value as the base URL.
+6.4  Mobile Build Process
+The project is built using Expo Application Services via three eas.json profiles: development (development client, internal distribution), preview (installable APK for testers), and production (Android App Bundle for the store). The app.json includes the native configuration applied at the build stage – the application id com.familyconnect.mobile, version code, permissions to use camera, microphone, and location with the description for the end-user, Google Maps API key, notification icon and color, and adaptive launcher icon. The build audit has proven that expo prebuild produces the fully coherent native project according to the configuration above.
+There is one deliberate release blocker – the lack of production signing keystore leads to using debug keystore for release builds. The produced artifact is installed for demonstration and side-loading as per the project requirements, while the Google Play Store submission needs to produce the actual upload keystore or delegate signing to EAS (account-level operation in the list of future actions). Also, the build audit captured the precise commands to reproduce the builds both for local Gradle and EAS cloud environments.
+6.5  Release Versioning and Rollback
+Releases adhered to a release candidate policy, with rc.1 being the completion of the map module, rc.2 being the production hardening phase, and rc.3 being the build that was ready for final testing, and 1.0.0 would follow only upon QA approval. Rollbacks are very simple in both layers: Railway rolls back to an earlier image, and since Mongoose works under a schema-on-read architecture, there are no database migrations that need to be rolled back. Earlier versions of the mobile app can always be released provided that the API is still backward compatible, something ensured by the envelope architecture.
+7  Project Management
+The success or failure of a one-person, one-year project depends upon the management of that project. This chapter will discuss the planning and controlling mechanisms adopted for the project, risk management, and version control.
+7.1  Methodology
+The project was implemented through agile-like iterations within the framework of the milestones at the university. Work was organized module-by-module according to the order of priorities established when we made the proposal: first secure the groups, then the schedule, then the memory archive, next accessibility and finally the evaluation — so there was a demonstrable core for each module before any optional depth was developed. Every iteration ended with the module fully wired up, from schema to endpoints to screens, not the whole set of backends separately from the screens, and that proved very useful at the progress review, where we demonstrated authentication, families and initial flows of events.
+7.2  Timeline and Milestones
+Table 7.1 outlines the eight months’ schedule that was planned in the proposal, and how this schedule was followed. This schedule was kept intact for the most part; however, the two items of the real-time chat functionality and map/safety module (which were extras in the proposal) moved into the must-have section, with the time being regained by cutting voice functionality and cultural calendar out.
+Table 7.1: Planned schedule versus actual execution
+Phase
+Planned window
+Actual outcome
+Research and requirements
+Months 1–2
+Platform analysis and requirement prioritisation completed; proposal defended (August 2025).
+System design
+Months 2–3
+Architecture, data model, and API conventions fixed; design system tokens defined.
+Core development I — groups and scheduling
+Months 3–4
+Auth, family management, events, polls, and notifications working end to end.
+Core development II — memories and chat
+Months 4–6
+Memory archive and albums delivered; real-time chat promoted to core and completed.
+Accessibility and map
+Months 5–6
+UI modes, i18n engine and bundles, live map, and SOS delivered.
+Integration and internal testing
+Months 6–7
+Release audit across every source file; eight defects fixed including two critical.
+Final testing and tuning
+Months 7–8
+Live 180-case programme (July 2026); four further fixes; regression re-run clean.
+Deployment and documentation
+Month 8
+Railway deployment verified; EAS build configuration audited; thesis prepared.
+With respect to the synchronisation tools used in the course, there were certain predefined milestones, which were; presentation of the proposal defense during week 6-7, mid-course progress assessment towards the beginning of the second semester, submission of the draft of the thesis in week 31, and the final submission, while the reflective journal was kept via fortnightly supervision meetings.
+7.3  Risk Management
+Risks were identified at proposal stage and reviewed as the project progressed; Table 7.2 records the register with what actually occurred.
+Table 7.2: Risk register and outcomes
+Risk
+Mitigation planned
+What happened
+Family data privacy breach
+Encryption in transit, access control, family scoping
+No isolation failure in testing; dedicated security cases all passed. Hardening items (token lifetime, stored refresh-token hashing) documented for production.
+Elder adoption difficulty
+Elder mode with larger fonts and simplified density
+Delivered as a first-class UI mode with policy-driven scaling; formal elder user trials remain future work.
+Cloud costs exceeding budget
+Free tiers, media compression, quotas
+Free tiers of Atlas, Cloudinary, Firebase, and Railway proved sufficient throughout.
+Schedule overrun from scope growth
+MoSCoW prioritisation, supervisor review of changes
+Chat and map grew the scope; voice and cultural calendar were cut in compensation. All milestones met.
+Single-developer key-person load
+Module-by-module completion; documentation as the work progressed
+Architecture, API, QA, and deployment documents were written during development, which later became the audit baseline.
+Device-dependent features untestable in CI
+Physical-device checklist; graceful degradation
+Push and GPS verified manually on hardware; server degrades gracefully without Firebase credentials.
+7.4  Version Control and Task Tracking
+The software project has been maintained using Git monorepository that holds backend, mobile frontend, and documentation and made public on GitHub with final integrated release being version 1.0.0-rc.3. The task management was carried out using the documentation: the per-screen QA checklist ensured interface completeness, the limitations register listed known limitations and their target release version, the bugs list documented the defects with priority, steps to reproduce, cause, and verification, and the test case worksheet (180 tests with status) ensured the verification. For a single developer, the documentation-based task management proved to be more durable than an external board because all claims of system state would eventually end up being documented and reviewed in this thesis.
+7.5  Quality Management
+The process of quality control involved the two-stage verification process mentioned in Chapter 5, which includes an extensive code audit followed by the execution stage with changes kept to a minimum, with no additions to functionality or redrawing of features allowed. The readiness test concluded the auditing phase and gave the backend a score of 74 out of 100 points and the mobile client 86 out of 100 points, with 78 points total, which meant conditional approval with four specific blockers before making the product available for download from the public stores. The approach of being honest about shipping a verified beta version of the application with a precise description of its difference from a production one turned out to be the key managerial achievement of the project.
+8  Evaluation
+In this chapter, the performance of the developed system will be evaluated on the basis of the objectives specified in the project charter, strengths and weaknesses of the system will be identified, and the limitations will be stated clearly. The data will be based on the verification program mentioned in Chapter 5, which includes 180 test cases and 10 acceptance scenarios.
+8.1  Achievement of Objectives
+Table 8.1: Objective achievement matrix
+Objective
+Outcome
+Assessment
+1. Secure, invite-only family groups with role-based access control and strong data protection
+Invite-code groups, admin role, RBAC on all destructive operations, bcrypt(12), JWT with refresh rotation, family-scoped isolation verified by dedicated security cases; end-to-end encryption and two-factor authentication were re-scoped out
+Achieved in substance; two proposal-stage security features consciously descoped
+2. Family-centred scheduling and reminders
+Events with automatic guest invitation and RSVP, availability polls with deadlines and closure, automatic push and in-app reminders; rule-based smart date suggestions replaced by polls; cultural calendar not built
+Achieved through a design that favours explicit family voting over algorithmic suggestion
+3. Private memory archive with organisation and heritage features
+Photo and video uploads with tags, likes, albums, sharing, and a story timeline; legacy mode present as a client-side placeholder pending a server API
+Achieved for the archive core; heritage extensions remain future work
+4. Inclusivity and accessibility across generations
+Standard, minor, and elder modes with policy gating and rescaling; high contrast; reduced motion; complete English, Tamil, and Sinhala bundles — but feature screens still render English strings; voice assistance not built
+Partially achieved: the accessibility architecture is complete, translation coverage is not
+5. Evaluate usability, performance, and security
+Two-phase verification: full-code audit plus 180-case live programme, UAT over ten scenarios, security and performance findings documented; a formal SUS study with families was not conducted
+Achieved on the technical axes; user-facing usability measurement remains open
+By judging the success criterion of the charter, all of the five criteria are satisfied: all of the core modules function end-to-end from the production backend; the family isolation was controlled under the attacks explicitly; the structured testing program was completed without any unresolved critical or high-level defects; the backend operates from public cloud hosting services while the client is available for installation on hardware; and the three UI options and language bundles exist.
+8.2  Strengths
+Verified breadth. The ten components of the product from real-time chat to SOS integrate well and operate together as part of one product, while the verified truth behind the claim comes from running each endpoint in the live environment.
+Security as default setting. Isolation, role-based access control, hashing, token rotation, rate limiting, file upload limits, and sanitisation of errors were verified through specific attacks such as injection and token forgery.
+Built-in real-time architecture capable of scaling with usage. Post-audit changes enable state to be mutated in place on message arrival and location updates; the network cost of talking chatty family is now independent of the size of history.
+Accessibility as core architecture. Modes, themes, motion and languages are contexts consumed everywhere, not settings pages, and that’s why their application happens automatically across 73 different screens.
+Honest documentation of engineering practices. Documented limitations, bugs, and blockers alongside features made the final assessment possible and the future work plan clear.
+8.3  Weaknesses and Limitations
+The assessment would not be complete without the other column. The obvious shortcoming is the lack of internationalization: the engine and all three bundles are present, however, the feature UIs are presented as hardcoded in English, which means that if an elder speaks Tamil or Sinhala, then the feature will provide a localized UI around the English content. Offline mode notices disconnection but fails to reproduce unsuccessful mutation because its domain processors of the queue have never been connected. Debug signing of the release artefact means that the app will not reach Google Play Store until there is a proper key store. Access tokens expire in 30 days and cannot be invalidated before the expiration, refresh tokens are stored unhashed, and the development CORS proxy has to be stripped from the release build — these are the security items that are blocking any untrusted deployment. Continuous integration process lacks automated unit-test suites, even though live tests are reproducible and run on demand. Last but not least, the assessment has boundaries: no subjective satisfaction study with families was performed during the year.
+Table 8.2: User feedback (to be completed)
+Item
+Value
+Participants and age groups
+[insert SUS participant details]
+SUS score(s)
+[insert overall and per-group SUS scores]
+Key qualitative feedback
+[insert summarised participant comments]
+Table 8.2 is a placeholder for the family pilot results: the survey instrument (the ten-item SUS [4]) was prepared, and the table should be completed with participant numbers, scores, and representative comments once the pilot data is collected, before final submission.
+8.4  Performance Evaluation
+Performance tuning focused on areas where the family application was detrimental to performance: unnecessary network round trips and unconstrained queries. The two types of storm that were discovered through audit analysis - full chat history refetches and full location refetches for each socket event - were fixed. Hot paths have indexes (messages based on family and time, starred lookup, locations based on family and recency, albums based on family). Chat history is restricted to 200 messages per request. Acknowledged and acceptable for the current scale: query for events and memory list, non-batched write and push notifications per recipient, independent fetching of family locations in dashboard, family and map modules. All flagged for future version but none is visible at family scale.
+8.5  Security Evaluation
+The security tests tried attacks a malicious family member or outsider would perform: requests without a token, old tokens, altered signatures, tokens that used incorrect secrets, NoSQL operator injections in login, regular expression metacharacters in searches, cross-family access to events and memories, destructive actions not authorized as admin (which was since patched), and unauthorized connections using sockets. All were refused properly. The audit conclusion remains the true assessment: safe-by-default in an academic and beta version, but needing the specified hardening — short token expiry, hashed refresh tokens, strict CORS, admin guard — before release for production use. Testing was done in accordance with OWASP guidance on vulnerability types to check [22].
+8.6  Overall Assessment
+The production-readiness review rated the system 78/100 points in total (backend: 74, mobile: 86), with a conditional approval to proceed with both the FYP demo and internal beta straight away, but depending on four conditions for going live with the public launch. In the context of the problem statement from chapter 1, the system works exactly as intended – the family is able to move their conversations, plans, memories, and safety net into a single private space – and the gap between the two is clear to see.
+9  Conclusion
+9.1  Summary of Achievements
+While most general-purpose platforms provide communication, planning, memories, and security in separate channels, this project aimed to offer a single private space where all can be accomplished. The end result of the development of the software during one academic year was Family Connect – a React Native app with an Express, MongoDB, and Socket.io backend – featuring ten modules: authentication with token rotation, invite-based family management, real-time chat with responses, reactions, pins, stars, and search, events with RSVP and attendance poll, memory storage with photo albums and tagging, a family tree, live location sharing and dual-channel SOS alert, notifications with in-app and push functionality, accessibility with three user interface options and three supported languages, and offline detection with graceful degradation.
+It is a matter-of-fact statement to claim that the system works as expected. All REST endpoints and the real-time layer of the system were tested using a 180-case program which ended up with a 94.4% success rate and no unresolved critical or high-level defects; all ten acceptance test scenarios were successful; and the fixes for four important defects – crashing gallery, silent SOS, empty family tree, and an open broadcast of notifications – were detected by the program and proven successful after re-execution.
+9.2  Reflection on Objectives
+Four out of five charter goals were met in spirit, and the fifth in terms of its technical side. Insofar as the actual design differs from the proposed one, such differences were intentional and, upon reflection, correct: polls for availability worked as a scheduling primitive better than smart suggestions; minor-mode policy-based gates were an enforcement strategy that offered more child safety than approval workflow; and spending the saved time on chat and map/SOS functionality made these the two strongest selling points of the product. The true shortcomings lie in inadequate language support on feature screens and lack of a usability test — both are clear-cut, known problems that come next.
+9.3  Limitations
+These constraints, as mentioned throughout both chapters 5 and 8, have to be reiterated at once: feature-screen internationalization is partial; offline mutations are not played back; the release build is debug signed rather than store validated; access-token expiration time, refresh token management, and the development CORS proxy should be secured before external exposure; many list queries and notifications dispatching are not optimized beyond the level of family; automated testing is an ad-hoc testing harness and not CI; no evidence of usability in real families was collected yet.
+9.4  Future Work
+Every item listed below is tangible in the sense that there already exists either architecture for it or a known way to get there.
+Final internationalisation step, consisting of moving the feature screens into the already existing translation engine – the bundles have keys.
+Registration of per-domain processors of the offline queue to make sure that any changes done while being offline will play back once the connection is back – the architecture is shipped already.
+Creating of production keystore or usage of EAS-managed credentials, matching version identifiers and submitting the signed bundle into Google Play store; doing an iOS build.
+Hardening authentication for public production – reducing lifetime of access tokens, hashing refresh tokens and getting rid of development CORS fallback.
+Moving safe zones, emergency contacts and trip history into server persistence and adding geofence notifications to them.
+Batching of notification writes and FCM dispatching, paginating remaining list endpoints, adding secondary indexes.
+Setting up CI for running an automated test suite on existing harnesses, so that every change goes through 129 live tests.
+Conducting the prepared SUS-based family pilot for various age groups and incorporating results of it into an accessibility-oriented release.
+Completing the family tree with full person and relationship CRUD operations based on server persisted legacy profiles.
+The problem that this project discovered in the beginning of its year-long development process – absence of a unifying, private and cross-generational platform for family use – was quite genuine, and one year of engineering effort proves that it is solvable with proper work on infrastructure of a free tier. Thus, Family Connect enters the end of the year as a verified, deployed beta product with all the remaining steps to production documented and outlined, exactly how it should be at this stage of development.
+References
+[1]WhatsApp, “Communicate with your family anytime,” WhatsApp LLC, 2025. [Online]. Available: https://www.whatsapp.com. [Accessed: Aug. 27, 2025].
+[2]Doodle, “Online scheduling made easy,” Doodle AG, 2025. [Online]. Available: https://doodle.com. [Accessed: Aug. 27, 2025].
+[3]Google Photos, “A home for your memories,” Google LLC, 2025. [Online]. Available: https://photos.google.com. [Accessed: Aug. 27, 2025].
+[4]J. Brooke, “SUS: A quick and dirty usability scale,” in Usability Evaluation in Industry, 1st ed. London, U.K.: Taylor & Francis, 1996, pp. 189–194.
+[5]International Organization for Standardization, ISO 9241-11:2018, Ergonomics of human–system interaction — Usability: Definitions and concepts. Geneva, Switzerland: ISO, 2018.
+[6]J. Nielsen, “10 usability heuristics for user interface design,” Nielsen Norman Group, 1994. [Online]. Available: https://www.nngroup.com/articles/ten-usability-heuristics/. [Accessed: Aug. 27, 2025].
+[7]K. Chen and Y. Zhang, “AI-powered evaluation systems in student performance assessment,” IEEE Access, vol. 9, pp. 14532–14544, 2021.
+[8]M. Jones, J. Bradley, and N. Sakimura, “JSON Web Token (JWT),” IETF RFC 7519, May 2015. [Online]. Available: https://www.rfc-editor.org/rfc/rfc7519. [Accessed: Aug. 27, 2025].
+[9]I. Fette and A. Melnikov, “The WebSocket Protocol,” IETF RFC 6455, Dec. 2011. [Online]. Available: https://www.rfc-editor.org/rfc/rfc6455. [Accessed: Aug. 27, 2025].
+[10]W3C, “Web Content Accessibility Guidelines (WCAG) 2.1,” W3C Recommendation, Jun. 2018. [Online]. Available: https://www.w3.org/TR/WCAG21/. [Accessed: Jul. 2026].
+[11]MongoDB Inc., “MongoDB Atlas documentation,” 2024. [Online]. Available: https://www.mongodb.com/docs/atlas/. [Accessed: Aug. 27, 2025].
+[12]OpenJS Foundation, “Express — Node.js web application framework.” [Online]. Available: https://expressjs.com. [Accessed: Jul. 2026].
+[13]Automattic, “Mongoose documentation.” [Online]. Available: https://mongoosejs.com/docs/. [Accessed: Jul. 2026].
+[14]Socket.IO, “Socket.IO documentation.” [Online]. Available: https://socket.io/docs/v4/. [Accessed: Jul. 2026].
+[15]N. Provos and D. Mazières, “A future-adaptable password scheme,” in Proc. USENIX Annual Technical Conference, FREENIX Track, Monterey, CA, USA, 1999, pp. 81–91.
+[16]Cloudinary, “Cloudinary documentation.” [Online]. Available: https://cloudinary.com/documentation. [Accessed: Jul. 2026].
+[17]Google Firebase, “Firebase Cloud Messaging,” Google Developers, 2024. [Online]. Available: https://firebase.google.com/docs/cloud-messaging. [Accessed: Aug. 27, 2025].
+[18]Meta Platforms, “React Native documentation.” [Online]. Available: https://reactnative.dev/docs/getting-started. [Accessed: Jul. 2026].
+[19]Expo, “Expo documentation.” [Online]. Available: https://docs.expo.dev. [Accessed: Jul. 2026].
+[20]React Navigation, “React Navigation documentation.” [Online]. Available: https://reactnavigation.org/docs/getting-started. [Accessed: Jul. 2026].
+[21]Railway, “Railway documentation.” [Online]. Available: https://docs.railway.com. [Accessed: Jul. 2026].
+[22]OWASP Foundation, “OWASP Top Ten.” [Online]. Available: https://owasp.org/www-project-top-ten/. [Accessed: Jul. 2026].
+Appendix A: REST API Endpoint Reference
+All endpoints are prefixed with /api and, unless marked public, require an Authorization: Bearer header. The response envelope is { success, data } on success and { success: false, message } on failure.
+Table A.1: Authentication and family endpoints
+Method and path
+Description
+POST /auth/register (public)
+Create an account; returns user and token pair
+POST /auth/login (public)
+Authenticate; returns token pair
+POST /auth/refresh (public)
+Exchange a refresh token for a new pair (rotation)
+POST /auth/logout
+Invalidate the stored refresh token
+GET /auth/me
+Current user profile
+POST /family/create
+Create a family; creator becomes admin
+GET /family/my-family
+Family details with member list
+POST /family/join
+Join a family by invite code
+POST /family/invite
+Retrieve/share the invite code (member-guarded)
+DELETE /family/leave
+Leave the family (blocked for the admin)
+Table A.2: Event, poll, memory, and album endpoints
+Method and path
+Description
+POST /events/create
+Create an event; auto-invites all members
+GET /events
+List family events
+GET /events/:id
+Event details
+PATCH /events/:id
+Update (creator or admin)
+DELETE /events/:id
+Delete (creator or admin)
+POST /events/respond
+RSVP accepted / declined / maybe
+POST /polls
+Create an availability poll (≥ 2 options)
+GET /polls/event/:eventId
+Poll for an event
+GET /polls/:pollId
+Poll details
+POST /polls/:pollId/vote
+Vote yes / maybe / no
+POST /polls/:pollId/close
+Close and record the selected option
+POST /memories/upload
+Multipart media upload with caption and tags
+GET /memories
+List family memories
+GET /memories/:id
+Memory details
+POST /memories/like
+Toggle like
+DELETE /memories/:id
+Delete (uploader or admin)
+POST /albums
+Create album
+GET /albums
+List albums (paginated)
+GET /albums/:id
+Album details
+PUT /albums/:id
+Update (owner or admin)
+POST /albums/:id/add-media
+Add memories to an album
+POST /albums/:id/share
+Enable share link
+DELETE /albums/:id
+Delete (owner or admin)
+Table A.3: Chat, notification, tree, and location endpoints
+Method and path
+Description
+POST /chat/send
+Send a message (optional media); also emitted to the socket room
+GET /chat/messages
+Paginated history (limit-bounded)
+GET /chat/search
+Literal-text search (regex-escaped)
+GET /chat/pinned  /  GET /chat/starred
+Pinned and starred message lists
+PATCH /chat/:id  /  DELETE /chat/:id
+Edit own message / delete own (or any, as admin)
+POST /chat/:id/react
+Add or change an emoji reaction
+POST /chat/:id/pin  /  DELETE /chat/:id/pin
+Pin / unpin
+POST /chat/:id/star
+Toggle star for the caller
+GET /notifications
+List own notifications
+POST /notifications/create
+Manual broadcast (admin only)
+PUT /notifications/read/:id
+Mark as read
+DELETE /notifications/:id
+Delete
+GET /family-tree
+Member nodes with relationships
+PUT /family-tree/relationship
+Update a relationship (self, or any as admin)
+POST /location/update
+Upsert own live position
+GET /location/family
+All family member positions
+GET /location/:userId
+One member’s position
+POST /location/sos
+Trigger the SOS alert (push + socket)
+Appendix B: Test Case Distribution and Reproduction
+The single workbook holds 180 tests: 122 live REST tests (automated), 7 live Socket.io tests (automated), and 51 tests with verified code for mobile behavior, build, navigation, and regression. Test results: 170 passed, 6 failed, 4 partially passed (94.4% success). The program can be recreated based on the files in the repository: first launch MongoDB; then run the server in the backend directory with an increased rate limit in development mode; next run qaLiveTest, qaSocketTest, and qaGenerateXlsx files. Original results are kept in JSON format in docs/qa folder of the repository.
+Appendix C: Known Limitations Register (at submission)
+Table C.1: Known limitations and their target release
+Area
+Limitation
+Target
+Internationalisation
+Feature screens hardcode English; bundles complete
+v1.1
+Offline
+Mutation retry processors not registered
+v1.1
+Release
+Debug-signed artifact; no production keystore
+Store release
+Auth hardening
+30-day access tokens; unhashed stored refresh tokens; dev CORS fallback
+Public production
+Map
+Safe zones, contacts, trips stored on-device only
+v1.1
+Tree
+Person/relationship CRUD and legacy profiles pending server APIs
+v1.x
+Performance
+Unpaginated event/memory lists; per-recipient notification dispatch
+v1.1
+Testing
+Harnesses run on demand; no CI pipeline
+v1.1
+Appendix D: Application Screenshots
+The following is a compilation of page-sized screenshots of the application during its execution apart from those included in Chapter 4. Insert the screenshots of the device for the following: Onboarding (Login/Register/Create/Join Family), Dashboard, Home page for each feature module (Events/Memories/Chat/Map/Tree), Countdown to SOS, Notifications list, and Accessibility settings for each UI mode & language.

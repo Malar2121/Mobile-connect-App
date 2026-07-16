@@ -7,12 +7,13 @@ import { SectionTitle } from '../../design-system';
 import { DashboardPressable } from './DashboardPressable';
 import { useTheme } from '../../hooks/useTheme';
 import { useResponsive } from '../../design-system';
+import { useI18n } from '../../i18n';
 
 const ALL_ACTIONS = [
   {
     id: 'event',
-    title: 'Create Event',
-    subtitle: 'Plan together',
+    titleKey: 'dashboard.qaCreateEvent',
+    subtitleKey: 'dashboard.qaCreateEventSub',
     icon: 'calendar',
     gradientKey: 'cool',
     route: 'Events',
@@ -21,8 +22,8 @@ const ALL_ACTIONS = [
   },
   {
     id: 'memory',
-    title: 'Upload Memory',
-    subtitle: 'Share a moment',
+    titleKey: 'dashboard.qaUploadMemory',
+    subtitleKey: 'dashboard.qaUploadMemorySub',
     icon: 'cloud-upload',
     gradientKey: 'warm',
     route: 'Memories',
@@ -31,24 +32,24 @@ const ALL_ACTIONS = [
   },
   {
     id: 'chat',
-    title: 'Open Chat',
-    subtitle: 'Message family',
+    titleKey: 'dashboard.qaOpenChat',
+    subtitleKey: 'dashboard.qaOpenChatSub',
     icon: 'chatbubbles',
     gradientKey: 'mint',
     route: 'Chat',
   },
   {
     id: 'map',
-    title: 'Open Map',
-    subtitle: 'See everyone',
+    titleKey: 'dashboard.qaOpenMap',
+    subtitleKey: 'dashboard.qaOpenMapSub',
     icon: 'map',
     gradientKey: 'sunset',
     route: 'Map',
   },
   {
     id: 'invite',
-    title: 'Invite Member',
-    subtitle: 'Grow your circle',
+    titleKey: 'dashboard.qaInvite',
+    subtitleKey: 'dashboard.qaInviteSub',
     icon: 'person-add',
     gradientKey: 'primary',
     action: 'invite',
@@ -56,8 +57,8 @@ const ALL_ACTIONS = [
   },
   {
     id: 'gallery',
-    title: 'Create Album',
-    subtitle: 'Browse memories',
+    titleKey: 'dashboard.qaAlbum',
+    subtitleKey: 'dashboard.qaAlbumSub',
     icon: 'albums',
     gradientKey: 'cardAccent',
     route: 'Memories',
@@ -65,8 +66,8 @@ const ALL_ACTIONS = [
   },
   {
     id: 'poll',
-    title: 'Create Poll',
-    subtitle: 'Pick a date',
+    titleKey: 'dashboard.qaPoll',
+    subtitleKey: 'dashboard.qaPollSub',
     icon: 'bar-chart',
     gradientKey: 'cool',
     route: 'Events',
@@ -75,8 +76,8 @@ const ALL_ACTIONS = [
   },
   {
     id: 'tree',
-    title: 'Family Tree',
-    subtitle: 'View connections',
+    titleKey: 'dashboard.qaTree',
+    subtitleKey: 'dashboard.qaTreeSub',
     icon: 'git-network',
     gradientKey: 'mint',
     route: 'Profile',
@@ -85,7 +86,7 @@ const ALL_ACTIONS = [
   },
 ];
 
-function ActionTile({ item, index, onPress, colors, gradients, layout, radii, tileWidth }) {
+function ActionTile({ item, title, subtitle, index, onPress, colors, gradients, layout, radii, tileWidth }) {
   const gradient = gradients[item.gradientKey] ?? gradients.cool;
 
   return (
@@ -93,22 +94,24 @@ function ActionTile({ item, index, onPress, colors, gradients, layout, radii, ti
       entering={FadeInDown.delay(80 + index * 40).duration(420).springify()}
       style={{ width: tileWidth }}
     >
-      <DashboardPressable onPress={() => onPress(item)} accessibilityLabel={item.title}>
-        <LinearGradient
-          colors={
-            colors.isDark
-              ? ['rgba(79,86,217,0.2)', 'rgba(20,20,28,0.9)']
-              : ['rgba(238,240,255,0.95)', 'rgba(255,255,255,0.98)']
-          }
-          style={[
-            styles.tile,
-            {
-              borderColor: colors.border,
-              borderRadius: radii.xl,
-              minHeight: layout.minTouch + 36,
-            },
-          ]}
-        >
+      <DashboardPressable onPress={() => onPress(item)} style={{ width: '100%' }} accessibilityLabel={title}>
+          <LinearGradient
+            colors={
+              colors.isDark
+                ? ['rgba(79,86,217,0.15)', 'rgba(24,24,27,0.85)']
+                : ['rgba(238,240,255,0.85)', 'rgba(255,255,255,1)']
+            }
+            style={[
+              styles.tile,
+              {
+                borderColor: colors.border,
+                borderRadius: radii['2xl'],
+                minHeight: layout.minTouch + 44,
+                overflow: 'hidden',
+                width: '100%',
+              },
+            ]}
+          >
           <LinearGradient
             colors={gradient}
             style={[styles.iconBox, { borderRadius: radii.md }]}
@@ -123,7 +126,7 @@ function ActionTile({ item, index, onPress, colors, gradients, layout, radii, ti
               marginTop: 12,
             }}
           >
-            {item.title}
+            {title}
           </Text>
           <Text
             style={{
@@ -132,7 +135,7 @@ function ActionTile({ item, index, onPress, colors, gradients, layout, radii, ti
               marginTop: 2,
             }}
           >
-            {item.subtitle}
+            {subtitle}
           </Text>
         </LinearGradient>
       </DashboardPressable>
@@ -145,6 +148,7 @@ function QuickActionsGridComponent({ isMinor, onAction }) {
   const { colors, layout, radii, gradients, isDark } = theme;
   const { horizontalPadding, isTablet } = useResponsive();
   const { width } = useWindowDimensions();
+  const { t } = useI18n();
 
   const actions = useMemo(
     () => ALL_ACTIONS.filter((a) => !(isMinor && a.minorHidden)),
@@ -159,12 +163,14 @@ function QuickActionsGridComponent({ isMinor, onAction }) {
 
   return (
     <View style={{ paddingHorizontal: horizontalPadding, marginBottom: layout.sectionGap }}>
-      <SectionTitle title="Quick actions" subtitle="Jump into what matters" />
+      <SectionTitle title={t('dashboard.quickActions')} subtitle={t('dashboard.quickActionsSubtitle')} />
       <View style={[styles.grid, { gap }]}>
         {actions.map((item, index) => (
           <ActionTile
             key={item.id}
             item={item}
+            title={t(item.titleKey)}
+            subtitle={t(item.subtitleKey)}
             index={index}
             onPress={onAction}
             colors={themeColors}

@@ -42,6 +42,24 @@ const userSchema = new mongoose.Schema(
       type: Boolean,
       default: false,
     },
+    // Member type drives the client UI mode (standard/minor/elder) and the
+    // safety-tracking policy: children and elders are always visible to
+    // guardians on the family map and cannot disable location sharing.
+    memberType: {
+      type: String,
+      enum: ['adult', 'child', 'elder'],
+      default: 'adult',
+    },
+    dateOfBirth: {
+      type: Date,
+      default: null,
+    },
+    // Adults may pause location sharing; children/elders cannot
+    // (enforced in the location controller for family safety).
+    locationSharingPaused: {
+      type: Boolean,
+      default: false,
+    },
     // FCM push notification tokens (one per device)
     fcmTokens: [
       {
@@ -55,6 +73,15 @@ const userSchema = new mongoose.Schema(
       },
     ],
     refreshToken: {
+      type: String,
+      select: false,
+    },
+    // Two-factor authentication (TOTP via authenticator app)
+    twoFactorEnabled: {
+      type: Boolean,
+      default: false,
+    },
+    twoFactorSecret: {
       type: String,
       select: false,
     },

@@ -52,3 +52,69 @@ export async function sendSOSAlert(payload) {
     throw normalizeAxiosError(e);
   }
 }
+
+// ─── Sharing (pause/resume — children & elders cannot pause) ───
+
+export async function setLocationSharing(enabled) {
+  try {
+    const { data } = await api.post('/location/sharing', { enabled });
+    if (!data.success) throw new Error(data.message || 'Could not update sharing');
+    return data.data;
+  } catch (e) {
+    throw normalizeAxiosError(e);
+  }
+}
+
+// ─── Location history (server trail, powers trips & member details) ───
+
+export async function getLocationHistory(userId, hours = 24) {
+  try {
+    const { data } = await api.get(`/location/history/${encodeURIComponent(userId)}?hours=${hours}`);
+    if (!data.success) throw new Error(data.message || 'Could not load history');
+    return data.data;
+  } catch (e) {
+    throw normalizeAxiosError(e);
+  }
+}
+
+// ─── Safe zones (server-persisted geofences) ───
+
+export async function getSafeZones() {
+  try {
+    const { data } = await api.get('/safezones');
+    if (!data.success) throw new Error(data.message || 'Could not load safe zones');
+    return Array.isArray(data.data) ? data.data : [];
+  } catch (e) {
+    throw normalizeAxiosError(e);
+  }
+}
+
+export async function createSafeZone(zone) {
+  try {
+    const { data } = await api.post('/safezones', zone);
+    if (!data.success) throw new Error(data.message || 'Could not create safe zone');
+    return data.data;
+  } catch (e) {
+    throw normalizeAxiosError(e);
+  }
+}
+
+export async function updateSafeZone(zoneId, updates) {
+  try {
+    const { data } = await api.put(`/safezones/${encodeURIComponent(zoneId)}`, updates);
+    if (!data.success) throw new Error(data.message || 'Could not update safe zone');
+    return data.data;
+  } catch (e) {
+    throw normalizeAxiosError(e);
+  }
+}
+
+export async function deleteSafeZone(zoneId) {
+  try {
+    const { data } = await api.delete(`/safezones/${encodeURIComponent(zoneId)}`);
+    if (!data.success) throw new Error(data.message || 'Could not delete safe zone');
+    return data.data;
+  } catch (e) {
+    throw normalizeAxiosError(e);
+  }
+}

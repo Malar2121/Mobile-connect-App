@@ -238,6 +238,19 @@ export default function ProfileScreen({ navigation }) {
           ) : null}
         </Card>
 
+        <SectionTitle title={t('security.title')} subtitle={t('security.subtitle')} style={{ marginTop: layout.sectionGap }} />
+        <Card>
+          <Button
+            title={t('security.twoFactor')}
+            variant="secondary"
+            onPress={() => navigation.navigate('Security')}
+            icon={<Ionicons name="shield-checkmark-outline" size={18} color={colors.primary} />}
+            iconRight={<Ionicons name="chevron-forward" size={18} color={colors.primary} />}
+            accessibilityLabel={t('security.twoFactor')}
+            accessibilityHint={t('security.subtitle')}
+          />
+        </Card>
+
         <Button
           title={t('profile.notificationsInbox')}
           variant="secondary"

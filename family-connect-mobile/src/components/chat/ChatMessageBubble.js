@@ -164,8 +164,8 @@ export function ChatMessageBubble({
         <Text
           style={{
             color: isMine ? '#FFFFFF' : colors.text,
-            fontSize: 16,
-            lineHeight: 22,
+            fontSize: uiMode === 'minor' ? 20 : 16,
+            lineHeight: uiMode === 'minor' ? 28 : 22,
             fontFamily: chatTypography.fontFamilyRegular,
           }}
         >
@@ -222,7 +222,7 @@ export function ChatMessageBubble({
       <GestureDetector gesture={gesture}>
         <Animated.View style={[styles.bubbleCol, isMine && styles.bubbleColMine, animStyle]}>
           {!isMine ? (
-            <Text style={[styles.senderName, { color: colors.textSecondary, fontFamily: chatTypography.fontFamilySemi }]}>
+            <Text style={[styles.senderName, { color: colors.textSecondary, fontFamily: chatTypography.fontFamilySemi, fontSize: uiMode === 'minor' ? 14 : 12 }]}>
               {sender.fullName ?? 'Family'}
             </Text>
           ) : null}
@@ -232,7 +232,7 @@ export function ChatMessageBubble({
               colors={gradientColors}
               start={{ x: 0, y: 0 }}
               end={{ x: 1, y: 1 }}
-              style={[styles.bubble, styles.bubbleMine, { borderRadius: chatRadii.bubble }]}
+              style={[styles.bubble, styles.bubbleMine, { borderRadius: uiMode === 'minor' ? 24 : chatRadii.bubble }]}
             >
               {bubbleContent}
             </LinearGradient>
@@ -241,8 +241,8 @@ export function ChatMessageBubble({
               style={[
                 styles.bubble,
                 {
-                  borderRadius: chatRadii.bubble,
-                  backgroundColor: isDark ? '#1E2430' : '#F0F2F5',
+                  borderRadius: uiMode === 'minor' ? 24 : chatRadii.bubble,
+                  backgroundColor: isDark ? '#1E2430' : (uiMode === 'minor' ? '#E0F2FE' : '#F0F2F5'),
                   borderColor: isDark ? 'rgba(255,255,255,0.06)' : 'rgba(0,0,0,0.04)',
                   borderWidth: StyleSheet.hairlineWidth,
                 },

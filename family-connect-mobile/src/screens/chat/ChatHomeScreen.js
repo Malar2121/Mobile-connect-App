@@ -11,6 +11,7 @@ import { PinnedBanner } from '../../components/chat/PinnedBanner';
 import { getChatAnalytics } from '../../utils/chatModuleHelpers';
 import { useTheme } from '../../hooks/useTheme';
 import { useResponsive } from '../../design-system';
+import { useI18n } from '../../i18n';
 
 const SHORTCUTS = [
   { id: 'conversation', label: 'Open chat', icon: 'chatbubbles', screen: 'Conversation', primary: true },
@@ -25,9 +26,10 @@ const SHORTCUTS = [
 
 export default function ChatHomeScreen() {
   const navigation = useNavigation();
+  const { t } = useI18n();
   const insets = useSafeAreaInsets();
   const { horizontalPadding } = useResponsive();
-  const { colors, layout, radii, isDark } = useTheme();
+  const { colors, layout, radii, isDark, uiMode } = useTheme();
   const { family, members, messages, loading, pinnedMessage, prefs, typingName, loadHistory } = useChatModule();
 
   const analytics = useMemo(() => getChatAnalytics(messages, members), [messages, members]);
@@ -36,8 +38,45 @@ export default function ChatHomeScreen() {
   if (loading && !messages.length) {
     return (
       <Screen edges={['top']}>
-        <PageHeader title="Chat" subtitle="Family communication" large />
+        <PageHeader title={t('chat.title')} subtitle={t('chat.subtitle')} large />
         <ChatSkeleton />
+      </Screen>
+    );
+  }
+
+  if (uiMode === 'minor') {
+    return (
+      <Screen edges={['top']}>
+        <View style={{ alignItems: 'center', marginTop: 40, paddingHorizontal: horizontalPadding }}>
+          <Text style={{ fontSize: 48 }}>👨‍👩‍👧‍👦</Text>
+          <Text style={{ color: colors.text, fontFamily: 'Inter_700Bold', fontSize: 28, marginTop: 24, textAlign: 'center' }}>
+            Family Chat
+          </Text>
+          <Text style={{ color: colors.textSecondary, fontSize: 18, marginTop: 12, textAlign: 'center' }}>
+            Talk to Mom, Dad, and the rest of the family!
+          </Text>
+          
+          <Pressable
+            onPress={() => navigate('Conversation')}
+            style={({ pressed }) => [
+              {
+                backgroundColor: '#3b82f6',
+                paddingVertical: 24,
+                paddingHorizontal: 48,
+                borderRadius: radii['3xl'],
+                marginTop: 64,
+                opacity: pressed ? 0.9 : 1,
+                alignItems: 'center',
+                width: '100%'
+              }
+            ]}
+          >
+            <Ionicons name="chatbubbles" size={40} color="#fff" />
+            <Text style={{ color: '#fff', fontSize: 24, fontWeight: 'bold', marginTop: 12 }}>
+              Open Chat
+            </Text>
+          </Pressable>
+        </View>
       </Screen>
     );
   }
@@ -45,7 +84,7 @@ export default function ChatHomeScreen() {
   return (
     <Screen edges={['top']} noPadding>
       <View style={{ paddingHorizontal: horizontalPadding }}>
-        <PageHeader title="Chat" subtitle={family?.name ?? 'Family communication'} large />
+        <PageHeader title={t('chat.title')} subtitle={family?.name ?? t('chat.subtitle')} large />
       </View>
 
       <ScrollView
@@ -64,13 +103,7 @@ export default function ChatHomeScreen() {
           ) : null}
         </LinearGradient>
 
-        {pinnedMessage ? (
-          <View style={{ marginBottom: 12 }}>
-            <PinnedBanner message={pinnedMessage} editedTexts={prefs.editedTexts} onPress={() => navigate('Conversation')} onUnpin={() => {}} />
-          </View>
-        ) : null}
-
-        <SectionTitle title="Quick access" subtitle="Premium family messaging" />
+        <SectionTitle title={t('chat.quickAccess')} subtitle={t('chat.quickAccessSubtitle')} />
         <View style={styles.grid}>
           {SHORTCUTS.map((item) => (
             <Pressable

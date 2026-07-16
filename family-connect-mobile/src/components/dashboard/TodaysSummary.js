@@ -7,21 +7,22 @@ import { DashboardAnimatedNumber } from './DashboardAnimatedNumber';
 import { DashboardPressable } from './DashboardPressable';
 import { useTheme } from '../../hooks/useTheme';
 import { useResponsive } from '../../design-system';
+import { useI18n } from '../../i18n';
 
 const SUMMARY_ITEMS = [
-  { key: 'todayEvents', label: 'Events today', icon: 'calendar', gradientKey: 'cool' },
-  { key: 'newMemories', label: 'New memories', icon: 'images', gradientKey: 'warm' },
-  { key: 'unreadMessages', label: 'Unread chats', icon: 'chatbubbles', gradientKey: 'mint' },
-  { key: 'unreadNotifications', label: 'Alerts', icon: 'notifications', gradientKey: 'sunset' },
-  { key: 'activeMembers', label: 'Active now', icon: 'radio-button-on', gradientKey: 'primary' },
+  { key: 'todayEvents', labelKey: 'dashboard.eventsToday', icon: 'calendar', gradientKey: 'cool' },
+  { key: 'newMemories', labelKey: 'dashboard.newMemories', icon: 'images', gradientKey: 'warm' },
+  { key: 'unreadMessages', labelKey: 'dashboard.unreadChats', icon: 'chatbubbles', gradientKey: 'mint' },
+  { key: 'unreadNotifications', labelKey: 'dashboard.alerts', icon: 'notifications', gradientKey: 'sunset' },
+  { key: 'activeMembers', labelKey: 'dashboard.activeNow', icon: 'radio-button-on', gradientKey: 'primary' },
 ];
 
-function SummaryTile({ item, value, index, onPress, colors, isDark, gradients, layout, radii }) {
+function SummaryTile({ item, label, value, index, onPress, colors, isDark, gradients, layout, radii }) {
   const gradient = gradients[item.gradientKey] ?? gradients.cool;
 
   return (
     <Animated.View entering={FadeInRight.delay(index * 50).duration(400).springify()}>
-      <DashboardPressable onPress={onPress} accessibilityLabel={`${item.label}, ${value}`}>
+      <DashboardPressable onPress={onPress} accessibilityLabel={`${label}, ${value}`}>
         <View
           style={[
             styles.tile,
@@ -52,7 +53,7 @@ function SummaryTile({ item, value, index, onPress, colors, isDark, gradients, l
               fontFamily: 'Inter_500Medium',
             }}
           >
-            {item.label}
+            {label}
           </Text>
           <View style={[styles.accent, { borderRadius: radii.sm, overflow: 'hidden' }]}>
             <View style={{ height: 3, backgroundColor: gradient[0] }} />
@@ -66,32 +67,38 @@ function SummaryTile({ item, value, index, onPress, colors, isDark, gradients, l
 function TodaysSummaryComponent({ summary, onStatPress }) {
   const { colors, isDark, gradients, layout, radii } = useTheme();
   const { horizontalPadding } = useResponsive();
+  const { t } = useI18n();
 
   return (
     <View style={{ marginBottom: layout.sectionGap }}>
-      <View style={{ paddingHorizontal: horizontalPadding }}>
-        <SectionTitle title="Today's summary" subtitle="Your family at a glance" />
+      <View style={{ paddingHorizontal: horizontalPadding, marginBottom: 12 }}>
+        <SectionTitle title={t('dashboard.todaySummary')} subtitle={t('dashboard.todaySummarySubtitle')} />
       </View>
-      <ScrollView
-        horizontal
-        showsHorizontalScrollIndicator={false}
-        contentContainerStyle={[styles.scroll, { paddingHorizontal: horizontalPadding }]}
+      <View
+        style={{
+          flexDirection: 'row',
+          flexWrap: 'wrap',
+          paddingHorizontal: horizontalPadding,
+          gap: 12,
+        }}
       >
         {SUMMARY_ITEMS.map((item, index) => (
-          <SummaryTile
-            key={item.key}
-            item={item}
-            value={summary[item.key] ?? 0}
-            index={index}
-            onPress={() => onStatPress?.(item.key)}
-            colors={colors}
-            isDark={isDark}
-            gradients={gradients}
-            layout={layout}
-            radii={radii}
-          />
+          <View key={item.key} style={{ width: '47%', flexGrow: 1 }}>
+            <SummaryTile
+              item={item}
+              label={t(item.labelKey)}
+              value={summary[item.key] ?? 0}
+              index={index}
+              onPress={() => onStatPress?.(item.key)}
+              colors={colors}
+              isDark={isDark}
+              gradients={gradients}
+              layout={layout}
+              radii={radii}
+            />
+          </View>
         ))}
-      </ScrollView>
+      </View>
     </View>
   );
 }

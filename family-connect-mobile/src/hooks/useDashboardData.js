@@ -139,9 +139,11 @@ export function useDashboardData() {
     [events, memories, locations],
   );
 
+  const noFamily = !familyLoading && !family;
+
   return {
     family,
-    members,
+    members: members ?? [],
     familyLoading,
     sectionLoading,
     refreshing,
@@ -149,10 +151,10 @@ export function useDashboardData() {
     refresh,
     user,
     uiMode,
-    noFamily: !family,
-    familyName: family?.name ?? 'Your Family',
+    noFamily,
+    familyName: family?.name ?? '',
     inviteCode: family?.inviteCode ?? '',
-    memberCount: members.length,
+    memberCount: members?.length ?? 0,
     liveCount,
     upcomingEvents,
     recentMemories,
@@ -161,7 +163,7 @@ export function useDashboardData() {
     insights,
     weeklyActivity,
     todaySummary,
-    stats,
+    stats: family ? stats : EMPTY_STATS,
     unreadNotificationCount: todaySummary.unreadNotifications,
   };
 }

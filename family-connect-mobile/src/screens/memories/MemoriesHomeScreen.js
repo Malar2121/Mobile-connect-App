@@ -16,9 +16,11 @@ import {
   StoryViewer,
 } from '../../components/memories';
 import { useResponsive } from '../../design-system';
+import { useI18n } from '../../i18n';
 
 export default function MemoriesHomeScreen() {
   const navigation = useNavigation();
+  const { t } = useI18n();
   const insets = useSafeAreaInsets();
   const { horizontalPadding } = useResponsive();
   const [storyOpen, setStoryOpen] = useState(false);
@@ -44,7 +46,7 @@ export default function MemoriesHomeScreen() {
   if (loading && !refreshing) {
     return (
       <Screen edges={['top']}>
-        <PageHeader title="Memories" subtitle="Family archive" large />
+        <PageHeader title={t('memories.title')} subtitle={t('memories.subtitle')} large />
         <MemorySkeleton />
       </Screen>
     );
@@ -53,7 +55,7 @@ export default function MemoriesHomeScreen() {
   return (
     <Screen edges={['top']} noPadding>
       <View style={{ paddingHorizontal: horizontalPadding }}>
-        <PageHeader title="Memories" subtitle="Digital family archive" large />
+        <PageHeader title={t('memories.title')} subtitle={t('memories.subtitle2')} large />
         {error ? <Text style={{ color: '#EF4444', marginBottom: 8 }}>{error}</Text> : null}
       </View>
 
@@ -74,14 +76,14 @@ export default function MemoriesHomeScreen() {
 
         {onThisDay.length > 0 ? (
           <>
-            <SectionTitle title="On this day" subtitle="Memories from years past" />
+            <SectionTitle title={t('memories.onThisDay')} subtitle={t('memories.yearsPast')} />
             {onThisDay.map((m) => (
               <MemoryCard key={m._id} memory={m} onPress={(mem) => navigate('MemoryDetails', { id: String(mem._id) })} compact />
             ))}
           </>
         ) : null}
 
-        <SectionTitle title="Featured" subtitle="Most loved memories" style={{ marginTop: 8 }} />
+        <SectionTitle title={t('memories.featured')} subtitle={t('memories.mostLoved')} style={{ marginTop: 8 }} />
         {featured.length === 0 ? (
           <EmptyMemories onUpload={() => navigate('UploadMemory')} isMinor={isMinor} />
         ) : (
@@ -90,7 +92,7 @@ export default function MemoriesHomeScreen() {
           ))
         )}
 
-        <SectionTitle title="Recent" style={{ marginTop: 8 }} />
+        <SectionTitle title={t('memories.recent')} style={{ marginTop: 8 }} />
         {recentMemories.slice(0, 6).map((m) => (
           <MemoryCard key={m._id} memory={m} onPress={(mem) => navigate('MemoryDetails', { id: String(mem._id) })} compact />
         ))}
@@ -98,7 +100,7 @@ export default function MemoriesHomeScreen() {
           View full gallery →
         </Text>
 
-        <SectionTitle title="Albums" subtitle={`${albums.length} collections`} style={{ marginTop: 16 }} />
+        <SectionTitle title={t('memories.albums')} subtitle={t('memories.collections', { count: albums.length })} style={{ marginTop: 16 }} />
         {albums.slice(0, 4).map((a) => (
           <AlbumCard key={a._id} album={a} onPress={(alb) => navigate('AlbumDetails', { id: String(alb._id) })} />
         ))}

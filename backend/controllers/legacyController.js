@@ -113,9 +113,63 @@ const addTribute = async (req, res) => {
   }
 };
 
+// PUT /api/legacy/:id
+// Update a legacy profile (admin only)
+const updateLegacyProfile = async (req, res) => {
+  try {
+    const { id } = req.params;
+    const { familyId, role } = req.user;
+
+    if (role !== 'admin') {
+      return res.status(403).json({ success: false, message: 'Only admins can update legacy profiles' });
+    }
+
+    const allowed = ['biography', 'deathDate', 'burialLocation'];
+    const updateData = {};
+    allowed.forEach((key) => {
+      if (req.body[key] !== undefined) updateData[key] = req.body[key];
+    });
+
+    const profile = await LegacyProfile.findOneAndUpdate({ _id: id, familyId }, updateData, {
+      new: true,
+      runValidators: true,
+    })
+      .populate('memberId', 'fullName avatar dateOfBirth')
+      .populate('tributes.author', 'fullName avatar');
+
+    if (!profile) return res.status(404).json({ success: false, message: 'Legacy profile not found' });
+
+    return res.status(200).json({ success: true, data: { profile } });
+  } catch (error) {
+    return res.status(500).json({ success: false, message: error.message });
+  }
+};
+
+// DELETE /api/legacy/:id
+// Delete a legacy profile (admin only)
+const deleteLegacyProfile = async (req, res) => {
+  try {
+    const { id } = req.params;
+    const { familyId, role } = req.user;
+
+    if (role !== 'admin') {
+      return res.status(403).json({ success: false, message: 'Only admins can delete legacy profiles' });
+    }
+
+    const profile = await LegacyProfile.findOneAndDelete({ _id: id, familyId });
+    if (!profile) return res.status(404).json({ success: false, message: 'Legacy profile not found' });
+
+    return res.status(200).json({ success: true, message: 'Legacy profile deleted', data: {} });
+  } catch (error) {
+    return res.status(500).json({ success: false, message: error.message });
+  }
+};
+
 module.exports = {
   getLegacyProfiles,
   getLegacyProfile,
   createLegacyProfile,
+  updateLegacyProfile,
+  deleteLegacyProfile,
   addTribute,
 };

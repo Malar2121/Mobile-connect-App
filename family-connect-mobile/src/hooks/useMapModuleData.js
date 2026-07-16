@@ -4,8 +4,16 @@ import * as Location from 'expo-location';
 import { useAuth } from '../contexts/AuthContext';
 import { useFamily } from '../contexts/FamilyContext';
 import { useTheme } from './useTheme';
-import { getFamilyLocations, updateLocation, sendSOSAlert } from '../services/locationService';
-import { connectSocket, subscribeLocationUpdate } from '../socket/socketClient';
+import {
+  getFamilyLocations,
+  updateLocation,
+  sendSOSAlert,
+  setLocationSharing,
+  getSafeZones,
+  createSafeZone,
+  deleteSafeZone,
+} from '../services/locationService';
+import { connectSocket, subscribeLocationUpdate, subscribeSocketEvent } from '../socket/socketClient';
 import {
   fitRegionToLocations,
   locationsToArray,
@@ -16,18 +24,15 @@ import {
   appendSosHistory,
   buildMapAnalytics,
   buildTripsFromPoints,
-  isInsideZone,
   loadEmergencyContacts,
   loadLocationSettings,
-  loadSafeZones,
   loadSosHistory,
   loadTripPoints,
-  loadTrips,
   recordTripPoint,
   saveLocationSettings,
-  saveSafeZones,
   saveEmergencyContacts,
   saveTrips,
+  ZONE_PRESETS,
 } from '../utils/mapModuleHelpers';
 
 const UPDATE_THROTTLE_MS = 30_000;
@@ -37,6 +42,37 @@ const WATCH_OPTIONS = {
   distanceInterval: 50,
 };
 
+// Map server zone types onto the preset icon/colour set used by the UI
+const TYPE_PRESET = {
+  home: ZONE_PRESETS[0],
+  school: ZONE_PRESETS[1],
+  work: ZONE_PRESETS[2],
+  relative: ZONE_PRESETS[4],
+  other: ZONE_PRESETS[4],
+};
+
+export function normalizeZone(raw) {
+  if (!raw) return null;
+  const preset = TYPE_PRESET[raw.type] ?? ZONE_PRESETS[4];
+  return {
+    id: String(raw._id ?? raw.id),
+    _id: raw._id,
+    name: raw.name,
+    label: raw.name,
+    type: raw.type ?? 'other',
+    icon: preset.icon,
+    color: preset.color,
+    latitude: raw.latitude,
+    longitude: raw.longitude,
+    radius: raw.radius,
+    radiusM: raw.radius ?? raw.radiusM ?? 200,
+    notifyEnter: raw.notifyOnEnter !== false,
+    notifyExit: raw.notifyOnExit !== false,
+    appliesTo: raw.appliesTo ?? [],
+    createdBy: raw.createdBy ?? null,
+  };
+}
+
 export function useMapModuleData() {
   const { user, token } = useAuth();
   const { family, members } = useFamily();
@@ -45,8 +81,8 @@ export function useMapModuleData() {
   const watchRef = useRef(null);
   const lastSentRef = useRef(0);
   const myCoordsRef = useRef(null);
-  const zoneStateRef = useRef({});
   const hasLocationsRef = useRef(false);
+  const autoShareTriedRef = useRef(false);
 
   const [locationMap, setLocationMap] = useState({});
   const [loading, setLoading] = useState(true);
@@ -55,31 +91,41 @@ export function useMapModuleData() {
   const [sharing, setSharing] = useState(false);
   const [sharingBusy, setSharingBusy] = useState(false);
   const [safeZones, setSafeZones] = useState([]);
+  const [zoneAlerts, setZoneAlerts] = useState([]);
   const [emergencyContacts, setEmergencyContacts] = useState([]);
   const [sosHistory, setSosHistory] = useState([]);
   const [trips, setTrips] = useState([]);
   const [locationSettings, setLocationSettings] = useState(null);
 
+  const isTrackedMember = user?.memberType === 'child' || user?.memberType === 'elder';
+
   const locations = useMemo(() => locationsToArray(locationMap), [locationMap]);
   const myLocation = user?._id ? locationMap[String(user._id)] : null;
   const analytics = useMemo(() => buildMapAnalytics(trips, safeZones), [trips, safeZones]);
 
+  const loadSafeZonesFromServer = useCallback(async () => {
+    try {
+      const zones = await getSafeZones();
+      setSafeZones(zones.map(normalizeZone).filter(Boolean));
+    } catch {
+      // Zones are supplementary — the map still works without them
+    }
+  }, []);
+
   const loadMeta = useCallback(async () => {
     if (!family || !user) return;
-    const [zones, contacts, sos, settings, savedTrips] = await Promise.all([
-      loadSafeZones(family._id),
+    const [contacts, sos, settings, points] = await Promise.all([
       loadEmergencyContacts(family._id),
       loadSosHistory(family._id),
       loadLocationSettings(user._id),
-      loadTrips(family._id, user._id),
+      loadTripPoints(user._id),
     ]);
-    setSafeZones(zones);
     setEmergencyContacts(contacts);
     setSosHistory(sos);
     setLocationSettings(settings);
-    setTrips(savedTrips);
-    setSharing(settings?.shareLocation ?? false);
-  }, [family, user]);
+    setTrips(buildTripsFromPoints(points));
+    await loadSafeZonesFromServer();
+  }, [family, user, loadSafeZonesFromServer]);
 
   const loadFamilyLocations = useCallback(async () => {
     if (!family) {
@@ -92,7 +138,7 @@ export function useMapModuleData() {
       const list = await getFamilyLocations();
       setLocationMap((prev) => mergeLocationsList(prev, list));
     } catch (e) {
-      setError(e.message || 'Could not load locations.');
+      setError(e.message || 'Could not load family locations.');
     } finally {
       setLoading(false);
     }
@@ -115,23 +161,14 @@ export function useMapModuleData() {
           battery: coords.battery,
         });
         setLocationMap((prev) => upsertLocationInMap(prev, saved));
+        // Geofence enter/exit is evaluated by the server on each update;
+        // locally we only keep the trip trail.
         await recordTripPoint(user._id, coords);
-
-        safeZones.forEach((zone) => {
-          const inside = isInsideZone(coords.latitude, coords.longitude, zone);
-          const wasInside = zoneStateRef.current[zone.id];
-          if (wasInside === undefined) {
-            zoneStateRef.current[zone.id] = inside;
-          } else if (wasInside !== inside) {
-            zoneStateRef.current[zone.id] = inside;
-            // TODO: server geofence notifications
-          }
-        });
       } catch (e) {
         setError(e.message || 'Could not share location.');
       }
     },
-    [user, safeZones],
+    [user],
   );
 
   const stopWatching = useCallback(async () => {
@@ -149,7 +186,7 @@ export function useMapModuleData() {
       if (status !== 'granted') {
         setPermissionDenied(true);
         setSharing(false);
-        return;
+        return false;
       }
       setPermissionDenied(false);
       const current = await Location.getCurrentPositionAsync({ accuracy: Location.Accuracy.Balanced });
@@ -171,9 +208,11 @@ export function useMapModuleData() {
         });
       });
       setSharing(true);
+      return true;
     } catch (e) {
       setError(e.message || 'Could not start location sharing.');
       setSharing(false);
+      return false;
     } finally {
       setSharingBusy(false);
     }
@@ -181,10 +220,29 @@ export function useMapModuleData() {
 
   const toggleSharing = useCallback(
     async (next) => {
-      if (next) await startWatching();
-      else {
+      // Children and elders cannot pause sharing — safety policy,
+      // enforced by the server as well.
+      if (!next && isTrackedMember) {
+        setError('Location sharing stays on for children and elders — family safety policy.');
+        return;
+      }
+      if (next) {
+        const ok = await startWatching();
+        if (ok) {
+          try {
+            await setLocationSharing(true);
+          } catch {
+            /* sharing preference sync is best-effort */
+          }
+        }
+      } else {
         setSharing(false);
         await stopWatching();
+        try {
+          await setLocationSharing(false);
+        } catch (e) {
+          setError(e.message || 'Could not pause sharing.');
+        }
       }
       if (user?._id) {
         const settings = { ...locationSettings, shareLocation: next };
@@ -192,8 +250,31 @@ export function useMapModuleData() {
         await saveLocationSettings(user._id, settings);
       }
     },
-    [startWatching, stopWatching, user, locationSettings],
+    [startWatching, stopWatching, user, locationSettings, isTrackedMember],
   );
+
+  // ─── Server-persisted safe zones ───
+  const addSafeZone = useCallback(
+    async (preset, coords) => {
+      const zone = await createSafeZone({
+        name: preset.label,
+        latitude: coords.latitude,
+        longitude: coords.longitude,
+        radius: 200,
+        type: preset.id === 'office' ? 'work' : preset.id === 'custom' || preset.id === 'hospital' ? 'other' : preset.id,
+        notifyOnEnter: true,
+        notifyOnExit: true,
+      });
+      setSafeZones((prev) => [normalizeZone(zone), ...prev]);
+      return zone;
+    },
+    [],
+  );
+
+  const removeSafeZone = useCallback(async (zone) => {
+    await deleteSafeZone(zone.id ?? zone._id);
+    setSafeZones((prev) => prev.filter((z) => z.id !== String(zone.id ?? zone._id)));
+  }, []);
 
   const refresh = useCallback(async () => {
     await Promise.all([loadFamilyLocations(), loadMeta()]);
@@ -210,22 +291,58 @@ export function useMapModuleData() {
     }, [refresh]),
   );
 
+  // Live socket subscriptions: positions, zone alerts, zone list changes
   useEffect(() => {
     if (!token || !family) return undefined;
     connectSocket(token);
-    const unsub = subscribeLocationUpdate((payload) => {
-      setLocationMap((prev) => upsertLocationInMap(prev, payload));
-    });
-    return unsub;
-  }, [token, family]);
+    const unsubs = [
+      subscribeLocationUpdate((payload) => {
+        setLocationMap((prev) => upsertLocationInMap(prev, payload));
+      }),
+      subscribeSocketEvent('zone_alert', (payload) => {
+        setZoneAlerts((prev) => [{ ...payload, id: `${payload.userId}-${payload.createdAt}` }, ...prev].slice(0, 20));
+      }),
+      subscribeSocketEvent('safezones_changed', () => {
+        loadSafeZonesFromServer();
+      }),
+      subscribeSocketEvent('location_sharing_changed', ({ userId, isSharing }) => {
+        if (!isSharing) {
+          setLocationMap((prev) => {
+            const next = { ...prev };
+            delete next[String(userId)];
+            return next;
+          });
+        }
+      }),
+    ];
+    return () => unsubs.forEach((u) => u());
+  }, [token, family, loadSafeZonesFromServer]);
+
+  // Children and elders share automatically so guardians can always
+  // find them (supervisor requirement: elder & child location tracking).
+  useEffect(() => {
+    if (!family || !user || !isTrackedMember) return;
+    if (autoShareTriedRef.current || sharing) return;
+    autoShareTriedRef.current = true;
+    startWatching();
+  }, [family, user, isTrackedMember, sharing, startWatching]);
 
   useEffect(() => () => { stopWatching(); }, [stopWatching]);
 
   const sendSOS = useCallback(
     async (message) => {
-      const coords = myCoordsRef.current ?? (myLocation ? { latitude: myLocation.latitude, longitude: myLocation.longitude } : null);
+      let coords = myCoordsRef.current
+        ?? (myLocation ? { latitude: myLocation.latitude, longitude: myLocation.longitude } : null);
+      if (!coords) {
+        // Grab a one-shot fix so SOS works even before sharing is on
+        const { status } = await Location.requestForegroundPermissionsAsync();
+        if (status === 'granted') {
+          const current = await Location.getCurrentPositionAsync({ accuracy: Location.Accuracy.Balanced });
+          coords = { latitude: current.coords.latitude, longitude: current.coords.longitude };
+        }
+      }
       if (!coords) throw new Error('Location unavailable for SOS');
-      const result = await sendSOSAlert({ ...coords, message });
+      const result = await sendSOSAlert({ latitude: coords.latitude, longitude: coords.longitude, message });
       await appendSosHistory(family._id, { ...result, message, userId: user._id, userName: user.fullName });
       const history = await loadSosHistory(family._id);
       setSosHistory(history);
@@ -259,10 +376,10 @@ export function useMapModuleData() {
     toggleSharing,
     safeZones,
     setSafeZones,
-    saveSafeZones: useCallback(async (zones) => {
-      await saveSafeZones(family._id, zones);
-      setSafeZones(zones);
-    }, [family]),
+    addSafeZone,
+    removeSafeZone,
+    reloadSafeZones: loadSafeZonesFromServer,
+    zoneAlerts,
     emergencyContacts,
     setEmergencyContacts,
     saveEmergencyContacts: useCallback(async (c) => {
@@ -284,5 +401,6 @@ export function useMapModuleData() {
     fitRegion: fitRegionToLocations,
     isMinor: uiMode === 'minor',
     isElder: uiMode === 'elder',
+    isTrackedMember,
   };
 }

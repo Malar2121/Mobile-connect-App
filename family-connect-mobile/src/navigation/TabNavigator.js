@@ -11,6 +11,7 @@ import CreateFamilyScreen from '../screens/profile/CreateFamilyScreen';
 import JoinFamilyScreen from '../screens/profile/JoinFamilyScreen';
 import NotificationsScreen from '../screens/notifications/NotificationsScreen';
 import LanguageScreen from '../screens/profile/LanguageScreen';
+import SecurityScreen from '../screens/profile/SecurityScreen';
 import FamilyNavigator from './FamilyNavigator';
 import FamilyTreeNavigator from './FamilyTreeNavigator';
 import { FloatingTabBar } from '../components/navigation/FloatingTabBar';
@@ -37,6 +38,7 @@ function ProfileNavigator() {
       <ProfileStack.Screen name="JoinFamily" component={JoinFamilyScreen} />
       <ProfileStack.Screen name="Notifications" component={NotificationsScreen} />
       <ProfileStack.Screen name="Language" component={LanguageScreen} />
+      <ProfileStack.Screen name="Security" component={SecurityScreen} />
     </ProfileStack.Navigator>
   );
 }

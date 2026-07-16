@@ -240,18 +240,18 @@ export default function ConversationScreen() {
 
       <KeyboardAvoidingView style={styles.flex} behavior={Platform.OS === 'ios' ? 'padding' : undefined}>
         <View style={styles.flex}>
-          {prefs.archived ? (
+          {prefs.archived && uiMode !== 'minor' ? (
             <View style={[styles.archivedBanner, { backgroundColor: isDark ? colors.card : '#FEF3C7' }]}>
               <Text style={{ color: colors.text, fontSize: 13 }}>This chat is archived</Text>
             </View>
           ) : null}
 
-          <PinnedBanner
+          {/* <PinnedBanner
             message={pinnedMessage}
             editedTexts={prefs.editedTexts}
             onPress={() => scrollToBottom()}
             onUnpin={() => pinnedMessage && handleUnpin(pinnedMessage)}
-          />
+          /> */}
 
           <ChatMessageList
             ref={listRef}
@@ -266,7 +266,7 @@ export default function ConversationScreen() {
             loadingMore={loadingMore}
             uiMode={uiMode}
             headerOffset={insets.top + 88}
-            onLongPress={setActionMessage}
+            onLongPress={uiMode === 'minor' ? undefined : setActionMessage}
             onSwipeReply={setReplyTo}
             onReactionPress={handleReaction}
           />

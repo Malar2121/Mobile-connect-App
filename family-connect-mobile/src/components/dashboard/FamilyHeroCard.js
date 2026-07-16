@@ -14,6 +14,7 @@ import { Avatar, GlassCard } from '../../design-system';
 import { DashboardPressable } from './DashboardPressable';
 import { useTheme } from '../../hooks/useTheme';
 import { useResponsive } from '../../design-system';
+import { useI18n } from '../../i18n';
 
 const AVATAR_SIZE = 46;
 const OVERLAP = 16;
@@ -49,6 +50,7 @@ function FamilyHeroCardComponent({
 }) {
   const { colors, isDark, gradients, layout, radii, shadows } = useTheme();
   const { horizontalPadding, isTablet } = useResponsive();
+  const { t } = useI18n();
   const visible = members.slice(0, 6);
   const extra = Math.max(0, members.length - visible.length);
 
@@ -103,19 +105,26 @@ function FamilyHeroCardComponent({
               <Text
                 style={{
                   color: colors.text,
-                  fontSize: 24 * layout.fontScale,
-                  fontFamily: 'Inter_700Bold',
-                  letterSpacing: -0.5,
-                  marginTop: 16,
+                  fontSize: layout.fontScale * 38,
+                  lineHeight: layout.fontScale * 42,
+                  fontFamily: 'Inter_900Black', // Fallback to Bold if Black isn't loaded, but styling implies extra heavy weight
+                  fontWeight: '900',
+                  letterSpacing: -1.5,
+                  marginTop: 20,
+                  marginBottom: 4,
                 }}
               >
                 {familyName}
               </Text>
 
+              <Text style={{ color: colors.textSecondary, fontSize: 15, fontFamily: 'Inter_500Medium', marginBottom: 20 }}>
+                {t('dashboard.membersOnline', { members: memberCount, online: onlineCount })}
+              </Text>
+
               <View style={styles.statsRow}>
                 <View style={styles.stat}>
                   <Text style={[styles.statValue, { color: colors.text }]}>{memberCount}</Text>
-                  <Text style={[styles.statLabel, { color: colors.textSecondary }]}>Members</Text>
+                  <Text style={[styles.statLabel, { color: colors.textSecondary }]}>{t('common.members')}</Text>
                 </View>
                 <View style={[styles.statDivider, { backgroundColor: colors.border }]} />
                 <View style={styles.stat}>
@@ -123,7 +132,7 @@ function FamilyHeroCardComponent({
                     <OnlinePulse />
                     <Text style={[styles.statValue, { color: colors.success }]}>{onlineCount}</Text>
                   </View>
-                  <Text style={[styles.statLabel, { color: colors.textSecondary }]}>Online now</Text>
+                  <Text style={[styles.statLabel, { color: colors.textSecondary }]}>{t('dashboard.onlineNow')}</Text>
                 </View>
                 {inviteCode ? (
                   <>
@@ -135,7 +144,7 @@ function FamilyHeroCardComponent({
                       >
                         {inviteCode}
                       </Text>
-                      <Text style={[styles.statLabel, { color: colors.textSecondary }]}>Invite code</Text>
+                      <Text style={[styles.statLabel, { color: colors.textSecondary }]}>{t('profile.inviteCode')}</Text>
                     </View>
                   </>
                 ) : null}
@@ -150,7 +159,7 @@ function FamilyHeroCardComponent({
                     style={[styles.btnPrimary, { borderRadius: radii.lg }]}
                   >
                     <Ionicons name="person-add-outline" size={18} color="#fff" />
-                    <Text style={styles.btnPrimaryText}>{inviting ? 'Copying…' : 'Quick invite'}</Text>
+                    <Text style={styles.btnPrimaryText}>{inviting ? t('dashboard.copying') : t('dashboard.quickInvite')}</Text>
                   </LinearGradient>
                 </DashboardPressable>
                 <DashboardPressable onPress={onManage} style={styles.actionBtn}>
@@ -165,7 +174,7 @@ function FamilyHeroCardComponent({
                     ]}
                   >
                     <Ionicons name="people-outline" size={18} color={colors.primary} />
-                    <Text style={[styles.btnSecondaryText, { color: colors.primary }]}>Manage</Text>
+                    <Text style={[styles.btnSecondaryText, { color: colors.primary }]}>{t('dashboard.manage')}</Text>
                   </View>
                 </DashboardPressable>
               </View>

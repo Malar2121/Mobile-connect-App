@@ -27,8 +27,75 @@ export async function loginUser(email, password) {
     if (!data.success || !data.data) {
       throw new Error(data.message || 'Login failed');
     }
+    // Accounts with 2FA enabled get a short-lived tempToken instead of tokens
+    if (data.data.requires2FA) {
+      return { requires2FA: true, tempToken: data.data.tempToken };
+    }
     const { accessToken, refreshToken, user } = data.data;
     return { accessToken, refreshToken, user };
+  } catch (e) {
+    throw normalizeAxiosError(e);
+  }
+}
+
+/**
+ * POST /api/auth/2fa/login — exchange tempToken + TOTP code for real tokens.
+ * @returns {{ accessToken: string, refreshToken: string, user: object }}
+ */
+export async function loginWith2FA(tempToken, code) {
+  try {
+    const { data } = await api.post('/auth/2fa/login', { tempToken, code });
+    if (!data.success || !data.data) {
+      throw new Error(data.message || 'Two-factor login failed');
+    }
+    const { accessToken, refreshToken, user } = data.data;
+    return { accessToken, refreshToken, user };
+  } catch (e) {
+    throw normalizeAxiosError(e);
+  }
+}
+
+/**
+ * POST /api/auth/2fa/setup — returns { secret, otpauthUrl } to show in an
+ * authenticator app; 2FA activates only after verify2FA succeeds.
+ */
+export async function setup2FA() {
+  try {
+    const { data } = await api.post('/auth/2fa/setup');
+    if (!data.success || !data.data) {
+      throw new Error(data.message || 'Could not start 2FA setup');
+    }
+    return data.data;
+  } catch (e) {
+    throw normalizeAxiosError(e);
+  }
+}
+
+/**
+ * POST /api/auth/2fa/verify — confirm the first TOTP code and enable 2FA.
+ */
+export async function verify2FA(code) {
+  try {
+    const { data } = await api.post('/auth/2fa/verify', { code });
+    if (!data.success) {
+      throw new Error(data.message || 'Verification failed');
+    }
+    return data.data;
+  } catch (e) {
+    throw normalizeAxiosError(e);
+  }
+}
+
+/**
+ * POST /api/auth/2fa/disable — requires a valid current TOTP code.
+ */
+export async function disable2FA(code) {
+  try {
+    const { data } = await api.post('/auth/2fa/disable', { code });
+    if (!data.success) {
+      throw new Error(data.message || 'Could not disable 2FA');
+    }
+    return data.data;
   } catch (e) {
     throw normalizeAxiosError(e);
   }
@@ -39,12 +106,13 @@ export async function loginUser(email, password) {
  * Backend expects `fullName` — we map `name` to `fullName`.
  * @returns {{ accessToken: string, refreshToken: string, user: object }}
  */
-export async function registerUser(name, email, password) {
+export async function registerUser(name, email, password, memberType = 'adult') {
   try {
     const { data } = await api.post('/auth/register', {
       fullName: name,
       email,
       password,
+      memberType,
     });
     if (!data.success || !data.data) {
       throw new Error(data.message || 'Registration failed');

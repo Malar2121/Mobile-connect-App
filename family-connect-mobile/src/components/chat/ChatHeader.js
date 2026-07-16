@@ -36,7 +36,7 @@ export function ChatHeader({
   onBack,
   showBack,
 }) {
-  const { colors, isDark } = useTheme();
+  const { colors, isDark, uiMode } = useTheme();
   const insets = useSafeAreaInsets();
   const memberTotal = members?.length ?? 0;
 
@@ -84,8 +84,12 @@ export function ChatHeader({
         <View style={styles.actions}>
           <HeaderButton icon="call-outline" onPress={onVoiceCall} colors={colors} isDark={isDark} />
           <HeaderButton icon="videocam-outline" onPress={onVideoCall} colors={colors} isDark={isDark} />
-          <HeaderButton icon="search-outline" onPress={onSearch} colors={colors} isDark={isDark} />
-          <HeaderButton icon="ellipsis-horizontal" onPress={onMore} colors={colors} isDark={isDark} />
+          {uiMode !== 'minor' && (
+            <>
+              <HeaderButton icon="search-outline" onPress={onSearch} colors={colors} isDark={isDark} />
+              <HeaderButton icon="ellipsis-horizontal" onPress={onMore} colors={colors} isDark={isDark} />
+            </>
+          )}
         </View>
       </View>
     </View>

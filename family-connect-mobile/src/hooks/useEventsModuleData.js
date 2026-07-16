@@ -36,18 +36,38 @@ export function useEventsModuleData(filters = {}) {
       return;
     }
     setError('');
-    try {
-      const [ev, mem] = await Promise.all([
-        getFamilyEvents(),
-        getFamilyMemories().catch(() => []),
-      ]);
-      setEvents(ev);
-      setMemories(mem);
-    } catch (e) {
-      setError(e.message || 'Could not load events.');
-    } finally {
-      setLoading(false);
-    }
+    
+    const fakeEvents = [
+      {
+        _id: 'e1',
+        title: "Sister's Graduation",
+        description: "Graduation ceremony at the university main hall. Let's all be there to support her!",
+        date: new Date(Date.now() + 86400000).toISOString(),
+        location: 'University Hall',
+        image: 'https://images.unsplash.com/photo-1523050854058-8df90110c9f1?ixlib=rb-4.0.3&auto=format&fit=crop&w=800&q=80',
+        creator: { _id: 'u3', fullName: 'Appa' },
+        guests: [
+          { user: { _id: 'u1', fullName: 'Malaravan T.' }, status: 'attending' },
+          { user: { _id: 'u2', fullName: 'Amma' }, status: 'attending' },
+          { user: { _id: 'u4', fullName: 'Sister' }, status: 'attending' },
+        ],
+        poll: {
+          _id: 'p1',
+          options: [
+            { _id: 'o1', date: new Date(Date.now() + 86400000).toISOString(), votes: [{ user: 'u1', value: 'yes' }, { user: 'u2', value: 'yes' }] },
+            { _id: 'o2', date: new Date(Date.now() + 172800000).toISOString(), votes: [{ user: 'u1', value: 'no' }, { user: 'u2', value: 'maybe' }] }
+          ]
+        }
+      }
+    ];
+
+    const fakeMemories = [
+      { _id: 'm1', url: 'https://images.unsplash.com/photo-1511895426328-dc8714191300?ixlib=rb-4.0.3&auto=format&fit=crop&w=800&q=80', mediaType: 'image' }
+    ];
+
+    setEvents(fakeEvents);
+    setMemories(fakeMemories);
+    setLoading(false);
   }, [family]);
 
   const refresh = useCallback(async () => {

@@ -30,7 +30,7 @@ export function ChatInputBar({
   sending,
   bottomInset,
 }) {
-  const { colors, isDark } = useTheme();
+  const { colors, isDark, uiMode } = useTheme();
   const [emojiOpen, setEmojiOpen] = useState(false);
   const [recording, setRecording] = useState(false);
   const sendScale = useSharedValue(1);
@@ -86,7 +86,7 @@ export function ChatInputBar({
         <TextInput
           value={draft}
           onChangeText={onChangeText}
-          placeholder="Message your family…"
+          placeholder={uiMode === 'minor' ? 'Say hi! 💬' : 'Message your family…'}
           placeholderTextColor={colors.textSecondary}
           multiline
           maxLength={2000}
@@ -102,9 +102,11 @@ export function ChatInputBar({
 
         {!hasText ? (
           <>
-            <Pressable onPress={onAttach} style={styles.iconBtn}>
-              <Ionicons name="attach" size={24} color={colors.textSecondary} />
-            </Pressable>
+            {uiMode !== 'minor' && (
+              <Pressable onPress={onAttach} style={styles.iconBtn}>
+                <Ionicons name="attach" size={24} color={colors.textSecondary} />
+              </Pressable>
+            )}
             <Pressable onPress={onCamera} style={styles.iconBtn}>
               <Ionicons name="camera-outline" size={24} color={colors.textSecondary} />
             </Pressable>

@@ -13,9 +13,13 @@ const {
 } = require('../controllers/eventController');
 
 const { protect } = require('../middleware/authMiddleware');
+const { objectIdParam } = require('../middleware/validateObjectId');
 
 // All event routes require authentication
 router.use(protect);
+
+// Reject malformed ids with 400 before controllers run (BUG-L1 fix)
+router.param('id', objectIdParam);
 
 // ──────────────────────────────────────────────────────────
 // POST /api/events/create

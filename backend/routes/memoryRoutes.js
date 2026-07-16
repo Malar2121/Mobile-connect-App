@@ -19,6 +19,10 @@ const { memoryUpload } = require('../config/cloudinary');
 // All memories routes require authentication
 router.use(protect);
 
+// Reject malformed ids with 400 before controllers run (BUG-L1 fix)
+const { objectIdParam } = require('../middleware/validateObjectId');
+router.param('id', objectIdParam);
+
 // ──────────────────────────────────────────────────────────
 // POST /api/memories/upload
 // Upload image or video to Cloudinary
