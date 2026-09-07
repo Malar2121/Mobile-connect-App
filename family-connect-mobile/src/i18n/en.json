@@ -320,5 +320,26 @@
     "emptyBody": "Add an anniversary or festival, and birthdays will appear here automatically from family profiles.",
     "noFamilyTitle": "Join a family first",
     "noFamilyBody": "Celebrations are shared with your family, so you need to be in one."
+  },
+  "consent": {
+    "queueTitle": "Child account approvals",
+    "queueSubtitle": "Approve a minor before they can see family content",
+    "explain": "Until you approve, this account cannot open family chat, memories, events or the family tree.",
+    "approve": "Approve",
+    "reject": "Reject",
+    "approveTitle": "Approve this account?",
+    "approveMessage": "{{name}} will be able to see family chat, memories, events and the family tree.",
+    "rejectTitle": "Reject this account?",
+    "rejectMessage": "{{name}} will stay locked out of family content. You can approve them later.",
+    "approved": "Account approved",
+    "rejected": "Account rejected",
+    "decisionFailed": "Could not save that decision.",
+    "loadFailed": "Could not load pending approvals.",
+    "emptyTitle": "Nothing waiting",
+    "emptyBody": "No child accounts are waiting for approval right now.",
+    "blockedPendingTitle": "Waiting for a guardian",
+    "blockedPendingBody": "A parent or guardian in your family needs to approve this account before you can see family content.",
+    "blockedRejectedTitle": "Account not approved",
+    "blockedRejectedBody": "A guardian has not approved this account. Ask a parent or guardian in your family to review it."
   }
 }

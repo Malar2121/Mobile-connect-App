@@ -17,6 +17,7 @@ import { QuickActionsGrid } from '../../components/dashboard/QuickActionsGrid';
 import { InsightsSection } from '../../components/dashboard/InsightsSection';
 import { SkeletonDashboard } from '../../components/dashboard/SkeletonDashboard';
 import { EmptyDashboard } from '../../components/dashboard/EmptyDashboard';
+import { ConsentBanner } from '../../components/family/ConsentBanner';
 import { useTheme } from '../../hooks/useTheme';
 import { useI18n } from '../../i18n';
 
@@ -141,6 +142,10 @@ export default function DashboardScreen() {
           onNotifications={() => navigation.navigate('Profile', { screen: 'Notifications' })}
           onSettings={() => navigation.navigate('Profile', { screen: 'ProfileMain' })}
         />
+
+        {/* Explains the 403s a minor sees until a guardian approves them.
+            Renders nothing for adults, elders, and approved accounts. */}
+        <ConsentBanner />
 
         {sectionError ? (
           <View style={styles.errorWrap}>

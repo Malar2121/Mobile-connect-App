@@ -4,8 +4,9 @@ const { body } = require('express-validator');
 const { getFamilyTree, updateRelationship } = require('../controllers/familyTreeController');
 const { protect, requireFamily } = require('../middleware/auth');
 const { validate } = require('../middleware/validate');
+const { requireParentalConsent } = require('../middleware/requireParentalConsent');
 
-router.use(protect, requireFamily);
+router.use(protect, requireFamily, requireParentalConsent);
 
 router.get('/', getFamilyTree);
 

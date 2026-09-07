@@ -29,6 +29,7 @@ const legacyRoutes = require('./routes/legacyRoutes');
 const webhookRoutes = require('./routes/webhookRoutes');
 const safeZoneRoutes = require('./routes/safeZoneRoutes');
 const celebrationRoutes = require('./routes/celebrationRoutes');
+const consentRoutes = require('./routes/consentRoutes');
 
 // ─── App setup ────────────────────────────────────────────────────────────
 const app = express();
@@ -86,9 +87,12 @@ const limiter = rateLimit({
   message: { success: false, message: 'Too many requests, please try again later.' },
 });
 
+// Deliberately stricter than the general limiter. Configurable the same way,
+// so an automated test run can raise it without the default being weakened —
+// omit the env vars and it stays at 20 attempts per 15 minutes.
 const authLimiter = rateLimit({
-  windowMs: 15 * 60 * 1000,
-  max: 20,
+  windowMs: parseInt(process.env.AUTH_RATE_LIMIT_WINDOW_MS) || 15 * 60 * 1000,
+  max: parseInt(process.env.AUTH_RATE_LIMIT_MAX) || 20,
   message: { success: false, message: 'Too many login attempts, please try again in 15 minutes.' },
 });
 
@@ -130,6 +134,7 @@ app.use('/api/legacy', legacyRoutes);
 app.use('/api/webhooks', webhookRoutes);
 app.use('/api/safezones', safeZoneRoutes);
 app.use('/api/celebrations', celebrationRoutes);
+app.use('/api/consent', consentRoutes);
 
 // ─── 404 & Error Handlers ─────────────────────────────────────────────────
 app.use(notFound);

@@ -14,9 +14,10 @@ const {
 
 const { protect } = require('../middleware/authMiddleware');
 const { objectIdParam } = require('../middleware/validateObjectId');
+const { requireParentalConsent } = require('../middleware/requireParentalConsent');
 
 // All event routes require authentication
-router.use(protect);
+router.use(protect, requireParentalConsent);
 
 // Reject malformed ids with 400 before controllers run (BUG-L1 fix)
 router.param('id', objectIdParam);

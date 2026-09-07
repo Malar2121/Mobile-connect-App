@@ -9,6 +9,7 @@ export { TimelineItem } from './TimelineItem';
 export { AnalyticsCard } from './AnalyticsCard';
 export { FamilyStatCard } from './FamilyStatCard';
 export { QRInviteCard } from './QRInviteCard';
+export { ConsentBanner } from './ConsentBanner';
 export { JoinRequestCard } from './JoinRequestCard';
 export { EmptyFamilyState } from './EmptyFamilyState';
 export { FamilyTimeline } from './FamilyTimeline';

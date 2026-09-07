@@ -10,6 +10,7 @@ import FamilySettingsScreen from '../screens/family/FamilySettingsScreen';
 import QRInviteScreen from '../screens/family/QRInviteScreen';
 import RelationshipScreen from '../screens/family/RelationshipScreen';
 import FamilyPermissionsScreen from '../screens/family/FamilyPermissionsScreen';
+import ChildApprovalsScreen from '../screens/family/ChildApprovalsScreen';
 import CreateFamilyScreen from '../screens/profile/CreateFamilyScreen';
 import JoinFamilyScreen from '../screens/profile/JoinFamilyScreen';
 
@@ -28,6 +29,7 @@ export default function FamilyNavigator() {
       <Stack.Screen name="QRInvite" component={QRInviteScreen} />
       <Stack.Screen name="Relationship" component={RelationshipScreen} />
       <Stack.Screen name="FamilyPermissions" component={FamilyPermissionsScreen} />
+      <Stack.Screen name="ChildApprovals" component={ChildApprovalsScreen} />
       <Stack.Screen name="CreateFamily" component={CreateFamilyScreen} />
       <Stack.Screen name="JoinFamily" component={JoinFamilyScreen} />
     </Stack.Navigator>

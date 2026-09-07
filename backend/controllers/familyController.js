@@ -2,6 +2,8 @@ const Family = require('../models/Family');
 const User = require('../models/User');
 const FamilyMember = require('../models/FamilyMember');
 const JoinRequest = require('../models/JoinRequest');
+const ParentalConsent = require('../models/ParentalConsent');
+const { requestConsentForChild } = require('./consentController');
 const crypto = require('crypto');
 
 // ──────────────────────────────────────────────────────────
@@ -166,13 +168,21 @@ const joinFamilyByCode = async (req, res) => {
       { upsert: true, new: true, setDefaultsOnInsert: true },
     );
 
+    // A minor joining opens a guardian-approval request; until a guardian
+    // decides, the consent middleware keeps them out of family content.
+    await requestConsentForChild(req.user, family._id);
+
     await family.populate('members', 'fullName email avatar role memberType dateOfBirth');
     await family.populate('createdBy', 'fullName email');
 
+    const needsConsent = req.user.memberType === 'child';
+
     return res.status(200).json({
       success: true,
-      message: `You have joined the "${family.name}" family!`,
-      data: { family },
+      message: needsConsent
+        ? `You have joined the "${family.name}" family. A parent or guardian needs to approve your account.`
+        : `You have joined the "${family.name}" family!`,
+      data: { family, consentRequired: needsConsent },
     });
   } catch (error) {
     return res.status(500).json({ success: false, message: error.message });
@@ -348,6 +358,16 @@ const updateMemberType = async (req, res) => {
       target.dateOfBirth = parsed;
     }
     await target.save({ validateBeforeSave: false });
+
+    if (memberType === 'child') {
+      // An admin marking someone as a minor is the admin's classification, not
+      // the guardian decision itself — open a consent request so a guardian
+      // explicitly approves. The acting admin is a guardian and can approve it.
+      await requestConsentForChild(target, req.user.familyId);
+    } else {
+      // No longer a minor: the consent gate no longer applies to them.
+      await ParentalConsent.deleteOne({ familyId: req.user.familyId, child: target._id });
+    }
 
     const io = req.app.get('io');
     if (io) {
