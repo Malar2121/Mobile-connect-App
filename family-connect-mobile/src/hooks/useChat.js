@@ -76,40 +76,18 @@ export function useChat({ user, token, family, members, prefs, chatActions }) {
       return;
     }
     setError('');
-    const fakeMessages = [
-      {
-        _id: 'msg1',
-        text: 'Hello everyone! I just arrived at the venue.',
-        sender: { _id: 'u2', fullName: 'Amma', avatar: 'https://images.unsplash.com/photo-1544005313-94ddf0286df2?auto=format&fit=crop&w=200&q=80' },
-        createdAt: new Date(Date.now() - 3600000).toISOString(),
-        readBy: [],
-        reactions: [{ emoji: '❤️', users: [{ _id: 'u1' }] }]
-      },
-      {
-        _id: 'msg2',
-        text: 'Great, see you soon!',
-        sender: { _id: user?._id || 'u1', fullName: user?.fullName || 'Malaravan T.', avatar: 'https://images.unsplash.com/photo-1506794778202-cad84cf45f1d?auto=format&fit=crop&w=200&q=80' },
-        createdAt: new Date(Date.now() - 3500000).toISOString(),
-        readBy: ['u2', 'u3', 'u4'],
-        replyTo: { _id: 'msg1', text: 'Hello everyone! I just arrived at the venue.', sender: { fullName: 'Amma', avatar: 'https://images.unsplash.com/photo-1544005313-94ddf0286df2?auto=format&fit=crop&w=200&q=80' } },
-        reactions: []
-      },
-      {
-        _id: 'msg3',
-        text: 'Please remember to bring the cake.',
-        sender: { _id: 'u3', fullName: 'Appa', avatar: 'https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?auto=format&fit=crop&w=200&q=80' },
-        createdAt: new Date(Date.now() - 3000000).toISOString(),
-        readBy: ['u1', 'u2'],
-        reactions: [{ emoji: '🎂', users: [{ _id: 'u1' }, { _id: 'u4' }] }],
-        pinnedAt: new Date().toISOString(),
-        pinnedBy: { _id: 'u3', fullName: 'Appa', avatar: 'https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?auto=format&fit=crop&w=200&q=80' }
-      }
-    ];
-    setMessages(fakeMessages);
-    setHasMore(false);
-    setLoading(false);
-    setTimeout(() => scrollToBottom(false), 200);
-  }, [family, user, scrollToBottom]);
+    try {
+      const { messages: history, hasMore: more } = await getMessages({ limit: PAGE_SIZE });
+      setMessages(history);
+      setHasMore(more);
+      markUnreadAsRead(history);
+    } catch (e) {
+      setError(e.message || 'Could not load messages.');
+    } finally {
+      setLoading(false);
+      setTimeout(() => scrollToBottom(false), 200);
+    }
+  }, [family, markUnreadAsRead, scrollToBottom]);
 
   useEffect(() => {
     hasMessagesRef.current = messages.length > 0;
