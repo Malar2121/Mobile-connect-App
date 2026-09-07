@@ -1,5 +1,6 @@
 const Message = require('../models/Message');
-const { notifyFamilyMembers } = require('../services/notificationService');
+const User = require('../models/User');
+const { notifyFamilyMembers, notifyUsers } = require('../services/notificationService');
 
 const MESSAGE_POPULATE = [
   { path: 'sender', select: 'fullName avatar' },
@@ -38,14 +39,44 @@ function escapeRegex(str) {
   return String(str).replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
 }
 
+/**
+ * Resolve "@Full Name" tokens in a message to the family members they name.
+ *
+ * Longest names are matched first and their character ranges are consumed, so
+ * in a family containing both "Amma" and "Amma Kumari" the text "@Amma Kumari"
+ * tags only Amma Kumari. A match must not be followed by another letter or
+ * digit, so "@Amma" does not tag a member called "Ammar".
+ */
 function parseMentions(text, members) {
   if (!text || !members?.length) return [];
-  const ids = [];
-  members.forEach((m) => {
-    const name = m.fullName || m.name;
-    if (name && text.includes(`@${name}`)) ids.push(m._id ?? m.id);
+
+  const named = members
+    .map((m) => ({ id: String(m._id ?? m.id), name: m.fullName || m.name }))
+    .filter((m) => m.name && m.id)
+    .sort((a, b) => b.name.length - a.name.length);
+
+  const consumed = [];
+  const overlaps = (start, end) => consumed.some(([s, e]) => start < e && end > s);
+  const ids = new Set();
+
+  named.forEach(({ id, name }) => {
+    const re = new RegExp(`@${escapeRegex(name)}(?![\\p{L}\\p{N}])`, 'gu');
+    let match;
+    while ((match = re.exec(text)) !== null) {
+      const start = match.index;
+      const end = start + match[0].length;
+      if (overlaps(start, end)) continue;
+      consumed.push([start, end]);
+      ids.add(id);
+    }
   });
-  return ids;
+
+  return [...ids];
+}
+
+/** Family members usable as mention targets. */
+async function getMentionableMembers(familyId) {
+  return User.find({ familyId }).select('fullName').lean();
 }
 
 async function populateMessage(message) {
@@ -84,15 +115,19 @@ const sendMessage = async (req, res) => {
       }
     }
 
+    const trimmedText = text ? text.trim() : '';
+    const mentions = parseMentions(trimmedText, await getMentionableMembers(familyId));
+
     const newMessage = await Message.create({
       familyId,
       sender: senderId,
-      text: text ? text.trim() : '',
+      text: trimmedText,
       ...media,
       mediaDuration: mediaDuration ? Number(mediaDuration) : null,
       waveform: Array.isArray(parsedWaveform) ? parsedWaveform : [],
       documentName: documentName || media.documentName,
       replyTo: replyTo || null,
+      mentions,
       readBy: [senderId],
     });
 
@@ -109,9 +144,26 @@ const sendMessage = async (req, res) => {
             ? 'Sent a document'
             : 'Sent a photo');
 
+    // Mentioned members get a direct alert; everyone else gets the normal
+    // family notification, so being @mentioned is not buried in group noise.
+    const mentionSet = new Set(mentions.map(String));
+
+    if (mentionSet.size > 0) {
+      notifyUsers({
+        userIds: [...mentionSet],
+        familyId,
+        excludeUserId: senderId,
+        type: 'chat_mention',
+        title: `${fullName} mentioned you`,
+        body: bodyLabel,
+        data: { messageId: String(newMessage._id) },
+      });
+    }
+
     notifyFamilyMembers({
       familyId,
       excludeUserId: senderId,
+      skipUserIds: [...mentionSet],
       type: 'chat_message',
       title: `${fullName} sent a message`,
       body: bodyLabel,
@@ -208,11 +260,33 @@ const editMessage = async (req, res) => {
       return res.status(403).json({ success: false, message: 'You can only edit your own messages' });
     }
 
+    const previousMentions = new Set((message.mentions || []).map(String));
+
     message.text = text.trim();
+    // Re-resolve mentions: an edit can add or remove an @name.
+    message.mentions = parseMentions(message.text, await getMentionableMembers(familyId));
     message.editedAt = new Date();
     await message.save();
     const populated = await populateMessage(message);
     emitToFamily(req, familyId, 'message_updated', populated);
+
+    // Only alert people the edit newly mentioned, so repeated edits do not
+    // re-notify someone who was already tagged.
+    const newlyMentioned = (message.mentions || [])
+      .map(String)
+      .filter((id) => !previousMentions.has(id));
+
+    if (newlyMentioned.length > 0) {
+      notifyUsers({
+        userIds: newlyMentioned,
+        familyId,
+        excludeUserId: userId,
+        type: 'chat_mention',
+        title: `${req.user.fullName} mentioned you`,
+        body: message.text,
+        data: { messageId: String(message._id) },
+      });
+    }
 
     return res.status(200).json({ success: true, data: populated });
   } catch (error) {

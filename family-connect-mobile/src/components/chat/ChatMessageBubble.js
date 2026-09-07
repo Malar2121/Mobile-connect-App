@@ -27,6 +27,7 @@ import {
   getSender,
   getSeenByLabel,
   highlightSearchText,
+  splitMentionText,
 } from '../../utils/chatHelpers';
 
 function StatusIcon({ status, size }) {
@@ -123,7 +124,10 @@ export function ChatMessageBubble({
     transform: [{ translateX: translateX.value }],
   }));
 
+  // Search highlighting wins while a search is active; otherwise show the
+  // mentions the server resolved for this message.
   const textParts = searchQuery ? highlightSearchText(displayText, searchQuery) : null;
+  const mentionParts = textParts ? null : splitMentionText(displayText, message.mentions);
   const gradientColors = isDark ? chatGradients.sentDark : chatGradients.sent;
 
   const bubbleContent = (
@@ -178,7 +182,24 @@ export function ChatMessageBubble({
                   {part.text}
                 </Text>
               ))
-            : displayText}
+            : mentionParts
+              ? mentionParts.map((part, i) => (
+                  <Text
+                    key={i}
+                    style={
+                      part.mention
+                        ? {
+                            color: isMine ? '#FFFFFF' : colors.primary,
+                            fontFamily: chatTypography.fontFamilySemi,
+                            textDecorationLine: isMine ? 'underline' : 'none',
+                          }
+                        : undefined
+                    }
+                  >
+                    {part.text}
+                  </Text>
+                ))
+              : displayText}
         </Text>
       ) : null}
 

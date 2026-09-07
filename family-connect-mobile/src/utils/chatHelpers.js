@@ -252,6 +252,40 @@ export function highlightSearchText(text, query) {
   }));
 }
 
+/**
+ * Split message text into plain and mentioned segments, using the mentions the
+ * server actually resolved and stored (message.mentions, populated with
+ * fullName). Rendering is driven by stored data, not by scanning for "@" — so
+ * an @name only shows as a mention when the backend really recorded it.
+ *
+ * Longest names first, matching the server's resolution order, so "@Amma
+ * Kumari" renders as one mention rather than "@Amma" plus stray text.
+ */
+export function splitMentionText(text, mentions) {
+  if (!text) return null;
+  const names = (mentions ?? [])
+    .map((m) => (typeof m === 'string' ? null : m?.fullName))
+    .filter(Boolean)
+    .sort((a, b) => b.length - a.length);
+
+  if (names.length === 0) return null;
+
+  const pattern = names.map((n) => n.replace(/[.*+?^${}()|[\]\\]/g, '\\$&')).join('|');
+  const regex = new RegExp(`(@(?:${pattern}))`, 'g');
+  const parts = text.split(regex).filter((p) => p !== '');
+
+  return parts.map((part) => ({
+    text: part,
+    mention: part.startsWith('@') && names.some((n) => part === `@${n}`),
+  }));
+}
+
+/** Did this message mention the given user? */
+export function mentionsUser(message, userId) {
+  if (!userId) return false;
+  return (message?.mentions ?? []).some((m) => String(m?._id ?? m) === String(userId));
+}
+
 export function getMediaMessages(messages) {
   return messages.filter((m) => m.mediaUrl && (m.mediaType === 'image' || m.mediaType === 'video'));
 }

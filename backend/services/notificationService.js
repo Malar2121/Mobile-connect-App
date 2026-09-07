@@ -35,10 +35,14 @@ const sendPush = async ({ tokens, title, body, data = {} }) => {
  * Automatically create Notification items for an entire family array of Users
  * and push via FCM / Expo if tokens exist.
  */
-const notifyFamilyMembers = async ({ familyId, excludeUserId, type, title, body, data = {} }) => {
+const notifyFamilyMembers = async ({ familyId, excludeUserId, skipUserIds = [], type, title, body, data = {} }) => {
   try {
-    // 1. Get all members of the family except the triggerer
-    const users = await User.find({ familyId, _id: { $ne: excludeUserId } });
+    // 1. Get all members of the family except the triggerer, and except anyone
+    //    already alerted more specifically (e.g. @mentioned in this message).
+    const skip = new Set(skipUserIds.map(String));
+    const users = (await User.find({ familyId, _id: { $ne: excludeUserId } })).filter(
+      (u) => !skip.has(String(u._id)),
+    );
 
     if (users.length === 0) return;
 
@@ -96,4 +100,46 @@ const notifyFamilyMembers = async ({ familyId, excludeUserId, type, title, body,
   }
 };
 
-module.exports = { sendPush, notifyFamilyMembers };
+/**
+ * Notify a specific set of users rather than the whole family.
+ * Used for @mentions, where only the people named should be alerted.
+ */
+const notifyUsers = async ({ userIds, familyId, excludeUserId, type, title, body, data = {} }) => {
+  try {
+    const ids = [...new Set((userIds || []).map(String))].filter(
+      (id) => !excludeUserId || id !== String(excludeUserId),
+    );
+    if (ids.length === 0) return;
+
+    // Scoped by familyId so a caller can never notify outside its own family.
+    const users = await User.find({ _id: { $in: ids }, familyId });
+
+    for (const user of users) {
+      await Notification.create({ recipient: user._id, familyId, type, title, body, data });
+
+      if (user.fcmTokens?.length) {
+        await sendPush({ tokens: user.fcmTokens.map((t) => t.token), title, body, data });
+      }
+
+      if (user.pushToken && user.pushToken.startsWith('ExponentPushToken')) {
+        try {
+          await fetch('https://exp.host/--/api/v2/push/send', {
+            method: 'POST',
+            headers: {
+              Accept: 'application/json',
+              'Accept-encoding': 'gzip, deflate',
+              'Content-Type': 'application/json',
+            },
+            body: JSON.stringify({ to: user.pushToken, sound: 'default', title, body, data }),
+          });
+        } catch (error) {
+          logger.error(`Expo push error: ${error.message}`);
+        }
+      }
+    }
+  } catch (err) {
+    logger.error(`notifyUsers error: ${err.message}`);
+  }
+};
+
+module.exports = { sendPush, notifyFamilyMembers, notifyUsers };
