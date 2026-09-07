@@ -84,8 +84,8 @@ export default function EventPollScreen() {
 
   const handleClose = useCallback(async () => {
     if (!pollData?.poll) return;
-    const results = pollData.results ?? [];
-    const winner = [...results].sort((a, b) => b.availabilityScore - a.availabilityScore)[0];
+    // Use the server's ranked suggestion so the dialog and the card agree.
+    const winner = pollData.suggestion ?? null;
     const ok = await dialog.confirm({
       title: 'Close poll?',
       message: winner ? `Select winning slot: ${winner.label}?` : 'Close this poll?',
@@ -111,6 +111,8 @@ export default function EventPollScreen() {
           <PollCard
             poll={pollData.poll}
             results={pollData.results}
+            suggestion={pollData.suggestion}
+            suggestionReason={pollData.suggestionReason}
             onVote={handleVote}
             onClose={handleClose}
             canManage

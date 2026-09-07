@@ -307,19 +307,37 @@ const updateMemberRole = async (req, res) => {
 
     const targetUserId = req.params.id;
     const { role } = req.body;
-    if (!['admin', 'parent', 'member', 'child'].includes(role)) {
+    if (!['admin', 'parent', 'member', 'child', 'guest'].includes(role)) {
       return res.status(400).json({ success: false, message: 'Invalid role' });
     }
 
-    // Update User model
-    await User.findByIdAndUpdate(targetUserId, { role });
-    // Update FamilyMember model
+    // Scope the lookup to this admin's own family. Without it, an admin could
+    // change the role of any user in the system by passing their id.
+    const target = await User.findOne({ _id: targetUserId, familyId: req.user.familyId });
+    if (!target) {
+      return res.status(404).json({ success: false, message: 'Member not found in your family' });
+    }
+
+    // A family must keep at least one admin, or nobody can administer it.
+    if (target.role === 'admin' && role !== 'admin') {
+      const adminCount = await User.countDocuments({ familyId: req.user.familyId, role: 'admin' });
+      if (adminCount <= 1) {
+        return res.status(400).json({
+          success: false,
+          message: 'This family would be left without an admin. Promote someone else first.',
+        });
+      }
+    }
+
+    target.role = role;
+    await target.save({ validateBeforeSave: false });
+
     const familyMember = await FamilyMember.findOneAndUpdate(
       { family: req.user.familyId, user: targetUserId },
       { role },
       { new: true }
     );
-    res.status(200).json({ success: true, data: { familyMember } });
+    res.status(200).json({ success: true, data: { familyMember, role } });
   } catch (error) {
     res.status(500).json({ success: false, message: error.message });
   }

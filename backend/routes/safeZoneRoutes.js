@@ -1,5 +1,6 @@
 const express = require('express');
 const { requireParentalConsent } = require('../middleware/requireParentalConsent');
+const { denyGuestWrites } = require('../middleware/denyGuestWrites');
 const router = express.Router();
 
 const { protect } = require('../middleware/authMiddleware');
@@ -11,7 +12,7 @@ const {
 } = require('../controllers/safeZoneController');
 
 // All safe-zone routes require authentication
-router.use(protect, requireParentalConsent);
+router.use(protect, requireParentalConsent, denyGuestWrites);
 
 // Reject malformed ids with 400 before controllers run
 const { objectIdParam } = require('../middleware/validateObjectId');

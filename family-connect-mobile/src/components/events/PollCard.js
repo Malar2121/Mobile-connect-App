@@ -4,13 +4,29 @@ import { Card } from '../../design-system';
 import { PollOption } from './PollOption';
 import { useTheme } from '../../hooks/useTheme';
 
-function PollCardComponent({ poll, results, onVote, onClose, canManage, voting }) {
+const REASON_TEXT = {
+  no_responses_yet: 'No one has voted yet — this is just the earliest option.',
+  works_for_everyone_who_replied: 'Works for everyone who has replied so far.',
+  best_available_with_conflicts: 'Best available, but someone has said no to it.',
+  all_options_past: 'Every proposed date has already passed.',
+  no_options: 'This poll has no date options.',
+};
+
+const CONFIDENCE_TEXT = {
+  high: 'Most of the family has replied.',
+  medium: 'About half the family has replied.',
+  low: 'Only a few people have replied so far.',
+  none: 'Waiting on votes.',
+};
+
+function PollCardComponent({ poll, results, suggestion, suggestionReason, onVote, onClose, canManage, voting }) {
   const { colors, layout, radii } = useTheme();
   if (!poll) return null;
 
-  const winning = results?.length
-    ? [...results].sort((a, b) => b.availabilityScore - a.availabilityScore)[0]
-    : null;
+  // The server ranks options (fewest blockers, then availability, then
+  // coverage, then earliest). Showing a locally re-sorted "winner" would
+  // disagree with it, so the suggestion is taken as given.
+  const winning = suggestion ?? null;
 
   return (
     <Card>
@@ -46,10 +62,17 @@ function PollCardComponent({ poll, results, onVote, onClose, canManage, voting }
         })}
       </View>
 
-      {winning && poll.isClosed ? (
+      {winning ? (
         <View style={[styles.winner, { backgroundColor: colors.success + '18', borderRadius: radii.lg }]}>
-          <Text style={{ color: colors.success, fontFamily: 'Inter_600SemiBold' }}>
-            Winning slot: {winning.label} ({winning.availabilityScore}% availability)
+          <Text style={{ color: colors.success, fontFamily: 'Inter_600SemiBold', fontSize: 14 * layout.fontScale }}>
+            {poll.isClosed ? 'Chosen slot' : 'Suggested date'}: {winning.label || new Date(winning.dateTime).toDateString()}
+          </Text>
+          <Text style={{ color: colors.textSecondary, fontSize: 12.5 * layout.fontScale, marginTop: 4 }}>
+            {winning.availabilityScore}% of the family available
+            {winning.blockers > 0 ? ` · ${winning.blockers} can't make it` : ''}
+          </Text>
+          <Text style={{ color: colors.textTertiary, fontSize: 11.5 * layout.fontScale, marginTop: 3 }}>
+            {REASON_TEXT[suggestionReason] ?? ''} {CONFIDENCE_TEXT[winning.confidence] ?? ''}
           </Text>
         </View>
       ) : null}

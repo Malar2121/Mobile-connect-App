@@ -5,8 +5,9 @@ const { createPoll, getPoll, getPollByEvent, castVote, closePoll } = require('..
 const { protect, requireFamily } = require('../middleware/auth');
 const { validate } = require('../middleware/validate');
 const { requireParentalConsent } = require('../middleware/requireParentalConsent');
+const { denyGuestWrites } = require('../middleware/denyGuestWrites');
 
-router.use(protect, requireFamily, requireParentalConsent);
+router.use(protect, requireFamily, requireParentalConsent, denyGuestWrites);
 
 router.post(
   '/',

@@ -1,4 +1,6 @@
 const EventPoll = require('../models/EventPoll');
+const Family = require('../models/Family');
+const { computeSmartDate } = require('../utils/smartDate');
 const Event = require('../models/Event');
 const asyncHandler = require('../utils/asyncHandler');
 const { successResponse, errorResponse } = require('../utils/apiResponse');
@@ -41,8 +43,8 @@ const getPollByEvent = asyncHandler(async (req, res) => {
 
   if (!poll) return errorResponse(res, 'No poll for this event', 404);
 
-  const results = computePollResults(poll);
-  return successResponse(res, { poll, results }, 'Poll retrieved');
+  const { results, suggestion, reason } = await analysePoll(poll, req.user.familyId);
+  return successResponse(res, { poll, results, suggestion, suggestionReason: reason }, 'Poll retrieved');
 });
 
 // ──────────────────────────────────────────
@@ -53,8 +55,8 @@ const getPoll = asyncHandler(async (req, res) => {
 
   if (!poll) return errorResponse(res, 'Poll not found', 404);
 
-  const results = computePollResults(poll);
-  return successResponse(res, { poll, results }, 'Poll retrieved');
+  const { results, suggestion, reason } = await analysePoll(poll, req.user.familyId);
+  return successResponse(res, { poll, results, suggestion, suggestionReason: reason }, 'Poll retrieved');
 });
 
 // ──────────────────────────────────────────
@@ -87,8 +89,8 @@ const castVote = asyncHandler(async (req, res) => {
 
   await poll.save();
 
-  const results = computePollResults(poll);
-  return successResponse(res, { results }, 'Vote recorded');
+  const { results, suggestion, reason } = await analysePoll(poll, req.user.familyId);
+  return successResponse(res, { results, suggestion, suggestionReason: reason }, 'Vote recorded');
 });
 
 // ──────────────────────────────────────────
@@ -112,24 +114,16 @@ const closePoll = asyncHandler(async (req, res) => {
 });
 
 // ──────────────────────────────────────────
-//  Helper: Compute poll availability results
+//  Helper: Compute poll results + the smart date suggestion
+//
+//  Scores are measured against the whole family, not just the people who
+//  replied, so an option two members accepted out of six is not reported as
+//  100% available. See utils/smartDate.js for the ranking rules.
 // ──────────────────────────────────────────
-const computePollResults = (poll) => {
-  return poll.options.map((option) => {
-    const yesCount = option.votes.filter((v) => v.vote === 'yes').length;
-    const maybeCount = option.votes.filter((v) => v.vote === 'maybe').length;
-    const noCount = option.votes.filter((v) => v.vote === 'no').length;
-    const totalVotes = option.votes.length;
-    const availabilityScore = totalVotes > 0 ? ((yesCount + maybeCount * 0.5) / totalVotes) * 100 : 0;
-
-    return {
-      optionId: option._id,
-      dateTime: option.dateTime,
-      label: option.label,
-      votes: { yes: yesCount, maybe: maybeCount, no: noCount, total: totalVotes },
-      availabilityScore: Math.round(availabilityScore),
-    };
-  });
+const analysePoll = async (poll, familyId) => {
+  const family = await Family.findById(familyId).select('members');
+  const familySize = family?.members?.length ?? 0;
+  return computeSmartDate(poll, familySize);
 };
 
 module.exports = { createPoll, getPoll, getPollByEvent, castVote, closePoll };

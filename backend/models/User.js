@@ -29,7 +29,9 @@ const userSchema = new mongoose.Schema(
     },
     role: {
       type: String,
-      enum: ['admin', 'parent', 'child', 'member'],
+      // 'guest' is the proposal's read-only role (§6.2): an extended relative
+      // who can see the family's shared content but not change any of it.
+      enum: ['admin', 'parent', 'child', 'member', 'guest'],
       default: 'member',
     },
     familyId: {

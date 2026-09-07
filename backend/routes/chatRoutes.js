@@ -1,5 +1,6 @@
 const express = require('express');
 const { requireParentalConsent } = require('../middleware/requireParentalConsent');
+const { denyGuestWrites } = require('../middleware/denyGuestWrites');
 const router = express.Router();
 
 const {
@@ -19,7 +20,7 @@ const {
 const { protect } = require('../middleware/authMiddleware');
 const { chatUpload } = require('../config/cloudinary');
 
-router.use(protect, requireParentalConsent);
+router.use(protect, requireParentalConsent, denyGuestWrites);
 
 // Reject malformed ids with 400 before controllers run (BUG-L1 fix)
 const { objectIdParam } = require('../middleware/validateObjectId');

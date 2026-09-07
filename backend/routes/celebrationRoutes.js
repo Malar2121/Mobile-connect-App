@@ -12,10 +12,11 @@ const {
 const { protect } = require('../middleware/authMiddleware');
 const { objectIdParam } = require('../middleware/validateObjectId');
 const { requireParentalConsent } = require('../middleware/requireParentalConsent');
+const { denyGuestWrites } = require('../middleware/denyGuestWrites');
 
 // Every celebration route requires a valid JWT; the controllers additionally
 // scope every query by the caller's familyId.
-router.use(protect, requireParentalConsent);
+router.use(protect, requireParentalConsent, denyGuestWrites);
 
 // Reject malformed ids with 400 before the controllers run.
 router.param('id', objectIdParam);

@@ -152,7 +152,7 @@ export default function MemberProfileScreen() {
                   Current Role: {member.displayRole}
                 </Text>
                 <View style={{ flexDirection: 'row', gap: 8, flexWrap: 'wrap' }}>
-                  {['admin', 'parent', 'member', 'child'].map(r => (
+                  {['admin', 'parent', 'member', 'child', 'guest'].map(r => (
                     <Button 
                       key={r}
                       title={r.charAt(0).toUpperCase() + r.slice(1)} 

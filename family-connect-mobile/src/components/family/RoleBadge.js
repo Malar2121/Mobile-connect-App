@@ -9,6 +9,7 @@ const ROLE_COLORS = {
   parent: '#0EA5E9',
   member: '#64748B',
   child: '#F59E0B',
+  guest: '#14B8A6',
 };
 
 function RoleBadgeComponent({ role, compact }) {

@@ -19,6 +19,14 @@ export const RELATIONSHIP_OPTIONS = [
 
 export const ROLE_DEFINITIONS = [
   {
+    id: 'guest',
+    label: 'Guest',
+    mapsFrom: 'guest',
+    description: 'Extended relative with read-only access. Can view but not change anything.',
+    permissions: ['View events', 'View shared memories', 'Read chat'],
+    readOnly: true,
+  },
+  {
     id: 'owner',
     label: 'Owner',
     mapsFrom: 'admin',
