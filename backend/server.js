@@ -63,9 +63,15 @@ initSocket(io);
 app.set('io', io); // Allow routes to access the io instance via req.app.get('io')
 
 // ─── External Services ────────────────────────────────────────────────────
-connectDB();
-initFirebase();
-startReminderScheduler();
+// Under test the suite owns the database connection and drives the reminder
+// sweep itself, so these are skipped rather than starting a second connection
+// and a background cron alongside the tests.
+const isTest = process.env.NODE_ENV === 'test';
+if (!isTest) {
+  connectDB();
+  initFirebase();
+  startReminderScheduler();
+}
 
 // ─── Security Middleware ──────────────────────────────────────────────────
 app.use(helmet());
@@ -142,11 +148,15 @@ app.use(errorHandler);
 
 // ─── Start Server ─────────────────────────────────────────────────────────
 const PORT = process.env.PORT || 5000;
-server.listen(PORT, () => {
-  logger.info(`🚀 Family Connect API running on port ${PORT} [${process.env.NODE_ENV}]`);
-  logger.info(`🔌 Socket.io server ready`);
-  logger.info(`📡 Health: http://localhost:${PORT}/health`);
-});
+// Supertest binds its own ephemeral port, so listening here would only occupy
+// port 5000 and leave a handle open that keeps Jest from exiting.
+if (!isTest) {
+  server.listen(PORT, () => {
+    logger.info(`🚀 Family Connect API running on port ${PORT} [${process.env.NODE_ENV}]`);
+    logger.info(`🔌 Socket.io server ready`);
+    logger.info(`📡 Health: http://localhost:${PORT}/health`);
+  });
+}
 
 // ─── Graceful Shutdown ────────────────────────────────────────────────────
 const shutdown = (signal) => {

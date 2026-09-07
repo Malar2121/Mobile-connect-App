@@ -5,3 +5,6 @@ logs/
 dist/
 .DS_Store
 coverage/
+
+# Jest coverage output
+coverage/

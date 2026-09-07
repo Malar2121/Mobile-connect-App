@@ -1,8 +1,9 @@
-import React from 'react';
+import React, { useCallback } from 'react';
 import { Pressable, ScrollView, StyleSheet, Text, View } from 'react-native';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import { Ionicons } from '@expo/vector-icons';
-import { useNavigation } from '@react-navigation/native';
+import { useFocusEffect, useNavigation } from '@react-navigation/native';
+import { useVoicePrompts } from '../../hooks/useVoicePrompts';
 import { useTheme } from '../../hooks/useTheme';
 import { useAuth } from '../../contexts/AuthContext';
 import { useDashboardData } from '../../hooks/useDashboardData';
@@ -25,20 +26,42 @@ export default function ElderDashboardScreen() {
   const firstName = user?.fullName?.split(' ')[0] ?? '';
   const nextEvent = upcomingEvents?.[0];
 
+  // Spoken orientation on arrival, in the app's current language. Silent
+  // unless the user is in elder mode with prompts left on.
+  const voice = useVoicePrompts();
+  useFocusEffect(
+    useCallback(() => {
+      voice.announceScreen(
+        `${t('elder.hello')}${firstName ? `, ${firstName}` : ''}. ${
+          nextEvent
+            ? t('elder.voiceNextEvent', { title: nextEvent.title })
+            : t('elder.voiceNoEvents')
+        }`,
+      );
+      return () => voice.stop();
+    }, [voice, t, firstName, nextEvent]),
+  );
+
   const ACTIONS = [
     {
       id: 'map',
       label: t('elder.familyMap'),
       icon: 'map',
       color: colors.primary,
-      onPress: () => navigation.navigate('Map'),
+      onPress: () => {
+        voice.speakKey('elder.familyMap');
+        navigation.navigate('Map');
+      },
     },
     {
       id: 'chat',
       label: t('elder.messages'),
       icon: 'chatbubbles',
       color: '#2563eb',
-      onPress: () => navigation.navigate('Chat'),
+      onPress: () => {
+        voice.speakKey('elder.messages');
+        navigation.navigate('Chat');
+      },
     },
   ];
 
@@ -65,7 +88,10 @@ export default function ElderDashboardScreen() {
 
         {/* SOS — the most important elder action, always first and huge */}
         <Pressable
-          onPress={() => navigation.navigate('Map', { screen: 'SOSScreen' })}
+          onPress={() => {
+            voice.speakKey('elder.voiceOpeningSos');
+            navigation.navigate('Map', { screen: 'SOSScreen' });
+          }}
           accessibilityRole="button"
           accessibilityLabel={t('elder.sos')}
           style={[

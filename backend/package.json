@@ -9,7 +9,9 @@
     "seed:dev-user": "node scripts/seedDevUser.js",
     "seed:demo": "node scripts/seedDemoData.js",
     "seed:demo:reset": "node scripts/seedDemoData.js --reset",
-    "test": "jest --coverage"
+    "test": "jest --runInBand",
+    "test:coverage": "jest --runInBand --coverage",
+    "test:watch": "jest --watch"
   },
   "keywords": [
     "family",

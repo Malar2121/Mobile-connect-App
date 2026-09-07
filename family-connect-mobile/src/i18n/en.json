@@ -115,7 +115,14 @@
     "familyMap": "Family map",
     "messages": "Messages",
     "nextEvent": "Next family event",
-    "yourFamily": "Your family"
+    "yourFamily": "Your family",
+    "voiceNextEvent": "Your next event is {{title}}.",
+    "voiceNoEvents": "You have no events coming up.",
+    "voiceOpeningSos": "Opening emergency help.",
+    "voicePrompts": "Spoken prompts",
+    "voicePromptsHint": "Read out each screen and important actions aloud.",
+    "voiceOn": "Spoken prompts turned on",
+    "voiceOff": "Spoken prompts turned off"
   },
   "dashboard": {
     "greetingMorning": "Good morning",

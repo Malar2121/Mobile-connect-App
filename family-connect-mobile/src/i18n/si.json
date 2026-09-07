@@ -115,7 +115,14 @@
     "familyMap": "පවුලේ සිතියම",
     "messages": "පණිවිඩ",
     "nextEvent": "ඊළඟ පවුලේ අවස්ථාව",
-    "yourFamily": "ඔබේ පවුල"
+    "yourFamily": "ඔබේ පවුල",
+    "voiceNextEvent": "ඔබේ ඊළඟ සිදුවීම {{title}}.",
+    "voiceNoEvents": "ඉදිරියේ සිදුවීම් නොමැත.",
+    "voiceOpeningSos": "හදිසි උදව් විවෘත කරමින්.",
+    "voicePrompts": "හඬ ඇඟවීම්",
+    "voicePromptsHint": "සෑම තිරයක්ම සහ වැදගත් ක්‍රියා හඬින් කියවයි.",
+    "voiceOn": "හඬ ඇඟවීම් සක්‍රීයයි",
+    "voiceOff": "හඬ ඇඟවීම් අක්‍රීයයි"
   },
   "dashboard": {
     "greetingMorning": "සුභ උදෑසනක්",

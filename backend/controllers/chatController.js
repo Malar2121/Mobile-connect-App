@@ -464,6 +464,8 @@ const getStarredMessages = async (req, res) => {
 };
 
 module.exports = {
+  // exported for unit testing
+  parseMentions,
   sendMessage,
   getFamilyMessages,
   deleteMessage,

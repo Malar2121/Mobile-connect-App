@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { ScrollView, StyleSheet, Text, View } from 'react-native';
+import { ScrollView, StyleSheet, Switch, Text, View } from 'react-native';
 import * as Clipboard from 'expo-clipboard';
 import { Ionicons } from '@expo/vector-icons';
 import {
@@ -18,12 +18,14 @@ import { useFamily } from '../../contexts/FamilyContext';
 import { useI18n, SUPPORTED_LOCALES } from '../../i18n';
 import { useTheme } from '../../hooks/useTheme';
 import { useAccessibilityPolicy } from '../../hooks/useAccessibilityPolicy';
+import { useVoicePrompts } from '../../hooks/useVoicePrompts';
 import { createInviteCode } from '../../services/familyService';
 
 export default function ProfileScreen({ navigation }) {
   const { colors, layout, uiMode, setUiMode, themePreference, setThemePreference } = useTheme();
   const { t, locale } = useI18n();
   const policy = useAccessibilityPolicy();
+  const voice = useVoicePrompts();
   const toast = useToast();
   const { user, signOut } = useAuth();
   const { family, members, loading: familyLoading } = useFamily();
@@ -227,9 +229,34 @@ export default function ProfileScreen({ navigation }) {
             ))}
           </View>
           {uiMode === 'elder' ? (
-            <Text style={{ color: colors.textSecondary, fontSize: 13 * layout.fontScale, marginTop: 12 }}>
-              {t('profile.elderHint')}
-            </Text>
+            <>
+              <Text style={{ color: colors.textSecondary, fontSize: 13 * layout.fontScale, marginTop: 12 }}>
+                {t('profile.elderHint')}
+              </Text>
+
+              {/* Only shown in elder mode — the prompts never run elsewhere. */}
+              <View style={styles.voiceRow}>
+                <View style={{ flex: 1, minWidth: 0, paddingRight: 12 }}>
+                  <Text style={{ color: colors.text, fontSize: 15 * layout.fontScale, fontFamily: 'Inter_600SemiBold' }}>
+                    {t('elder.voicePrompts')}
+                  </Text>
+                  <Text style={{ color: colors.textSecondary, fontSize: 13 * layout.fontScale, marginTop: 2 }}>
+                    {t('elder.voicePromptsHint')}
+                  </Text>
+                </View>
+                <Switch
+                  value={voice.enabled}
+                  onValueChange={async (next) => {
+                    await voice.setPromptsEnabled(next);
+                    // Speak the confirmation only when turning it on, so the
+                    // user hears immediately that it works.
+                    if (next) voice.speak(t('elder.voiceOn'));
+                  }}
+                  accessibilityLabel={t('elder.voicePrompts')}
+                  accessibilityState={{ checked: voice.enabled }}
+                />
+              </View>
+            </>
           ) : null}
           {uiMode === 'minor' ? (
             <Text style={{ color: colors.textSecondary, fontSize: 13 * layout.fontScale, marginTop: 12 }}>
@@ -274,4 +301,5 @@ const styles = StyleSheet.create({
   profileRow: { flexDirection: 'row', alignItems: 'center' },
   profileCopy: { marginLeft: 16, flex: 1 },
   chipRow: { flexDirection: 'row', flexWrap: 'wrap', gap: 8 },
+  voiceRow: { flexDirection: 'row', alignItems: 'center', marginTop: 16 },
 });
