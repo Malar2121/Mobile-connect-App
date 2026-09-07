@@ -10,6 +10,7 @@ const rateLimit = require('express-rate-limit');
 const connectDB = require('./config/db');
 const { initFirebase } = require('./config/firebase');
 const { initSocket } = require('./socket/socketServer');
+const { startReminderScheduler } = require('./services/reminderScheduler');
 const { errorHandler, notFound } = require('./middleware/errorHandler');
 const logger = require('./utils/logger');
 
@@ -27,6 +28,7 @@ const locationRoutes = require('./routes/locationRoutes');
 const legacyRoutes = require('./routes/legacyRoutes');
 const webhookRoutes = require('./routes/webhookRoutes');
 const safeZoneRoutes = require('./routes/safeZoneRoutes');
+const celebrationRoutes = require('./routes/celebrationRoutes');
 
 // ─── App setup ────────────────────────────────────────────────────────────
 const app = express();
@@ -62,6 +64,7 @@ app.set('io', io); // Allow routes to access the io instance via req.app.get('io
 // ─── External Services ────────────────────────────────────────────────────
 connectDB();
 initFirebase();
+startReminderScheduler();
 
 // ─── Security Middleware ──────────────────────────────────────────────────
 app.use(helmet());
@@ -126,6 +129,7 @@ app.use('/api/location', locationRoutes);
 app.use('/api/legacy', legacyRoutes);
 app.use('/api/webhooks', webhookRoutes);
 app.use('/api/safezones', safeZoneRoutes);
+app.use('/api/celebrations', celebrationRoutes);
 
 // ─── 404 & Error Handlers ─────────────────────────────────────────────────
 app.use(notFound);

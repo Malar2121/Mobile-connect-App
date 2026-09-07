@@ -31,6 +31,7 @@ export default function EventReminderScreen() {
 
   const [reminders, setReminders] = useState([]);
   const [customTitle, setCustomTitle] = useState('');
+  const [customAt, setCustomAt] = useState('');
   const [pushEnabled, setPushEnabled] = useState(true);
   const [saving, setSaving] = useState(false);
 
@@ -52,29 +53,43 @@ export default function EventReminderScreen() {
   }, [pushEnabled, toast]);
 
   const addCustom = useCallback(async () => {
-    if (!customTitle.trim()) return;
-    
+    const title = customTitle.trim();
+    if (!title) return;
+
+    const when = new Date(customAt);
+    if (!customAt || Number.isNaN(when.getTime())) {
+      toast.error('Enter when to remind you, for example 2026-12-24 18:00.');
+      return;
+    }
+    if (when.getTime() <= Date.now()) {
+      toast.error('Pick a time in the future.');
+      return;
+    }
+
+    // A personal note fires locally on this device at the time the user chose.
+    // Event, birthday and celebration reminders are dispatched server-side by
+    // the reminder scheduler, so they arrive on every device and do not depend
+    // on this screen having been opened.
     if (pushEnabled) {
       try {
         await Notifications.scheduleNotificationAsync({
-          content: {
-            title: 'Family Connect Reminder',
-            body: customTitle.trim(),
-          },
-          trigger: { seconds: 60 }, // Demo: triggers in 60s
+          content: { title: 'Family Connect Reminder', body: title },
+          trigger: { type: 'date', date: when },
         });
-        toast.success('Notification scheduled!');
+        toast.success(`Reminder set for ${when.toLocaleString()}`);
       } catch (e) {
-        toast.error('Failed to schedule push notification.');
+        toast.error('Failed to schedule the reminder on this device.');
+        return;
       }
     }
 
     setReminders((prev) => [
-      { id: Date.now().toString(), title: customTitle.trim(), type: 'custom', at: new Date().toISOString() },
+      { id: Date.now().toString(), title, type: 'custom', at: when.toISOString() },
       ...prev,
     ]);
     setCustomTitle('');
-  }, [customTitle, pushEnabled, toast]);
+    setCustomAt('');
+  }, [customTitle, customAt, pushEnabled, toast]);
 
   const handleSave = useCallback(async () => {
     if (!family?._id) return;
@@ -99,7 +114,8 @@ export default function EventReminderScreen() {
             <Switch value={pushEnabled} onValueChange={setPushEnabled} accessibilityLabel="Push notifications" />
           </View>
           <Text style={{ color: colors.textTertiary, fontSize: 11, marginTop: 8 }}>
-            Note: Custom reminders added here will schedule a demo local notification in 60 seconds if push is enabled.
+            Event, birthday and celebration reminders are sent by the server at their
+            scheduled time — you do not need this screen open to receive them.
           </Text>
         </Card>
 
@@ -110,6 +126,13 @@ export default function EventReminderScreen() {
 
         <Text style={{ color: colors.text, fontFamily: 'Inter_700Bold', marginTop: 20, marginBottom: 10 }}>Custom reminders</Text>
         <TextField label="New reminder" value={customTitle} onChangeText={setCustomTitle} placeholder="Call Grandma before dinner" />
+        <TextField
+          label="Remind me at"
+          value={customAt}
+          onChangeText={setCustomAt}
+          placeholder="2026-12-24 18:00"
+          hint="Date and time on this device"
+        />
         <Button title="Add reminder" variant="secondary" onPress={addCustom} style={{ marginBottom: 12 }} />
 
         {reminders.map((r) => (

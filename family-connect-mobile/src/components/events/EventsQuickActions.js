@@ -8,6 +8,7 @@ const ACTIONS = [
   { id: 'create', label: 'Create', icon: 'add-circle-outline', screen: 'CreateEvent' },
   { id: 'calendar', label: 'Calendar', icon: 'calendar-outline', screen: 'Calendar' },
   { id: 'poll', label: 'Poll', icon: 'stats-chart-outline', screen: 'EventPoll', needsEvent: true },
+  { id: 'celebrations', label: 'Celebrations', icon: 'gift-outline', screen: 'Celebrations' },
   { id: 'reminders', label: 'Reminders', icon: 'alarm-outline', screen: 'EventReminders' },
   { id: 'history', label: 'History', icon: 'time-outline', screen: 'EventHistory' },
   { id: 'agenda', label: 'Agenda', icon: 'list-outline', screen: 'Agenda' },

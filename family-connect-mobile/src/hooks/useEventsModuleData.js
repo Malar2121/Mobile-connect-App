@@ -5,6 +5,7 @@ import { useFamily } from '../contexts/FamilyContext';
 import { useTheme } from './useTheme';
 import { getFamilyEvents } from '../services/eventService';
 import { getFamilyMemories } from '../services/memoryService';
+import { getCelebrations } from '../services/celebrationService';
 import {
   buildEventHistory,
   buildEventInsights,
@@ -24,6 +25,7 @@ export function useEventsModuleData(filters = {}) {
 
   const [events, setEvents] = useState([]);
   const [memories, setMemories] = useState([]);
+  const [celebrations, setCelebrations] = useState([]);
   const [loading, setLoading] = useState(true);
   const [refreshing, setRefreshing] = useState(false);
   const [error, setError] = useState('');
@@ -32,17 +34,20 @@ export function useEventsModuleData(filters = {}) {
     if (!family) {
       setEvents([]);
       setMemories([]);
+      setCelebrations([]);
       setLoading(false);
       return;
     }
     setError('');
     try {
-      const [ev, mem] = await Promise.all([
+      const [ev, mem, cel] = await Promise.all([
         getFamilyEvents(),
         getFamilyMemories().catch(() => []),
+        getCelebrations().catch(() => []),
       ]);
       setEvents(ev);
       setMemories(mem);
+      setCelebrations(cel);
     } catch (e) {
       setError(e.message || 'Could not load events.');
     } finally {
@@ -78,8 +83,8 @@ export function useEventsModuleData(filters = {}) {
   const agendaGroups = useMemo(() => groupEventsByDate(filteredEvents), [filteredEvents]);
   const eventsByDay = useMemo(() => buildEventsByDayMap(events), [events]);
   const insights = useMemo(
-    () => buildEventInsights(events, members, userId),
-    [events, members, userId],
+    () => buildEventInsights(events, members, userId, celebrations),
+    [events, members, userId, celebrations],
   );
   const history = useMemo(
     () => buildEventHistory(events, memories),
@@ -91,6 +96,7 @@ export function useEventsModuleData(filters = {}) {
   return {
     events,
     memories,
+    celebrations,
     members,
     family,
     user,

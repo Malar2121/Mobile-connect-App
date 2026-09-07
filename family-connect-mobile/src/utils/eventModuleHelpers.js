@@ -146,7 +146,11 @@ export function buildEventsByDayMap(events) {
   return map;
 }
 
-export function buildEventInsights(events, members, userId) {
+/**
+ * @param celebrations Real celebration records from /api/celebrations. Birthday
+ *   and anniversary counts come from these, never from guessing at event titles.
+ */
+export function buildEventInsights(events, members, userId, celebrations = []) {
   const now = new Date();
   const monthStart = new Date(now.getFullYear(), now.getMonth(), 1);
   const eventsThisMonth = (events ?? []).filter(
@@ -177,12 +181,11 @@ export function buildEventInsights(events, members, userId) {
   });
   const topOrganizer = (members ?? []).find((m) => String(m._id) === topId);
 
-  const upcomingBirthdays = (events ?? []).filter((e) =>
-    inferEventCategory(e.title).label === 'Birthday' && !isEventPast(e),
-  ).length;
-  const upcomingAnniversaries = (events ?? []).filter((e) =>
-    inferEventCategory(e.title).label === 'Anniversary' && !isEventPast(e),
-  ).length;
+  // Counted from typed celebration records rather than by looking for the word
+  // "birthday" in an event title, which missed every other spelling and
+  // wrongly counted anything that merely mentioned one.
+  const upcomingBirthdays = (celebrations ?? []).filter((c) => c.type === 'birthday').length;
+  const upcomingAnniversaries = (celebrations ?? []).filter((c) => c.type === 'anniversary').length;
 
   const pendingRsvps = filterPendingRsvpEvents(events, userId).length;
   const nextEvent = pickUpcomingEvents(events, 1)[0];

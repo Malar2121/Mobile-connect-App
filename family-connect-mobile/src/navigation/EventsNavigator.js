@@ -12,6 +12,7 @@ import EventReminderScreen from '../screens/events/EventReminderScreen';
 import EventAttachmentsScreen from '../screens/events/EventAttachmentsScreen';
 import EventHistoryScreen from '../screens/events/EventHistoryScreen';
 import EventsListScreen from '../screens/events/EventsListScreen';
+import CelebrationsScreen from '../screens/events/CelebrationsScreen';
 
 const Stack = createNativeStackNavigator();
 
@@ -30,6 +31,7 @@ export default function EventsNavigator() {
       <Stack.Screen name="EventReminders" component={EventReminderScreen} />
       <Stack.Screen name="EventAttachments" component={EventAttachmentsScreen} />
       <Stack.Screen name="EventHistory" component={EventHistoryScreen} />
+      <Stack.Screen name="Celebrations" component={CelebrationsScreen} />
     </Stack.Navigator>
   );
 }
