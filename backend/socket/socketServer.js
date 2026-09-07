@@ -97,7 +97,13 @@ const initSocket = (io) => {
     // 5. Read Receipt updates 
     socket.on('mark_read', async ({ messageId }) => {
       try {
-        const message = await Message.findById(messageId);
+        // Scope by familyId so a member of family A can never write a read
+        // receipt onto a message belonging to family B (same rule the REST
+        // controllers apply to every message lookup).
+        const message = await Message.findOne({
+          _id: messageId,
+          familyId: socket.user.familyId,
+        });
         if (!message) return;
 
         const alreadyRead = message.readBy.some((id) => id.toString() === String(socket.user._id));

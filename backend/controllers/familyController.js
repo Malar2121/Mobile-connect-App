@@ -402,12 +402,29 @@ const addLifeEvent = async (req, res) => {
 
 const createJoinRequest = async (req, res) => {
   try {
-    const { familyId } = req.body;
+    const { familyId, inviteCode } = req.body;
     if (req.user.familyId) return res.status(400).json({ success: false, message: 'Already in a family' });
-    
+
+    // The invite code is the only thing that proves the requester was actually
+    // invited, so it is mandatory. A bare familyId proves nothing: the caller
+    // could aim a request at any family whose ObjectId they guessed, pushing
+    // their name and email in front of an unrelated family's admin. familyId
+    // is accepted only as an optional cross-check against the resolved family.
+    if (!inviteCode) {
+      return res.status(400).json({ success: false, message: 'An invite code is required to request to join a family' });
+    }
+
+    const family = await Family.findOne({ inviteCode: String(inviteCode).trim().toUpperCase() });
+    if (!family) {
+      return res.status(404).json({ success: false, message: 'Family not found for that invite code' });
+    }
+    if (familyId && String(family._id) !== String(familyId)) {
+      return res.status(400).json({ success: false, message: 'Invite code does not match the requested family' });
+    }
+
     const request = await JoinRequest.findOneAndUpdate(
-      { family: familyId, user: req.user._id },
-      { family: familyId, user: req.user._id, status: 'pending' },
+      { family: family._id, user: req.user._id },
+      { family: family._id, user: req.user._id, status: 'pending' },
       { upsert: true, new: true, setDefaultsOnInsert: true }
     );
     res.status(201).json({ success: true, data: { request } });

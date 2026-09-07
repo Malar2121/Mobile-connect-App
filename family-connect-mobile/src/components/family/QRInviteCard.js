@@ -1,15 +1,22 @@
 import React, { memo } from 'react';
-import { Image, StyleSheet, Text, View } from 'react-native';
+import { StyleSheet, Text, View } from 'react-native';
 import { Ionicons } from '@expo/vector-icons';
+import QRCode from 'react-native-qrcode-svg';
 import { Card } from '../../design-system';
 import { useTheme } from '../../hooks/useTheme';
 
+/**
+ * Renders the family invite QR entirely on-device.
+ *
+ * This used to build an <Image> URL against api.qrserver.com, which meant a
+ * live join credential for a private family was sent to a third party and
+ * written into its access logs every time an admin opened the invite screen.
+ * The proposal's own constraint is that family data stays private, so the
+ * code is now encoded locally and never leaves the phone.
+ */
 function QRInviteCardComponent({ inviteLink, inviteCode }) {
   const { colors, layout, radii } = useTheme();
   const data = inviteLink || inviteCode || '';
-  const qrUri = data
-    ? `https://api.qrserver.com/v1/create-qr-code/?size=240x240&data=${encodeURIComponent(data)}`
-    : null;
 
   return (
     <Card>
@@ -20,14 +27,16 @@ function QRInviteCardComponent({ inviteLink, inviteCode }) {
         Share this QR code for a quick family join experience.
       </Text>
 
-      {qrUri ? (
-        <View style={[styles.qrWrap, { backgroundColor: colors.surfaceSecondary, borderRadius: radii.xl }]}>
-          <Image
-            source={{ uri: qrUri }}
-            style={styles.qrImage}
-            accessibilityLabel="QR code for family invite"
-            resizeMode="contain"
-          />
+      {data ? (
+        <View
+          style={[styles.qrWrap, { backgroundColor: colors.surfaceSecondary, borderRadius: radii.xl }]}
+          accessible
+          accessibilityRole="image"
+          accessibilityLabel="QR code for the family invite"
+        >
+          {/* Fixed light-on-dark values: a QR must stay high-contrast and
+              light-grounded in both themes or scanners fail on it. */}
+          <QRCode value={data} size={220} color="#000000" backgroundColor="#FFFFFF" ecl="M" />
         </View>
       ) : (
         <View style={[styles.placeholder, { backgroundColor: colors.surfaceSecondary, borderRadius: radii.xl }]}>
@@ -58,6 +67,5 @@ export const QRInviteCard = memo(QRInviteCardComponent);
 
 const styles = StyleSheet.create({
   qrWrap: { alignItems: 'center', padding: 20 },
-  qrImage: { width: 220, height: 220 },
   placeholder: { alignItems: 'center', padding: 40 },
 });

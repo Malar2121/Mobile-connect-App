@@ -161,9 +161,14 @@ export async function addLifeEvent(userId, lifeEvent) {
   }
 }
 
-export async function createJoinRequest(familyId) {
+/**
+ * POST /api/family/join-requests
+ * The invite code is what proves the requester was actually invited — the
+ * server resolves the family from it, so a bare familyId is not accepted.
+ */
+export async function createJoinRequest(inviteCode) {
   try {
-    const response = await api.post('/family/join-requests', { familyId });
+    const response = await api.post('/family/join-requests', { inviteCode });
     if (!response.data.success) throw new Error(response.data.message);
     return response.data.data;
   } catch (e) {
