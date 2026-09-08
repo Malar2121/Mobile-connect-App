@@ -9,6 +9,8 @@ const ACTIONS = [
   { id: 'members', label: 'Members', icon: 'people-outline', screen: 'FamilyMembers' },
   { id: 'invite', label: 'Invite', icon: 'person-add-outline', screen: 'InviteMembers', admin: true },
   { id: 'requests', label: 'Requests', icon: 'mail-unread-outline', screen: 'JoinRequests', admin: true },
+  { id: 'emailinvite', label: 'Email invite', icon: 'mail-outline', screen: 'EmailInvite', admin: true },
+  { id: 'scan', label: 'Scan invite', icon: 'qr-code-outline', screen: 'ScanInvite' },
   { id: 'approvals', label: 'Child approvals', icon: 'shield-checkmark-outline', screen: 'ChildApprovals', admin: true },
   { id: 'roles', label: 'Roles', icon: 'shield-outline', screen: 'FamilyRoles' },
   { id: 'relationships', label: 'Relationships', icon: 'git-network-outline', screen: 'Relationship' },

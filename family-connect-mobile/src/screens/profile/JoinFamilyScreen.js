@@ -79,6 +79,13 @@ export default function JoinFamilyScreen({ navigation }) {
         <Button title="Join family" onPress={handleJoin} loading={loading} style={{ marginTop: 12 }} />
       </Card>
 
+      <Button
+        title="Scan a QR invite instead"
+        variant="secondary"
+        onPress={() => navigation.navigate('FamilyModule', { screen: 'ScanInvite' })}
+        style={{ marginTop: 14 }}
+      />
+
       <Button title="Cancel" variant="ghost" onPress={() => navigation.goBack()} style={{ marginTop: 14 }} />
     </Screen>
   );

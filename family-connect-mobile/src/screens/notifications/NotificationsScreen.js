@@ -35,89 +35,17 @@ export default function NotificationsScreen({ navigation }) {
   const load = useCallback(async () => {
     setError('');
     try {
-      const list = await getNotifications().catch(() => [
-        {
-          _id: 'n_mock_1',
-          type: 'memory_uploaded',
-          title: 'Amma uploaded a new memory',
-          body: 'Check out "Our trip to the mountains!" photo',
-          createdAt: new Date(Date.now() - 3600000 * 2).toISOString(),
-          isRead: false,
-        },
-        {
-          _id: 'n_mock_2',
-          type: 'event_created',
-          title: "Sister's Graduation starts tomorrow",
-          body: 'Join at University Hall at 10:00 AM',
-          createdAt: new Date(Date.now() - 3600000 * 5).toISOString(),
-          isRead: false,
-        },
-        {
-          _id: 'n_mock_3',
-          type: 'chat_message',
-          title: 'New message from Appa',
-          body: 'Are we still on for dinner tonight?',
-          createdAt: new Date(Date.now() - 3600000 * 8).toISOString(),
-          isRead: true,
-        },
-        {
-          _id: 'n_mock_4',
-          type: 'event_created',
-          title: 'Relationship mapped',
-          body: "Malaravan T. linked Grandpa Thatha as Appa's Father",
-          createdAt: new Date(Date.now() - 86400000).toISOString(),
-          isRead: true,
-        },
-        {
-          _id: 'n_mock_5',
-          type: 'memory_uploaded',
-          title: 'Amma liked your memory',
-          body: 'Summer trip!',
-          createdAt: new Date(Date.now() - 86400000 * 2).toISOString(),
-          isRead: true,
-        },
-        {
-          _id: 'n_mock_6',
-          type: 'notifications',
-          title: 'Appa arrived at Safe Zone: Home',
-          body: 'Appa is now at Home.',
-          createdAt: new Date(Date.now() - 86400000 * 3).toISOString(),
-          isRead: true,
-        }
-      ]);
-      setNotifications(list);
+      // Real notifications only. This screen previously fell back to a
+      // fabricated list on any failure, which made an empty or unreachable
+      // inbox look busy and hid genuine errors from the user.
+      setNotifications(await getNotifications());
     } catch (e) {
-      setNotifications([
-        {
-          _id: 'n_mock_1',
-          type: 'memory_uploaded',
-          title: 'Amma uploaded a new memory',
-          body: 'Check out "Our trip to the mountains!" photo',
-          createdAt: new Date(Date.now() - 3600000 * 2).toISOString(),
-          isRead: false,
-        },
-        {
-          _id: 'n_mock_2',
-          type: 'event_created',
-          title: "Sister's Graduation starts tomorrow",
-          body: 'Join at University Hall at 10:00 AM',
-          createdAt: new Date(Date.now() - 3600000 * 5).toISOString(),
-          isRead: false,
-        },
-        {
-          _id: 'n_mock_3',
-          type: 'chat_message',
-          title: 'New message from Appa',
-          body: 'Are we still on for dinner tonight?',
-          createdAt: new Date(Date.now() - 3600000 * 8).toISOString(),
-          isRead: true,
-        }
-      ]);
+      setError(e.message || t('notifications.loadFailed'));
     } finally {
       setLoading(false);
       setRefreshing(false);
     }
-  }, []);
+  }, [t]);
 
   useFocusEffect(
     useCallback(() => {

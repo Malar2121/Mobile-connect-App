@@ -266,7 +266,8 @@
     "title": "Notifications",
     "markRead": "Mark as read",
     "empty": "No notifications",
-    "hiddenMinor": "Some notifications are hidden in minor mode"
+    "hiddenMinor": "Some notifications are hidden in minor mode",
+    "loadFailed": "Could not load notifications."
   },
   "dates": {
     "today": "Today",
@@ -348,5 +349,52 @@
     "blockedPendingBody": "A parent or guardian in your family needs to approve this account before you can see family content.",
     "blockedRejectedTitle": "Account not approved",
     "blockedRejectedBody": "A guardian has not approved this account. Ask a parent or guardian in your family to review it."
+  },
+  "scan": {
+    "title": "Scan invite",
+    "subtitle": "Point the camera at a family invite QR code",
+    "permissionTitle": "Camera access needed",
+    "permissionBody": "Family Connect needs your camera to read the invite QR code. Nothing is recorded or uploaded.",
+    "permissionDenied": "Camera access is turned off. Enable it in your device settings, or enter the invite code by hand.",
+    "allowCamera": "Allow camera",
+    "enterCodeInstead": "Enter the code instead",
+    "scanAgain": "Scan again",
+    "joining": "Joining the family…",
+    "joined": "Welcome to {{family}}!",
+    "joinedGeneric": "Welcome to the family!",
+    "requestSent": "Join request sent. An admin must approve it.",
+    "notAnInvite": "That QR code isn't a Family Connect invite.",
+    "linkMissingCode": "That link doesn't contain an invite code.",
+    "failed": "Could not join with that invite."
+  },
+  "invite": {
+    "title": "Email invitations",
+    "subtitle": "Invite a relative by email",
+    "emailField": "Email address",
+    "emailHint": "They receive a one-time link that expires.",
+    "emailInvalid": "Enter a valid email address.",
+    "send": "Send invitation",
+    "sent": "Invitation emailed to {{email}}",
+    "sendFailed": "Could not create the invitation.",
+    "notEmailedTitle": "Invitation created, not emailed",
+    "mailNotConfigured": "Email is not set up on the server, so nothing was sent.",
+    "mailFailed": "The mail server rejected the message, so nothing was sent.",
+    "tokenCopied": "The invitation code has been copied — share it with them directly.",
+    "sentInvitations": "Invitations",
+    "loadFailed": "Could not load invitations.",
+    "emptyTitle": "No invitations yet",
+    "emptyBody": "Invite a relative by email and it will appear here.",
+    "emailed": "emailed",
+    "notEmailed": "not emailed",
+    "status_pending": "Pending",
+    "status_accepted": "Accepted",
+    "status_expired": "Expired",
+    "status_revoked": "Revoked",
+    "revoke": "Revoke",
+    "revokeTitle": "Revoke this invitation?",
+    "revokeMessage": "The link sent to {{email}} will stop working.",
+    "revokeA11y": "Revoke the invitation for {{email}}",
+    "revoked": "Invitation revoked",
+    "revokeFailed": "Could not revoke the invitation."
   }
 }

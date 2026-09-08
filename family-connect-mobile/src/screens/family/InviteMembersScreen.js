@@ -21,15 +21,16 @@ export default function InviteMembersScreen() {
   const [loading, setLoading] = useState(true);
   const [regenerating, setRegenerating] = useState(false);
   const [history, setHistory] = useState([]);
+  const [error, setError] = useState('');
 
   const loadInvite = useCallback(async () => {
     setLoading(true);
+    setError('');
     try {
-      const data = await createInviteCode(false).catch(() => ({
-        inviteCode: inviteCode || 'MLRV2026',
-        inviteLink: 'https://familyconnect.app/join/MLRV2026',
-        expiresAt: new Date(Date.now() + 86400000 * 7).toISOString(),
-      }));
+      // No invented fallback code here. Showing a plausible-looking invite that
+      // does not exist is worse than showing an error: an admin would share it
+      // and the recipient could never join.
+      const data = await createInviteCode(false);
       setInviteData(data);
       if (familyId) {
         await appendInviteHistory(familyId, {
@@ -40,15 +41,12 @@ export default function InviteMembersScreen() {
         setHistory(await loadInviteHistory(familyId).catch(() => []));
       }
     } catch (e) {
-      setInviteData({
-        inviteCode: inviteCode || 'MLRV2026',
-        inviteLink: 'https://familyconnect.app/join/MLRV2026',
-        expiresAt: new Date(Date.now() + 86400000 * 7).toISOString(),
-      });
+      setInviteData(null);
+      setError(e.message || 'Could not load the family invite code.');
     } finally {
       setLoading(false);
     }
-  }, [familyId, inviteCode]);
+  }, [familyId]);
 
   useEffect(() => {
     if (family) loadInvite();
@@ -57,11 +55,7 @@ export default function InviteMembersScreen() {
   const handleRegenerate = useCallback(async () => {
     setRegenerating(true);
     try {
-      const data = await createInviteCode(true).catch(() => ({
-        inviteCode: 'NEWMLRV26',
-        inviteLink: 'https://familyconnect.app/join/NEWMLRV26',
-        expiresAt: new Date(Date.now() + 86400000 * 7).toISOString(),
-      }));
+      const data = await createInviteCode(true);
       setInviteData(data);
       await appendInviteHistory(familyId, {
         code: data.inviteCode,
@@ -72,12 +66,8 @@ export default function InviteMembersScreen() {
       await refresh().catch(() => {});
       toast.success('New invite code generated');
     } catch (e) {
-      setInviteData({
-        inviteCode: 'NEWMLRV26',
-        inviteLink: 'https://familyconnect.app/join/NEWMLRV26',
-        expiresAt: new Date(Date.now() + 86400000 * 7).toISOString(),
-      });
-      toast.success('New invite code generated');
+      // Report the failure rather than showing a fabricated new code.
+      toast.error(e.message || 'Could not regenerate the invite code.');
     } finally {
       setRegenerating(false);
     }
@@ -122,9 +112,15 @@ export default function InviteMembersScreen() {
       />
       <ScrollView contentContainerStyle={{ paddingBottom: 32 }} showsVerticalScrollIndicator={false}>
         <View >
+          {error ? (
+            <Card style={{ marginBottom: 16 }}>
+              <Text style={{ color: colors.error, fontSize: 14 * layout.fontScale }}>{error}</Text>
+              <Button title="Try again" variant="secondary" onPress={loadInvite} style={{ marginTop: 12 }} />
+            </Card>
+          ) : null}
           {loading ? (
             <Loader />
-          ) : (
+          ) : error ? null : (
             <>
               <InviteCard
                 inviteCode={inviteData?.inviteCode ?? inviteCode}

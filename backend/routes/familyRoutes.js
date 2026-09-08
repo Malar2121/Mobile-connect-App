@@ -69,4 +69,21 @@ router.get('/join-requests', getJoinRequests);
 router.post('/join-requests/:id/approve', approveJoinRequest);
 router.post('/join-requests/:id/reject', rejectJoinRequest);
 
+// ──────────────────────────────────────────────────────────
+// Email invitations (§6.3 — secure onboarding via email or QR)
+// ──────────────────────────────────────────────────────────
+const {
+  createInvitation,
+  listInvitations,
+  revokeInvitation,
+  verifyInvitation,
+  acceptInvitation,
+} = require('../controllers/invitationController');
+
+router.post('/invitations', createInvitation);
+router.get('/invitations', listInvitations);
+router.get('/invitations/verify/:token', verifyInvitation);
+router.post('/invitations/accept', acceptInvitation);
+router.delete('/invitations/:id', revokeInvitation);
+
 module.exports = router;
