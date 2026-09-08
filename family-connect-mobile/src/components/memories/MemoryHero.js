@@ -6,9 +6,12 @@ import { Video, ResizeMode } from 'expo-av';
 import { Avatar } from '../../design-system';
 import { useTheme } from '../../hooks/useTheme';
 import { formatMemoryDate, getLikeCount, getUploader } from '../../utils/memoryHelpers';
+import { useI18n } from '../../i18n';
 
 function MemoryHeroComponent({ memory, viewCount }) {
   const { colors, layout, radii, isDark } = useTheme();
+
+  const { t } = useI18n();
   const uploader = getUploader(memory);
   const isVideo = memory.mediaType === 'video';
 
@@ -17,7 +20,7 @@ function MemoryHeroComponent({ memory, viewCount }) {
       {isVideo ? (
         <Video source={{ uri: memory.mediaUrl }} style={styles.media} useNativeControls resizeMode={ResizeMode.CONTAIN} />
       ) : (
-        <Image source={{ uri: memory.mediaUrl }} style={styles.media} contentFit="cover" accessibilityLabel="Memory photo" />
+        <Image source={{ uri: memory.mediaUrl }} style={styles.media} contentFit="cover" accessibilityLabel={t('memories.memoryPhoto')} />
       )}
       <LinearGradient colors={['transparent', 'rgba(0,0,0,0.8)']} style={styles.overlay}>
         {memory.caption ? (

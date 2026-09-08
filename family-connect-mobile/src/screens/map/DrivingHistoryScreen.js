@@ -6,11 +6,14 @@ import { PageHeader, Screen } from '../../design-system';
 import { TripCard, TravelStatsCard } from '../../components/map';
 import { useMapModule } from '../../contexts/MapModuleContext';
 import { useResponsive } from '../../design-system';
+import { useI18n } from '../../i18n';
 
 export default function DrivingHistoryScreen() {
   const navigation = useNavigation();
   const insets = useSafeAreaInsets();
   const { horizontalPadding } = useResponsive();
+
+  const { t } = useI18n();
   const { trips, analytics, rebuildTrips } = useMapModule();
 
   useEffect(() => {
@@ -21,7 +24,7 @@ export default function DrivingHistoryScreen() {
 
   return (
     <Screen edges={['top']}>
-      <PageHeader title="Driving history" subtitle="Trips & average speed" onBack={() => navigation.goBack()} />
+      <PageHeader title={t('map.drivingHistory')} subtitle={t('map.drivingSubtitle')} onBack={() => navigation.goBack()} />
 
       <FlatList
         data={drivingTrips}

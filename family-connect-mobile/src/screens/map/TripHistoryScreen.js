@@ -6,12 +6,15 @@ import { TripCard, LocationTimeline, MiniMapCard } from '../../components/map';
 import { useMapModule } from '../../contexts/MapModuleContext';
 import { useTheme } from '../../hooks/useTheme';
 import { useResponsive } from '../../design-system';
+import { useI18n } from '../../i18n';
 
 export default function TripHistoryScreen() {
   const navigation = useNavigation();
   const route = useRoute();
   const focusId = route.params?.tripId;
   const { horizontalPadding } = useResponsive();
+
+  const { t } = useI18n();
   const { colors, layout } = useTheme();
   const { trips } = useMapModule();
 
@@ -26,14 +29,14 @@ export default function TripHistoryScreen() {
 
   return (
     <Screen edges={['top']}>
-      <PageHeader title="Trip history" subtitle="Timeline & routes" onBack={() => navigation.goBack()} />
+      <PageHeader title={t('map.tripHistory')} subtitle={t('map.timelineRoutes')} onBack={() => navigation.goBack()} />
 
       <ScrollView contentContainerStyle={{ paddingBottom: 40 }}>
         {focusTrip ? (
           <>
             <TripCard trip={focusTrip} />
             <MiniMapCard locations={focusTrip.waypoints} height={180} />
-            <LocationTimeline items={timeline} title="Route timeline" />
+            <LocationTimeline items={timeline} title={t('map.routeTimeline')} />
           </>
         ) : (
           trips.map((t) => <TripCard key={t.id} trip={t} onPress={() => navigation.navigate('TripHistory', { tripId: t.id })} />)

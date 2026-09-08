@@ -7,10 +7,13 @@ import { useChatModule } from '../../contexts/ChatModuleContext';
 import { VoiceBubble } from '../../components/chat/VoiceBubble';
 import { useTheme } from '../../hooks/useTheme';
 import { useResponsive } from '../../design-system';
+import { useI18n } from '../../i18n';
 
 export default function VoiceMessageScreen() {
   const navigation = useNavigation();
   const { horizontalPadding } = useResponsive();
+
+  const { t } = useI18n();
   const { colors, layout } = useTheme();
   const { sendTextMessage } = useChatModule();
   const recordingRef = useRef(null);
@@ -47,7 +50,7 @@ export default function VoiceMessageScreen() {
 
   return (
     <Screen edges={['top']}>
-      <PageHeader title="Voice message" subtitle="Record & send" onBack={() => navigation.goBack()} />
+      <PageHeader title={t('chat.voiceMessage')} subtitle={t('chat.recordAndSend')} onBack={() => navigation.goBack()} />
 
       <View style={{ paddingTop: 24 }}>
         <Text style={{ color: colors.textSecondary, fontSize: 15 * layout.fontScale, lineHeight: 22, marginBottom: 24 }}>
@@ -56,8 +59,8 @@ export default function VoiceMessageScreen() {
 
         <VoiceBubble uri={null} duration={0} isMine={false} waveform={[]} />
 
-        <Button title="Start recording" onPress={startRecording} style={{ marginTop: 20 }} />
-        <Button title="Stop & send" onPress={stopAndSend} variant="secondary" style={{ marginTop: 12 }} />
+        <Button title={t('chat.startRecording')} onPress={startRecording} style={{ marginTop: 20 }} />
+        <Button title={t('chat.stopAndSend')} onPress={stopAndSend} variant="secondary" style={{ marginTop: 12 }} />
       </View>
     </Screen>
   );

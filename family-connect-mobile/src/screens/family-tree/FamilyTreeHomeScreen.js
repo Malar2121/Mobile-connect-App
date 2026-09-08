@@ -17,11 +17,14 @@ import {
 } from '../../components/family-tree';
 import { useTheme } from '../../hooks/useTheme';
 import { useResponsive } from '../../design-system';
+import { useI18n } from '../../i18n';
 
 export default function FamilyTreeHomeScreen() {
   const navigation = useNavigation();
   const insets = useSafeAreaInsets();
   const { horizontalPadding } = useResponsive();
+
+  const { t } = useI18n();
   const { colors, layout, radii, isDark } = useTheme();
   const [searchQuery, setSearchQuery] = useState('');
   const searchFilters = useMemo(() => ({ query: searchQuery }), [searchQuery]);
@@ -47,7 +50,7 @@ export default function FamilyTreeHomeScreen() {
   if (loading && !refreshing) {
     return (
       <Screen edges={['top']}>
-        <PageHeader title="Family Tree" subtitle="Heritage & connections" large />
+        <PageHeader title={t('tree.title')} subtitle={t('tree.heritage')} large />
         <TreeSkeleton />
       </Screen>
     );
@@ -56,13 +59,13 @@ export default function FamilyTreeHomeScreen() {
   return (
     <Screen edges={['top']} noPadding>
       <View style={{ paddingHorizontal: horizontalPadding }}>
-        <PageHeader title="Family Tree" subtitle="Interactive heritage system" large />
+        <PageHeader title={t('tree.title')} subtitle={t('tree.interactiveSubtitle')} large />
         {error ? <Text style={{ color: colors.error ?? '#EF4444', marginBottom: 8 }}>{error}</Text> : null}
         <SearchBar
           value={searchQuery}
           onChangeText={setSearchQuery}
-          placeholder="Search by name, relationship, generation…"
-          accessibilityLabel="Search family tree"
+          placeholder={t('tree.searchPlaceholder')}
+          accessibilityLabel={t('tree.searchLabel')}
         />
       </View>
 
@@ -75,7 +78,7 @@ export default function FamilyTreeHomeScreen() {
           colors={isDark ? ['#1A1528', '#2D2640'] : ['#EEF2FF', '#FDF4FF', '#FFFFFF']}
           style={{ borderRadius: radii['2xl'], padding: 18, marginBottom: 16, borderWidth: 1, borderColor: colors.border }}
         >
-          <Text style={{ color: colors.text, fontFamily: 'Inter_700Bold', fontSize: 22 * layout.fontScale }}>Family overview</Text>
+          <Text style={{ color: colors.text, fontFamily: 'Inter_700Bold', fontSize: 22 * layout.fontScale }}>{t('tree.overview')}</Text>
           <Text style={{ color: colors.textSecondary, fontSize: 14 * layout.fontScale, marginTop: 6, lineHeight: 22 }}>
             Visualize relationships, preserve stories, and explore your lineage across generations.
           </Text>
@@ -101,14 +104,14 @@ export default function FamilyTreeHomeScreen() {
 
         {searchQuery ? (
           <>
-            <SectionTitle title="Search results" subtitle={`${searchResults.length} matches`} />
+            <SectionTitle title={t('tree.searchResults')} subtitle={`${searchResults.length} matches`} />
             {searchResults.map((p) => (
               <PersonCard key={p.id} person={p} onPress={openPerson} compact />
             ))}
           </>
         ) : null}
 
-        <SectionTitle title="Members" subtitle="Tap to view profile" />
+        <SectionTitle title="Members" subtitle={t('tree.tapToView')} />
         {enrichedNodes.length ? (
           enrichedNodes.slice(0, 8).map((p) => <PersonCard key={p.id} person={p} onPress={openPerson} compact />)
         ) : (
@@ -117,7 +120,7 @@ export default function FamilyTreeHomeScreen() {
 
         {milestones.length ? (
           <>
-            <SectionTitle title="Family milestones" />
+            <SectionTitle title={t('tree.milestones')} />
             {milestones.map((m) => (
               <View
                 key={m.id}
@@ -144,7 +147,7 @@ export default function FamilyTreeHomeScreen() {
 
         {legacyProfiles.length ? (
           <>
-            <SectionTitle title="Legacy profiles" subtitle="From remembrance mode" />
+            <SectionTitle title={t('tree.legacyProfiles')} subtitle={t('tree.fromRemembrance')} />
             {legacyProfiles.slice(0, 2).map((profile) => {
               const member = members.find((m) => String(m._id) === String(profile.memberId));
               return (
@@ -164,7 +167,7 @@ export default function FamilyTreeHomeScreen() {
       <FAB
         icon={<Ionicons name="git-network" size={26} color="#FFFFFF" />}
         onPress={() => navigate('InteractiveTree')}
-        accessibilityLabel="Open interactive family tree"
+        accessibilityLabel={t('tree.openInteractive')}
         style={{ bottom: insets.bottom + 100 }}
       />
     </Screen>

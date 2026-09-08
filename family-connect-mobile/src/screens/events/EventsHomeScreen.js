@@ -65,7 +65,7 @@ export default function EventsHomeScreen() {
         <PageHeader title={t('events.title')} subtitle={t('events.subtitle2')} large />
         {error ? <Text style={{ color: colors.error, marginBottom: 8 }}>{error}</Text> : null}
         {insights.nextCountdown ? (
-          <CountdownCard label="Next event" value={insights.nextCountdown} style={{ marginBottom: 12 }} />
+          <CountdownCard label={t('events.nextEvent')} value={insights.nextCountdown} style={{ marginBottom: 12 }} />
         ) : null}
       </View>
 
@@ -79,7 +79,7 @@ export default function EventsHomeScreen() {
 
         <SectionTitle title={t('events.todayEvents')} subtitle={t('events.scheduled', { count: todayEvents.length })} />
         {todayEvents.length === 0 ? (
-          <Text style={{ color: colors.textSecondary, marginBottom: 16 }}>Nothing on the calendar today.</Text>
+          <Text style={{ color: colors.textSecondary, marginBottom: 16 }}>{t('events.nothingToday')}</Text>
         ) : (
           todayEvents.map((e) => (
             <EventCard key={e._id} event={e} userId={userId} onPress={() => navigate('EventDetails', { id: String(e._id) })} />
@@ -97,7 +97,7 @@ export default function EventsHomeScreen() {
 
         <SectionTitle title={t('events.pendingRsvps')} subtitle={t('events.needReply', { count: pendingRsvpEvents.length })} style={{ marginTop: 8 }} />
         {pendingRsvpEvents.length === 0 ? (
-          <Text style={{ color: colors.textSecondary, marginBottom: 16 }}>You're all caught up.</Text>
+          <Text style={{ color: colors.textSecondary, marginBottom: 16 }}>{t('events.allCaughtUp')}</Text>
         ) : (
           pendingRsvpEvents.slice(0, 3).map((e) => (
             <EventCard key={e._id} event={e} userId={userId} onPress={() => navigate('EventDetails', { id: String(e._id) })} />
@@ -138,7 +138,7 @@ export default function EventsHomeScreen() {
           onPress={() => navigate('CreateEvent')}
           bottom={20 + insets.bottom + 52}
           icon={<Ionicons name="add" size={28} color="#fff" />}
-          accessibilityLabel="Create event"
+          accessibilityLabel={t('events.create')}
         />
       ) : null}
     </Screen>

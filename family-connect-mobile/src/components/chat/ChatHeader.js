@@ -6,6 +6,7 @@ import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import { FamilyAvatarGroup } from './FamilyAvatarGroup';
 import { useTheme } from '../../hooks/useTheme';
 import { chatTypography } from '../../constants/chatTheme';
+import { useI18n } from '../../i18n';
 
 function HeaderButton({ icon, onPress, colors, isDark }) {
   return (
@@ -37,6 +38,8 @@ export function ChatHeader({
   showBack,
 }) {
   const { colors, isDark, uiMode } = useTheme();
+
+  const { t } = useI18n();
   const insets = useSafeAreaInsets();
   const memberTotal = members?.length ?? 0;
 
@@ -57,7 +60,7 @@ export function ChatHeader({
       >
         <View style={styles.left}>
           {showBack ? (
-            <Pressable onPress={onBack} hitSlop={8} accessibilityLabel="Go back">
+            <Pressable onPress={onBack} hitSlop={8} accessibilityLabel={t('common.goBack')}>
               <Ionicons name="chevron-back" size={24} color={colors.text} />
             </Pressable>
           ) : null}

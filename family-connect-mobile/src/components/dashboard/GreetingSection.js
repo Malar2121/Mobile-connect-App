@@ -123,7 +123,7 @@ function GreetingSectionComponent({
               borderColor: colors.border,
             },
           ]}
-          accessibilityLabel="Weather information not available yet"
+          accessibilityLabel={t('dash.weatherUnavailable')}
         >
           <Text style={{ color: colors.textTertiary, fontSize: 12 * layout.fontScale }}>
             Weather · —

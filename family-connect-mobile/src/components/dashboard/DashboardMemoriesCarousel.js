@@ -13,6 +13,7 @@ import {
   dashboardSpacing,
   dashboardTypography,
 } from '../../constants/dashboardTheme';
+import { useI18n } from '../../i18n';
 
 function formatMemoryDate(dateVal) {
   if (!dateVal) return '';
@@ -72,6 +73,8 @@ function MemoryTile({ memory, isDark, colors }) {
 export function DashboardMemoriesCarousel({ memories, onViewAll }) {
   const { colors, isDark } = useTheme();
 
+  const { t } = useI18n();
+
   return (
     <Animated.View entering={FadeInDown.delay(220).duration(520).springify()} style={styles.section}>
       <View style={styles.head}>
@@ -92,8 +95,8 @@ export function DashboardMemoriesCarousel({ memories, onViewAll }) {
           <DashboardEmptyIllustration
             compact
             icon="images-outline"
-            title="No memories yet"
-            message="Capture your first family photo or video to fill this carousel."
+            title={t('memories.noneYet')}
+            message={t('dash.firstMemoryHint')}
             gradient={dashboardGradients(isDark).warm}
           />
         </View>

@@ -13,11 +13,14 @@ import { updateMemberRelationship } from '../../services/familyTreeService';
 import { useFamilyModuleData } from '../../hooks/useFamilyModuleData';
 import { useTheme } from '../../hooks/useTheme';
 import { useResponsive } from '../../design-system';
+import { useI18n } from '../../i18n';
 
 export default function RelationshipScreen() {
   const navigation = useNavigation();
   const toast = useToast();
   const { colors, layout, radii } = useTheme();
+
+  const { t } = useI18n();
   const { horizontalPadding } = useResponsive();
   const { members, treeNodes, canManage, loading, refresh, user } = useFamilyModuleData();
 
@@ -53,7 +56,7 @@ export default function RelationshipScreen() {
     } catch (e) {
       if (e.status === 404) {
         toast.error(
-          'This member is not in the family tree yet. Ask an admin to add them first.',
+          t('tree.notInTree'),
         );
       } else {
         toast.error(e.message || 'Could not update relationship');
@@ -96,7 +99,7 @@ export default function RelationshipScreen() {
     <Screen edges={['top']}>
       <PageHeader
         title="Relationships"
-        subtitle="Map your family connections"
+        subtitle={t('tree.mapConnections')}
         onBack={() => navigation.goBack()}
       />
 
@@ -164,7 +167,7 @@ export default function RelationshipScreen() {
               ) : null}
 
               <Button
-                title="Save relationship"
+                title={t('tree.saveRelationship')}
                 onPress={handleSave}
                 loading={saving}
                 disabled={!selectedRel}

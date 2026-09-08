@@ -4,9 +4,12 @@ import { LinearGradient } from 'expo-linear-gradient';
 import { Ionicons } from '@expo/vector-icons';
 import { Avatar } from '../../design-system';
 import { useTheme } from '../../hooks/useTheme';
+import { useI18n } from '../../i18n';
 
 function LegacyCardComponent({ profile, member, memoryCount, onPress }) {
   const { colors, layout, radii, isDark } = useTheme();
+
+  const { t } = useI18n();
   const name = profile?.displayName ?? member?.fullName ?? 'Beloved family member';
 
   return (
@@ -17,7 +20,7 @@ function LegacyCardComponent({ profile, member, memoryCount, onPress }) {
       >
         <View style={[styles.badge, { backgroundColor: colors.primary + '22', borderRadius: radii.full }]}>
           <Ionicons name="heart" size={12} color={colors.primary} />
-          <Text style={{ color: colors.primary, fontSize: 11, fontFamily: 'Inter_600SemiBold', marginLeft: 4 }}>In loving memory</Text>
+          <Text style={{ color: colors.primary, fontSize: 11, fontFamily: 'Inter_600SemiBold', marginLeft: 4 }}>{t('memories.inLovingMemory')}</Text>
         </View>
         <Avatar uri={member?.avatar ?? profile?.photoUri} name={name} size={layout.avatarSize + 24} />
         <Text style={{ color: colors.text, fontFamily: 'Inter_700Bold', fontSize: 22 * layout.fontScale, marginTop: 14, textAlign: 'center' }}>

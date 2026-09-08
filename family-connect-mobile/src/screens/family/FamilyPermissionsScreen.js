@@ -11,35 +11,38 @@ import {
 } from '../../utils/familyModuleHelpers';
 import { useResponsive } from '../../design-system';
 import { useTheme } from '../../hooks/useTheme';
+import { useI18n } from '../../i18n';
 
 const PRIVACY_OPTIONS = [
-  { id: 'members_only', label: 'Members only' },
-  { id: 'extended', label: 'Extended family' },
+  { id: 'members_only', label: t('perms.membersOnly') },
+  { id: 'extended', label: t('perms.extendedFamily') },
   { id: 'private', label: 'Private' },
 ];
 
 const MEMORY_OPTIONS = [
-  { id: 'family', label: 'All family members' },
-  { id: 'parents', label: 'Parents & admins' },
-  { id: 'self', label: 'Uploader only' },
+  { id: 'family', label: t('perms.allFamily') },
+  { id: 'parents', label: t('perms.parentsAdmins') },
+  { id: 'self', label: t('perms.uploaderOnly') },
 ];
 
 const CHAT_OPTIONS = [
-  { id: 'all_members', label: 'All members' },
-  { id: 'admins_only', label: 'Admins only' },
-  { id: 'parents', label: 'Parents & admins' },
+  { id: 'all_members', label: t('perms.allMembers') },
+  { id: 'admins_only', label: t('perms.adminsOnly') },
+  { id: 'parents', label: t('perms.parentsAdmins') },
 ];
 
 const INVITE_OPTIONS = [
-  { id: 'admin_only', label: 'Admins only' },
-  { id: 'parents', label: 'Parents & admins' },
-  { id: 'all_members', label: 'All members' },
+  { id: 'admin_only', label: t('perms.adminsOnly') },
+  { id: 'parents', label: t('perms.parentsAdmins') },
+  { id: 'all_members', label: t('perms.allMembers') },
 ];
 
 export default function FamilyPermissionsScreen() {
   const navigation = useNavigation();
   const toast = useToast();
   const { colors, layout } = useTheme();
+
+  const { t } = useI18n();
   const { horizontalPadding } = useResponsive();
   const { familyId, canManage } = useFamilyModuleData();
   const [permissions, setPermissions] = useState(getDefaultPermissions());
@@ -57,7 +60,7 @@ export default function FamilyPermissionsScreen() {
     setSaving(true);
     try {
       await saveFamilyPermissions(familyId, permissions);
-      toast.success('Permissions saved locally');
+      toast.success(t('perms.saved'));
     } catch (e) {
       toast.error(e.message || 'Could not save');
     } finally {
@@ -69,7 +72,7 @@ export default function FamilyPermissionsScreen() {
     <Screen edges={['top']}>
       <PageHeader
         title="Permissions"
-        subtitle="Family privacy & sharing"
+        subtitle={t('perms.subtitle')}
         onBack={() => navigation.goBack()}
       />
       <ScrollView contentContainerStyle={{ paddingBottom: 32 }}>
@@ -79,19 +82,19 @@ export default function FamilyPermissionsScreen() {
         </Text>
 
         <PermissionCard
-          title="Family privacy"
-          description="Who can discover and view your family profile"
+          title={t('perms.familyPrivacy')}
+          description={t('perms.discoverHint')}
           icon="eye-outline"
           options={PRIVACY_OPTIONS}
           selectedOption={permissions.familyPrivacy}
           onSelectOption={(v) => update('familyPrivacy', v)}
           readOnly={!canManage}
-          note="Saved on this device for now."
+          note={t('perms.localNote')}
         />
 
         <PermissionCard
-          title="Location sharing"
-          description="Allow members to share live location on the map"
+          title={t('perms.locationSharing')}
+          description={t('perms.locationHint')}
           icon="location-outline"
           value={permissions.locationSharing}
           onValueChange={(v) => update('locationSharing', v)}
@@ -99,8 +102,8 @@ export default function FamilyPermissionsScreen() {
         />
 
         <PermissionCard
-          title="Album sharing"
-          description="Enable shared memory albums across the family"
+          title={t('perms.albumSharing')}
+          description={t('perms.albumHint')}
           icon="images-outline"
           value={permissions.albumSharing}
           onValueChange={(v) => update('albumSharing', v)}
@@ -108,8 +111,8 @@ export default function FamilyPermissionsScreen() {
         />
 
         <PermissionCard
-          title="Memory visibility"
-          description="Default visibility for new memory uploads"
+          title={t('perms.memoryVisibility')}
+          description={t('perms.memoryHint')}
           icon="lock-closed-outline"
           options={MEMORY_OPTIONS}
           selectedOption={permissions.memoryVisibility}
@@ -118,8 +121,8 @@ export default function FamilyPermissionsScreen() {
         />
 
         <PermissionCard
-          title="Chat permissions"
-          description="Who can participate in family chat"
+          title={t('perms.chatPermissions')}
+          description={t('perms.chatHint')}
           icon="chatbubbles-outline"
           options={CHAT_OPTIONS}
           selectedOption={permissions.chatPermissions}
@@ -129,7 +132,7 @@ export default function FamilyPermissionsScreen() {
 
         <PermissionCard
           title="Notifications"
-          description="Family-wide notification preferences"
+          description={t('perms.notificationHint')}
           icon="notifications-outline"
           value={permissions.notificationPreferences}
           onValueChange={(v) => update('notificationPreferences', v)}
@@ -137,8 +140,8 @@ export default function FamilyPermissionsScreen() {
         />
 
         <PermissionCard
-          title="Invitation permissions"
-          description="Who can invite new members"
+          title={t('perms.invitePermissions')}
+          description={t('perms.inviteHint')}
           icon="person-add-outline"
           options={INVITE_OPTIONS}
           selectedOption={permissions.invitationPermissions}
@@ -147,7 +150,7 @@ export default function FamilyPermissionsScreen() {
         />
 
         {canManage ? (
-          <Button title="Save permissions" onPress={handleSave} loading={saving} style={{ marginTop: 8 }} />
+          <Button title={t('perms.save')} onPress={handleSave} loading={saving} style={{ marginTop: 8 }} />
         ) : null}
       </ScrollView>
     </Screen>

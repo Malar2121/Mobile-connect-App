@@ -9,10 +9,13 @@ import { mapTreeNodeToMember } from '../../utils/familyModuleHelpers';
 import { getFamilyTree } from '../../services/familyTreeService';
 import { useEffect, useState } from 'react';
 import { useResponsive } from '../../design-system';
+import { useI18n } from '../../i18n';
 
 export default function TaggedMembersScreen() {
   const navigation = useNavigation();
   const { horizontalPadding } = useResponsive();
+
+  const { t } = useI18n();
   const { members, memories } = useMemoriesModuleData();
   const [treeNodes, setTreeNodes] = useState([]);
 
@@ -35,7 +38,7 @@ export default function TaggedMembersScreen() {
 
   return (
     <Screen edges={['top']}>
-      <PageHeader title="Tagged members" subtitle="Who appears in memories" onBack={() => navigation.goBack()} />
+      <PageHeader title={t('memories.taggedMembers')} subtitle={t('memories.whoAppears')} onBack={() => navigation.goBack()} />
       <FlatList
         data={tagged}
         keyExtractor={(item) => String(item.member._id)}

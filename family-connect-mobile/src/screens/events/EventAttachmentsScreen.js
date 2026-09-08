@@ -6,12 +6,15 @@ import { Button, Card, PageHeader, Screen, useToast } from '../../design-system'
 import { updateEvent, getEventDetails } from '../../services/eventService';
 import { useTheme } from '../../hooks/useTheme';
 import { useResponsive } from '../../design-system';
+import { useI18n } from '../../i18n';
 
 export default function EventAttachmentsScreen() {
   const route = useRoute();
   const navigation = useNavigation();
   const toast = useToast();
   const { colors, layout } = useTheme();
+
+  const { t } = useI18n();
   const { horizontalPadding } = useResponsive();
   const { eventId } = route.params ?? {};
 
@@ -56,7 +59,7 @@ export default function EventAttachmentsScreen() {
     setSaving(true);
     try {
       await updateEvent(eventId, { attachments });
-      toast.success('Attachments saved');
+      toast.success(t('events.attachmentsSaved'));
     } catch (e) {
       toast.error(e.message || 'Save failed');
     } finally {
@@ -71,7 +74,7 @@ export default function EventAttachmentsScreen() {
         <Text style={{ color: colors.textSecondary, marginBottom: 16, fontSize: 14 * layout.fontScale }}>
           Attach menus, tickets, or planning docs. (Note: using local URIs, true upload requires Cloudinary integration).
         </Text>
-        <Button title="Add attachment" onPress={pickFile} />
+        <Button title={t('events.addAttachment')} onPress={pickFile} />
         {attachments.map((a, i) => (
           <Card key={a._id || i} style={{ marginTop: 10 }}>
             <Text style={{ color: colors.text, fontFamily: 'Inter_600SemiBold' }}>{a.name}</Text>

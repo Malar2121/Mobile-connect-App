@@ -7,18 +7,21 @@ import { useEventsModuleData } from '../../hooks/useEventsModuleData';
 import { EVENT_CATEGORIES } from '../../utils/eventModuleHelpers';
 import { useTheme } from '../../hooks/useTheme';
 import { useResponsive } from '../../design-system';
+import { useI18n } from '../../i18n';
 
 const STATUS_FILTERS = [
   { id: 'all', label: 'All' },
   { id: 'upcoming', label: 'Upcoming' },
   { id: 'today', label: 'Today' },
   { id: 'past', label: 'Past' },
-  { id: 'pending_rsvp', label: 'Pending RSVP' },
+  { id: 'pending_rsvp', label: t('events.pendingRsvp') },
 ];
 
 export default function AgendaScreen() {
   const navigation = useNavigation();
   const { colors, layout } = useTheme();
+
+  const { t } = useI18n();
   const { horizontalPadding } = useResponsive();
   const [query, setQuery] = useState('');
   const [category, setCategory] = useState('all');
@@ -51,7 +54,7 @@ export default function AgendaScreen() {
 
   return (
     <Screen edges={['top']}>
-      <PageHeader title="Agenda" subtitle="Grouped by date" onBack={() => navigation.goBack()} />
+      <PageHeader title="Agenda" subtitle={t('events.groupedByDate')} onBack={() => navigation.goBack()} />
       <View style={{ marginBottom: 12 }}>
         <EventSearchBar value={query} onChangeText={setQuery} />
         <View style={styles.chips}>
@@ -60,7 +63,7 @@ export default function AgendaScreen() {
           ))}
         </View>
         <View style={[styles.chips, { marginTop: 8 }]}>
-          <Chip label="All categories" selected={category === 'all'} onPress={() => setCategory('all')} />
+          <Chip label={t('events.allCategories')} selected={category === 'all'} onPress={() => setCategory('all')} />
           {EVENT_CATEGORIES.map((c) => (
             <Chip key={c.id} label={c.label} selected={category === c.id} onPress={() => setCategory(c.id)} />
           ))}
@@ -74,7 +77,7 @@ export default function AgendaScreen() {
         contentContainerStyle={{ paddingBottom: 32 }}
         refreshControl={<RefreshControl refreshing={refreshing} onRefresh={refresh} />}
         ListEmptyComponent={
-          !loading ? <Text style={{ color: colors.textSecondary, textAlign: 'center', marginTop: 24 }}>No events match your filters.</Text> : null
+          !loading ? <Text style={{ color: colors.textSecondary, textAlign: 'center', marginTop: 24 }}>{t('events.noMatches')}</Text> : null
         }
         initialNumToRender={5}
         maxToRenderPerBatch={8}

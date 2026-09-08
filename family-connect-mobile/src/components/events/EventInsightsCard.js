@@ -2,27 +2,30 @@ import React, { memo } from 'react';
 import { StyleSheet, Text, View } from 'react-native';
 import { Avatar } from '../../design-system';
 import { useTheme } from '../../hooks/useTheme';
+import { useI18n } from '../../i18n';
 
 function EventInsightsCardComponent({ insights }) {
   const { colors, layout, radii } = useTheme();
+
+  const { t } = useI18n();
   if (!insights) return null;
 
   const metrics = [
-    { label: 'This month', value: insights.eventsThisMonth },
-    { label: 'Avg RSVP', value: `${insights.avgRsvp}%` },
-    { label: 'Pending RSVPs', value: insights.pendingRsvps },
+    { label: t('events.thisMonth'), value: insights.eventsThisMonth },
+    { label: t('events.avgRsvp'), value: `${insights.avgRsvp}%` },
+    { label: t('events.pendingRsvps'), value: insights.pendingRsvps },
     { label: 'Birthdays', value: insights.upcomingBirthdays },
     { label: 'Anniversaries', value: insights.upcomingAnniversaries },
   ];
 
   return (
     <View style={[styles.wrap, { backgroundColor: colors.surface, borderColor: colors.border, borderRadius: radii.xl }]}>
-      <Text style={{ color: colors.text, fontFamily: 'Inter_700Bold', fontSize: 17 * layout.fontScale }}>Smart insights</Text>
+      <Text style={{ color: colors.text, fontFamily: 'Inter_700Bold', fontSize: 17 * layout.fontScale }}>{t('events.insights')}</Text>
       {insights.mostActiveOrganizer ? (
         <View style={[styles.organizer, { backgroundColor: colors.primarySubtle, borderRadius: radii.lg }]}>
           <Avatar uri={insights.mostActiveOrganizerAvatar} name={insights.mostActiveOrganizer} size={36} />
           <View style={{ marginLeft: 10 }}>
-            <Text style={{ color: colors.textSecondary, fontSize: 11 }}>Top organizer</Text>
+            <Text style={{ color: colors.textSecondary, fontSize: 11 }}>{t('events.topOrganizer')}</Text>
             <Text style={{ color: colors.text, fontFamily: 'Inter_600SemiBold' }}>{insights.mostActiveOrganizer}</Text>
           </View>
         </View>

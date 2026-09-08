@@ -7,10 +7,12 @@ import Animated, { FadeInDown } from 'react-native-reanimated';
 import { Button, EmptyState } from '../../design-system';
 
 import { dashboardSpacing } from '../../constants/dashboardTheme';
+import { useI18n } from '../../i18n';
 
 
 
 export function DashboardNoFamilyView({ onCreateFamily, onJoinFamily }) {
+  const { t } = useI18n();
 
   return (
 
@@ -20,17 +22,17 @@ export function DashboardNoFamilyView({ onCreateFamily, onJoinFamily }) {
 
         icon="people-outline"
 
-        title="Start your family circle"
+        title={t('dash.startCircle')}
 
-        description="Create a private space for events, memories, chat, and live locations — all in one beautiful home."
+        description={t('dash.noFamilyBody')}
 
       />
 
       <View style={styles.actions}>
 
-        <Button title="Create family" onPress={onCreateFamily} size="lg" />
+        <Button title={t('profile.createFamily')} onPress={onCreateFamily} size="lg" />
 
-        <Button title="Join with code" variant="secondary" onPress={onJoinFamily} style={{ marginTop: 12 }} />
+        <Button title={t('dash.joinWithCode')} variant="secondary" onPress={onJoinFamily} style={{ marginTop: 12 }} />
 
       </View>
 

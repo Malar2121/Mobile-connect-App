@@ -6,10 +6,13 @@ import Animated, { useAnimatedStyle, useSharedValue, withTiming } from 'react-na
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import { Ionicons } from '@expo/vector-icons';
 import { useTheme } from '../../hooks/useTheme';
+import { useI18n } from '../../i18n';
 
 function StoryViewerComponent({ memories, visible, initialIndex = 0, onClose }) {
   const insets = useSafeAreaInsets();
   const { colors } = useTheme();
+
+  const { t } = useI18n();
   const [index, setIndex] = useState(initialIndex);
   const progress = useSharedValue(0);
   const timer = useRef(null);
@@ -47,7 +50,7 @@ function StoryViewerComponent({ memories, visible, initialIndex = 0, onClose }) 
             </View>
           ))}
         </View>
-        <Pressable style={styles.close} onPress={onClose} accessibilityLabel="Close stories">
+        <Pressable style={styles.close} onPress={onClose} accessibilityLabel={t('memories.closeStories')}>
           <Ionicons name="close" size={28} color="#fff" />
         </Pressable>
         {memory.mediaType === 'video' ? (

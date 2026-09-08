@@ -14,9 +14,12 @@ import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import { chatTypography } from '../../constants/chatTheme';
 import { useTheme } from '../../hooks/useTheme';
 import { getSender, highlightSearchText } from '../../utils/chatHelpers';
+import { useI18n } from '../../i18n';
 
 export function ChatSearchModal({ visible, query, onChangeQuery, results, onClose, onSelect }) {
   const { colors, isDark } = useTheme();
+
+  const { t } = useI18n();
   const insets = useSafeAreaInsets();
 
   return (
@@ -30,7 +33,7 @@ export function ChatSearchModal({ visible, query, onChangeQuery, results, onClos
             autoFocus
             value={query}
             onChangeText={onChangeQuery}
-            placeholder="Search messages…"
+            placeholder={t('chat.searchPlaceholder')}
             placeholderTextColor={colors.textSecondary}
             style={[
               styles.input,

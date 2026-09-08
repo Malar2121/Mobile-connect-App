@@ -6,10 +6,13 @@ import { MemberCard, EmptyFamilyState } from '../../components/family';
 import { useFamilyModuleData } from '../../hooks/useFamilyModuleData';
 import { useResponsive } from '../../design-system';
 import { Linking } from 'react-native';
+import { useI18n } from '../../i18n';
 
 export default function FamilyMembersScreen() {
   const navigation = useNavigation();
   const { horizontalPadding } = useResponsive();
+
+  const { t } = useI18n();
   const [query, setQuery] = useState('');
   const { members, familyLoading, loading, refreshing, refresh, noFamily } = useFamilyModuleData();
 
@@ -71,11 +74,11 @@ export default function FamilyMembersScreen() {
     <Screen edges={['top']}>
       <PageHeader
         title="Members"
-        subtitle={`${members.length} in your family`}
+        subtitle={t('family.membersInFamily', { count: members.length })}
         onBack={() => navigation.goBack()}
       />
       <View style={{ marginBottom: 12 }}>
-        <SearchBar value={query} onChangeText={setQuery} placeholder="Search members" accessibilityLabel="Search family members" />
+        <SearchBar value={query} onChangeText={setQuery} placeholder={t('family.searchMembers')} accessibilityLabel={t('family.searchMembersHint')} />
       </View>
 
       {loading && !refreshing ? (

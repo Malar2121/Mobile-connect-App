@@ -21,12 +21,13 @@ import {
 } from '../../design-system';
 import { useTheme } from '../../hooks/useTheme';
 import { uploadMemory } from '../../services/memoryService';
+import { useI18n } from '../../i18n';
 
 async function ensureLibraryPermission() {
   const { status } = await ImagePicker.requestMediaLibraryPermissionsAsync();
   if (status !== 'granted') {
     Alert.alert(
-      'Permission needed',
+      t('memories.permissionNeeded'),
       'Allow access to your photo library to share family memories.',
     );
     return false;
@@ -38,7 +39,7 @@ async function ensureCameraPermission() {
   const { status } = await ImagePicker.requestCameraPermissionsAsync();
   if (status !== 'granted') {
     Alert.alert(
-      'Permission needed',
+      t('memories.permissionNeeded'),
       'Allow camera access to capture new memories.',
     );
     return false;
@@ -48,6 +49,7 @@ async function ensureCameraPermission() {
 
 export default function UploadMemoryScreen({ navigation }) {
   const { colors, layout, uiMode } = useTheme();
+  const { t } = useI18n();
   const toast = useToast();
   const [caption, setCaption] = useState('');
   const [asset, setAsset] = useState(null);
@@ -93,7 +95,7 @@ export default function UploadMemoryScreen({ navigation }) {
   }
 
   function showPickerOptions() {
-    Alert.alert('Add media', 'Choose a source', [
+    Alert.alert(t('memories.addMedia'), 'Choose a source', [
       { text: 'Photo library', onPress: pickFromLibrary },
       { text: 'Camera', onPress: captureWithCamera },
       { text: 'Cancel', style: 'cancel' },
@@ -102,7 +104,7 @@ export default function UploadMemoryScreen({ navigation }) {
 
   async function handleUpload() {
     if (!asset) {
-      setError('Select a photo or video first.');
+      setError(t('memories.selectFirst'));
       return;
     }
 
@@ -126,7 +128,7 @@ export default function UploadMemoryScreen({ navigation }) {
       }
 
       await uploadMemory(formData);
-      toast.success('Memory shared with family');
+      toast.success(t('memories.shared'));
       navigation.navigate('MemoriesHome', { refresh: Date.now() });
     } catch (e) {
       setError(e.message || 'Upload failed.');
@@ -144,8 +146,8 @@ export default function UploadMemoryScreen({ navigation }) {
         <PageHeader title="Upload" onBack={() => navigation.goBack()} />
         <EmptyState
           icon="shield-outline"
-          title="Uploads disabled"
-          description="Ask a parent or guardian to upload memories for the family."
+          title={t('memories.uploadsDisabled')}
+          description={t('memories.minorUploadHint')}
           actionLabel="Back to gallery"
           onAction={() => navigation.goBack()}
         />
@@ -155,7 +157,7 @@ export default function UploadMemoryScreen({ navigation }) {
 
   return (
     <Screen edges={['top']} scroll>
-      <PageHeader title="Upload memory" onBack={() => navigation.goBack()} />
+      <PageHeader title={t('memories.uploadMemory')} onBack={() => navigation.goBack()} />
       <Text
         style={{
           color: colors.textSecondary,
@@ -232,7 +234,7 @@ export default function UploadMemoryScreen({ navigation }) {
 
         {asset ? (
           <Button
-            title="Change media"
+            title={t('memories.changeMedia')}
             variant="secondary"
             onPress={showPickerOptions}
             style={{ marginBottom: layout.sectionGap }}
@@ -243,7 +245,7 @@ export default function UploadMemoryScreen({ navigation }) {
           label="Caption"
           value={caption}
           onChangeText={setCaption}
-          placeholder="A note for the family"
+          placeholder={t('memories.captionPlaceholder')}
           multiline
           numberOfLines={isElder ? 4 : 3}
         />

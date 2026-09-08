@@ -9,11 +9,14 @@ import { searchChatMessages } from '../../services/chatService';
 import { SEARCH_FILTERS, buildSearchParams, mergeSearchResults } from '../../utils/chatModuleHelpers';
 import { useTheme } from '../../hooks/useTheme';
 import { useResponsive } from '../../design-system';
+import { useI18n } from '../../i18n';
 
 export default function ChatSearchScreen() {
   const navigation = useNavigation();
   const insets = useSafeAreaInsets();
   const { horizontalPadding } = useResponsive();
+
+  const { t } = useI18n();
   const { colors, layout } = useTheme();
   const { messages, prefs, members, scrollToBottom } = useChatModule();
 
@@ -57,9 +60,9 @@ export default function ChatSearchScreen() {
 
   return (
     <Screen edges={['top']}>
-      <PageHeader title="Search" subtitle="Text, media, links & more" onBack={() => navigation.goBack()} />
+      <PageHeader title="Search" subtitle={t('chat.searchSubtitle')} onBack={() => navigation.goBack()} />
       <View >
-        <SearchBar value={query} onChangeText={setQuery} placeholder="Search messages…" />
+        <SearchBar value={query} onChangeText={setQuery} placeholder={t('chat.searchPlaceholder')} />
         <View style={{ flexDirection: 'row', flexWrap: 'wrap', gap: 8, marginVertical: 12 }}>
           {SEARCH_FILTERS.map((f) => (
             <FilterChip key={f.id} label={f.label} active={filter === f.id} onPress={() => setFilter(f.id)} />

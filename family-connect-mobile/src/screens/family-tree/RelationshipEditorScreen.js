@@ -12,11 +12,14 @@ import {
 } from '../../utils/familyTreeModuleHelpers';
 import { useTheme } from '../../hooks/useTheme';
 import { useResponsive } from '../../design-system';
+import { useI18n } from '../../i18n';
 
 export default function RelationshipEditorScreen() {
   const navigation = useNavigation();
   const toast = useToast();
   const { colors, layout } = useTheme();
+
+  const { t } = useI18n();
   const { horizontalPadding } = useResponsive();
   const { members, treeNodes, canManage, user, loading, refresh } = useFamilyTreeModuleData();
 
@@ -58,7 +61,7 @@ export default function RelationshipEditorScreen() {
       toast.success(`Relationship updated for ${selectedMember.fullName}`);
     } catch (e) {
       if (e.status === 404) {
-        toast.error('This member is not in the family tree yet. Ask an admin to add them first.');
+        toast.error(t('tree.notInTree'));
       } else {
         toast.error(e.message || 'Could not update relationship');
       }
@@ -88,7 +91,7 @@ export default function RelationshipEditorScreen() {
 
   return (
     <Screen edges={['top']}>
-      <PageHeader title="Relationship editor" subtitle="Father, mother, spouse, child & more" onBack={() => navigation.goBack()} />
+      <PageHeader title={t('tree.relationshipEditor')} subtitle={t('tree.relationshipSubtitle')} onBack={() => navigation.goBack()} />
 
       {loading ? (
         <Loader />

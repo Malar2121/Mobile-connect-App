@@ -3,6 +3,7 @@ import { Pressable, StyleSheet, Text, View } from 'react-native';
 import { Ionicons } from '@expo/vector-icons';
 import { SectionTitle } from '../../design-system';
 import { useTheme } from '../../hooks/useTheme';
+import { useI18n } from '../../i18n';
 
 const ACTIONS = [
   { id: 'upload', label: 'Upload', icon: 'cloud-upload-outline', screen: 'UploadMemory' },
@@ -15,11 +16,13 @@ const ACTIONS = [
 
 function MemoriesQuickActionsComponent({ onNavigate, isMinor }) {
   const { colors, layout, radii } = useTheme();
+
+  const { t } = useI18n();
   const visible = isMinor ? ACTIONS.filter((a) => a.id !== 'upload') : ACTIONS;
 
   return (
     <View style={{ marginBottom: layout.sectionGap }}>
-      <SectionTitle title="Quick actions" />
+      <SectionTitle title={t('common.quickActions')} />
       <View style={styles.grid}>
         {visible.map((a) => (
           <Pressable

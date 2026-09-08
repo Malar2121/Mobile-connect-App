@@ -3,6 +3,7 @@ import { Pressable, StyleSheet, Text, View } from 'react-native';
 import { Avatar, Button } from '../../design-system';
 import { TREE_RELATIONSHIP_OPTIONS } from '../../utils/familyTreeModuleHelpers';
 import { useTheme } from '../../hooks/useTheme';
+import { useI18n } from '../../i18n';
 
 function RelationshipEditorComponent({
   member,
@@ -17,6 +18,8 @@ function RelationshipEditorComponent({
   warning,
 }) {
   const { colors, layout, radii } = useTheme();
+
+  const { t } = useI18n();
 
   const others = (members ?? []).filter((m) => String(m._id) !== String(member?._id));
 
@@ -64,7 +67,7 @@ function RelationshipEditorComponent({
         <Avatar uri={member.avatar} name={member.fullName} size={52} />
         <View style={{ marginLeft: 12, flex: 1 }}>
           <Text style={{ color: colors.text, fontFamily: 'Inter_700Bold', fontSize: 18 * layout.fontScale }}>{member.fullName}</Text>
-          <Text style={{ color: colors.textSecondary, fontSize: 14 * layout.fontScale }}>Choose relationship type</Text>
+          <Text style={{ color: colors.textSecondary, fontSize: 14 * layout.fontScale }}>{t('tree.chooseRelationship')}</Text>
         </View>
       </View>
 
@@ -108,7 +111,7 @@ function RelationshipEditorComponent({
       ) : null}
 
       <Button
-        title="Save relationship"
+        title={t('tree.saveRelationship')}
         onPress={onSave}
         loading={saving}
         disabled={!canEdit || !selectedRelId}

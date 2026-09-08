@@ -5,9 +5,12 @@ import { SectionTitle } from '../../design-system';
 import { TimelineItem } from './TimelineItem';
 import { useTheme } from '../../hooks/useTheme';
 import { useResponsive } from '../../design-system';
+import { useI18n } from '../../i18n';
 
-function FamilyTimelineComponent({ items, title = 'Family timeline', subtitle }) {
+function FamilyTimelineComponent({ items, title = t('family.timeline'), subtitle }) {
   const { colors, layout, radii } = useTheme();
+
+  const { t } = useI18n();
   const { horizontalPadding } = useResponsive();
 
   return (

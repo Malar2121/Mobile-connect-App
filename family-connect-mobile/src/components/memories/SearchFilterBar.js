@@ -1,14 +1,16 @@
 import React, { memo } from 'react';
 import { StyleSheet, View } from 'react-native';
 import { Chip, SearchBar } from '../../design-system';
+import { useI18n } from '../../i18n';
 
 function SearchFilterBarComponent({ query, onChangeQuery, years, selectedYear, onYearChange }) {
+  const { t } = useI18n();
   return (
     <View>
-      <SearchBar value={query} onChangeText={onChangeQuery} placeholder="Search captions, albums…" />
+      <SearchBar value={query} onChangeText={onChangeQuery} placeholder={t('memories.searchPlaceholder')} />
       {years?.length ? (
         <View style={styles.chips}>
-          <Chip label="All years" selected={!selectedYear} onPress={() => onYearChange?.(null)} />
+          <Chip label={t('memories.allYears')} selected={!selectedYear} onPress={() => onYearChange?.(null)} />
           {years.map((y) => (
             <Chip key={y} label={String(y)} selected={selectedYear === y} onPress={() => onYearChange?.(y)} />
           ))}

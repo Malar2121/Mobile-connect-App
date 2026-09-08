@@ -21,11 +21,11 @@ export default function TwoFactorAuthScreen({ navigation, route }) {
 
   async function handleVerify() {
     if (code.length < 6) {
-      toast.error('Please enter the full 6-digit code');
+      toast.error(t('auth.enterFullCode'));
       return;
     }
     if (!tempToken) {
-      toast.error('Your sign-in session expired. Please log in again.');
+      toast.error(t('auth.sessionExpired'));
       navigation.goBack();
       return;
     }
@@ -33,7 +33,7 @@ export default function TwoFactorAuthScreen({ navigation, route }) {
     try {
       // On success AuthContext gains a token and AppNavigator switches stacks
       await completeTwoFactorSignIn(tempToken, code);
-      toast.success('Verification successful');
+      toast.success(t('auth.verified'));
     } catch (e) {
       toast.error(e?.message || 'Invalid verification code');
       setCode('');
@@ -79,7 +79,7 @@ export default function TwoFactorAuthScreen({ navigation, route }) {
                 style={styles.cta}
               />
               <Button
-                title="Back to Login"
+                title={t('auth.backToLogin')}
                 variant="outline"
                 onPress={() => navigation.goBack()}
                 style={{ marginTop: 16 }}

@@ -10,6 +10,7 @@ import { useEventsModuleData } from '../../hooks/useEventsModuleData';
 import { loadEventReminders, saveEventReminders } from '../../utils/eventModuleHelpers';
 import { useTheme } from '../../hooks/useTheme';
 import { useResponsive } from '../../design-system';
+import { useI18n } from '../../i18n';
 
 Notifications.setNotificationHandler({
   handleNotification: async () => ({
@@ -24,6 +25,8 @@ export default function EventReminderScreen() {
   const navigation = useNavigation();
   const toast = useToast();
   const { colors, layout } = useTheme();
+
+  const { t } = useI18n();
   const { horizontalPadding } = useResponsive();
   const { family } = useFamily();
   const { upcomingEvents } = useEventsModuleData();
@@ -45,7 +48,7 @@ export default function EventReminderScreen() {
     if (pushEnabled) {
       Notifications.requestPermissionsAsync().then(({ status }) => {
         if (status !== 'granted') {
-          toast.error('Push notifications permission denied.');
+          toast.error(t('events.pushDenied'));
           setPushEnabled(false);
         }
       });
@@ -58,11 +61,11 @@ export default function EventReminderScreen() {
 
     const when = new Date(customAt);
     if (!customAt || Number.isNaN(when.getTime())) {
-      toast.error('Enter when to remind you, for example 2026-12-24 18:00.');
+      toast.error(t('events.reminderWhenRequired'));
       return;
     }
     if (when.getTime() <= Date.now()) {
-      toast.error('Pick a time in the future.');
+      toast.error(t('events.reminderFuture'));
       return;
     }
 
@@ -78,7 +81,7 @@ export default function EventReminderScreen() {
         });
         toast.success(`Reminder set for ${when.toLocaleString()}`);
       } catch (e) {
-        toast.error('Failed to schedule the reminder on this device.');
+        toast.error(t('events.reminderScheduleFailed'));
         return;
       }
     }
@@ -96,7 +99,7 @@ export default function EventReminderScreen() {
     setSaving(true);
     try {
       await saveEventReminders(family._id, reminders);
-      toast.success('Reminders saved locally');
+      toast.success(t('events.remindersSaved'));
     } catch (e) {
       toast.error(e.message || 'Save failed');
     } finally {
@@ -106,12 +109,12 @@ export default function EventReminderScreen() {
 
   return (
     <Screen edges={['top']}>
-      <PageHeader title="Reminders" subtitle="Never miss a family moment" onBack={() => navigation.goBack()} />
+      <PageHeader title="Reminders" subtitle={t('events.remindersSubtitle')} onBack={() => navigation.goBack()} />
       <ScrollView contentContainerStyle={{ paddingBottom: 32 }}>
         <Card>
           <View style={styles.row}>
-            <Text style={{ color: colors.text, flex: 1, fontSize: 15 * layout.fontScale }}>Push notifications</Text>
-            <Switch value={pushEnabled} onValueChange={setPushEnabled} accessibilityLabel="Push notifications" />
+            <Text style={{ color: colors.text, flex: 1, fontSize: 15 * layout.fontScale }}>{t('events.pushNotifications')}</Text>
+            <Switch value={pushEnabled} onValueChange={setPushEnabled} accessibilityLabel={t('events.pushNotifications')} />
           </View>
           <Text style={{ color: colors.textTertiary, fontSize: 11, marginTop: 8 }}>
             Event, birthday and celebration reminders are sent by the server at their
@@ -119,21 +122,21 @@ export default function EventReminderScreen() {
           </Text>
         </Card>
 
-        <Text style={{ color: colors.text, fontFamily: 'Inter_700Bold', marginTop: 20, marginBottom: 10 }}>Event reminders</Text>
+        <Text style={{ color: colors.text, fontFamily: 'Inter_700Bold', marginTop: 20, marginBottom: 10 }}>{t('events.eventReminders')}</Text>
         {eventReminders.slice(0, 5).map((r) => (
           <ReminderCard key={r.id} reminder={{ ...r, icon: 'calendar-outline' }} />
         ))}
 
-        <Text style={{ color: colors.text, fontFamily: 'Inter_700Bold', marginTop: 20, marginBottom: 10 }}>Custom reminders</Text>
-        <TextField label="New reminder" value={customTitle} onChangeText={setCustomTitle} placeholder="Call Grandma before dinner" />
+        <Text style={{ color: colors.text, fontFamily: 'Inter_700Bold', marginTop: 20, marginBottom: 10 }}>{t('events.customReminders')}</Text>
+        <TextField label={t('events.newReminder')} value={customTitle} onChangeText={setCustomTitle} placeholder={t('events.reminderExample')} />
         <TextField
-          label="Remind me at"
+          label={t('events.remindMeAt')}
           value={customAt}
           onChangeText={setCustomAt}
           placeholder="2026-12-24 18:00"
-          hint="Date and time on this device"
+          hint={t('events.reminderWhenHint')}
         />
-        <Button title="Add reminder" variant="secondary" onPress={addCustom} style={{ marginBottom: 12 }} />
+        <Button title={t('events.addReminder')} variant="secondary" onPress={addCustom} style={{ marginBottom: 12 }} />
 
         {reminders.map((r) => (
           <Card key={r.id} style={{ marginBottom: 8 }}>
@@ -146,7 +149,7 @@ export default function EventReminderScreen() {
           Birthday and anniversary reminders are inferred from event titles until dedicated User DOB APIs exist.
         </Text>
 
-        <Button title="Save reminders" onPress={handleSave} loading={saving} style={{ marginTop: 20 }} />
+        <Button title={t('events.saveReminders')} onPress={handleSave} loading={saving} style={{ marginTop: 20 }} />
       </ScrollView>
     </Screen>
   );

@@ -10,6 +10,7 @@ import { memberLocationSummary, haversineKm, formatDistance } from '../../utils/
 import { getLocationHistory } from '../../services/locationService';
 import { useTheme } from '../../hooks/useTheme';
 import { useResponsive } from '../../design-system';
+import { useI18n } from '../../i18n';
 
 const TYPE_LABEL = { child: '🧒 Child — tracked', elder: '👴 Elder — tracked', adult: null };
 
@@ -18,6 +19,8 @@ export default function MemberLocationDetailsScreen() {
   const route = useRoute();
   const userId = String(route.params?.userId ?? '');
   const { horizontalPadding } = useResponsive();
+
+  const { t } = useI18n();
   const { colors, layout, radii } = useTheme();
   const { locationMap, myLocation, members } = useMapModule();
   const [address, setAddress] = useState('');
@@ -83,7 +86,7 @@ export default function MemberLocationDetailsScreen() {
     return (
       <Screen edges={['top']}>
         <PageHeader title="Member" onBack={() => navigation.goBack()} />
-        <Text style={{ padding: horizontalPadding, color: colors.textSecondary }}>Location not available.</Text>
+        <Text style={{ padding: horizontalPadding, color: colors.textSecondary }}>{t('map.locationUnavailable')}</Text>
       </Screen>
     );
   }
@@ -118,12 +121,12 @@ export default function MemberLocationDetailsScreen() {
 
         <Pressable onPress={openNavigation} style={[styles.navBtn, { backgroundColor: colors.primary, borderRadius: radii.xl, marginTop: 20 }]}>
           <Ionicons name="navigate" size={20} color="#fff" />
-          <Text style={{ color: '#fff', fontFamily: 'Inter_600SemiBold', marginLeft: 8 }}>Open in Maps</Text>
+          <Text style={{ color: '#fff', fontFamily: 'Inter_600SemiBold', marginLeft: 8 }}>{t('map.openInMaps')}</Text>
         </Pressable>
 
         {trailItems.length > 0 ? (
           <View style={{ marginTop: 24 }}>
-            <LocationTimeline items={trailItems} title="Last 24 hours" subtitle={`${history?.points?.length ?? 0} recorded points`} />
+            <LocationTimeline items={trailItems} title={t('map.last24Hours')} subtitle={`${history?.points?.length ?? 0} recorded points`} />
           </View>
         ) : null}
       </ScrollView>

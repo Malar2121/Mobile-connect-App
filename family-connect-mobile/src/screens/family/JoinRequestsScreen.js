@@ -8,11 +8,14 @@ import { useFamilyModuleData } from '../../hooks/useFamilyModuleData';
 import { useTheme } from '../../hooks/useTheme';
 import { useResponsive, useToast } from '../../design-system';
 import { approveJoinRequest, rejectJoinRequest } from '../../services/familyService';
+import { useI18n } from '../../i18n';
 
 export default function JoinRequestsScreen() {
   const navigation = useNavigation();
   const toast = useToast();
   const { colors, layout, radii } = useTheme();
+
+  const { t } = useI18n();
   const { horizontalPadding } = useResponsive();
   const { canManage, noFamily, pendingJoinRequests, joinRequests, refresh } = useFamilyModuleData();
   const [processing, setProcessing] = useState(null);
@@ -20,7 +23,7 @@ export default function JoinRequestsScreen() {
   if (noFamily) {
     return (
       <Screen edges={['top']}>
-        <PageHeader title="Join requests" onBack={() => navigation.goBack()} />
+        <PageHeader title={t('family.joinRequests')} onBack={() => navigation.goBack()} />
         <EmptyFamilyState
           onCreate={() => navigation.navigate('CreateFamily')}
           onJoin={() => navigation.navigate('JoinFamily')}
@@ -33,7 +36,7 @@ export default function JoinRequestsScreen() {
     setProcessing(id);
     try {
       await approveJoinRequest(id);
-      toast.success('Request approved');
+      toast.success(t('family.requestApproved'));
       refresh();
     } catch (e) {
       toast.error(e.message);
@@ -46,7 +49,7 @@ export default function JoinRequestsScreen() {
     setProcessing(id);
     try {
       await rejectJoinRequest(id);
-      toast.success('Request rejected');
+      toast.success(t('family.requestRejected'));
       refresh();
     } catch (e) {
       toast.error(e.message);
@@ -58,8 +61,8 @@ export default function JoinRequestsScreen() {
   return (
     <Screen edges={['top']}>
       <PageHeader
-        title="Join requests"
-        subtitle="Review pending family joins"
+        title={t('family.joinRequests')}
+        subtitle={t('family.reviewPending')}
         onBack={() => navigation.goBack()}
       />
       <ScrollView contentContainerStyle={{ paddingBottom: 32 }}>
@@ -85,7 +88,7 @@ export default function JoinRequestsScreen() {
               When someone uses your invite code, their request will appear here.
             </Text>
             <Button
-              title="Manage invites"
+              title={t('family.manageInvites')}
               variant="secondary"
               onPress={() => navigation.navigate('InviteMembers')}
               style={{ marginTop: 16 }}

@@ -8,10 +8,13 @@ import { ZONE_PRESETS } from '../../utils/mapModuleHelpers';
 import { useTheme } from '../../hooks/useTheme';
 import { useAuth } from '../../contexts/AuthContext';
 import { useResponsive } from '../../design-system';
+import { useI18n } from '../../i18n';
 
 export default function SafeZonesScreen() {
   const navigation = useNavigation();
   const { horizontalPadding } = useResponsive();
+
+  const { t } = useI18n();
   const { colors, layout } = useTheme();
   const { user } = useAuth();
   const { safeZones, addSafeZone, removeSafeZone, myLocation, zoneAlerts } = useMapModule();
@@ -22,14 +25,14 @@ export default function SafeZonesScreen() {
   const addZone = useCallback(
     async (preset) => {
       if (!myLocation) {
-        Alert.alert('Location needed', 'Share your location first to place a zone at your position.');
+        Alert.alert(t('map.locationNeeded'), 'Share your location first to place a zone at your position.');
         return;
       }
       setSaving(true);
       try {
         await addSafeZone(preset, { latitude: myLocation.latitude, longitude: myLocation.longitude });
       } catch (e) {
-        Alert.alert('Could not add zone', e.message || 'Please try again.');
+        Alert.alert(t('map.addZoneFailed'), e.message || 'Please try again.');
       } finally {
         setSaving(false);
       }
@@ -42,7 +45,7 @@ export default function SafeZonesScreen() {
       try {
         await removeSafeZone(zone);
       } catch (e) {
-        Alert.alert('Could not delete zone', e.message || 'Please try again.');
+        Alert.alert(t('map.deleteZoneFailed'), e.message || 'Please try again.');
       }
     },
     [removeSafeZone],
@@ -50,7 +53,7 @@ export default function SafeZonesScreen() {
 
   return (
     <Screen edges={['top']}>
-      <PageHeader title="Safe zones" subtitle="Home, school, office & more" onBack={() => navigation.goBack()} />
+      <PageHeader title={t('map.safeZones')} subtitle={t('map.zonesSubtitle')} onBack={() => navigation.goBack()} />
 
       <ScrollView contentContainerStyle={{ paddingBottom: 40 }}>
         <Text style={{ color: colors.textSecondary, fontSize: 14 * layout.fontScale, marginBottom: 16, lineHeight: 22 }}>
@@ -59,7 +62,7 @@ export default function SafeZonesScreen() {
 
         {canManage ? (
           <>
-            <SectionTitle title="Add zone at my location" />
+            <SectionTitle title={t('map.addZoneHere')} />
             {ZONE_PRESETS.map((p) => (
               <Button key={p.id} title={`Add ${p.label}`} onPress={() => addZone(p)} loading={saving} variant="secondary" style={{ marginBottom: 8 }} />
             ))}
@@ -72,7 +75,7 @@ export default function SafeZonesScreen() {
           </Card>
         )}
 
-        <SectionTitle title="Family zones" subtitle={`${safeZones.length} configured`} />
+        <SectionTitle title={t('map.familyZones')} subtitle={`${safeZones.length} configured`} />
         {safeZones.length === 0 ? (
           <Card>
             <Text style={{ color: colors.textSecondary, fontSize: 13 * layout.fontScale }}>
@@ -91,7 +94,7 @@ export default function SafeZonesScreen() {
 
         {zoneAlerts.length > 0 ? (
           <>
-            <SectionTitle title="Recent alerts" subtitle="Live enter/exit activity" />
+            <SectionTitle title={t('map.recentAlerts')} subtitle={t('map.alertsSubtitle')} />
             {zoneAlerts.map((a) => (
               <Card key={a.id} style={{ marginBottom: 8 }}>
                 <Text style={{ color: colors.text, fontWeight: '700', fontSize: 14 * layout.fontScale }}>

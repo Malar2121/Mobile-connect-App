@@ -2,16 +2,19 @@ import React, { memo } from 'react';
 import { StyleSheet, Text, View } from 'react-native';
 import { LinearGradient } from 'expo-linear-gradient';
 import { useTheme } from '../../hooks/useTheme';
+import { useI18n } from '../../i18n';
 
 function TravelStatsCardComponent({ analytics }) {
   const { colors, layout, radii, isDark } = useTheme();
+
+  const { t } = useI18n();
   if (!analytics) return null;
 
   const stats = [
-    { label: 'Distance today', value: `${analytics.distanceTodayKm} km` },
+    { label: t('map.distanceToday'), value: `${analytics.distanceTodayKm} km` },
     { label: 'Trips', value: analytics.tripsToday },
     { label: 'Places', value: analytics.visitedPlaces },
-    { label: 'Travel time', value: `${analytics.travelTimeMin}m` },
+    { label: t('map.travelTime'), value: `${analytics.travelTimeMin}m` },
   ];
 
   return (
@@ -19,7 +22,7 @@ function TravelStatsCardComponent({ analytics }) {
       colors={isDark ? ['#1E1B2E', '#2A2640'] : ['#ECFDF5', '#EEF2FF']}
       style={[styles.wrap, { borderRadius: radii['2xl'], borderColor: colors.border }]}
     >
-      <Text style={{ color: colors.text, fontFamily: 'Inter_700Bold', fontSize: 17 * layout.fontScale, marginBottom: 12 }}>Travel analytics</Text>
+      <Text style={{ color: colors.text, fontFamily: 'Inter_700Bold', fontSize: 17 * layout.fontScale, marginBottom: 12 }}>{t('map.travelAnalytics')}</Text>
       <View style={styles.grid}>
         {stats.map((s) => (
           <View key={s.label} style={[styles.stat, { backgroundColor: colors.surface + (isDark ? 'CC' : '99'), borderRadius: radii.lg }]}>

@@ -25,6 +25,7 @@ import {
   getUploader,
   isLikedByUser,
 } from '../utils/memoryHelpers';
+import { useI18n } from '../i18n';
 
 export function MemoryViewerModal({
   visible,
@@ -36,6 +37,8 @@ export function MemoryViewerModal({
   deleting,
 }) {
   const { colors, layout, uiMode, isDark } = useTheme();
+
+  const { t } = useI18n();
   const { user } = useAuth();
   const insets = useSafeAreaInsets();
   const { width, height } = useWindowDimensions();
@@ -57,12 +60,12 @@ export function MemoryViewerModal({
   function confirmDelete() {
     if (!memory || deleting) return;
     Alert.alert(
-      'Delete memory',
-      'This will permanently remove this memory for your family.',
+      t('memories.deleteMemory'),
+      t('memories.deleteMemoryBody'),
       [
-        { text: 'Cancel', style: 'cancel' },
+        { text: t('common.cancel'), style: 'cancel' },
         {
-          text: 'Delete',
+          text: t('common.delete'),
           style: 'destructive',
           onPress: () => onDelete?.(memory),
         },
@@ -210,7 +213,7 @@ export function MemoryViewerModal({
 
             {showDelete ? (
               <PrimaryButton
-                title="Delete memory"
+                title={t('memories.deleteMemory')}
                 onPress={confirmDelete}
                 loading={deleting}
                 disabled={deleting}

@@ -7,10 +7,13 @@ import { RoleBadge } from '../../components/family';
 import { ROLE_DEFINITIONS } from '../../utils/familyModuleHelpers';
 import { useTheme } from '../../hooks/useTheme';
 import { useResponsive } from '../../design-system';
+import { useI18n } from '../../i18n';
 
 export default function FamilyRolesScreen() {
   const navigation = useNavigation();
   const { colors, layout, radii } = useTheme();
+
+  const { t } = useI18n();
   const { horizontalPadding } = useResponsive();
 
   const renderRole = ({ item }) => (
@@ -41,8 +44,8 @@ export default function FamilyRolesScreen() {
   return (
     <Screen edges={['top']}>
       <PageHeader
-        title="Family roles"
-        subtitle="Understand permissions at a glance"
+        title={t('familySettings.roles')}
+        subtitle={t('family.rolesSubtitle')}
         onBack={() => navigation.goBack()}
       />
       <View style={{ paddingBottom: 12 }}>

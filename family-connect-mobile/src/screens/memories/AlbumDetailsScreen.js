@@ -6,6 +6,7 @@ import { AlbumHeader, GalleryGrid } from '../../components/memories';
 import { getAlbum, deleteAlbum, shareAlbum } from '../../services/albumService';
 import { useAuth } from '../../contexts/AuthContext';
 import { useResponsive } from '../../design-system';
+import { useI18n } from '../../i18n';
 
 export default function AlbumDetailsScreen() {
   const route = useRoute();
@@ -13,6 +14,8 @@ export default function AlbumDetailsScreen() {
   const toast = useToast();
   const dialog = useDialog();
   const { user } = useAuth();
+
+  const { t } = useI18n();
   const { horizontalPadding } = useResponsive();
   const { id } = route.params ?? {};
 
@@ -39,7 +42,7 @@ export default function AlbumDetailsScreen() {
   const handleShare = useCallback(async () => {
     try {
       const result = await shareAlbum(id);
-      toast.success('Share link ready');
+      toast.success(t('memories.shareLinkReady'));
       if (result?.shareLink) toast.success(result.shareLink);
     } catch (e) {
       toast.error(e.message || 'Share failed');
@@ -65,7 +68,7 @@ export default function AlbumDetailsScreen() {
       <ScrollView contentContainerStyle={{ paddingBottom: 32 }}>
         <AlbumHeader album={data?.album} onShare={handleShare} canManage={isOwner} />
         {(data?.media ?? []).length === 0 ? (
-          <Text style={{ color: '#64748B' }}>No media in this album yet. Add memories from memory details.</Text>
+          <Text style={{ color: '#64748B' }}>{t('memories.albumEmpty')}</Text>
         ) : (
           <GalleryGrid
             memories={data.media}

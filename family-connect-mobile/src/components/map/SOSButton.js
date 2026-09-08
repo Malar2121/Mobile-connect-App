@@ -3,9 +3,12 @@ import { Pressable, StyleSheet, Text, View } from 'react-native';
 import { LinearGradient } from 'expo-linear-gradient';
 import Animated, { useAnimatedStyle, useSharedValue, withRepeat, withTiming } from 'react-native-reanimated';
 import { useTheme } from '../../hooks/useTheme';
+import { useI18n } from '../../i18n';
 
 function SOSButtonComponent({ onPress, countdown, onCancel, disabled }) {
   const { colors, layout, radii } = useTheme();
+
+  const { t } = useI18n();
   const pulse = useSharedValue(1);
   const [seconds, setSeconds] = useState(countdown ?? 0);
 
@@ -36,7 +39,7 @@ function SOSButtonComponent({ onPress, countdown, onCancel, disabled }) {
 
   return (
     <Animated.View style={animStyle}>
-      <Pressable onPress={onPress} disabled={disabled} accessibilityRole="button" accessibilityLabel="Emergency SOS">
+      <Pressable onPress={onPress} disabled={disabled} accessibilityRole="button" accessibilityLabel={t('map.emergencySos')}>
         <LinearGradient colors={['#DC2626', '#EF4444', '#F87171']} style={[styles.btn, { borderRadius: radii.full }]}>
           <Text style={styles.label}>SOS</Text>
           <Text style={styles.sub}>Emergency</Text>

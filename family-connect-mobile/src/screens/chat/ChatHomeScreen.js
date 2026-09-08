@@ -14,7 +14,7 @@ import { useResponsive } from '../../design-system';
 import { useI18n } from '../../i18n';
 
 const SHORTCUTS = [
-  { id: 'conversation', label: 'Open chat', icon: 'chatbubbles', screen: 'Conversation', primary: true },
+  { id: 'conversation', label: t('chat.openChat'), icon: 'chatbubbles', screen: 'Conversation', primary: true },
   { id: 'search', label: 'Search', icon: 'search', screen: 'ChatSearch' },
   { id: 'media', label: 'Media', icon: 'images', screen: 'ChatMediaGallery' },
   { id: 'files', label: 'Files', icon: 'folder', screen: 'SharedFiles' },
@@ -94,7 +94,7 @@ export default function ChatHomeScreen() {
           colors={isDark ? ['#1A1528', '#2D2640'] : ['#EEF2FF', '#FDF4FF']}
           style={{ borderRadius: radii['2xl'], padding: 18, marginBottom: 16, borderWidth: 1, borderColor: colors.border }}
         >
-          <Text style={{ color: colors.text, fontFamily: 'Inter_700Bold', fontSize: 20 * layout.fontScale }}>Family chat</Text>
+          <Text style={{ color: colors.text, fontFamily: 'Inter_700Bold', fontSize: 20 * layout.fontScale }}>{t('chat.familyChat')}</Text>
           <Text style={{ color: colors.textSecondary, marginTop: 6, lineHeight: 22 }}>
             {analytics.total} messages · {analytics.media} media · {members?.length ?? 0} members
           </Text>
@@ -128,7 +128,7 @@ export default function ChatHomeScreen() {
       <FAB
         icon={<Ionicons name="chatbubbles" size={26} color="#FFFFFF" />}
         onPress={() => navigate('Conversation')}
-        accessibilityLabel="Open conversation"
+        accessibilityLabel={t('chat.openConversation')}
         style={{ bottom: insets.bottom + 100 }}
       />
     </Screen>

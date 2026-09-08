@@ -8,12 +8,15 @@ import { getMemoriesForMember } from '../../utils/familyTreeModuleHelpers';
 import { useTheme } from '../../hooks/useTheme';
 import { useResponsive } from '../../design-system';
 import { getLegacyProfiles } from '../../services/legacyService';
+import { useI18n } from '../../i18n';
 
 export default function LegacyProfilesScreen() {
   const navigation = useNavigation();
   const route = useRoute();
   const focusId = route.params?.memberId ? String(route.params.memberId) : null;
   const { colors, layout, radii } = useTheme();
+
+  const { t } = useI18n();
   const { horizontalPadding } = useResponsive();
 
   const { members, memories } = useFamilyTreeModuleData();
@@ -50,7 +53,7 @@ export default function LegacyProfilesScreen() {
 
   return (
     <Screen edges={['top']}>
-      <PageHeader title="Legacy profiles" subtitle="Remembrance pages" onBack={() => navigation.goBack()} />
+      <PageHeader title={t('tree.legacyProfiles')} subtitle={t('tree.remembranceSubtitle')} onBack={() => navigation.goBack()} />
 
       <ScrollView contentContainerStyle={{ paddingBottom: 40 }}>
         {profiles.length ? (

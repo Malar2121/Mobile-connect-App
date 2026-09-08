@@ -1,9 +1,12 @@
 import React, { memo } from 'react';
 import { StyleSheet, View } from 'react-native';
 import { useTheme } from '../../hooks/useTheme';
+import { useI18n } from '../../i18n';
 
 function TreeMiniMapComponent({ layout, selectedId, width = 100, height = 72 }) {
   const { colors, radii } = useTheme();
+
+  const { t } = useI18n();
   if (!layout?.positions) return null;
 
   const positions = Object.entries(layout.positions);
@@ -23,7 +26,7 @@ function TreeMiniMapComponent({ layout, selectedId, width = 100, height = 72 }) 
           borderRadius: radii.md,
         },
       ]}
-      accessibilityLabel="Tree minimap overview"
+      accessibilityLabel={t('tree.minimap')}
     >
       {positions.map(([id, pos]) => (
         <View

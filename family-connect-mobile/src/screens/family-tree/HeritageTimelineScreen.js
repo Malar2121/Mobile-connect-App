@@ -6,11 +6,14 @@ import { PageHeader, Screen } from '../../design-system';
 import { useFamilyTreeModuleData } from '../../hooks/useFamilyTreeModuleData';
 import { HeritageCard } from '../../components/family-tree';
 import { useResponsive } from '../../design-system';
+import { useI18n } from '../../i18n';
 
 export default function HeritageTimelineScreen() {
   const navigation = useNavigation();
   const insets = useSafeAreaInsets();
   const { horizontalPadding } = useResponsive();
+
+  const { t } = useI18n();
   const { heritageTimeline, loading, refreshing, refresh } = useFamilyTreeModuleData();
 
   const onPressItem = useCallback(
@@ -24,7 +27,7 @@ export default function HeritageTimelineScreen() {
 
   return (
     <Screen edges={['top']}>
-      <PageHeader title="Heritage timeline" subtitle="Chronological family history" onBack={() => navigation.goBack()} />
+      <PageHeader title={t('tree.heritageTimeline')} subtitle={t('tree.chronological')} onBack={() => navigation.goBack()} />
 
       <FlatList
         data={heritageTimeline}

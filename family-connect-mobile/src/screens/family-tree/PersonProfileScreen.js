@@ -8,6 +8,7 @@ import { PersonCard, HeritageCard } from '../../components/family-tree';
 import { getMemoriesForMember, getEventsForMember } from '../../utils/familyTreeModuleHelpers';
 import { useTheme } from '../../hooks/useTheme';
 import { useResponsive } from '../../design-system';
+import { useI18n } from '../../i18n';
 
 function RelationSection({ title, people, onPress }) {
   if (!people?.length) return null;
@@ -26,6 +27,8 @@ export default function PersonProfileScreen() {
   const route = useRoute();
   const memberId = String(route.params?.memberId ?? '');
   const { colors, layout, radii } = useTheme();
+
+  const { t } = useI18n();
   const { horizontalPadding } = useResponsive();
 
   const { enrichedNodes, memories, events, achievements, legacyProfiles, loading, getPersonRelations } =
@@ -56,7 +59,7 @@ export default function PersonProfileScreen() {
     return (
       <Screen edges={['top']}>
         <PageHeader title="Profile" onBack={() => navigation.goBack()} />
-        <Text style={{ color: colors.textSecondary, padding: horizontalPadding }}>Member not found.</Text>
+        <Text style={{ color: colors.textSecondary, padding: horizontalPadding }}>{t('family.memberNotFound')}</Text>
       </Screen>
     );
   }
@@ -77,7 +80,7 @@ export default function PersonProfileScreen() {
           {legacy ? (
             <View style={[styles.legacyBadge, { backgroundColor: colors.primarySubtle, borderRadius: radii.full }]}>
               <Ionicons name="heart" size={14} color={colors.primary} />
-              <Text style={{ color: colors.primary, marginLeft: 6, fontFamily: 'Inter_600SemiBold', fontSize: 12 }}>Memorial profile</Text>
+              <Text style={{ color: colors.primary, marginLeft: 6, fontFamily: 'Inter_600SemiBold', fontSize: 12 }}>{t('tree.memorialProfile')}</Text>
             </View>
           ) : null}
         </View>
@@ -89,7 +92,7 @@ export default function PersonProfileScreen() {
 
         {personEvents.length ? (
           <>
-            <SectionTitle title="Events attended" />
+            <SectionTitle title={t('tree.eventsAttended')} />
             {personEvents.slice(0, 5).map((e) => (
               <HeritageCard key={e._id} item={{ id: e._id, type: 'event', title: e.title, date: e.date, icon: 'calendar-outline' }} />
             ))}
@@ -122,7 +125,7 @@ export default function PersonProfileScreen() {
           </>
         ) : null}
 
-        <SectionTitle title="Timeline" subtitle="Life events architecture" style={{ marginTop: 20 }} />
+        <SectionTitle title="Timeline" subtitle={t('tree.lifeEvents')} style={{ marginTop: 20 }} />
         {person.lifeEvents && person.lifeEvents.length > 0 ? (
           person.lifeEvents.map((evt, i) => (
             <Card key={evt._id || i} style={{ marginBottom: 8 }}>

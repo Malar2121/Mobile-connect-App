@@ -3,9 +3,12 @@ import { StyleSheet, Text, View } from 'react-native';
 import { LinearGradient } from 'expo-linear-gradient';
 import { Avatar } from '../../design-system';
 import { useTheme } from '../../hooks/useTheme';
+import { useI18n } from '../../i18n';
 
 function TreeAnalyticsCardComponent({ analytics }) {
   const { colors, layout, radii, gradients, isDark } = useTheme();
+
+  const { t } = useI18n();
   if (!analytics) return null;
 
   const stats = [
@@ -34,7 +37,7 @@ function TreeAnalyticsCardComponent({ analytics }) {
       <View style={[styles.footer, { borderTopColor: colors.border }]}>
         <Avatar uri={analytics.mostConnectedAvatar} name={analytics.mostConnectedMember} size={36} />
         <View style={{ flex: 1, marginLeft: 10 }}>
-          <Text style={{ color: colors.textSecondary, fontSize: 12 }}>Most connected</Text>
+          <Text style={{ color: colors.textSecondary, fontSize: 12 }}>{t('tree.mostConnected')}</Text>
           <Text style={{ color: colors.text, fontFamily: 'Inter_600SemiBold', fontSize: 14 * layout.fontScale }}>
             {analytics.mostConnectedMember}
           </Text>

@@ -9,11 +9,14 @@ import { appendInviteHistory, loadInviteHistory } from '../../utils/familyModule
 import { useToast } from '../../design-system';
 import { useResponsive } from '../../design-system';
 import { useTheme } from '../../hooks/useTheme';
+import { useI18n } from '../../i18n';
 
 export default function InviteMembersScreen() {
   const navigation = useNavigation();
   const toast = useToast();
   const { colors, layout } = useTheme();
+
+  const { t } = useI18n();
   const { horizontalPadding } = useResponsive();
   const { family, inviteCode, canManage, refresh, familyId } = useFamilyModuleData();
 
@@ -64,7 +67,7 @@ export default function InviteMembersScreen() {
       }).catch(() => {});
       setHistory(await loadInviteHistory(familyId).catch(() => []));
       await refresh().catch(() => {});
-      toast.success('New invite code generated');
+      toast.success(t('family.newCodeGenerated'));
     } catch (e) {
       // Report the failure rather than showing a fabricated new code.
       toast.error(e.message || 'Could not regenerate the invite code.');
@@ -106,8 +109,8 @@ export default function InviteMembersScreen() {
   return (
     <Screen edges={['top']}>
       <PageHeader
-        title="Invite members"
-        subtitle="Grow your family circle"
+        title={t('family.inviteMembers')}
+        subtitle={t('family.growCircle')}
         onBack={() => navigation.goBack()}
       />
       <ScrollView contentContainerStyle={{ paddingBottom: 32 }} showsVerticalScrollIndicator={false}>
@@ -115,7 +118,7 @@ export default function InviteMembersScreen() {
           {error ? (
             <Card style={{ marginBottom: 16 }}>
               <Text style={{ color: colors.error, fontSize: 14 * layout.fontScale }}>{error}</Text>
-              <Button title="Try again" variant="secondary" onPress={loadInvite} style={{ marginTop: 12 }} />
+              <Button title={t('common.tryAgain')} variant="secondary" onPress={loadInvite} style={{ marginTop: 12 }} />
             </Card>
           ) : null}
           {loading ? (
@@ -132,7 +135,7 @@ export default function InviteMembersScreen() {
                 readOnly={!canManage}
               />
               <Button
-                title="Show QR code"
+                title={t('family.showQr')}
                 variant="secondary"
                 onPress={() =>
                   navigation.navigate('QRInvite', {
@@ -149,7 +152,7 @@ export default function InviteMembersScreen() {
             </>
           )}
 
-          <SectionTitle title="Invite history" subtitle="Recent activity on this device" style={{ marginTop: 20 }} />
+          <SectionTitle title={t('family.inviteHistory')} subtitle={t('family.recentOnDevice')} style={{ marginTop: 20 }} />
           {history.length === 0 ? (
             <Text style={{ color: colors.textSecondary, fontSize: 14 * layout.fontScale }}>
               Share or regenerate an invite to build history.

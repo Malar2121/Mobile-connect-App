@@ -21,6 +21,7 @@ import {
   getMyRsvpStatus,
   resolveEventCreatorName,
 } from '../../utils/eventFormat';
+import { useI18n } from '../../i18n';
 
 const RSVP_VARIANT = {
   accepted: 'success',
@@ -39,6 +40,8 @@ const RSVP_LABEL = {
 export default function EventsListScreen({ navigation }) {
   const insets = useSafeAreaInsets();
   const { colors, layout, uiMode } = useTheme();
+
+  const { t } = useI18n();
   const { user } = useAuth();
   const { members } = useFamily();
   const userId = user?._id;
@@ -84,7 +87,7 @@ export default function EventsListScreen({ navigation }) {
   if (loading && !refreshing) {
     return (
       <Screen edges={['top']}>
-        <PageHeader title="Events" subtitle="Loading…" large />
+        <PageHeader title="Events" subtitle={t('common.loadingEllipsis')} large />
         <Skeleton variant="list-row" count={4} />
       </Screen>
     );
@@ -121,7 +124,7 @@ export default function EventsListScreen({ navigation }) {
         ListEmptyComponent={
           <EmptyState
             icon="calendar-outline"
-            title="No events yet"
+            title={t('events.noneYet')}
             description={
               isMinor
                 ? 'Family events will appear here.'
@@ -184,7 +187,7 @@ export default function EventsListScreen({ navigation }) {
       {!isMinor ? (
         <FAB
           onPress={() => navigation.navigate('CreateEvent')}
-          accessibilityLabel="Create event"
+          accessibilityLabel={t('events.create')}
           bottom={fabBottom}
           icon={<Ionicons name="add" size={28} color="#fff" />}
         />

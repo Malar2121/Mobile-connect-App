@@ -130,7 +130,7 @@ function InsightsSectionComponent({ insights, weeklyActivity }) {
         <InsightTile
           label={t('dashboard.memoriesUploaded')}
           value={insights.memoriesThisMonth}
-          sub={`${insights.totalMemories} total`}
+          sub={t('memories.totalCount', { count: insights.totalMemories })}
           colors={colors}
           layout={layout}
           radii={radii}

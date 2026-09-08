@@ -6,11 +6,14 @@ import { Loader, PageHeader, Screen } from '../../design-system';
 import { RSVPCard } from '../../components/events';
 import { getEventDetails } from '../../services/eventService';
 import { useResponsive } from '../../design-system';
+import { useI18n } from '../../i18n';
 
 export default function RSVPManagementScreen() {
   const route = useRoute();
   const navigation = useNavigation();
   const { horizontalPadding } = useResponsive();
+
+  const { t } = useI18n();
   const { id } = route.params ?? {};
   const [event, setEvent] = useState(null);
   const [loading, setLoading] = useState(true);
@@ -29,7 +32,7 @@ export default function RSVPManagementScreen() {
 
   return (
     <Screen edges={['top']}>
-      <PageHeader title="RSVP management" subtitle={event?.title} onBack={() => navigation.goBack()} />
+      <PageHeader title={t('events.rsvpManagement')} subtitle={event?.title} onBack={() => navigation.goBack()} />
       <ScrollView contentContainerStyle={{ paddingBottom: 32 }}>
         <RSVPCard event={event} showGuests />
       </ScrollView>

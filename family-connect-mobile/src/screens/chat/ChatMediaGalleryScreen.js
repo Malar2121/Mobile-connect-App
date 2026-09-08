@@ -7,18 +7,21 @@ import { useChatModule } from '../../contexts/ChatModuleContext';
 import { getMediaMessages } from '../../utils/chatHelpers';
 import { useTheme } from '../../hooks/useTheme';
 import { useResponsive } from '../../design-system';
+import { useI18n } from '../../i18n';
 
 export default function ChatMediaGalleryScreen() {
   const navigation = useNavigation();
   const insets = useSafeAreaInsets();
   const { horizontalPadding } = useResponsive();
+
+  const { t } = useI18n();
   const { colors } = useTheme();
   const { messages } = useChatModule();
   const media = useMemo(() => getMediaMessages(messages), [messages]);
 
   return (
     <Screen edges={['top']}>
-      <PageHeader title="Media gallery" subtitle={`${media.length} items`} onBack={() => navigation.goBack()} />
+      <PageHeader title={t('chat.mediaGallery')} subtitle={`${media.length} items`} onBack={() => navigation.goBack()} />
       <FlatList
         data={media}
         numColumns={3}
@@ -31,7 +34,7 @@ export default function ChatMediaGalleryScreen() {
           </Pressable>
         )}
         ListEmptyComponent={
-          <Text style={{ color: colors.textTertiary, textAlign: 'center', marginTop: 40 }}>No media shared yet</Text>
+          <Text style={{ color: colors.textTertiary, textAlign: 'center', marginTop: 40 }}>{t('chat.noMedia')}</Text>
         }
       />
     </Screen>

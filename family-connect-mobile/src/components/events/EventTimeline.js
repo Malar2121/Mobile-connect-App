@@ -3,15 +3,18 @@ import { StyleSheet, Text, View } from 'react-native';
 import { Ionicons } from '@expo/vector-icons';
 import { SectionTitle } from '../../design-system';
 import { useTheme } from '../../hooks/useTheme';
+import { useI18n } from '../../i18n';
 
-function EventTimelineComponent({ items, title = 'Event history' }) {
+function EventTimelineComponent({ items, title = t('events.history') }) {
   const { colors, layout, radii } = useTheme();
+
+  const { t } = useI18n();
 
   return (
     <View>
       <SectionTitle title={title} />
       {items.length === 0 ? (
-        <Text style={{ color: colors.textSecondary }}>No completed events yet.</Text>
+        <Text style={{ color: colors.textSecondary }}>{t('events.noCompleted')}</Text>
       ) : (
         items.map((item, index) => (
           <View key={item.id} style={styles.row} accessibilityLabel={item.title}>

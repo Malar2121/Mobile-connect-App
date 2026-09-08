@@ -3,9 +3,12 @@ import { StyleSheet, Text, View } from 'react-native';
 import { LinearGradient } from 'expo-linear-gradient';
 import { Avatar } from '../../design-system';
 import { useTheme } from '../../hooks/useTheme';
+import { useI18n } from '../../i18n';
 
 function AnalyticsCardComponent({ title, subtitle, metrics, highlightMember, highlightAvatar }) {
   const { colors, layout, radii, shadows, isDark } = useTheme();
+
+  const { t } = useI18n();
 
   return (
     <View
@@ -32,7 +35,7 @@ function AnalyticsCardComponent({ title, subtitle, metrics, highlightMember, hig
         <View style={[styles.highlight, { backgroundColor: colors.primarySubtle, borderRadius: radii.lg }]}>
           <Avatar uri={highlightAvatar} name={highlightMember} size={40} />
           <View style={{ marginLeft: 12, flex: 1 }}>
-            <Text style={{ color: colors.textSecondary, fontSize: 12 * layout.fontScale }}>Most active</Text>
+            <Text style={{ color: colors.textSecondary, fontSize: 12 * layout.fontScale }}>{t('family.mostActive')}</Text>
             <Text style={{ color: colors.text, fontFamily: 'Inter_600SemiBold', fontSize: 16 * layout.fontScale }}>
               {highlightMember}
             </Text>

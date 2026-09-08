@@ -6,10 +6,13 @@ import { EventTimeline } from '../../components/events';
 import { useEventsModuleData } from '../../hooks/useEventsModuleData';
 import { useTheme } from '../../hooks/useTheme';
 import { useResponsive } from '../../design-system';
+import { useI18n } from '../../i18n';
 
 export default function EventHistoryScreen() {
   const navigation = useNavigation();
   const { colors, layout } = useTheme();
+
+  const { t } = useI18n();
   const { horizontalPadding } = useResponsive();
   const { history, insights, refreshing, refresh } = useEventsModuleData();
 
@@ -17,7 +20,7 @@ export default function EventHistoryScreen() {
     id: h.id,
     title: h.event.title,
     subtitle: h.event.location || new Date(h.event.date).toLocaleDateString(),
-    meta: `${h.attendance}/${h.totalGuests} attended · ${h.memoriesCount} memories`,
+    meta: t('events.historyMeta', { attended: h.attendance, total: h.totalGuests, memories: h.memoriesCount }),
   }));
 
   const renderItem = useCallback(
@@ -36,7 +39,7 @@ export default function EventHistoryScreen() {
 
   return (
     <Screen edges={['top']}>
-      <PageHeader title="Event history" subtitle="Completed gatherings" onBack={() => navigation.goBack()} />
+      <PageHeader title={t('events.history')} subtitle={t('events.completedGatherings')} onBack={() => navigation.goBack()} />
       <FlatList
         data={history}
         keyExtractor={(item) => item.id}
@@ -47,14 +50,14 @@ export default function EventHistoryScreen() {
         ListHeaderComponent={
           <View style={{ marginBottom: 16 }}>
             <Card>
-              <Text style={{ color: colors.textSecondary }}>Attendance rate</Text>
+              <Text style={{ color: colors.textSecondary }}>{t('events.attendanceRate')}</Text>
               <Text style={{ color: colors.text, fontFamily: 'Inter_700Bold', fontSize: 28 * layout.fontScale }}>{insights.avgRsvp}%</Text>
-              <Text style={{ color: colors.textTertiary, fontSize: 12, marginTop: 4 }}>Average RSVP across all events</Text>
+              <Text style={{ color: colors.textTertiary, fontSize: 12, marginTop: 4 }}>{t('events.attendanceHint')}</Text>
             </Card>
             <EventTimeline items={timelineItems} title="Timeline" />
           </View>
         }
-        ListEmptyComponent={<Text style={{ color: colors.textSecondary, textAlign: 'center' }}>No completed events yet.</Text>}
+        ListEmptyComponent={<Text style={{ color: colors.textSecondary, textAlign: 'center' }}>{t('events.noCompleted')}</Text>}
         initialNumToRender={8}
       />
     </Screen>

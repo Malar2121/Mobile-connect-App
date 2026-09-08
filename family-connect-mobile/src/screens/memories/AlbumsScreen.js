@@ -8,12 +8,15 @@ import { AlbumCard } from '../../components/memories';
 import { useMemoriesModuleData } from '../../hooks/useMemoriesModuleData';
 import { createAlbum } from '../../services/albumService';
 import { useResponsive } from '../../design-system';
+import { useI18n } from '../../i18n';
 
 export default function AlbumsScreen() {
   const navigation = useNavigation();
   const insets = useSafeAreaInsets();
   const toast = useToast();
   const { horizontalPadding } = useResponsive();
+
+  const { t } = useI18n();
   const { albums, refreshing, refresh, isMinor } = useMemoriesModuleData();
   const [creating, setCreating] = useState(false);
   const [title, setTitle] = useState('');
@@ -27,7 +30,7 @@ export default function AlbumsScreen() {
       setTitle('');
       setShowForm(false);
       await refresh();
-      toast.success('Album created');
+      toast.success(t('memories.albumCreated'));
     } catch (e) {
       toast.error(e.message || 'Could not create album');
     } finally {
@@ -40,8 +43,8 @@ export default function AlbumsScreen() {
       <PageHeader title="Albums" subtitle={`${albums.length} collections`} onBack={() => navigation.goBack()} />
       {showForm && !isMinor ? (
         <View style={{ marginBottom: 12 }}>
-          <TextField label="Album title" value={title} onChangeText={setTitle} placeholder="Summer reunion" />
-          <Button title="Create album" onPress={handleCreate} loading={creating} style={{ marginTop: 8 }} />
+          <TextField label={t('memories.albumTitle')} value={title} onChangeText={setTitle} placeholder={t('memories.albumExample')} />
+          <Button title={t('memories.createAlbum')} onPress={handleCreate} loading={creating} style={{ marginTop: 8 }} />
         </View>
       ) : null}
       <FlatList

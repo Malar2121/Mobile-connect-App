@@ -12,12 +12,13 @@ import {
   dashboardSpacing,
   dashboardTypography,
 } from '../../constants/dashboardTheme';
+import { useI18n } from '../../i18n';
 
 const ACTIONS = [
   {
     id: 'event',
     title: 'Create Event',
-    subtitle: 'Plan together',
+    subtitle: t('dash.planTogether'),
     icon: 'calendar',
     gradientKey: 'cool',
     route: 'Events',
@@ -27,7 +28,7 @@ const ACTIONS = [
   {
     id: 'memory',
     title: 'Upload Memory',
-    subtitle: 'Share a moment',
+    subtitle: t('dash.shareMoment'),
     icon: 'cloud-upload',
     gradientKey: 'warm',
     route: 'Memories',
@@ -36,7 +37,7 @@ const ACTIONS = [
   {
     id: 'chat',
     title: 'Open Chat',
-    subtitle: 'Message family',
+    subtitle: t('dash.messageFamily'),
     icon: 'chatbubbles',
     gradientKey: 'mint',
     route: 'Chat',
@@ -44,7 +45,7 @@ const ACTIONS = [
   {
     id: 'map',
     title: 'Open Map',
-    subtitle: 'See everyone',
+    subtitle: t('dash.seeEveryone'),
     icon: 'map',
     gradientKey: 'sunset',
     route: 'Map',
@@ -52,7 +53,7 @@ const ACTIONS = [
   {
     id: 'gallery',
     title: 'Family Gallery',
-    subtitle: 'Browse albums',
+    subtitle: t('dash.browseAlbums'),
     icon: 'images',
     gradientKey: 'cardAccent',
     route: 'Memories',
@@ -61,7 +62,7 @@ const ACTIONS = [
   {
     id: 'invite',
     title: 'Invite Member',
-    subtitle: 'Grow your circle',
+    subtitle: t('dash.growCircle'),
     icon: 'person-add',
     gradientKey: 'warm',
     action: 'invite',
@@ -115,6 +116,8 @@ function ActionCard({ item, onPress, isDark, colors }) {
 
 export function DashboardQuickActions({ onAction, isMinor }) {
   const { colors, isDark } = useTheme();
+
+  const { t } = useI18n();
   const visible = ACTIONS.filter((a) => !(isMinor && a.minorHidden));
 
   return (

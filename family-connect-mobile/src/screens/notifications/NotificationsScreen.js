@@ -140,7 +140,7 @@ export default function NotificationsScreen({ navigation }) {
           <EmptyState
             icon="notifications-off-outline"
             title={t('notifications.empty')}
-            description="When your family shares events, memories, or messages, you'll see them here."
+            description={t('notifications.emptyBody')}
             compact
           />
         }

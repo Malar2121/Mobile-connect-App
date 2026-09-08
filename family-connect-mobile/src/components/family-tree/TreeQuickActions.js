@@ -4,9 +4,10 @@ import { Ionicons } from '@expo/vector-icons';
 import { SectionTitle } from '../../design-system';
 import { useTheme } from '../../hooks/useTheme';
 import { useResponsive } from '../../design-system';
+import { useI18n } from '../../i18n';
 
 const ACTIONS = [
-  { id: 'tree', label: 'Interactive tree', icon: 'git-network', screen: 'InteractiveTree' },
+  { id: 'tree', label: t('tree.interactive'), icon: 'git-network', screen: 'InteractiveTree' },
   { id: 'ancestors', label: 'Ancestors', icon: 'arrow-up', screen: 'Ancestors' },
   { id: 'descendants', label: 'Descendants', icon: 'arrow-down', screen: 'Descendants' },
   { id: 'timeline', label: 'Heritage', icon: 'time', screen: 'HeritageTimeline' },
@@ -18,12 +19,14 @@ const ACTIONS = [
 
 function TreeQuickActionsComponent({ onNavigate, isMinor }) {
   const { colors, layout, radii } = useTheme();
+
+  const { t } = useI18n();
   const { horizontalPadding, columns } = useResponsive();
   const visible = ACTIONS.filter((a) => !(isMinor && a.id === 'edit'));
 
   return (
     <View style={{ paddingHorizontal: horizontalPadding, marginBottom: layout.sectionGap }}>
-      <SectionTitle title="Explore" subtitle="Navigate your heritage" />
+      <SectionTitle title="Explore" subtitle={t('tree.navigateHeritage')} />
       <View style={[styles.grid, { gap: 10 }]}>
         {visible.map((action) => (
           <Pressable

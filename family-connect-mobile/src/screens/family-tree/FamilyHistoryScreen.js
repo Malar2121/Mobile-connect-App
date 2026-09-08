@@ -6,6 +6,7 @@ import { useFamilyTreeModuleData } from '../../hooks/useFamilyTreeModuleData';
 import { saveFamilyHistory, DEFAULT_FAMILY_HISTORY } from '../../utils/familyTreeModuleHelpers';
 import { useTheme } from '../../hooks/useTheme';
 import { useResponsive } from '../../design-system';
+import { useI18n } from '../../i18n';
 
 const SECTIONS = [
   { key: 'origins', title: 'Origins', placeholder: 'Where does your family come from?' },
@@ -20,6 +21,8 @@ export default function FamilyHistoryScreen() {
   const navigation = useNavigation();
   const toast = useToast();
   const { colors, layout } = useTheme();
+
+  const { t } = useI18n();
   const { horizontalPadding } = useResponsive();
   const { family, familyHistory, setFamilyHistory } = useFamilyTreeModuleData();
   const [draft, setDraft] = useState(familyHistory ?? DEFAULT_FAMILY_HISTORY);
@@ -39,9 +42,9 @@ export default function FamilyHistoryScreen() {
     try {
       await saveFamilyHistory(family._id, draft);
       setFamilyHistory(draft);
-      toast.success('Family journal saved');
+      toast.success(t('tree.journalSaved'));
     } catch {
-      toast.error('Could not save journal');
+      toast.error(t('tree.journalSaveFailed'));
     } finally {
       setSaving(false);
     }
@@ -49,7 +52,7 @@ export default function FamilyHistoryScreen() {
 
   return (
     <Screen edges={['top']}>
-      <PageHeader title="Family history" subtitle="Digital family journal" onBack={() => navigation.goBack()} />
+      <PageHeader title={t('tree.history')} subtitle={t('tree.journalSubtitle')} onBack={() => navigation.goBack()} />
 
       <ScrollView contentContainerStyle={{ paddingBottom: 40 }} keyboardShouldPersistTaps="handled">
         <Text style={{ color: colors.textSecondary, fontSize: 14 * layout.fontScale, marginBottom: 16, lineHeight: 22 }}>
@@ -70,7 +73,7 @@ export default function FamilyHistoryScreen() {
           </View>
         ))}
 
-        <Button title="Save journal" onPress={handleSave} loading={saving} />
+        <Button title={t('tree.saveJournal')} onPress={handleSave} loading={saving} />
       </ScrollView>
     </Screen>
   );

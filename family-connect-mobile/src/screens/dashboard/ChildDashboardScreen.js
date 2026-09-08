@@ -9,9 +9,12 @@ import { useDashboardData } from '../../hooks/useDashboardData';
 import { GlassCard } from '../../design-system';
 import { ConsentBanner } from '../../components/family/ConsentBanner';
 import { useUIMode } from '../../contexts/UIModeContext';
+import { useI18n } from '../../i18n';
 
 export default function ChildDashboardScreen() {
   const { colors, radii, spacing, typography, shadows, setUiMode } = useTheme();
+
+  const { t } = useI18n();
   const insets = useSafeAreaInsets();
   const { user } = useAuth();
   const navigation = useNavigation();
@@ -22,8 +25,8 @@ export default function ChildDashboardScreen() {
   const { modeLocked } = useUIMode();
 
   const MODES = [
-    { id: 'standard', label: 'Standard Mode', icon: 'phone-portrait-outline', desc: 'Full app access' },
-    { id: 'elder', label: 'Elder Mode', icon: 'accessibility-outline', desc: 'Larger text & simpler layout' },
+    { id: 'standard', label: t('child.standardMode'), icon: 'phone-portrait-outline', desc: t('child.fullAccess') },
+    { id: 'elder', label: t('child.elderMode'), icon: 'accessibility-outline', desc: t('child.largerText') },
   ];
 
   return (
@@ -71,7 +74,7 @@ export default function ChildDashboardScreen() {
             <View style={styles.iconCircle}>
               <Ionicons name="map" size={32} color="#166534" />
             </View>
-            <Text style={styles.buttonText}>Find Family</Text>
+            <Text style={styles.buttonText}>{t('child.findFamily')}</Text>
           </Pressable>
 
           <Pressable 
@@ -91,10 +94,10 @@ export default function ChildDashboardScreen() {
             style={[styles.sosButton, shadows.md, { backgroundColor: '#f87171', borderRadius: radii['3xl'], padding: spacing.xl }]}
             onPress={() => navigation.navigate('Map', { screen: 'SOSScreen' })}
             accessibilityRole="button"
-            accessibilityLabel="I need help — open SOS"
+            accessibilityLabel={t('child.sosA11y')}
           >
             <Ionicons name="alert-circle" size={40} color="#fff" />
-            <Text style={styles.sosText}>I Need Help</Text>
+            <Text style={styles.sosText}>{t('child.needHelp')}</Text>
           </Pressable>
         </View>
 
@@ -105,12 +108,14 @@ export default function ChildDashboardScreen() {
               <View style={[styles.statusDot, { backgroundColor: liveCount > 0 ? '#4ade80' : colors.border }]} />
               <Text style={[typography.h3, { color: colors.text, marginLeft: spacing.sm }]}>
                 {liveCount > 0
-                  ? `${liveCount} family ${liveCount === 1 ? 'member is' : 'members are'} sharing location`
-                  : 'No one is sharing location right now'}
+                  ? liveCount === 1
+                    ? t('child.sharingCountOne')
+                    : t('child.sharingCount', { count: liveCount })
+                  : t('child.noSharing')}
               </Text>
             </View>
             <Text style={[typography.caption, { color: colors.textSecondary, marginTop: spacing.xs, marginLeft: spacing.xl }]}>
-              {members?.length ? `${members.length} people in your family` : 'Ask a parent to add you to a family'}
+              {members?.length ? t('child.peopleInFamily', { count: members.length }) : t('child.askParent')}
             </Text>
           </GlassCard>
         </View>

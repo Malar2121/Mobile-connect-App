@@ -12,6 +12,7 @@ import {
   dashboardSpacing,
   dashboardTypography,
 } from '../../constants/dashboardTheme';
+import { useI18n } from '../../i18n';
 
 function formatEventDate(dateVal) {
   if (!dateVal) return 'Date TBD';
@@ -85,6 +86,8 @@ function EventRow({ event, isLast, colors, isDark }) {
 export function DashboardUpcomingEvents({ events, onAddEvent, onViewAll }) {
   const { colors, isDark } = useTheme();
 
+  const { t } = useI18n();
+
   return (
     <Animated.View entering={FadeInDown.delay(160).duration(520).springify()} style={styles.section}>
       <View style={styles.head}>
@@ -106,8 +109,8 @@ export function DashboardUpcomingEvents({ events, onAddEvent, onViewAll }) {
             <DashboardEmptyIllustration
               compact
               icon="calendar-outline"
-              title="Nothing planned yet"
-              message="Tap + to schedule your next family moment together."
+              title={t('dash.nothingPlanned')}
+              message={t('dash.planHint')}
             />
           ) : (
             events.map((ev, idx) => (

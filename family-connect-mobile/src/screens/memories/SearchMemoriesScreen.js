@@ -5,10 +5,13 @@ import { PageHeader, Screen } from '../../design-system';
 import { MemoryCard, SearchFilterBar } from '../../components/memories';
 import { useMemoriesModuleData } from '../../hooks/useMemoriesModuleData';
 import { useResponsive } from '../../design-system';
+import { useI18n } from '../../i18n';
 
 export default function SearchMemoriesScreen() {
   const navigation = useNavigation();
   const { horizontalPadding } = useResponsive();
+
+  const { t } = useI18n();
   const [query, setQuery] = useState('');
   const [year, setYear] = useState(null);
 
@@ -24,7 +27,7 @@ export default function SearchMemoriesScreen() {
 
   return (
     <Screen edges={['top']}>
-      <PageHeader title="Search" subtitle="Find any memory" onBack={() => navigation.goBack()} />
+      <PageHeader title="Search" subtitle={t('memories.findAny')} onBack={() => navigation.goBack()} />
       <FlatList
         data={filtered}
         keyExtractor={(item) => String(item._id)}

@@ -8,11 +8,14 @@ import { SearchResultCard } from '../../components/chat/SearchResultCard';
 import { getStarredMessages } from '../../services/chatService';
 import { isMessageStarred } from '../../utils/chatModuleHelpers';
 import { useResponsive } from '../../design-system';
+import { useI18n } from '../../i18n';
 
 export default function StarredMessagesScreen() {
   const navigation = useNavigation();
   const insets = useSafeAreaInsets();
   const { horizontalPadding } = useResponsive();
+
+  const { t } = useI18n();
   const { messages, userId, prefs } = useChatModule();
   const [starred, setStarred] = useState([]);
 
@@ -26,7 +29,7 @@ export default function StarredMessagesScreen() {
 
   return (
     <Screen edges={['top']}>
-      <PageHeader title="Starred messages" subtitle="Your saved messages" onBack={() => navigation.goBack()} />
+      <PageHeader title={t('chat.starredMessages')} subtitle={t('chat.starredSubtitle')} onBack={() => navigation.goBack()} />
       <FlatList
         data={starred}
         keyExtractor={(item) => String(item._id)}

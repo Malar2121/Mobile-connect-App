@@ -30,10 +30,13 @@ import { useChatModule } from '../../contexts/ChatModuleContext';
 import { useTheme } from '../../hooks/useTheme';
 import { getUnreadCount } from '../../utils/chatHelpers';
 import { getMessageReactions, isMessageStarred } from '../../utils/chatModuleHelpers';
+import { useI18n } from '../../i18n';
 
 export default function ConversationScreen() {
   const navigation = useNavigation();
   const { colors, isDark, uiMode } = useTheme();
+
+  const { t } = useI18n();
   const insets = useSafeAreaInsets();
   const recordingRef = useRef(null);
   const recordingStart = useRef(null);
@@ -132,7 +135,7 @@ export default function ConversationScreen() {
           Alert.alert('Scheduled', 'Message will send in 1 hour.');
           break;
         case 'delete':
-          Alert.alert('Delete message?', 'This cannot be undone.', [
+          Alert.alert(t('chat.deleteMessage'), 'This cannot be undone.', [
             { text: 'Cancel', style: 'cancel' },
             { text: 'Delete', style: 'destructive', onPress: () => handleDelete(message) },
           ]);
@@ -198,7 +201,7 @@ export default function ConversationScreen() {
       recordingRef.current = recording;
       recordingStart.current = Date.now();
     } catch {
-      setError('Could not start voice recording.');
+      setError(t('chat.recordFailed'));
     }
   }, [setError]);
 
@@ -216,7 +219,7 @@ export default function ConversationScreen() {
         });
       }
     } catch {
-      setError('Could not send voice message.');
+      setError(t('chat.voiceSendFailed'));
     }
   }, [sendTextMessage, setError]);
 
@@ -240,7 +243,7 @@ export default function ConversationScreen() {
         <View style={styles.flex}>
           {prefs.archived && uiMode !== 'minor' ? (
             <View style={[styles.archivedBanner, { backgroundColor: isDark ? colors.card : '#FEF3C7' }]}>
-              <Text style={{ color: colors.text, fontSize: 13 }}>This chat is archived</Text>
+              <Text style={{ color: colors.text, fontSize: 13 }}>{t('chat.archived')}</Text>
             </View>
           ) : null}
 

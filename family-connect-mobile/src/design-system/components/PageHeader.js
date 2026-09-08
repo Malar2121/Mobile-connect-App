@@ -2,6 +2,7 @@ import React from 'react';
 import { Pressable, StyleSheet, Text, View } from 'react-native';
 import { useTheme } from '../../hooks/useTheme';
 import { IconButton } from './IconButton';
+import { useI18n } from '../../i18n';
 
 /**
  * Consistent page header — title, subtitle, back + action slots.
@@ -18,6 +19,8 @@ export function PageHeader({
 }) {
   const { colors, layout, spacing } = useTheme();
 
+  const { t } = useI18n();
+
   return (
     <View
       style={[
@@ -33,7 +36,7 @@ export function PageHeader({
           <IconButton
             icon="chevron-back"
             onPress={onBack}
-            accessibilityLabel="Go back"
+            accessibilityLabel={t('common.goBack')}
             variant="ghost"
             size="md"
           />

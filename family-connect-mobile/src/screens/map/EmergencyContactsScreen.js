@@ -5,10 +5,13 @@ import { PageHeader, Screen, TextField, Button, SectionTitle } from '../../desig
 import { useMapModule } from '../../contexts/MapModuleContext';
 import { useTheme } from '../../hooks/useTheme';
 import { useResponsive } from '../../design-system';
+import { useI18n } from '../../i18n';
 
 export default function EmergencyContactsScreen() {
   const navigation = useNavigation();
   const { horizontalPadding } = useResponsive();
+
+  const { t } = useI18n();
   const { colors, layout } = useTheme();
   const { emergencyContacts, saveEmergencyContacts } = useMapModule();
   const [name, setName] = useState('');
@@ -24,17 +27,17 @@ export default function EmergencyContactsScreen() {
 
   return (
     <Screen edges={['top']}>
-      <PageHeader title="Emergency contacts" subtitle="Called during SOS" onBack={() => navigation.goBack()} />
+      <PageHeader title={t('map.emergencyContacts')} subtitle={t('map.calledDuringSos')} onBack={() => navigation.goBack()} />
 
       <ScrollView contentContainerStyle={{ paddingBottom: 40 }} keyboardShouldPersistTaps="handled">
         <Text style={{ color: colors.textSecondary, fontSize: 14 * layout.fontScale, marginBottom: 16, lineHeight: 22 }}>
           Stored on device until a family emergency contacts API is available.
         </Text>
 
-        <SectionTitle title="Add contact" />
+        <SectionTitle title={t('map.addContact')} />
         <TextField value={name} onChangeText={setName} placeholder="Name" />
-        <TextField value={phone} onChangeText={setPhone} placeholder="Phone number" keyboardType="phone-pad" style={{ marginTop: 10 }} />
-        <Button title="Save contact" onPress={addContact} style={{ marginTop: 14 }} />
+        <TextField value={phone} onChangeText={setPhone} placeholder={t('map.phoneNumber')} keyboardType="phone-pad" style={{ marginTop: 10 }} />
+        <Button title={t('map.saveContact')} onPress={addContact} style={{ marginTop: 14 }} />
 
         <SectionTitle title="Contacts" subtitle={`${emergencyContacts.length} saved`} />
         {emergencyContacts.map((c) => (

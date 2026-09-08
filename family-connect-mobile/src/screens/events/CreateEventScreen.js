@@ -9,7 +9,7 @@ import { EVENT_CATEGORIES, saveEventMeta } from '../../utils/eventModuleHelpers'
 
 const STEPS = ['General', 'Schedule', 'Details', 'Review'];
 const REPEAT_OPTIONS = [
-  { id: 'none', label: 'Does not repeat' },
+  { id: 'none', label: t('events.noRepeat') },
   { id: 'weekly', label: 'Weekly' },
   { id: 'monthly', label: 'Monthly' },
 ];
@@ -92,8 +92,8 @@ export default function CreateEventScreen({ navigation }) {
 
       {step === 0 ? (
         <>
-          <TextField label={t('events.titleField')} value={title} onChangeText={setTitle} placeholder="Family BBQ" />
-          <TextField label={t('events.descriptionField')} value={description} onChangeText={setDescription} multiline numberOfLines={4} placeholder="What's the plan?" />
+          <TextField label={t('events.titleField')} value={title} onChangeText={setTitle} placeholder={t('events.titlePlaceholder')} />
+          <TextField label={t('events.descriptionField')} value={description} onChangeText={setDescription} multiline numberOfLines={4} placeholder={t('events.descriptionPlaceholder')} />
           <Text style={{ color: colors.textSecondary, marginBottom: 8, marginTop: 8 }}>Category</Text>
           <View style={styles.chips}>
             {EVENT_CATEGORIES.map((c) => (
@@ -119,7 +119,7 @@ export default function CreateEventScreen({ navigation }) {
 
       {step === 2 ? (
         <>
-          <TextField label={t('events.locationField')} value={location} onChangeText={setLocation} placeholder="Home, park, restaurant…" />
+          <TextField label={t('events.locationField')} value={location} onChangeText={setLocation} placeholder={t('events.locationPlaceholder')} />
           <TextField label={t('events.coverImage')} value={image} onChangeText={setImage} placeholder="https://…" />
           <TextField label={t('events.maxParticipants')} value={maxParticipants} onChangeText={setMaxParticipants} placeholder="Optional" keyboardType="number-pad" />
           <Text style={{ color: colors.textSecondary, marginTop: 12, marginBottom: 8 }}>Privacy</Text>

@@ -5,6 +5,7 @@ import * as Clipboard from 'expo-clipboard';
 import { Card, Button } from '../../design-system';
 import { useTheme } from '../../hooks/useTheme';
 import { useToast } from '../../design-system';
+import { useI18n } from '../../i18n';
 
 function InviteCardComponent({
   inviteCode,
@@ -17,18 +18,20 @@ function InviteCardComponent({
   readOnly,
 }) {
   const { colors, layout, radii } = useTheme();
+
+  const { t } = useI18n();
   const toast = useToast();
 
   async function copyCode() {
     if (!inviteCode) return;
     await Clipboard.setStringAsync(inviteCode);
-    toast.success('Invite code copied');
+    toast.success(t('family.codeCopied'));
   }
 
   async function copyLink() {
     if (!inviteLink) return;
     await Clipboard.setStringAsync(inviteLink);
-    toast.success('Invite link copied');
+    toast.success(t('family.linkCopied'));
   }
 
   return (
@@ -73,18 +76,18 @@ function InviteCardComponent({
       ) : null}
 
       <View style={styles.actions}>
-        <Button title="Copy code" variant="secondary" onPress={copyCode} style={{ flex: 1 }} />
+        <Button title={t('family.copyCode')} variant="secondary" onPress={copyCode} style={{ flex: 1 }} />
         {inviteLink ? (
-          <Button title="Copy link" variant="secondary" onPress={copyLink} style={{ flex: 1 }} />
+          <Button title={t('family.copyLink')} variant="secondary" onPress={copyLink} style={{ flex: 1 }} />
         ) : null}
       </View>
 
       {!readOnly ? (
         <View style={{ marginTop: 10, gap: 8 }}>
-          {onShare ? <Button title="Share invite" onPress={onShare} icon={<Ionicons name="share-outline" size={18} color="#fff" />} /> : null}
+          {onShare ? <Button title={t('family.shareInvite')} onPress={onShare} icon={<Ionicons name="share-outline" size={18} color="#fff" />} /> : null}
           {onRegenerate ? (
             <Button
-              title="Regenerate code"
+              title={t('family.regenerateCode')}
               variant="ghost"
               onPress={onRegenerate}
               loading={regenerating}

@@ -3,9 +3,12 @@ import { StyleSheet, Text, View } from 'react-native';
 import { Avatar } from '../../design-system';
 import { useTheme } from '../../hooks/useTheme';
 import { formatMemoryDate } from '../../utils/memoryHelpers';
+import { useI18n } from '../../i18n';
 
 function MemoryAnalyticsCardComponent({ analytics }) {
   const { colors, layout, radii } = useTheme();
+
+  const { t } = useI18n();
   if (!analytics) return null;
 
   const metrics = [
@@ -17,12 +20,12 @@ function MemoryAnalyticsCardComponent({ analytics }) {
 
   return (
     <View style={[styles.wrap, { backgroundColor: colors.surface, borderColor: colors.border, borderRadius: radii.xl }]}>
-      <Text style={{ color: colors.text, fontFamily: 'Inter_700Bold', fontSize: 17 * layout.fontScale }}>Archive analytics</Text>
+      <Text style={{ color: colors.text, fontFamily: 'Inter_700Bold', fontSize: 17 * layout.fontScale }}>{t('memories.analytics')}</Text>
       {analytics.mostActiveContributor ? (
         <View style={[styles.row, { backgroundColor: colors.primarySubtle, borderRadius: radii.lg }]}>
           <Avatar uri={analytics.mostActiveAvatar} name={analytics.mostActiveContributor} size={36} />
           <View style={{ marginLeft: 10 }}>
-            <Text style={{ color: colors.textSecondary, fontSize: 11 }}>Top contributor</Text>
+            <Text style={{ color: colors.textSecondary, fontSize: 11 }}>{t('memories.topContributor')}</Text>
             <Text style={{ color: colors.text, fontFamily: 'Inter_600SemiBold' }}>{analytics.mostActiveContributor}</Text>
           </View>
         </View>
@@ -47,7 +50,7 @@ function MemoryAnalyticsCardComponent({ analytics }) {
           </View>
         ))}
       </View>
-      <Text style={{ color: colors.textTertiary, fontSize: 11, marginTop: 6, textAlign: 'center' }}>Uploads this week</Text>
+      <Text style={{ color: colors.textTertiary, fontSize: 11, marginTop: 6, textAlign: 'center' }}>{t('memories.uploadsThisWeek')}</Text>
     </View>
   );
 }

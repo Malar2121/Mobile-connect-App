@@ -5,6 +5,7 @@ import { PageHeader, Screen } from '../../design-system';
 import { useFamilyTreeModuleData } from '../../hooks/useFamilyTreeModuleData';
 import { TreeCanvas, TreeControls, TreeLegend, TreeMiniMap } from '../../components/family-tree';
 import { layoutTree } from '../../utils/familyTreeModuleHelpers';
+import { useI18n } from '../../i18n';
 
 export default function InteractiveTreeScreen() {
   const navigation = useNavigation();
@@ -12,6 +13,9 @@ export default function InteractiveTreeScreen() {
   const initialId = route.params?.memberId ? String(route.params.memberId) : null;
 
   const { enrichedNodes, treeSettings, isElder, loading } = useFamilyTreeModuleData();
+
+
+  const { t } = useI18n();
   const [selectedId, setSelectedId] = useState(initialId);
   const [collapsedIds, setCollapsedIds] = useState(() => new Set());
 
@@ -39,8 +43,8 @@ export default function InteractiveTreeScreen() {
     <Screen edges={['top']} noPadding>
       <View style={styles.header}>
         <PageHeader
-          title="Interactive tree"
-          subtitle="Pinch to zoom · drag to pan"
+          title={t('tree.interactive')}
+          subtitle={t('tree.gestureHint')}
           onBack={() => navigation.goBack()}
         />
       </View>

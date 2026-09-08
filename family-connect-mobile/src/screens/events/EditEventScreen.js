@@ -5,12 +5,15 @@ import { Button, PageHeader, Screen, TextField, useToast } from '../../design-sy
 import { useTheme } from '../../hooks/useTheme';
 import { getEventDetails, updateEvent } from '../../services/eventService';
 import { loadEventMeta, saveEventMeta } from '../../utils/eventModuleHelpers';
+import { useI18n } from '../../i18n';
 
 export default function EditEventScreen() {
   const route = useRoute();
   const navigation = useNavigation();
   const toast = useToast();
   const { colors } = useTheme();
+
+  const { t } = useI18n();
   const { id } = route.params ?? {};
 
   const [title, setTitle] = useState('');
@@ -54,7 +57,7 @@ export default function EditEventScreen() {
       });
       const meta = await loadEventMeta(id);
       await saveEventMeta(id, meta);
-      toast.success('Event updated');
+      toast.success(t('events.updated'));
       navigation.goBack();
     } catch (e) {
       toast.error(e.message || 'Update failed');
@@ -65,15 +68,15 @@ export default function EditEventScreen() {
 
   return (
     <Screen edges={['top']} scroll>
-      <PageHeader title="Edit event" onBack={() => navigation.goBack()} />
+      <PageHeader title={t('events.editEvent')} onBack={() => navigation.goBack()} />
       <TextField label="Title" value={title} onChangeText={setTitle} />
       <TextField label="Description" value={description} onChangeText={setDescription} multiline numberOfLines={4} />
       <TextField label="Date" value={date} onChangeText={setDate} placeholder="YYYY-MM-DD" />
-      <TextField label="Start time" value={startTime} onChangeText={setStartTime} />
-      <TextField label="End time" value={endTime} onChangeText={setEndTime} />
+      <TextField label={t('events.startTime')} value={startTime} onChangeText={setStartTime} />
+      <TextField label={t('events.endTime')} value={endTime} onChangeText={setEndTime} />
       <TextField label="Location" value={location} onChangeText={setLocation} />
-      <TextField label="Cover image URL" value={image} onChangeText={setImage} />
-      <Button title="Save changes" onPress={handleSave} loading={loading} size="lg" style={{ marginTop: 16, marginBottom: 32 }} />
+      <TextField label={t('events.coverImage')} value={image} onChangeText={setImage} />
+      <Button title={t('events.saveChanges')} onPress={handleSave} loading={loading} size="lg" style={{ marginTop: 16, marginBottom: 32 }} />
     </Screen>
   );
 }

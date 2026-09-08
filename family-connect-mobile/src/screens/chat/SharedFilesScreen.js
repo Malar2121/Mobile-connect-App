@@ -8,18 +8,21 @@ import { useChatModule } from '../../contexts/ChatModuleContext';
 import { groupSharedFiles } from '../../utils/chatModuleHelpers';
 import { useTheme } from '../../hooks/useTheme';
 import { useResponsive } from '../../design-system';
+import { useI18n } from '../../i18n';
 
 export default function SharedFilesScreen() {
   const navigation = useNavigation();
   const insets = useSafeAreaInsets();
   const { horizontalPadding } = useResponsive();
+
+  const { t } = useI18n();
   const { colors, layout } = useTheme();
   const { messages } = useChatModule();
   const groups = useMemo(() => groupSharedFiles(messages), [messages]);
 
   return (
     <Screen edges={['top']}>
-      <PageHeader title="Shared files" subtitle="Grouped by type" onBack={() => navigation.goBack()} />
+      <PageHeader title={t('chat.sharedFiles')} subtitle={t('chat.groupedByType')} onBack={() => navigation.goBack()} />
 
       <FlatList
         data={[

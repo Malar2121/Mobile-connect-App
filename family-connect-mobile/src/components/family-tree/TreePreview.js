@@ -4,9 +4,12 @@ import { LinearGradient } from 'expo-linear-gradient';
 import { Ionicons } from '@expo/vector-icons';
 import { Avatar } from '../../design-system';
 import { useTheme } from '../../hooks/useTheme';
+import { useI18n } from '../../i18n';
 
 function TreePreviewComponent({ nodes, onPress }) {
   const { colors, layout, radii, isDark } = useTheme();
+
+  const { t } = useI18n();
   const preview = (nodes ?? []).slice(0, 5);
 
   return (
@@ -16,9 +19,9 @@ function TreePreviewComponent({ nodes, onPress }) {
         style={[styles.wrap, { borderRadius: radii['2xl'], borderColor: colors.border }]}
       >
         <View style={styles.header}>
-          <Text style={{ color: colors.text, fontFamily: 'Inter_700Bold', fontSize: 16 * layout.fontScale }}>Tree preview</Text>
+          <Text style={{ color: colors.text, fontFamily: 'Inter_700Bold', fontSize: 16 * layout.fontScale }}>{t('tree.preview')}</Text>
           <View style={styles.link}>
-            <Text style={{ color: colors.primary, fontFamily: 'Inter_600SemiBold', fontSize: 13 }}>Open tree</Text>
+            <Text style={{ color: colors.primary, fontFamily: 'Inter_600SemiBold', fontSize: 13 }}>{t('tree.openTree')}</Text>
             <Ionicons name="arrow-forward" size={14} color={colors.primary} style={{ marginLeft: 4 }} />
           </View>
         </View>

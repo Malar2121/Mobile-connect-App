@@ -19,11 +19,14 @@ import { useTheme } from '../../hooks/useTheme';
 import { useResponsive } from '../../design-system';
 import { getLegacyProfiles, createLegacyProfile } from '../../services/legacyService';
 import { useAuth } from '../../contexts/AuthContext';
+import { useI18n } from '../../i18n';
 
 export default function LegacyModeScreen() {
   const navigation = useNavigation();
   const toast = useToast();
   const { colors, layout, isDark } = useTheme();
+
+  const { t } = useI18n();
   const { horizontalPadding } = useResponsive();
   const { members, memories, family } = useMemoriesModuleData();
   const { user } = useAuth();
@@ -61,7 +64,7 @@ export default function LegacyModeScreen() {
         burialLocation: burialLocation.trim(),
       });
       setProfiles((prev) => [created, ...prev]);
-      toast.success('Remembrance page saved');
+      toast.success(t('legacy.saved'));
       setBiography('');
       setDeathDate('');
       setBurialLocation('');
@@ -84,7 +87,7 @@ export default function LegacyModeScreen() {
 
   return (
     <Screen edges={['top']}>
-      <PageHeader title="Legacy Mode" subtitle="Honoring those we love" onBack={() => navigation.goBack()} />
+      <PageHeader title={t('legacy.title')} subtitle={t('legacy.subtitle')} onBack={() => navigation.goBack()} />
       <ScrollView contentContainerStyle={{ paddingBottom: 40 }}>
         <LinearGradient
           colors={isDark ? ['#1A1528', '#2D2640'] : ['#FDF4FF', '#FFFFFF']}
@@ -98,7 +101,7 @@ export default function LegacyModeScreen() {
           </Text>
         </LinearGradient>
 
-        <SectionTitle title="Remembrance pages" />
+        <SectionTitle title={t('legacy.pages')} />
         {profiles.length > 0 ? (
           profiles.map((p) => {
             const memberId = p.memberId?._id || p.memberId;
@@ -115,14 +118,14 @@ export default function LegacyModeScreen() {
             );
           })
         ) : (
-          <Text style={{ color: colors.textSecondary }}>No legacy profiles found.</Text>
+          <Text style={{ color: colors.textSecondary }}>{t('legacy.empty')}</Text>
         )}
 
         {user?.role === 'admin' ? (
           <>
-            <SectionTitle title="Create remembrance" style={{ marginTop: 20 }} />
+            <SectionTitle title={t('legacy.create')} style={{ marginTop: 20 }} />
             <Card>
-              <Text style={{ color: colors.textSecondary, marginBottom: 8 }}>Select a family member to honor</Text>
+              <Text style={{ color: colors.textSecondary, marginBottom: 8 }}>{t('legacy.selectMember')}</Text>
               {members.map((m) => (
                 <Button
                   key={m._id}
@@ -134,13 +137,13 @@ export default function LegacyModeScreen() {
               ))}
               {selectedMember && !profiles.some(p => String(p.memberId?._id || p.memberId) === String(selectedMember._id)) ? (
                 <>
-                  <TextField label="Date of Death (YYYY-MM-DD)" value={deathDate} onChangeText={setDeathDate} />
-                  <TextField label="Burial Location" value={burialLocation} onChangeText={setBurialLocation} />
-                  <TextField label="Biography" value={biography} onChangeText={setBiography} multiline numberOfLines={5} placeholder="A few words about their life and legacy…" />
-                  <Button title="Save remembrance" onPress={handleSave} loading={saving} style={{ marginTop: 12 }} />
+                  <TextField label={t('legacy.dateOfDeath')} value={deathDate} onChangeText={setDeathDate} />
+                  <TextField label={t('legacy.restingPlace')} value={burialLocation} onChangeText={setBurialLocation} />
+                  <TextField label="Biography" value={biography} onChangeText={setBiography} multiline numberOfLines={5} placeholder={t('legacy.storyPlaceholder')} />
+                  <Button title={t('legacy.save')} onPress={handleSave} loading={saving} style={{ marginTop: 12 }} />
                 </>
               ) : selectedMember ? (
-                <Text style={{ color: colors.textTertiary, marginTop: 8 }}>This member already has a legacy profile.</Text>
+                <Text style={{ color: colors.textTertiary, marginTop: 8 }}>{t('legacy.exists')}</Text>
               ) : null}
             </Card>
           </>
@@ -150,7 +153,7 @@ export default function LegacyModeScreen() {
           <>
             <SectionTitle title={`${selectedMember.fullName || selectedMember.displayName}'s memories`} style={{ marginTop: 20 }} />
             {legacyMemories.length === 0 ? (
-              <Text style={{ color: colors.textSecondary }}>Tag this member in memories to build their archive.</Text>
+              <Text style={{ color: colors.textSecondary }}>{t('legacy.tagHint')}</Text>
             ) : (
               <GalleryGrid
                 memories={legacyMemories}

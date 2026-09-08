@@ -4,6 +4,7 @@ import { Ionicons } from '@expo/vector-icons';
 import QRCode from 'react-native-qrcode-svg';
 import { Card } from '../../design-system';
 import { useTheme } from '../../hooks/useTheme';
+import { useI18n } from '../../i18n';
 
 /**
  * Renders the family invite QR entirely on-device.
@@ -16,6 +17,7 @@ import { useTheme } from '../../hooks/useTheme';
  */
 function QRInviteCardComponent({ inviteLink, inviteCode }) {
   const { colors, layout, radii } = useTheme();
+  const { t } = useI18n();
   const data = inviteLink || inviteCode || '';
 
   return (
@@ -32,7 +34,7 @@ function QRInviteCardComponent({ inviteLink, inviteCode }) {
           style={[styles.qrWrap, { backgroundColor: colors.surfaceSecondary, borderRadius: radii.xl }]}
           accessible
           accessibilityRole="image"
-          accessibilityLabel="QR code for the family invite"
+          accessibilityLabel={t('family.qrA11y')}
         >
           {/* Fixed light-on-dark values: a QR must stay high-contrast and
               light-grounded in both themes or scanners fail on it. */}
@@ -41,7 +43,7 @@ function QRInviteCardComponent({ inviteLink, inviteCode }) {
       ) : (
         <View style={[styles.placeholder, { backgroundColor: colors.surfaceSecondary, borderRadius: radii.xl }]}>
           <Ionicons name="qr-code-outline" size={64} color={colors.textTertiary} />
-          <Text style={{ color: colors.textSecondary, marginTop: 8 }}>Generate an invite to show QR</Text>
+          <Text style={{ color: colors.textSecondary, marginTop: 8 }}>{t('family.qrEmpty')}</Text>
         </View>
       )}
 

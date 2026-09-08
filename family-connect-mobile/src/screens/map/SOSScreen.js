@@ -85,10 +85,10 @@ export default function SOSScreen() {
         <SOSButton onPress={startSOS} countdown={countdown} onCancel={cancelSOS} disabled={sending} />
 
         <View style={{ width: '100%', marginTop: 24 }}>
-          <TextField value={message} onChangeText={setMessage} placeholder="Optional message for family" multiline style={{ minHeight: 80 }} />
+          <TextField value={message} onChangeText={setMessage} placeholder={t('map.sosMessagePlaceholder')} multiline style={{ minHeight: 80 }} />
         </View>
 
-        <LocationTimeline items={timeline} title="Emergency history" subtitle="Recent SOS alerts" />
+        <LocationTimeline items={timeline} title={t('map.emergencyHistory')} subtitle={t('map.recentSos')} />
       </ScrollView>
     </Screen>
   );

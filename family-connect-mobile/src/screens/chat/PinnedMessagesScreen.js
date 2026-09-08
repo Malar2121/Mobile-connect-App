@@ -7,11 +7,14 @@ import { useChatModule } from '../../contexts/ChatModuleContext';
 import { SearchResultCard } from '../../components/chat/SearchResultCard';
 import { getPinnedMessages } from '../../services/chatService';
 import { useResponsive } from '../../design-system';
+import { useI18n } from '../../i18n';
 
 export default function PinnedMessagesScreen() {
   const navigation = useNavigation();
   const insets = useSafeAreaInsets();
   const { horizontalPadding } = useResponsive();
+
+  const { t } = useI18n();
   const { messages } = useChatModule();
   const [pinned, setPinned] = useState([]);
 
@@ -25,7 +28,7 @@ export default function PinnedMessagesScreen() {
 
   return (
     <Screen edges={['top']}>
-      <PageHeader title="Pinned messages" subtitle="Server synchronized" onBack={() => navigation.goBack()} />
+      <PageHeader title={t('chat.pinnedMessages')} subtitle={t('chat.pinnedSubtitle')} onBack={() => navigation.goBack()} />
       <FlatList
         data={pinned}
         keyExtractor={(item) => String(item._id)}

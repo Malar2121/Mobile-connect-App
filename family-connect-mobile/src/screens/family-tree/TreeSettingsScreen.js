@@ -6,6 +6,7 @@ import { useFamilyTreeModuleData } from '../../hooks/useFamilyTreeModuleData';
 import { saveTreeSettings, DEFAULT_TREE_SETTINGS } from '../../utils/familyTreeModuleHelpers';
 import { useTheme } from '../../hooks/useTheme';
 import { useResponsive } from '../../design-system';
+import { useI18n } from '../../i18n';
 
 function SettingRow({ label, description, value, onValueChange, colors, layout }) {
   return (
@@ -34,6 +35,8 @@ export default function TreeSettingsScreen() {
   const navigation = useNavigation();
   const toast = useToast();
   const { colors, layout } = useTheme();
+
+  const { t } = useI18n();
   const { horizontalPadding } = useResponsive();
   const { family, treeSettings, setTreeSettings } = useFamilyTreeModuleData();
   const [draft, setDraft] = useState(treeSettings ?? DEFAULT_TREE_SETTINGS);
@@ -49,9 +52,9 @@ export default function TreeSettingsScreen() {
     try {
       await saveTreeSettings(family._id, draft);
       setTreeSettings(draft);
-      toast.success('Tree settings saved');
+      toast.success(t('tree.settingsSaved'));
     } catch {
-      toast.error('Could not save settings');
+      toast.error(t('tree.settingsSaveFailed'));
     } finally {
       setSaving(false);
     }
@@ -59,47 +62,47 @@ export default function TreeSettingsScreen() {
 
   return (
     <Screen edges={['top']}>
-      <PageHeader title="Tree settings" subtitle="Display & accessibility" onBack={() => navigation.goBack()} />
+      <PageHeader title={t('tree.settingsTitle')} subtitle={t('tree.displayAccessibility')} onBack={() => navigation.goBack()} />
 
       <ScrollView contentContainerStyle={{ paddingBottom: 40 }}>
         <SectionTitle title="Visualization" />
         <SettingRow
-          label="Generation labels"
-          description="Show Founders, Parents, Children headers"
+          label={t('tree.generationLabels')}
+          description={t('tree.generationHint')}
           value={draft.showGenerationLabels}
           onValueChange={() => toggle('showGenerationLabels')}
           colors={colors}
           layout={layout}
         />
         <SettingRow
-          label="Show nicknames"
-          description="Display Dad, Amma, etc. on nodes"
+          label={t('tree.showNicknames')}
+          description={t('tree.nicknameHint')}
           value={draft.showNicknames}
           onValueChange={() => toggle('showNicknames')}
           colors={colors}
           layout={layout}
         />
         <SettingRow
-          label="Animated connections"
-          description="Smooth line animations"
+          label={t('tree.animatedConnections')}
+          description={t('tree.animationHint')}
           value={draft.animateConnections}
           onValueChange={() => toggle('animateConnections')}
           colors={colors}
           layout={layout}
         />
         <SettingRow
-          label="Highlight path"
-          description="Emphasize selected member connections"
+          label={t('tree.highlightPath')}
+          description={t('tree.highlightHint')}
           value={draft.highlightPath}
           onValueChange={() => toggle('highlightPath')}
           colors={colors}
           layout={layout}
         />
 
-        <SectionTitle title="Accessibility" subtitle="Elder mode enhancements" />
+        <SectionTitle title="Accessibility" subtitle={t('tree.elderEnhancements')} />
         <SettingRow
-          label="Large tree nodes"
-          description="Bigger avatars and touch targets"
+          label={t('tree.largeNodes')}
+          description={t('tree.largeNodesHint')}
           value={draft.elderLargeNodes}
           onValueChange={() => toggle('elderLargeNodes')}
           colors={colors}
@@ -110,7 +113,7 @@ export default function TreeSettingsScreen() {
           Dynamic fonts follow your app accessibility settings. VoiceOver labels are on all tree nodes and controls.
         </Text>
 
-        <Button title="Save settings" onPress={handleSave} loading={saving} />
+        <Button title={t('tree.saveSettings')} onPress={handleSave} loading={saving} />
       </ScrollView>
     </Screen>
   );

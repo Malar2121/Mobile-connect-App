@@ -5,16 +5,19 @@ import { PageHeader, Screen } from '../../design-system';
 import { AlbumCard } from '../../components/memories';
 import { useMemoriesModuleData } from '../../hooks/useMemoriesModuleData';
 import { useResponsive } from '../../design-system';
+import { useI18n } from '../../i18n';
 
 export default function SharedAlbumsScreen() {
   const navigation = useNavigation();
   const { horizontalPadding } = useResponsive();
+
+  const { t } = useI18n();
   const { albums } = useMemoriesModuleData();
   const shared = albums.filter((a) => a.isShared);
 
   return (
     <Screen edges={['top']}>
-      <PageHeader title="Shared albums" subtitle="Family collections" onBack={() => navigation.goBack()} />
+      <PageHeader title={t('memories.sharedAlbums')} subtitle={t('memories.familyCollections')} onBack={() => navigation.goBack()} />
       <FlatList
         data={shared}
         keyExtractor={(item) => String(item._id)}

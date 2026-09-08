@@ -85,8 +85,8 @@ export default function LocationSettingsScreen() {
 
         <SectionTitle title={t('map.locationSettings')} />
         <SettingRow
-          label="High precision"
-          description="More accurate GPS"
+          label={t('map.highPrecision')}
+          description={t('map.highPrecisionHint')}
           value={draft.highPrecision && !precisionDisabled}
           onValueChange={() => !precisionDisabled && toggle('highPrecision')}
           disabled={precisionDisabled}
@@ -94,8 +94,8 @@ export default function LocationSettingsScreen() {
           layout={layout}
         />
         <SettingRow
-          label="Background tracking"
-          description="Needs always-on location permission in your device settings"
+          label={t('map.backgroundTracking')}
+          description={t('map.backgroundHint')}
           value={draft.backgroundTracking}
           onValueChange={() => toggle('backgroundTracking')}
           disabled={shareDisabled}
@@ -103,8 +103,8 @@ export default function LocationSettingsScreen() {
           layout={layout}
         />
         <SettingRow
-          label="Battery optimization"
-          description="Reduce update frequency"
+          label={t('map.batteryOptimization')}
+          description={t('map.batteryHint')}
           value={draft.batteryOptimization}
           onValueChange={() => toggle('batteryOptimization')}
           colors={colors}

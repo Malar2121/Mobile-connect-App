@@ -7,11 +7,14 @@ import { PersonCard } from '../../components/family-tree';
 import { useAuth } from '../../contexts/AuthContext';
 import { useTheme } from '../../hooks/useTheme';
 import { useResponsive } from '../../design-system';
+import { useI18n } from '../../i18n';
 
 export default function AncestorsScreen() {
   const navigation = useNavigation();
   const route = useRoute();
   const { user } = useAuth();
+
+  const { t } = useI18n();
   const { colors, layout } = useTheme();
   const { horizontalPadding } = useResponsive();
   const memberId = String(route.params?.memberId ?? user?._id ?? '');
@@ -23,7 +26,7 @@ export default function AncestorsScreen() {
 
   return (
     <Screen edges={['top']}>
-      <PageHeader title="Ancestors" subtitle="Visual lineage upward" onBack={() => navigation.goBack()} />
+      <PageHeader title="Ancestors" subtitle={t('tree.ancestorsSubtitle')} onBack={() => navigation.goBack()} />
 
       <ScrollView contentContainerStyle={{ paddingBottom: 40 }}>
         {lineage.length ? (

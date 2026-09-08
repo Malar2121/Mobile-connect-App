@@ -7,10 +7,13 @@ import { useEventsModuleData } from '../../hooks/useEventsModuleData';
 import { formatEventDateLong } from '../../utils/eventFormat';
 import { useTheme } from '../../hooks/useTheme';
 import { useResponsive } from '../../design-system';
+import { useI18n } from '../../i18n';
 
 export default function CalendarScreen() {
   const navigation = useNavigation();
   const { colors, layout } = useTheme();
+
+  const { t } = useI18n();
   const { horizontalPadding } = useResponsive();
   const { eventsByDay, upcomingEvents, userId } = useEventsModuleData();
 
@@ -76,7 +79,7 @@ export default function CalendarScreen() {
 
   return (
     <Screen edges={['top']}>
-      <PageHeader title="Calendar" subtitle="Month · Week · Day" onBack={() => navigation.goBack()} />
+      <PageHeader title="Calendar" subtitle={t('events.calendarViews')} onBack={() => navigation.goBack()} />
       <ScrollView contentContainerStyle={{ paddingBottom: 32 }}>
         <CalendarHeader
           month={month}
@@ -109,7 +112,7 @@ export default function CalendarScreen() {
               <EventCard event={item} userId={userId} onPress={(e) => navigation.navigate('EventDetails', { id: String(e._id) })} />
             )}
             scrollEnabled={false}
-            ListEmptyComponent={<Text style={{ color: colors.textSecondary }}>No events this week.</Text>}
+            ListEmptyComponent={<Text style={{ color: colors.textSecondary }}>{t('events.noneThisWeek')}</Text>}
           />
         ) : null}
 
@@ -119,7 +122,7 @@ export default function CalendarScreen() {
               {formatEventDateLong(selectedDate)}
             </Text>
             {selectedEvents.length === 0 ? (
-              <Card><Text style={{ color: colors.textSecondary }}>No events on this day.</Text></Card>
+              <Card><Text style={{ color: colors.textSecondary }}>{t('events.noneThisDay')}</Text></Card>
             ) : (
               selectedEvents.map((e) => (
                 <EventCard key={e._id} event={e} userId={userId} onPress={() => navigation.navigate('EventDetails', { id: String(e._id) })} />
@@ -130,7 +133,7 @@ export default function CalendarScreen() {
 
         {viewMode === 'month' && selectedEvents.length > 0 ? (
           <View style={{ marginTop: 16 }}>
-            <Text style={{ color: colors.text, fontFamily: 'Inter_700Bold', marginBottom: 8 }}>Selected day</Text>
+            <Text style={{ color: colors.text, fontFamily: 'Inter_700Bold', marginBottom: 8 }}>{t('events.selectedDay')}</Text>
             {selectedEvents.map((e) => (
               <EventCard key={e._id} event={e} userId={userId} onPress={() => navigation.navigate('EventDetails', { id: String(e._id) })} compact />
             ))}

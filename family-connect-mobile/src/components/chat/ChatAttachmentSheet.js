@@ -4,9 +4,10 @@ import { BlurView } from 'expo-blur';
 import { Ionicons } from '@expo/vector-icons';
 import { chatTypography } from '../../constants/chatTheme';
 import { useTheme } from '../../hooks/useTheme';
+import { useI18n } from '../../i18n';
 
 const OPTIONS = [
-  { id: 'gallery', icon: 'images-outline', label: 'Photo & Video', color: '#8B5CF6' },
+  { id: 'gallery', icon: 'images-outline', label: t('chat.photoVideo'), color: '#8B5CF6' },
   { id: 'camera', icon: 'camera-outline', label: 'Camera', color: '#EC4899' },
   { id: 'document', icon: 'document-outline', label: 'Document', color: '#3B82F6' },
   { id: 'gif', icon: 'happy-outline', label: 'GIF', color: '#F59E0B' },
@@ -14,6 +15,8 @@ const OPTIONS = [
 
 export function ChatAttachmentSheet({ visible, onClose, onSelect }) {
   const { colors, isDark } = useTheme();
+
+  const { t } = useI18n();
 
   return (
     <Modal visible={visible} transparent animationType="fade" onRequestClose={onClose}>

@@ -28,10 +28,13 @@ import { getFamilyMemories } from '../../services/memoryService';
 import { formatEventDateLong, getMyRsvpStatus } from '../../utils/eventFormat';
 import { getEventCountdown, isEventPast } from '../../utils/eventModuleHelpers';
 import { useResponsive } from '../../design-system';
+import { useI18n } from '../../i18n';
 
 export default function EventDetailsScreen({ route, navigation }) {
   const { id } = route.params ?? {};
   const { colors, layout, radii } = useTheme();
+
+  const { t } = useI18n();
   const { horizontalPadding } = useResponsive();
   const toast = useToast();
   const dialog = useDialog();
@@ -89,7 +92,7 @@ export default function EventDetailsScreen({ route, navigation }) {
     try {
       await respondToEvent(id, status);
       await load();
-      toast.success('RSVP updated');
+      toast.success(t('events.rsvpUpdated'));
     } catch (e) {
       toast.error(e.message || 'RSVP failed');
     } finally {
@@ -117,7 +120,7 @@ export default function EventDetailsScreen({ route, navigation }) {
     setDeleting(true);
     try {
       await deleteEvent(id);
-      toast.success('Event deleted');
+      toast.success(t('events.deleted'));
       navigation.goBack();
     } catch (e) {
       toast.error(e.message || 'Delete failed');
@@ -138,7 +141,7 @@ export default function EventDetailsScreen({ route, navigation }) {
     return (
       <Screen edges={['top']}>
         <PageHeader title="Event" onBack={() => navigation.goBack()} />
-        <EmptyState icon="calendar-outline" title="Event not found" actionLabel="Go back" onAction={() => navigation.goBack()} />
+        <EmptyState icon="calendar-outline" title={t('events.notFound')} actionLabel="Go back" onAction={() => navigation.goBack()} />
       </Screen>
     );
   }
@@ -161,7 +164,7 @@ export default function EventDetailsScreen({ route, navigation }) {
           {event.description ? (
             <Text style={{ color: colors.textSecondary, fontSize: 15 * layout.fontScale, lineHeight: 22 }}>{event.description}</Text>
           ) : (
-            <Text style={{ color: colors.textTertiary, fontStyle: 'italic' }}>No description</Text>
+            <Text style={{ color: colors.textTertiary, fontStyle: 'italic' }}>{t('events.noDescription')}</Text>
           )}
         </Card>
 
@@ -176,9 +179,9 @@ export default function EventDetailsScreen({ route, navigation }) {
 
         {mapQuery ? (
           <Card style={{ marginTop: 12 }}>
-            <Text style={{ color: colors.textSecondary, fontSize: 13, marginBottom: 8 }}>Map preview</Text>
+            <Text style={{ color: colors.textSecondary, fontSize: 13, marginBottom: 8 }}>{t('events.mapPreview')}</Text>
             <Text style={{ color: colors.text, fontFamily: 'Inter_600SemiBold' }}>{event.location}</Text>
-            <Button title="Open in maps" variant="secondary" onPress={() => Linking.openURL(`https://maps.google.com/?q=${mapQuery}`)} style={{ marginTop: 12 }} />
+            <Button title={t('events.openInMaps')} variant="secondary" onPress={() => Linking.openURL(`https://maps.google.com/?q=${mapQuery}`)} style={{ marginTop: 12 }} />
           </Card>
         ) : null}
 
@@ -188,7 +191,7 @@ export default function EventDetailsScreen({ route, navigation }) {
 
         {!past ? (
           <>
-            <SectionTitle title="Your RSVP" style={{ marginTop: 20 }} />
+            <SectionTitle title={t('events.yourRsvp')} style={{ marginTop: 20 }} />
             <Badge label={myStatus} variant={myStatus === 'accepted' ? 'success' : myStatus === 'declined' ? 'danger' : 'default'} style={{ marginBottom: 12 }} />
             <Button title="Accept" onPress={() => respond('accepted')} loading={submitting === 'accepted'} disabled={Boolean(submitting)} />
             <Button title="Maybe" variant="secondary" onPress={() => respond('maybe')} loading={submitting === 'maybe'} style={{ marginTop: 8 }} disabled={Boolean(submitting)} />
@@ -196,7 +199,7 @@ export default function EventDetailsScreen({ route, navigation }) {
           </>
         ) : null}
 
-        <SectionTitle title="Availability poll" subtitle="Doodle-style family scheduling" style={{ marginTop: 20 }} />
+        <SectionTitle title={t('events.availabilityPoll')} subtitle={t('events.pollSubtitle')} style={{ marginTop: 20 }} />
         {pollData ? (
           <PollCard
             poll={pollData.poll}
@@ -206,9 +209,9 @@ export default function EventDetailsScreen({ route, navigation }) {
           />
         ) : (
           <Card>
-            <Text style={{ color: colors.textSecondary }}>No poll for this event yet.</Text>
+            <Text style={{ color: colors.textSecondary }}>{t('events.noPoll')}</Text>
             {isHost ? (
-              <Button title="Create availability poll" onPress={() => navigation.navigate('EventPoll', { eventId: id })} style={{ marginTop: 12 }} />
+              <Button title={t('events.createPoll')} onPress={() => navigation.navigate('EventPoll', { eventId: id })} style={{ marginTop: 12 }} />
             ) : null}
           </Card>
         )}
@@ -238,7 +241,7 @@ export default function EventDetailsScreen({ route, navigation }) {
                 color: colors.text,
                 fontFamily: 'Inter_400Regular',
               }}
-              placeholder="Add a comment..."
+              placeholder={t('events.addNote')}
               placeholderTextColor={colors.textTertiary}
               value={newComment}
               onChangeText={setNewComment}
@@ -248,13 +251,13 @@ export default function EventDetailsScreen({ route, navigation }) {
         </View>
 
         <View style={{ marginTop: 20, gap: 10 }}>
-          <Button title="RSVP management" variant="secondary" onPress={() => navigation.navigate('RSVPManagement', { id })} />
+          <Button title={t('events.rsvpManagement')} variant="secondary" onPress={() => navigation.navigate('RSVPManagement', { id })} />
           <Button title="Reminders" variant="secondary" onPress={() => navigation.navigate('EventReminders', { eventId: id })} />
           <Button title="Attachments" variant="secondary" onPress={() => navigation.navigate('EventAttachments', { eventId: id })} />
           {isHost ? (
             <>
-              <Button title="Edit event" variant="secondary" onPress={() => navigation.navigate('EditEvent', { id })} />
-              <Button title="Delete event" variant="danger" onPress={handleDelete} loading={deleting} />
+              <Button title={t('events.editEvent')} variant="secondary" onPress={() => navigation.navigate('EditEvent', { id })} />
+              <Button title={t('events.deleteEvent')} variant="danger" onPress={handleDelete} loading={deleting} />
             </>
           ) : null}
         </View>

@@ -4,11 +4,14 @@ import { Ionicons } from '@expo/vector-icons';
 import { Audio } from 'expo-av';
 import { useTheme } from '../../hooks/useTheme';
 import { formatDuration } from '../../utils/chatModuleHelpers';
+import { useI18n } from '../../i18n';
 
 const SPEEDS = [1, 1.5, 2];
 
 function VoiceBubbleComponent({ uri, duration, isMine }) {
   const { colors } = useTheme();
+
+  const { t } = useI18n();
   const soundRef = useRef(null);
   const [playing, setPlaying] = useState(false);
   const [position, setPosition] = useState(0);
@@ -89,7 +92,7 @@ function VoiceBubbleComponent({ uri, duration, isMine }) {
       <Text style={{ color: isMine ? '#fff' : colors.textSecondary, fontSize: 11, minWidth: 36 }}>
         {formatDuration(playing ? position : total)}
       </Text>
-      <Pressable onPress={cycleSpeed} accessibilityLabel="Change playback speed">
+      <Pressable onPress={cycleSpeed} accessibilityLabel={t('chat.playbackSpeed')}>
         <Text style={{ color: isMine ? '#E0E7FF' : colors.primary, fontSize: 11, fontFamily: 'Inter_600SemiBold' }}>
           {SPEEDS[speedIdx]}x
         </Text>

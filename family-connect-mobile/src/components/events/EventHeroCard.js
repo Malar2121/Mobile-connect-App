@@ -6,16 +6,19 @@ import { CountdownCard } from './CountdownCard';
 import { useTheme } from '../../hooks/useTheme';
 import { formatEventDateLong } from '../../utils/eventFormat';
 import { getEventCategory } from '../../utils/eventModuleHelpers';
+import { useI18n } from '../../i18n';
 
 function EventHeroCardComponent({ event, countdown, onPress }) {
   const { colors, layout, radii, isDark } = useTheme();
+
+  const { t } = useI18n();
   const category = getEventCategory(event);
   const timeLine = [event?.startTime, event?.endTime].filter(Boolean).join(' – ');
 
   return (
     <View style={[styles.wrap, { borderRadius: radii['2xl'], overflow: 'hidden' }]}>
       {event?.image ? (
-        <Image source={{ uri: event.image }} style={styles.image} accessibilityLabel="Event cover" />
+        <Image source={{ uri: event.image }} style={styles.image} accessibilityLabel={t('events.eventCover')} />
       ) : (
         <LinearGradient
           colors={isDark ? ['#1A1D3D', '#4F56D9'] : ['#EEF0FF', '#C7D2FE']}
@@ -41,7 +44,7 @@ function EventHeroCardComponent({ event, countdown, onPress }) {
         </Text>
         {countdown ? (
           <View style={{ marginTop: 12 }}>
-            <CountdownCard label="Starts in" value={countdown} compact light />
+            <CountdownCard label={t('events.startsIn')} value={countdown} compact light />
           </View>
         ) : null}
       </LinearGradient>

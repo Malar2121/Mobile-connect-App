@@ -1,6 +1,7 @@
 import React, { memo } from 'react';
 import { StyleSheet, Text, View } from 'react-native';
 import { useTheme } from '../../hooks/useTheme';
+import { useI18n } from '../../i18n';
 
 const LEGEND = [
   { color: '#6366F1', label: 'Parent' },
@@ -12,10 +13,12 @@ const LEGEND = [
 function TreeLegendComponent() {
   const { colors, layout, radii } = useTheme();
 
+  const { t } = useI18n();
+
   return (
     <View
       style={[styles.wrap, { backgroundColor: colors.surface, borderColor: colors.border, borderRadius: radii.lg }]}
-      accessibilityLabel="Relationship legend"
+      accessibilityLabel={t('tree.legend')}
     >
       {LEGEND.map((item) => (
         <View key={item.label} style={styles.item}>

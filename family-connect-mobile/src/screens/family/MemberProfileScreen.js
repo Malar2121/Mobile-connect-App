@@ -19,6 +19,7 @@ import { formatNotificationTime, getNotificationIcon } from '../../utils/notific
 import { useTheme } from '../../hooks/useTheme';
 import { useResponsive, Button, useToast } from '../../design-system';
 import { updateMemberRole, updateMemberType } from '../../services/familyService';
+import { useI18n } from '../../i18n';
 
 const MEMBER_TYPE_LABEL = { adult: 'Adult', child: 'Child', elder: 'Elder' };
 
@@ -27,6 +28,8 @@ export default function MemberProfileScreen() {
   const route = useRoute();
   const toast = useToast();
   const { colors, layout, radii } = useTheme();
+
+  const { t } = useI18n();
   const { horizontalPadding } = useResponsive();
   const memberId = route.params?.memberId;
   const { members, memories, events, messages, notifications, loading, family, canManage, refresh } = useFamilyModuleData();
@@ -73,7 +76,7 @@ export default function MemberProfileScreen() {
     return (
       <Screen edges={['top']}>
         <PageHeader title="Member" onBack={() => navigation.goBack()} />
-        <Text style={{ color: colors.textSecondary, padding: horizontalPadding }}>Member not found.</Text>
+        <Text style={{ color: colors.textSecondary, padding: horizontalPadding }}>{t('family.memberNotFound')}</Text>
       </Screen>
     );
   }
@@ -85,7 +88,7 @@ export default function MemberProfileScreen() {
 
   return (
     <Screen edges={['top']}>
-      <PageHeader title={member.fullName} subtitle="Member profile" onBack={() => navigation.goBack()} />
+      <PageHeader title={member.fullName} subtitle={t('family.memberProfile')} onBack={() => navigation.goBack()} />
       <ScrollView contentContainerStyle={{ paddingBottom: 32 }} showsVerticalScrollIndicator={false}>
         <View style={styles.hero}>
           <Avatar uri={member.avatar} name={member.fullName} size={layout.avatarSize + 36} />
@@ -108,10 +111,10 @@ export default function MemberProfileScreen() {
         </View>
 
         <View >
-          <SectionTitle title="Shared memories" subtitle={`${memberMemories.length} recent uploads`} />
+          <SectionTitle title={t('family.sharedMemories')} subtitle={`${memberMemories.length} recent uploads`} />
           {memberMemories.length === 0 ? (
             <Card>
-              <Text style={{ color: colors.textSecondary }}>No shared memories yet.</Text>
+              <Text style={{ color: colors.textSecondary }}>{t('family.noSharedMemories')}</Text>
             </Card>
           ) : (
             memberMemories.map((m) => (
@@ -126,10 +129,10 @@ export default function MemberProfileScreen() {
             ))
           )}
 
-          <SectionTitle title="Recent activity" style={{ marginTop: 20 }} />
+          <SectionTitle title={t('family.recentActivity')} style={{ marginTop: 20 }} />
           {recentActivity.length === 0 ? (
             <Card>
-              <Text style={{ color: colors.textSecondary }}>No recent activity recorded.</Text>
+              <Text style={{ color: colors.textSecondary }}>{t('family.noRecentActivity')}</Text>
             </Card>
           ) : (
             recentActivity.map((item, i) => (
@@ -137,16 +140,16 @@ export default function MemberProfileScreen() {
             ))
           )}
 
-          <SectionTitle title="Privacy" subtitle="Member visibility settings" style={{ marginTop: 20 }} />
+          <SectionTitle title="Privacy" subtitle={t('family.visibilitySettings')} style={{ marginTop: 20 }} />
           <Card>
-            <PrivacyRow icon="location-outline" label="Location sharing" value={member.hasLocation ? 'Enabled' : 'Not shared'} colors={colors} layout={layout} />
-            <PrivacyRow icon="images-outline" label="Album contributions" value={`${stats?.memoriesShared ?? 0} albums`} colors={colors} layout={layout} />
+            <PrivacyRow icon="location-outline" label={t('family.locationSharing')} value={member.hasLocation ? 'Enabled' : 'Not shared'} colors={colors} layout={layout} />
+            <PrivacyRow icon="images-outline" label={t('family.albumContributions')} value={`${stats?.memoriesShared ?? 0} albums`} colors={colors} layout={layout} />
             <PrivacyRow icon="chatbubble-outline" label="Chat" value="Family chat enabled" colors={colors} layout={layout} />
           </Card>
 
           {canManage && (
             <>
-              <SectionTitle title="Administration" subtitle="Manage member role" style={{ marginTop: 20 }} />
+              <SectionTitle title="Administration" subtitle={t('family.manageRole')} style={{ marginTop: 20 }} />
               <Card>
                 <Text style={{ color: colors.textSecondary, fontSize: 13 * layout.fontScale, marginBottom: 8 }}>
                   Current Role: {member.displayRole}
@@ -172,8 +175,8 @@ export default function MemberProfileScreen() {
               </Card>
 
               <SectionTitle
-                title="Member type"
-                subtitle="Child accounts get the kids UI and tracking; elders get the simplified UI"
+                title={t('family.memberType')}
+                subtitle={t('family.memberTypeHint')}
                 style={{ marginTop: 20 }}
               />
               <Card>

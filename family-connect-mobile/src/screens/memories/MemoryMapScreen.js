@@ -8,10 +8,13 @@ import { useMemoriesModuleData } from '../../hooks/useMemoriesModuleData';
 import { loadMemoryMeta } from '../../utils/memoryModuleHelpers';
 import { useTheme } from '../../hooks/useTheme';
 import { useResponsive } from '../../design-system';
+import { useI18n } from '../../i18n';
 
 export default function MemoryMapScreen() {
   const navigation = useNavigation();
   const { colors, layout } = useTheme();
+
+  const { t } = useI18n();
   const { horizontalPadding } = useResponsive();
   const { memories } = useMemoriesModuleData();
 
@@ -38,7 +41,7 @@ export default function MemoryMapScreen() {
 
   return (
     <Screen edges={['top']}>
-      <PageHeader title="Memory map" subtitle="Places that matter" onBack={() => navigation.goBack()} />
+      <PageHeader title={t('memories.map')} subtitle={t('memories.mapSubtitle')} onBack={() => navigation.goBack()} />
       <ScrollView contentContainerStyle={{ paddingBottom: 32 }}>
         <View style={{ height: 280, marginHorizontal: horizontalPadding, borderRadius: 16, overflow: 'hidden' }}>
           {mappedMemories.length > 0 ? (
@@ -54,7 +57,7 @@ export default function MemoryMapScreen() {
             </MapView>
           ) : (
             <View style={{ flex: 1, backgroundColor: colors.surface, justifyContent: 'center', alignItems: 'center' }}>
-              <Text style={{ color: colors.textSecondary }}>No geo-tagged memories yet.</Text>
+              <Text style={{ color: colors.textSecondary }}>{t('memories.noGeoTagged')}</Text>
             </View>
           )}
         </View>

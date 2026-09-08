@@ -7,6 +7,7 @@ import { Avatar, GlassCard } from '../../design-system';
 import { MemberAvatarStack } from './MemberAvatarStack';
 import { useTheme } from '../../hooks/useTheme';
 import { useResponsive } from '../../design-system';
+import { useI18n } from '../../i18n';
 
 function FamilyHeroCardComponent({
   familyName,
@@ -21,6 +22,8 @@ function FamilyHeroCardComponent({
   onSettings,
 }) {
   const { colors, isDark, gradients, layout, radii, shadows } = useTheme();
+
+  const { t } = useI18n();
   const { horizontalPadding, isTablet } = useResponsive();
 
   const createdLabel = createdAt
@@ -32,7 +35,7 @@ function FamilyHeroCardComponent({
       entering={FadeInDown.duration(480).springify()}
       style={{ paddingHorizontal: horizontalPadding, marginBottom: layout.sectionGap }}
       accessibilityRole="summary"
-      accessibilityLabel={`${familyName} family overview. ${memberCount} members, ${onlineCount} online.`}
+      accessibilityLabel={t('family.heroA11y', { family: familyName, members: memberCount, online: onlineCount })}
     >
       <View style={[shadows.lg, { borderRadius: radii['2xl'], overflow: 'hidden' }]}>
         <LinearGradient
@@ -84,7 +87,7 @@ function FamilyHeroCardComponent({
                 <StatPill colors={colors} layout={layout} value={memberCount} label="Members" />
                 <StatPill colors={colors} layout={layout} value={onlineCount} label="Online" accent={colors.success} />
                 {inviteCode ? (
-                  <StatPill colors={colors} layout={layout} value={inviteCode} label="Invite code" accent={colors.primary} mono />
+                  <StatPill colors={colors} layout={layout} value={inviteCode} label={t('profile.inviteCode')} accent={colors.primary} mono />
                 ) : null}
                 {pendingRequests > 0 ? (
                   <StatPill colors={colors} layout={layout} value={pendingRequests} label="Requests" accent={colors.warning} />

@@ -27,11 +27,14 @@ import { incrementMemoryView, loadMemoryMeta } from '../../utils/memoryModuleHel
 import { useFamily } from '../../contexts/FamilyContext';
 import { useResponsive } from '../../design-system';
 import { useTheme } from '../../hooks/useTheme';
+import { useI18n } from '../../i18n';
 
 export default function MemoryDetailsScreen({ route, navigation }) {
   const { id } = route.params ?? {};
   const toast = useToast();
   const { user } = useAuth();
+
+  const { t } = useI18n();
   const { family } = useFamily();
   const { horizontalPadding } = useResponsive();
   const { colors, radii } = useTheme();
@@ -131,9 +134,9 @@ export default function MemoryDetailsScreen({ route, navigation }) {
           </Card>
         ) : null}
 
-        <SectionTitle title="Tagged members" style={{ marginTop: 16 }} />
+        <SectionTitle title={t('memories.taggedMembers')} style={{ marginTop: 16 }} />
         {tags.length === 0 ? (
-          <Text style={{ color: colors.textSecondary }}>No members tagged.</Text>
+          <Text style={{ color: colors.textSecondary }}>{t('memories.noTagged')}</Text>
         ) : (
           <View style={{ flexDirection: 'row', flexWrap: 'wrap', gap: 10 }}>
             {tags.map((t) => (
@@ -175,7 +178,7 @@ export default function MemoryDetailsScreen({ route, navigation }) {
                 color: colors.text,
                 fontFamily: 'Inter_400Regular',
               }}
-              placeholder="Add a comment..."
+              placeholder={t('memories.addNote')}
               placeholderTextColor={colors.textTertiary}
               value={newComment}
               onChangeText={setNewComment}
@@ -185,7 +188,7 @@ export default function MemoryDetailsScreen({ route, navigation }) {
         </View>
 
         {canDeleteMemory(memory, user) ? (
-          <Button title="Delete memory" variant="danger" onPress={handleDelete} style={{ marginTop: 20 }} />
+          <Button title={t('memories.deleteMemory')} variant="danger" onPress={handleDelete} style={{ marginTop: 20 }} />
         ) : null}
       </ScrollView>
     </Screen>

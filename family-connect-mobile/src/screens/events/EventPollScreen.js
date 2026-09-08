@@ -127,7 +127,7 @@ export default function EventPollScreen() {
             </Text>
             <TextField label={t('poll.question')} value={question} onChangeText={setQuestion} />
             <TextField label={t('poll.optionALabel')} value={label1} onChangeText={setLabel1} />
-            <TextField label={t('poll.optionADate')} value={option1} onChangeText={setOption1} placeholder="2026-07-15T18:00" hint="ISO format or parseable date" />
+            <TextField label={t('poll.optionADate')} value={option1} onChangeText={setOption1} placeholder="2026-07-15T18:00" hint={t('poll.dateHint')} />
             <TextField label={t('poll.optionBLabel')} value={label2} onChangeText={setLabel2} />
             <TextField label={t('poll.optionBDate')} value={option2} onChangeText={setOption2} placeholder="2026-07-16T18:00" />
             <Button title={t('poll.createPoll')} onPress={handleCreate} loading={creating} style={{ marginTop: 16 }} />

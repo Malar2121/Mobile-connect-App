@@ -117,7 +117,7 @@ export default function MemoriesHomeScreen() {
           onPress={() => navigate('UploadMemory')}
           bottom={20 + insets.bottom + 52}
           icon={<Ionicons name="cloud-upload-outline" size={26} color="#fff" />}
-          accessibilityLabel="Upload memory"
+          accessibilityLabel={t('memories.uploadMemory')}
         />
       ) : null}
 

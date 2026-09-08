@@ -12,10 +12,13 @@ import {
   FamilyStatCard,
 } from '../../components/family';
 import { useResponsive } from '../../design-system';
+import { useI18n } from '../../i18n';
 
 export default function FamilyHomeScreen() {
   const navigation = useNavigation();
   const { horizontalPadding } = useResponsive();
+
+  const { t } = useI18n();
   const {
     family,
     members,
@@ -48,7 +51,7 @@ export default function FamilyHomeScreen() {
   if (familyLoading && !family) {
     return (
       <Screen edges={['top']}>
-        <PageHeader title="Family" subtitle="Your family home" large onBack={() => navigation.goBack()} />
+        <PageHeader title="Family" subtitle={t('family.homeSubtitle')} large onBack={() => navigation.goBack()} />
         <Loader />
       </Screen>
     );
@@ -57,7 +60,7 @@ export default function FamilyHomeScreen() {
   if (noFamily) {
     return (
       <Screen edges={['top']}>
-        <PageHeader title="Family" subtitle="Get started" large showBack onBack={() => navigation.goBack()} />
+        <PageHeader title="Family" subtitle={t('family.getStarted')} large showBack onBack={() => navigation.goBack()} />
         <EmptyFamilyState
           onCreate={() => navigation.navigate('CreateFamily')}
           onJoin={() => navigation.navigate('JoinFamily')}
@@ -97,7 +100,7 @@ export default function FamilyHomeScreen() {
         <View style={[styles.statsRow, { paddingHorizontal: horizontalPadding }]}>
           <FamilyStatCard label="Memories" value={analytics.totalMemories} icon="images-outline" onPress={() => navigation.getParent()?.navigate('Memories')} />
           <FamilyStatCard label="Events" value={analytics.totalEvents} icon="calendar-outline" onPress={() => navigation.getParent()?.navigate('Events')} />
-          <FamilyStatCard label="This week" value={analytics.activityThisWeek} icon="pulse-outline" accent="#10B981" />
+          <FamilyStatCard label={t('family.thisWeek')} value={analytics.activityThisWeek} icon="pulse-outline" accent="#10B981" />
         </View>
 
         <FamilyQuickActions onNavigate={navigate} canManage={canManage} />
@@ -107,9 +110,9 @@ export default function FamilyHomeScreen() {
         ) : (
           <>
             <View style={{ paddingHorizontal: horizontalPadding }}>
-              <SectionTitle title="Participation" subtitle="Real activity from your family" />
+              <SectionTitle title="Participation" subtitle={t('family.realActivity')} />
               <AnalyticsCard
-                title="Family analytics"
+                title={t('family.analytics')}
                 highlightMember={analytics.mostActiveMember}
                 highlightAvatar={analytics.mostActiveAvatar}
                 metrics={[
@@ -120,7 +123,7 @@ export default function FamilyHomeScreen() {
                 ]}
               />
             </View>
-            <FamilyTimeline items={timeline} subtitle="Joins, memories, and milestones" />
+            <FamilyTimeline items={timeline} subtitle={t('family.timelineSubtitle')} />
           </>
         )}
       </ScrollView>

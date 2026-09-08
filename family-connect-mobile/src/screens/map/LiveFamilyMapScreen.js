@@ -18,9 +18,10 @@ import { useMapModule } from '../../contexts/MapModuleContext';
 import { MemberMarker, MapSkeleton, TravelStatsCard, SOSButton } from '../../components/map';
 import { useTheme } from '../../hooks/useTheme';
 import { MAP_DARK_STYLE } from '../../utils/locationHelpers';
+import { useI18n } from '../../i18n';
 
 const SHORTCUTS = [
-  { id: 'zones', label: 'Safe zones', icon: 'shield', screen: 'SafeZones' },
+  { id: 'zones', label: t('map.safeZones'), icon: 'shield', screen: 'SafeZones' },
   { id: 'sos', label: 'SOS', icon: 'warning', screen: 'SOSScreen' },
   { id: 'trips', label: 'Trips', icon: 'car', screen: 'TripHistory' },
   { id: 'settings', label: 'Settings', icon: 'settings', screen: 'LocationSettings' },
@@ -29,6 +30,8 @@ const SHORTCUTS = [
 export default function LiveFamilyMapScreen() {
   const navigation = useNavigation();
   const { colors, layout, isDark } = useTheme();
+
+  const { t } = useI18n();
   const mapRef = useRef(null);
   const [selected, setSelected] = useState(null);
   const [regionFitted, setRegionFitted] = useState(false);
@@ -90,9 +93,9 @@ export default function LiveFamilyMapScreen() {
     return (
       <SafeAreaView style={[styles.safe, { backgroundColor: colors.background }]} edges={['top']}>
         <View style={{ padding: layout.sectionGap }}>
-          <Text style={[styles.title, { color: colors.text, fontSize: titleSize }]}>Family safety map</Text>
+          <Text style={[styles.title, { color: colors.text, fontSize: titleSize }]}>{t('map.safetyMap')}</Text>
           <Card style={{ marginTop: layout.sectionGap }}>
-            <Text style={{ color: colors.text, fontWeight: '700' }}>Join a family to see the map</Text>
+            <Text style={{ color: colors.text, fontWeight: '700' }}>{t('map.joinToSee')}</Text>
           </Card>
         </View>
       </SafeAreaView>
@@ -111,19 +114,19 @@ export default function LiveFamilyMapScreen() {
       </ScrollView>
 
       <View style={[styles.header, { paddingHorizontal: layout.sectionGap }]}>
-        <Text style={[styles.title, { color: colors.text, fontSize: titleSize }]}>Live family map</Text>
+        <Text style={[styles.title, { color: colors.text, fontSize: titleSize }]}>{t('map.liveMap')}</Text>
         <Text style={{ color: colors.textSecondary, marginTop: 4, fontSize: 13 * layout.fontScale }}>
           {locations.length} sharing · {safeZones.length} safe zones
         </Text>
 
         {permissionDenied ? (
-          <Text style={{ color: colors.error, marginTop: 8, fontSize: 13 }}>Enable location permission in settings.</Text>
+          <Text style={{ color: colors.error, marginTop: 8, fontSize: 13 }}>{t('map.enablePermission')}</Text>
         ) : null}
 
         {!isMinor ? (
           <View style={[styles.shareRow, { backgroundColor: colors.card, borderColor: colors.border, marginTop: 10, padding: isElder ? 16 : 12 }]}>
             <View style={{ flex: 1 }}>
-              <Text style={{ color: colors.text, fontWeight: '700', fontSize: 15 * layout.fontScale }}>Share my location</Text>
+              <Text style={{ color: colors.text, fontWeight: '700', fontSize: 15 * layout.fontScale }}>{t('map.shareMyLocation')}</Text>
               <Text style={{ color: colors.textSecondary, marginTop: 4, fontSize: 12 }}>Foreground · ~30s updates</Text>
             </View>
             {sharingBusy ? <ActivityIndicator color={colors.primary} /> : (

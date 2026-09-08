@@ -25,6 +25,7 @@ import { useMemoriesModuleData } from '../../hooks/useMemoriesModuleData';
 import { useAccessibilityPolicy } from '../../hooks/useAccessibilityPolicy';
 import { filterPhotos, filterVideos } from '../../utils/memoryModuleHelpers';
 import { getLikeCount, getUploader } from '../../utils/memoryHelpers';
+import { useI18n } from '../../i18n';
 
 function MemoryGridItem({ memory, size, onPress, colors, layout, isElder, isDark }) {
   const uploader = getUploader(memory);
@@ -79,6 +80,8 @@ function MemoryGridItem({ memory, size, onPress, colors, layout, isElder, isDark
 export default function MemoryGalleryScreen({ navigation, route }) {
   const insets = useSafeAreaInsets();
   const { colors, layout, uiMode, isDark } = useTheme();
+
+  const { t } = useI18n();
   const { horizontalPadding } = useResponsive();
   const { width } = useWindowDimensions();
   const filter = route.params?.filter;
@@ -110,7 +113,7 @@ export default function MemoryGalleryScreen({ navigation, route }) {
   if (loading && !refreshing) {
     return (
       <Screen edges={['top']}>
-        <PageHeader title={title} subtitle="Loading…" large onBack={() => navigation.goBack()} />
+        <PageHeader title={title} subtitle={t('common.loadingEllipsis')} large onBack={() => navigation.goBack()} />
         <Skeleton variant="list-row" count={4} />
       </Screen>
     );
@@ -154,7 +157,7 @@ export default function MemoryGalleryScreen({ navigation, route }) {
         ListEmptyComponent={
           <EmptyState
             icon="images-outline"
-            title="No memories yet"
+            title={t('memories.noneYet')}
             description={isMinor ? 'Family photos and videos will appear here.' : 'Share the first family moment — tap + to upload.'}
             actionLabel={isMinor ? undefined : 'Upload memory'}
             onAction={isMinor ? undefined : () => navigation.navigate('UploadMemory')}
@@ -177,7 +180,7 @@ export default function MemoryGalleryScreen({ navigation, route }) {
       {!isMinor ? (
         <FAB
           onPress={() => navigation.navigate('UploadMemory')}
-          accessibilityLabel="Upload memory"
+          accessibilityLabel={t('memories.uploadMemory')}
           bottom={fabBottom}
           icon={<Ionicons name="cloud-upload-outline" size={26} color="#fff" />}
         />

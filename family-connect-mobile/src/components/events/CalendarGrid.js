@@ -1,12 +1,14 @@
 import React, { memo, useMemo } from 'react';
 import { Pressable, StyleSheet, Text, View } from 'react-native';
 import { useTheme } from '../../hooks/useTheme';
+import { useI18n } from '../../i18n';
 import { getEventCategory } from '../../utils/eventModuleHelpers';
 
 const WEEKDAYS = ['Sun', 'Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat'];
 
 function CalendarGridComponent({ month, year, selectedDate, eventsByDay, onSelectDate, onEventPress }) {
   const { colors, layout, radii } = useTheme();
+  const { t } = useI18n();
   const today = new Date();
   const todayKey = `${today.getFullYear()}-${today.getMonth()}-${today.getDate()}`;
 
@@ -50,7 +52,7 @@ function CalendarGridComponent({ month, year, selectedDate, eventsByDay, onSelec
                 isSelected && { backgroundColor: colors.primarySubtle, borderRadius: radii.md },
                 isToday && !isSelected && { borderWidth: 1, borderColor: colors.primary, borderRadius: radii.md },
               ]}
-              accessibilityLabel={`${cell.day}, ${cell.events.length} events`}
+              accessibilityLabel={t('events.dayEventsA11y', { day: cell.day, count: cell.events.length })}
             >
               <Text
                 style={{

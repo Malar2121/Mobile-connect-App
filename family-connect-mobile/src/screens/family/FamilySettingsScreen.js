@@ -8,12 +8,15 @@ import { loadFamilyMotto, saveFamilyMotto } from '../../utils/familyModuleHelper
 import { useFamily } from '../../contexts/FamilyContext';
 import { useTheme } from '../../hooks/useTheme';
 import { useResponsive } from '../../design-system';
+import { useI18n } from '../../i18n';
 
 export default function FamilySettingsScreen() {
   const navigation = useNavigation();
   const toast = useToast();
   const dialog = useDialog();
   const { colors, layout } = useTheme();
+
+  const { t } = useI18n();
   const { horizontalPadding } = useResponsive();
   const { family, motto, setMotto, canManage, isOwner, familyId } = useFamilyModuleData();
   const { refreshFamily } = useFamily();
@@ -43,7 +46,7 @@ export default function FamilySettingsScreen() {
         await updateFamily({ name: localName.trim() });
         await refreshFamily();
       }
-      toast.success('Settings saved');
+      toast.success(t('familySettings.saved'));
     } catch (e) {
       toast.error(e.message || 'Could not save settings');
     } finally {
@@ -64,7 +67,7 @@ export default function FamilySettingsScreen() {
     try {
       await leaveFamily();
       await refreshFamily();
-      toast.success('You left the family');
+      toast.success(t('familySettings.left'));
       (navigation.getParent() ?? navigation).navigate('ProfileMain');
     } catch (e) {
       toast.error(e.message || 'Could not leave family');
@@ -75,25 +78,25 @@ export default function FamilySettingsScreen() {
 
   return (
     <Screen edges={['top']}>
-      <PageHeader title="Family settings" subtitle={family?.name} onBack={() => navigation.goBack()} />
+      <PageHeader title={t('familySettings.title')} subtitle={family?.name} onBack={() => navigation.goBack()} />
       <ScrollView contentContainerStyle={{ paddingBottom: 32 }}>
         {canManage ? (
           <Card>
             <TextField
-              label="Family name"
+              label={t('familySettings.name')}
               value={localName}
               onChangeText={setLocalName}
-              placeholder="e.g. The Smith Family"
+              placeholder={t('family.namePlaceholder')}
             />
             <TextField
-              label="Family motto (optional)"
+              label={t('familySettings.motto')}
               value={localMotto}
               onChangeText={setLocalMotto}
-              placeholder="Together we grow stronger"
+              placeholder={t('familySettings.mottoExample')}
               multiline
               style={{ marginTop: 12 }}
             />
-            <Button title="Save changes" onPress={saveSettings} loading={saving} style={{ marginTop: 16 }} />
+            <Button title={t('familySettings.save')} onPress={saveSettings} loading={saving} style={{ marginTop: 16 }} />
           </Card>
         ) : (
           <Card>
@@ -113,13 +116,13 @@ export default function FamilySettingsScreen() {
 
         <Card style={{ marginTop: 12 }}>
           <Text style={{ color: colors.text, fontFamily: 'Inter_600SemiBold', marginBottom: 12 }}>Administration</Text>
-          <Button title="Permissions & privacy" variant="secondary" onPress={() => navigation.navigate('FamilyPermissions')} />
-          <Button title="Join requests" variant="secondary" onPress={() => navigation.navigate('JoinRequests')} style={{ marginTop: 10 }} />
-          <Button title="Family roles" variant="secondary" onPress={() => navigation.navigate('FamilyRoles')} style={{ marginTop: 10 }} />
+          <Button title={t('familySettings.permissions')} variant="secondary" onPress={() => navigation.navigate('FamilyPermissions')} />
+          <Button title={t('familySettings.joinRequests')} variant="secondary" onPress={() => navigation.navigate('JoinRequests')} style={{ marginTop: 10 }} />
+          <Button title={t('familySettings.roles')} variant="secondary" onPress={() => navigation.navigate('FamilyRoles')} style={{ marginTop: 10 }} />
         </Card>
 
         {!isOwner ? (
-          <Button title="Leave family" variant="danger" onPress={handleLeave} loading={leaving} style={{ marginTop: 24 }} />
+          <Button title={t('familySettings.leave')} variant="danger" onPress={handleLeave} loading={leaving} style={{ marginTop: 24 }} />
         ) : (
           <Text style={{ color: colors.textTertiary, fontSize: 13, marginTop: 24, textAlign: 'center' }}>
             Family owners cannot leave until ownership is transferred.

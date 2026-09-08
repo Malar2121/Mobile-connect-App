@@ -5,10 +5,13 @@ import { PageHeader, Screen } from '../../design-system';
 import { TimelineCard } from '../../components/memories';
 import { useMemoriesModuleData } from '../../hooks/useMemoriesModuleData';
 import { useResponsive } from '../../design-system';
+import { useI18n } from '../../i18n';
 
 export default function StoryTimelineScreen() {
   const navigation = useNavigation();
   const { horizontalPadding } = useResponsive();
+
+  const { t } = useI18n();
   const { timeline, refreshing, refresh } = useMemoriesModuleData();
 
   const renderItem = useCallback(
@@ -23,7 +26,7 @@ export default function StoryTimelineScreen() {
 
   return (
     <Screen edges={['top']}>
-      <PageHeader title="Timeline" subtitle="Your family story" onBack={() => navigation.goBack()} />
+      <PageHeader title="Timeline" subtitle={t('memories.familyStory')} onBack={() => navigation.goBack()} />
       <FlatList
         data={timeline}
         keyExtractor={(item) => item.label}

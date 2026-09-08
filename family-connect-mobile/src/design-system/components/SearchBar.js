@@ -2,6 +2,7 @@ import React from 'react';
 import { Pressable, StyleSheet, TextInput, View } from 'react-native';
 import { Ionicons } from '@expo/vector-icons';
 import { useTheme } from '../../hooks/useTheme';
+import { useI18n } from '../../i18n';
 
 /**
  * Search bar — Telegram / Instagram inspired, with clear button.
@@ -16,6 +17,8 @@ export function SearchBar({
   accessibilityLabel = 'Search',
 }) {
   const { colors, layout, radii, isDark } = useTheme();
+
+  const { t } = useI18n();
 
   return (
     <View
@@ -59,7 +62,7 @@ export function SearchBar({
             onChangeText?.('');
             onClear?.();
           }}
-          accessibilityLabel="Clear search"
+          accessibilityLabel={t('common.clearSearch')}
           hitSlop={8}
           style={styles.clear}
         >

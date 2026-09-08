@@ -14,6 +14,7 @@ import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import { chatTypography } from '../../constants/chatTheme';
 import { useTheme } from '../../hooks/useTheme';
 import { useUIMode } from '../../contexts/UIModeContext';
+import { useI18n } from '../../i18n';
 
 function SettingRow({ icon, label, value, onPress, right, colors }) {
   return (
@@ -48,6 +49,8 @@ export function ChatSettingsModal({
   members,
 }) {
   const { colors, isDark } = useTheme();
+
+  const { t } = useI18n();
   const { themePreference, setThemePreference } = useUIMode();
   const insets = useSafeAreaInsets();
 
@@ -93,19 +96,19 @@ export function ChatSettingsModal({
           <View style={[styles.card, { backgroundColor: colors.card, borderColor: colors.border }]}>
             <SettingRow
               icon="notifications-off-outline"
-              label="Mute notifications"
+              label={t('chat.muteNotifications')}
               colors={colors}
               right={<Switch value={muted} onValueChange={onToggleMute} trackColor={{ true: colors.primary }} />}
             />
             <SettingRow
               icon="archive-outline"
-              label="Archive chat"
+              label={t('chat.archive')}
               colors={colors}
               right={<Switch value={archived} onValueChange={onToggleArchive} trackColor={{ true: colors.primary }} />}
             />
             <SettingRow
               icon="moon-outline"
-              label="Dark mode"
+              label={t('chat.darkMode')}
               colors={colors}
               right={
                 <Switch
@@ -125,12 +128,12 @@ export function ChatSettingsModal({
             <SettingRow icon="image-outline" label="Wallpaper" colors={colors} onPress={pickWallpaper} />
             <SettingRow
               icon="images-outline"
-              label="Shared media"
+              label={t('chat.sharedMedia')}
               colors={colors}
               value={`${starredCount ?? 0} starred`}
               onPress={onMediaGallery}
             />
-            <SettingRow icon="star-outline" label="Starred messages" colors={colors} value={String(starredCount ?? 0)} />
+            <SettingRow icon="star-outline" label={t('chat.starredMessages')} colors={colors} value={String(starredCount ?? 0)} />
           </View>
         </ScrollView>
       </View>
