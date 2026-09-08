@@ -48,7 +48,19 @@
     "hasAccount": "දැනටමත් ගිණුමක් තිබේද?",
     "welcomeBack": "නැවත සාදරයෙන් පිළිගනිමු!",
     "enterEmailPassword": "විද්‍යුත් තැපෑල සහ මුරපදය ඇතුළත් කරන්න.",
-    "createAccount": "ගිණුම සාදන්න"
+    "createAccount": "ගිණුම සාදන්න",
+    "memberAdult": "වැඩිහිටි",
+    "memberChild": "ළමයා",
+    "memberElder": "ජ්‍යෙෂ්ඨ",
+    "fillAllFields": "නම, විද්‍යුත් තැපෑල සහ මුරපදය පුරවන්න.",
+    "passwordRule": "මුරපදය අවම වශයෙන් අක්ෂර 8ක් සහ විශේෂ අක්ෂරයක් අඩංගු විය යුතුය.",
+    "accountCreated": "ගිණුම සාර්ථකව සාදන ලදී",
+    "joinYourFamily": "ඔබේ පවුලට එක්වන්න",
+    "createAccountToConnect": "සම්බන්ධ වීමට ගිණුමක් සාදන්න",
+    "iAmA": "මම…",
+    "name": "නම",
+    "passwordHint": "අවම අක්ෂර 8ක් සහ විශේෂ අක්ෂර 1ක්",
+    "haveAccount": "දැනටමත් ගිණුමක් තිබේද?"
   },
   "profile": {
     "title": "පැතිකඩ",
@@ -188,7 +200,24 @@
     "invite": "ආරාධනා",
     "settings": "පවුල් සැකසුම්",
     "roles": "භූමිකා",
-    "permissions": "අවසර"
+    "permissions": "අවසර",
+    "nameRequired": "පවුලේ නම අවශ්‍යයි.",
+    "created": "පවුල සාදන ලදී!",
+    "createFailed": "පවුල සෑදීමට නොහැකි විය",
+    "createTitle": "පවුලක් සාදන්න",
+    "nameField": "පවුලේ නම",
+    "namePlaceholder": "උදා. පෙරේරා පවුල",
+    "createButton": "පවුල සාදන්න",
+    "inviteCodeRequired": "ආරාධනා කේතය අවශ්‍යයි.",
+    "joinRequestSent": "සම්බන්ධ වීමේ ඉල්ලීම යවන ලදී. පරිපාලකයෙකු එය අනුමත කළ යුතුය.",
+    "welcome": "පවුලට සාදරයෙන් පිළිගනිමු!",
+    "joinFailed": "පවුලට සම්බන්ධ වීමට නොහැකි විය",
+    "joinTitle": "පවුලකට එක්වන්න",
+    "joinHint": "ඔබේ පවුලේ පරිපාලක බෙදාගත් ආරාධනා කේතය ඇතුළත් කරන්න (ආකෘතිය: ABCD-EFGH).",
+    "inviteCodeField": "ආරාධනා කේතය",
+    "joinButton": "පවුලට එක්වන්න",
+    "scanInstead": "ඒ වෙනුවට QR ආරාධනය ස්කෑන් කරන්න",
+    "createHint": "නව පවුල් අවකාශයක් අරඹන්න. ඔබ පරිපාලක වන අතර කේතයක් සමඟ අන් අයට ආරාධනා කළ හැක."
   },
   "events": {
     "title": "සිදුවීම්",
@@ -207,7 +236,23 @@
     "pendingRsvps": "අපේක්ෂිත RSVP",
     "needReply": "{{count}} කට ඔබේ පිළිතුර අවශ්‍යයි",
     "nextOnCalendar": "දින දර්ශනයේ ඊළඟ",
-    "recentlyCompleted": "මෑතකදී අවසන් වූ"
+    "recentlyCompleted": "මෑතකදී අවසන් වූ",
+    "titleRequired": "මාතෘකාව අවශ්‍යයි.",
+    "dateInvalid": "වලංගු දිනයක් භාවිතා කරන්න (YYYY-MM-DD).",
+    "created": "සිදුවීම සාදන ලදී",
+    "newEvent": "නව සිදුවීම",
+    "titleField": "මාතෘකාව",
+    "descriptionField": "විස්තරය",
+    "dateField": "දිනය",
+    "startTime": "ආරම්භක වේලාව",
+    "endTime": "අවසන් වේලාව",
+    "locationField": "ස්ථානය",
+    "coverImage": "ආවරණ රූප URL",
+    "maxParticipants": "උපරිම සහභාගිවන්නන්",
+    "familyOnly": "පවුල පමණි",
+    "inviteesOnly": "ආරාධිතයන් පමණි",
+    "continue": "ඉදිරියට",
+    "createEvent": "සිදුවීම සාදන්න"
   },
   "memories": {
     "title": "මතකයන්",
@@ -396,5 +441,20 @@
     "revokeA11y": "{{email}} සඳහා ආරාධනය අවලංගු කරන්න",
     "revoked": "ආරාධනය අවලංගු කරන ලදී",
     "revokeFailed": "ආරාධනය අවලංගු කිරීමට නොහැකි විය."
+  },
+  "poll": {
+    "voteRecorded": "ඡන්දය සටහන් විය",
+    "needTwoOptions": "අවම වශයෙන් දින විකල්ප දෙකක් එක් කරන්න",
+    "created": "ඡන්ද විමසුම සාදන ලදී",
+    "closed": "ඡන්ද විමසුම වසා ඇත",
+    "title": "ලබා ගත හැකි බව ඡන්ද විමසුම",
+    "subtitle": "සැමට ගැලපෙන දිනය සොයන්න",
+    "explain": "දින කිහිපයක් යෝජනා කර පවුලේ සාමාජිකයින්ට ඔව්, සමහරවිට හෝ නැත ලෙස ඡන්දය දීමට ඉඩ දෙන්න.",
+    "question": "ප්‍රශ්නය",
+    "optionALabel": "විකල්ප A නම",
+    "optionADate": "විකල්ප A දිනය/වේලාව",
+    "optionBLabel": "විකල්ප B නම",
+    "optionBDate": "විකල්ප B දිනය/වේලාව",
+    "createPoll": "ඡන්ද විමසුම සාදන්න"
   }
 }

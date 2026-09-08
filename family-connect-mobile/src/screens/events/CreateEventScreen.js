@@ -3,6 +3,7 @@ import { ScrollView, StyleSheet, Text, View } from 'react-native';
 import { Button, Chip, PageHeader, Screen, TextField, useToast } from '../../design-system';
 import { CategoryChip } from '../../components/events';
 import { useTheme } from '../../hooks/useTheme';
+import { useI18n } from '../../i18n';
 import { createEvent } from '../../services/eventService';
 import { EVENT_CATEGORIES, saveEventMeta } from '../../utils/eventModuleHelpers';
 
@@ -15,6 +16,7 @@ const REPEAT_OPTIONS = [
 
 export default function CreateEventScreen({ navigation }) {
   const { colors, layout } = useTheme();
+  const { t } = useI18n();
   const toast = useToast();
   const [step, setStep] = useState(0);
   const [title, setTitle] = useState('');
@@ -35,7 +37,7 @@ export default function CreateEventScreen({ navigation }) {
     setError('');
     const t = title.trim();
     if (!t) {
-      setError('Title is required.');
+      setError(t('events.titleRequired'));
       setStep(0);
       return;
     }
@@ -44,7 +46,7 @@ export default function CreateEventScreen({ navigation }) {
     if (date.trim()) {
       const parsed = new Date(date.trim());
       if (Number.isNaN(parsed.getTime())) {
-        setError('Use a valid date (YYYY-MM-DD).');
+        setError(t('events.dateInvalid'));
         setStep(1);
         return;
       }
@@ -68,7 +70,7 @@ export default function CreateEventScreen({ navigation }) {
         recurrenceRule,
       });
       await saveEventMeta(created._id, { category, repeat, privacy, maxParticipants: maxParticipants || null });
-      toast.success('Event created');
+      toast.success(t('events.created'));
       navigation.replace('EventDetails', { id: String(created._id) });
     } catch (e) {
       toast.error(e.message || 'Could not create event');
@@ -79,7 +81,7 @@ export default function CreateEventScreen({ navigation }) {
 
   return (
     <Screen edges={['top']} scroll>
-      <PageHeader title="New event" subtitle={`Step ${step + 1} of ${STEPS.length} — ${STEPS[step]}`} onBack={() => (step > 0 ? setStep(step - 1) : navigation.goBack())} />
+      <PageHeader title={t('events.newEvent')} subtitle={`Step ${step + 1} of ${STEPS.length} — ${STEPS[step]}`} onBack={() => (step > 0 ? setStep(step - 1) : navigation.goBack())} />
       <View style={styles.steps}>
         {STEPS.map((s, i) => (
           <Chip key={s} label={s} selected={i === step} onPress={() => setStep(i)} />
@@ -90,8 +92,8 @@ export default function CreateEventScreen({ navigation }) {
 
       {step === 0 ? (
         <>
-          <TextField label="Title" value={title} onChangeText={setTitle} placeholder="Family BBQ" />
-          <TextField label="Description" value={description} onChangeText={setDescription} multiline numberOfLines={4} placeholder="What's the plan?" />
+          <TextField label={t('events.titleField')} value={title} onChangeText={setTitle} placeholder="Family BBQ" />
+          <TextField label={t('events.descriptionField')} value={description} onChangeText={setDescription} multiline numberOfLines={4} placeholder="What's the plan?" />
           <Text style={{ color: colors.textSecondary, marginBottom: 8, marginTop: 8 }}>Category</Text>
           <View style={styles.chips}>
             {EVENT_CATEGORIES.map((c) => (
@@ -103,9 +105,9 @@ export default function CreateEventScreen({ navigation }) {
 
       {step === 1 ? (
         <>
-          <TextField label="Date" value={date} onChangeText={setDate} placeholder="2026-07-15" hint="YYYY-MM-DD" />
-          <TextField label="Start time" value={startTime} onChangeText={setStartTime} placeholder="18:00" />
-          <TextField label="End time" value={endTime} onChangeText={setEndTime} placeholder="21:00" />
+          <TextField label={t('events.dateField')} value={date} onChangeText={setDate} placeholder="2026-07-15" hint="YYYY-MM-DD" />
+          <TextField label={t('events.startTime')} value={startTime} onChangeText={setStartTime} placeholder="18:00" />
+          <TextField label={t('events.endTime')} value={endTime} onChangeText={setEndTime} placeholder="21:00" />
           <Text style={{ color: colors.textTertiary, fontSize: 11, marginTop: 8 }}>TODO: Repeat rules stored locally until backend recurrence API.</Text>
           <View style={[styles.chips, { marginTop: 12 }]}>
             {REPEAT_OPTIONS.map((r) => (
@@ -117,13 +119,13 @@ export default function CreateEventScreen({ navigation }) {
 
       {step === 2 ? (
         <>
-          <TextField label="Location" value={location} onChangeText={setLocation} placeholder="Home, park, restaurant…" />
-          <TextField label="Cover image URL" value={image} onChangeText={setImage} placeholder="https://…" />
-          <TextField label="Max participants" value={maxParticipants} onChangeText={setMaxParticipants} placeholder="Optional" keyboardType="number-pad" />
+          <TextField label={t('events.locationField')} value={location} onChangeText={setLocation} placeholder="Home, park, restaurant…" />
+          <TextField label={t('events.coverImage')} value={image} onChangeText={setImage} placeholder="https://…" />
+          <TextField label={t('events.maxParticipants')} value={maxParticipants} onChangeText={setMaxParticipants} placeholder="Optional" keyboardType="number-pad" />
           <Text style={{ color: colors.textSecondary, marginTop: 12, marginBottom: 8 }}>Privacy</Text>
           <View style={styles.chips}>
-            <Chip label="Family only" selected={privacy === 'family'} onPress={() => setPrivacy('family')} />
-            <Chip label="Invitees only" selected={privacy === 'invitees'} onPress={() => setPrivacy('invitees')} />
+            <Chip label={t('events.familyOnly')} selected={privacy === 'family'} onPress={() => setPrivacy('family')} />
+            <Chip label={t('events.inviteesOnly')} selected={privacy === 'invitees'} onPress={() => setPrivacy('invitees')} />
           </View>
           <Text style={{ color: colors.textTertiary, fontSize: 11, marginTop: 8 }}>TODO: Reminder scheduling — configure in Event Reminders after creation.</Text>
         </>
@@ -140,9 +142,9 @@ export default function CreateEventScreen({ navigation }) {
       ) : null}
 
       {step < STEPS.length - 1 ? (
-        <Button title="Continue" onPress={() => setStep(step + 1)} size="lg" style={{ marginTop: 16 }} />
+        <Button title={t('events.continue')} onPress={() => setStep(step + 1)} size="lg" style={{ marginTop: 16 }} />
       ) : (
-        <Button title="Create event" onPress={handleSubmit} loading={loading} size="lg" style={{ marginTop: 16, marginBottom: 32 }} />
+        <Button title={t('events.createEvent')} onPress={handleSubmit} loading={loading} size="lg" style={{ marginTop: 16, marginBottom: 32 }} />
       )}
     </Screen>
   );

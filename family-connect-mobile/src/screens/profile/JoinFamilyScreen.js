@@ -11,9 +11,11 @@ import {
 } from '../../design-system';
 import { useFamily } from '../../contexts/FamilyContext';
 import { useTheme } from '../../hooks/useTheme';
+import { useI18n } from '../../i18n';
 
 export default function JoinFamilyScreen({ navigation }) {
   const { colors, layout } = useTheme();
+  const { t } = useI18n();
   const toast = useToast();
   const { joinFamily, refreshFamily } = useFamily();
   const [inviteCode, setInviteCode] = useState('');
@@ -24,7 +26,7 @@ export default function JoinFamilyScreen({ navigation }) {
     setError('');
     const trimmed = inviteCode.trim();
     if (!trimmed) {
-      setError('Invite code is required.');
+      setError(t('family.inviteCodeRequired'));
       return;
     }
 
@@ -32,15 +34,15 @@ export default function JoinFamilyScreen({ navigation }) {
     try {
       const result = await joinFamily(trimmed);
       if (result?.pending) {
-        toast.success(result.message || 'Join request sent. An admin must approve your request.');
+        toast.success(result.message || t('family.joinRequestSent'));
         navigation.goBack();
         return;
       }
       await refreshFamily();
-      toast.success('Welcome to the family!');
+      toast.success(t('family.welcome'));
       navigation.dispatch(CommonActions.navigate({ name: 'Dashboard' }));
     } catch (e) {
-      toast.error(e.message || 'Could not join family');
+      toast.error(e.message || t('family.joinFailed'));
     } finally {
       setLoading(false);
     }
@@ -48,7 +50,7 @@ export default function JoinFamilyScreen({ navigation }) {
 
   return (
     <Screen edges={['top']} scroll>
-      <PageHeader title="Join a family" onBack={() => navigation.goBack()} />
+      <PageHeader title={t('family.joinTitle')} onBack={() => navigation.goBack()} />
       <Text
         style={{
           color: colors.textSecondary,
@@ -57,7 +59,7 @@ export default function JoinFamilyScreen({ navigation }) {
           lineHeight: 22,
         }}
       >
-        Enter the invite code shared by your family admin (format: ABCD-EFGH).
+        {t('family.joinHint')}
       </Text>
 
       <Card>
@@ -68,7 +70,7 @@ export default function JoinFamilyScreen({ navigation }) {
         ) : null}
 
         <TextField
-          label="Invite code"
+          label={t('family.inviteCodeField')}
           value={inviteCode}
           onChangeText={setInviteCode}
           placeholder="ABCD-EFGH"
@@ -76,17 +78,17 @@ export default function JoinFamilyScreen({ navigation }) {
           containerStyle={{ marginBottom: 0 }}
         />
 
-        <Button title="Join family" onPress={handleJoin} loading={loading} style={{ marginTop: 12 }} />
+        <Button title={t('family.joinButton')} onPress={handleJoin} loading={loading} style={{ marginTop: 12 }} />
       </Card>
 
       <Button
-        title="Scan a QR invite instead"
+        title={t('family.scanInstead')}
         variant="secondary"
         onPress={() => navigation.navigate('FamilyModule', { screen: 'ScanInvite' })}
         style={{ marginTop: 14 }}
       />
 
-      <Button title="Cancel" variant="ghost" onPress={() => navigation.goBack()} style={{ marginTop: 14 }} />
+      <Button title={t('common.cancel')} variant="ghost" onPress={() => navigation.goBack()} style={{ marginTop: 14 }} />
     </Screen>
   );
 }

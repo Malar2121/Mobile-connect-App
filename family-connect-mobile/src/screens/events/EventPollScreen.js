@@ -4,6 +4,7 @@ import { useRoute, useNavigation } from '@react-navigation/native';
 import { Button, PageHeader, Screen, TextField, useToast, useDialog } from '../../design-system';
 import { PollCard } from '../../components/events';
 import { useTheme } from '../../hooks/useTheme';
+import { useI18n } from '../../i18n';
 import { createPoll, getPoll, getPollByEvent, castPollVote, closePoll } from '../../services/pollService';
 import { useResponsive } from '../../design-system';
 
@@ -13,6 +14,7 @@ export default function EventPollScreen() {
   const toast = useToast();
   const dialog = useDialog();
   const { colors, layout } = useTheme();
+  const { t } = useI18n();
   const { horizontalPadding } = useResponsive();
   const { eventId, pollId: initialPollId } = route.params ?? {};
 
@@ -49,7 +51,7 @@ export default function EventPollScreen() {
       await castPollVote(pollData.poll._id, optionId, vote);
       const fresh = await getPoll(pollData.poll._id);
       setPollData(fresh);
-      toast.success('Vote recorded');
+      toast.success(t('poll.voteRecorded'));
     } catch (e) {
       toast.error(e.message || 'Vote failed');
     } finally {
@@ -59,7 +61,7 @@ export default function EventPollScreen() {
 
   const handleCreate = useCallback(async () => {
     if (!eventId || !option1 || !option2) {
-      toast.error('Add at least two date options');
+      toast.error(t('poll.needTwoOptions'));
       return;
     }
     setCreating(true);
@@ -74,7 +76,7 @@ export default function EventPollScreen() {
       });
       const fresh = await getPoll(data.poll._id);
       setPollData(fresh);
-      toast.success('Poll created');
+      toast.success(t('poll.created'));
     } catch (e) {
       toast.error(e.message || 'Could not create poll');
     } finally {
@@ -95,7 +97,7 @@ export default function EventPollScreen() {
     try {
       await closePoll(pollData.poll._id, winner?.optionId);
       await loadPoll();
-      toast.success('Poll closed');
+      toast.success(t('poll.closed'));
     } catch (e) {
       toast.error(e.message || 'Could not close poll');
     }
@@ -103,7 +105,7 @@ export default function EventPollScreen() {
 
   return (
     <Screen edges={['top']}>
-      <PageHeader title="Availability poll" subtitle="Doodle-style scheduling" onBack={() => navigation.goBack()} />
+      <PageHeader title={t('poll.title')} subtitle={t('poll.subtitle')} onBack={() => navigation.goBack()} />
       <ScrollView contentContainerStyle={{ paddingBottom: 32 }}>
         {loading ? (
           <Text style={{ color: colors.textSecondary }}>Loading poll…</Text>
@@ -121,14 +123,14 @@ export default function EventPollScreen() {
         ) : (
           <>
             <Text style={{ color: colors.textSecondary, marginBottom: 16, fontSize: 14 * layout.fontScale }}>
-              Propose multiple dates and let family members vote yes, maybe, or no.
+              {t('poll.explain')}
             </Text>
-            <TextField label="Question" value={question} onChangeText={setQuestion} />
-            <TextField label="Option A label" value={label1} onChangeText={setLabel1} />
-            <TextField label="Option A date/time" value={option1} onChangeText={setOption1} placeholder="2026-07-15T18:00" hint="ISO format or parseable date" />
-            <TextField label="Option B label" value={label2} onChangeText={setLabel2} />
-            <TextField label="Option B date/time" value={option2} onChangeText={setOption2} placeholder="2026-07-16T18:00" />
-            <Button title="Create poll" onPress={handleCreate} loading={creating} style={{ marginTop: 16 }} />
+            <TextField label={t('poll.question')} value={question} onChangeText={setQuestion} />
+            <TextField label={t('poll.optionALabel')} value={label1} onChangeText={setLabel1} />
+            <TextField label={t('poll.optionADate')} value={option1} onChangeText={setOption1} placeholder="2026-07-15T18:00" hint="ISO format or parseable date" />
+            <TextField label={t('poll.optionBLabel')} value={label2} onChangeText={setLabel2} />
+            <TextField label={t('poll.optionBDate')} value={option2} onChangeText={setOption2} placeholder="2026-07-16T18:00" />
+            <Button title={t('poll.createPoll')} onPress={handleCreate} loading={creating} style={{ marginTop: 16 }} />
           </>
         )}
       </ScrollView>

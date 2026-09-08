@@ -11,9 +11,11 @@ import {
 } from '../../design-system';
 import { useFamily } from '../../contexts/FamilyContext';
 import { useTheme } from '../../hooks/useTheme';
+import { useI18n } from '../../i18n';
 
 export default function CreateFamilyScreen({ navigation }) {
   const { colors, layout } = useTheme();
+  const { t } = useI18n();
   const toast = useToast();
   const { createFamily, refreshFamily } = useFamily();
   const [name, setName] = useState('');
@@ -24,7 +26,7 @@ export default function CreateFamilyScreen({ navigation }) {
     setError('');
     const trimmed = name.trim();
     if (!trimmed) {
-      setError('Family name is required.');
+      setError(t('family.nameRequired'));
       return;
     }
 
@@ -32,10 +34,10 @@ export default function CreateFamilyScreen({ navigation }) {
     try {
       await createFamily(trimmed);
       await refreshFamily();
-      toast.success('Family created!');
+      toast.success(t('family.created'));
       navigation.dispatch(CommonActions.navigate({ name: 'Dashboard' }));
     } catch (e) {
-      toast.error(e.message || 'Could not create family');
+      toast.error(e.message || t('family.createFailed'));
     } finally {
       setLoading(false);
     }
@@ -43,7 +45,7 @@ export default function CreateFamilyScreen({ navigation }) {
 
   return (
     <Screen edges={['top']} scroll>
-      <PageHeader title="Create a family" onBack={() => navigation.goBack()} />
+      <PageHeader title={t('family.createTitle')} onBack={() => navigation.goBack()} />
       <Text
         style={{
           color: colors.textSecondary,
@@ -52,7 +54,7 @@ export default function CreateFamilyScreen({ navigation }) {
           lineHeight: 22,
         }}
       >
-        Start a new family space. You will be the admin and can invite others with a code.
+        {t('family.createHint')}
       </Text>
 
       <Card>
@@ -63,18 +65,18 @@ export default function CreateFamilyScreen({ navigation }) {
         ) : null}
 
         <TextField
-          label="Family name"
+          label={t('family.nameField')}
           value={name}
           onChangeText={setName}
-          placeholder="e.g. The Smith Family"
+          placeholder={t('family.namePlaceholder')}
           autoCapitalize="words"
           containerStyle={{ marginBottom: 0 }}
         />
 
-        <Button title="Create family" onPress={handleCreate} loading={loading} style={{ marginTop: 12 }} />
+        <Button title={t('family.createButton')} onPress={handleCreate} loading={loading} style={{ marginTop: 12 }} />
       </Card>
 
-      <Button title="Cancel" variant="ghost" onPress={() => navigation.goBack()} style={{ marginTop: 14 }} />
+      <Button title={t('common.cancel')} variant="ghost" onPress={() => navigation.goBack()} style={{ marginTop: 14 }} />
     </Screen>
   );
 }

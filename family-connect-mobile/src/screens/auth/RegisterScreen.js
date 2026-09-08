@@ -13,10 +13,12 @@ import {
 } from '../../design-system';
 import { useAuth } from '../../contexts/AuthContext';
 import { useTheme } from '../../hooks/useTheme';
+import { useI18n } from '../../i18n';
 import { useResponsive } from '../../design-system';
 
 export default function RegisterScreen({ navigation }) {
   const { colors, layout } = useTheme();
+  const { t } = useI18n();
   const { isTablet } = useResponsive();
   const toast = useToast();
   const dialog = useDialog();
@@ -29,9 +31,9 @@ export default function RegisterScreen({ navigation }) {
   const [error, setError] = useState('');
 
   const MEMBER_TYPES = [
-    { id: 'adult', label: 'Adult', icon: 'person-outline' },
-    { id: 'child', label: 'Child', icon: 'shield-outline' },
-    { id: 'elder', label: 'Elder', icon: 'accessibility-outline' },
+    { id: 'adult', label: t('auth.memberAdult'), icon: 'person-outline' },
+    { id: 'child', label: t('auth.memberChild'), icon: 'shield-outline' },
+    { id: 'elder', label: t('auth.memberElder'), icon: 'accessibility-outline' },
   ];
 
   async function handleRegister() {
@@ -39,18 +41,18 @@ export default function RegisterScreen({ navigation }) {
     const n = name.trim();
     const em = email.trim();
     if (!n || !em || !password) {
-      setError('Please fill in name, email, and password.');
+      setError(t('auth.fillAllFields'));
       return;
     }
     const passwordRegex = /[!@#$%^&*(),.?":{}|<>]/;
     if (password.length < 8 || !passwordRegex.test(password)) {
-      setError('Password must be at least 8 characters and include a special character.');
+      setError(t('auth.passwordRule'));
       return;
     }
     setLoading(true);
     try {
       await signUp(n, em, password, memberType);
-      toast.success('Account created successfully');
+      toast.success(t('auth.accountCreated'));
       const go = await dialog.confirm({
         title: 'Account created',
         message: 'You can sign in now with your new credentials.',
@@ -86,10 +88,10 @@ export default function RegisterScreen({ navigation }) {
                     { color: colors.text, fontSize: layout.fontScale * 38, fontFamily: 'Inter_900Black', letterSpacing: -1 },
                   ]}
                 >
-                  Join your family
+                  {t('auth.joinYourFamily')}
                 </Text>
                 <Text style={[styles.sub, { color: colors.textSecondary, fontSize: 15 * layout.fontScale }]}>
-                  Create an account to connect
+                  {t('auth.createAccountToConnect')}
                 </Text>
               </View>
 
@@ -99,9 +101,9 @@ export default function RegisterScreen({ navigation }) {
                 </View>
               ) : null}
 
-              <TextField label="Name" value={name} onChangeText={setName} placeholder="Alex" />
+              <TextField label={t('auth.name')} value={name} onChangeText={setName} placeholder="Alex" />
               <TextField
-                label="Email"
+                label={t('auth.email')}
                 value={email}
                 onChangeText={setEmail}
                 placeholder="you@example.com"
@@ -109,15 +111,15 @@ export default function RegisterScreen({ navigation }) {
                 autoCapitalize="none"
               />
               <TextField
-                label="Password"
+                label={t('auth.password')}
                 value={password}
                 onChangeText={setPassword}
                 placeholder="••••••••"
                 secureTextEntry
-                hint="At least 8 chars & 1 special character"
+                hint={t('auth.passwordHint')}
               />
               <Text style={{ color: colors.textSecondary, fontSize: 13 * layout.fontScale, marginBottom: 8 }}>
-                I am a…
+                {t('auth.iAmA')}
               </Text>
               <View style={styles.chipRow}>
                 {MEMBER_TYPES.map((type) => (
@@ -139,7 +141,7 @@ export default function RegisterScreen({ navigation }) {
                 ))}
               </View>
               <Button
-                title="Create account"
+                title={t('auth.createAccount')}
                 onPress={handleRegister}
                 loading={loading}
                 disabled={loading}
@@ -153,8 +155,8 @@ export default function RegisterScreen({ navigation }) {
                 accessibilityRole="link"
               >
                 <Text style={{ color: colors.textSecondary, fontSize: 15 * layout.fontScale }}>
-                  Already have an account?{' '}
-                  <Text style={{ color: colors.primary, fontFamily: 'Inter_700Bold' }}>Sign in</Text>
+                  {t('auth.haveAccount')}{' '}
+                  <Text style={{ color: colors.primary, fontFamily: 'Inter_700Bold' }}>{t('auth.signIn')}</Text>
                 </Text>
               </Pressable>
             </GlassCard>

@@ -48,7 +48,19 @@
     "hasAccount": "Already have an account?",
     "welcomeBack": "Welcome back!",
     "enterEmailPassword": "Please enter email and password.",
-    "createAccount": "Create account"
+    "createAccount": "Create account",
+    "memberAdult": "Adult",
+    "memberChild": "Child",
+    "memberElder": "Elder",
+    "fillAllFields": "Please fill in name, email, and password.",
+    "passwordRule": "Password must be at least 8 characters and include a special character.",
+    "accountCreated": "Account created successfully",
+    "joinYourFamily": "Join your family",
+    "createAccountToConnect": "Create an account to connect",
+    "iAmA": "I am a…",
+    "name": "Name",
+    "passwordHint": "At least 8 chars & 1 special character",
+    "haveAccount": "Already have an account?"
   },
   "profile": {
     "title": "Profile",
@@ -188,7 +200,24 @@
     "invite": "Invite",
     "settings": "Family settings",
     "roles": "Roles",
-    "permissions": "Permissions"
+    "permissions": "Permissions",
+    "nameRequired": "Family name is required.",
+    "created": "Family created!",
+    "createFailed": "Could not create family",
+    "createTitle": "Create a family",
+    "nameField": "Family name",
+    "namePlaceholder": "e.g. The Smith Family",
+    "createButton": "Create family",
+    "inviteCodeRequired": "Invite code is required.",
+    "joinRequestSent": "Join request sent. An admin must approve your request.",
+    "welcome": "Welcome to the family!",
+    "joinFailed": "Could not join family",
+    "joinTitle": "Join a family",
+    "joinHint": "Enter the invite code shared by your family admin (format: ABCD-EFGH).",
+    "inviteCodeField": "Invite code",
+    "joinButton": "Join family",
+    "scanInstead": "Scan a QR invite instead",
+    "createHint": "Start a new family space. You will be the admin and can invite others with a code."
   },
   "events": {
     "title": "Events",
@@ -207,7 +236,23 @@
     "pendingRsvps": "Pending RSVPs",
     "needReply": "{{count}} need your reply",
     "nextOnCalendar": "Next on your calendar",
-    "recentlyCompleted": "Recently completed"
+    "recentlyCompleted": "Recently completed",
+    "titleRequired": "Title is required.",
+    "dateInvalid": "Use a valid date (YYYY-MM-DD).",
+    "created": "Event created",
+    "newEvent": "New event",
+    "titleField": "Title",
+    "descriptionField": "Description",
+    "dateField": "Date",
+    "startTime": "Start time",
+    "endTime": "End time",
+    "locationField": "Location",
+    "coverImage": "Cover image URL",
+    "maxParticipants": "Max participants",
+    "familyOnly": "Family only",
+    "inviteesOnly": "Invitees only",
+    "continue": "Continue",
+    "createEvent": "Create event"
   },
   "memories": {
     "title": "Memories",
@@ -396,5 +441,20 @@
     "revokeA11y": "Revoke the invitation for {{email}}",
     "revoked": "Invitation revoked",
     "revokeFailed": "Could not revoke the invitation."
+  },
+  "poll": {
+    "voteRecorded": "Vote recorded",
+    "needTwoOptions": "Add at least two date options",
+    "created": "Poll created",
+    "closed": "Poll closed",
+    "title": "Availability poll",
+    "subtitle": "Find the date that works for everyone",
+    "explain": "Propose multiple dates and let family members vote yes, maybe, or no.",
+    "question": "Question",
+    "optionALabel": "Option A label",
+    "optionADate": "Option A date/time",
+    "optionBLabel": "Option B label",
+    "optionBDate": "Option B date/time",
+    "createPoll": "Create poll"
   }
 }
