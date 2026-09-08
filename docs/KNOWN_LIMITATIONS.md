@@ -1,84 +1,68 @@
-# Family Connect — Known Limitations
+# Known limitations
 
-Documented gaps between mobile UI and backend capabilities. These are intentional placeholders for future backend work — not bugs in navigation.
+Current as of commit `d2ad793`. This file describes **reality**, not intent —
+if something here is fixed, delete the entry.
 
-## Backend Gaps (UI prepared, API pending)
+The previous version of this file was badly out of date: it listed join-request
+approval, safe zones and offline processors as pending when all three existed.
+That is exactly the failure mode this document has to avoid.
 
-### Family Module
-- Join request approval workflow (`JoinRequestsScreen`)
-- Granular role/permission management (`FamilyRolesScreen`, `FamilyPermissionsScreen`)
-- Relationship graph editing (`RelationshipScreen`)
-- Extended member profile fields (`MemberProfileScreen`)
+---
 
-### Events Module
-- Event attachments file storage (`EventAttachmentsScreen`)
-- Push reminder scheduling (`EventReminderScreen`)
-- Recurring events
+## Not implemented
 
-### Memories Module
-- Geo-tagged memory map (`MemoryMapScreen`)
-- Legacy mode archival workflows (`LegacyModeScreen`)
-- Server-side view counts (currently client AsyncStorage)
+| Item | Detail |
+|---|---|
+| **SUS usability study** | Prepared but not run — it needs real participants. Instrument and scoring in `SUS_EVALUATION.md`. **No score exists and none should be quoted.** |
+| **Play Store publication** | Proposal §6.5 mentions publishing for Android. The app has not been submitted. |
+| **Recurring events** | `Event.recurrenceRule` is stored but nothing expands it. Recurring *celebrations* do work. |
+| **Invitation history / expiry UI** | Email invitations expire correctly server-side; the older shareable-code screen does not show expiry. |
 
-### Family Tree Module
-- Full CRUD for persons and relationships (`PersonProfileScreen`, `RelationshipEditorScreen`)
-- Server-persisted legacy profiles (`LegacyProfilesScreen`)
+## Partially implemented
 
-### Chat Module
-- Server-side chat settings (`ChatSettingsScreen`)
-- Dedicated voice message pipeline (`VoiceMessageScreen` — uses media upload path partially)
+| Item | What works | What does not |
+|---|---|---|
+| **Sinhala and Tamil** | Bundles complete and parity-tested. Login, register, dashboard, family join/create, events, poll, celebrations, consent, invitations, scanner, profile, elder screens are localised — about 27% of screens | The remaining ~59 screens are English only. Adoption is guarded by a test floor so it cannot regress |
+| **QR onboarding** | Generated on-device and scannable in-app; handles invite codes and email tokens | Not verified on two physical devices — see `MANUAL_TEST_PLAN.md` |
+| **Email invitations** | Full token lifecycle: hashed, single-use, expiring, revocable, email-bound. 21 tests | **No SMTP provider is configured**, so no email has actually been delivered. Set `SMTP_*` to enable |
+| **Performance testing** | Bounded-read and pathology tests with recorded timings | No load testing, no production measurements — figures are from one developer machine |
+| **Push notifications** | Server-side dispatch is implemented and tested | Requires Firebase credentials and a physical device; not verified end-to-end |
+| **Offline support** | Banner, queue and processors are registered | Cached reads are in-memory only; no unified offline cache |
 
-### Map Module
-- Server-persisted safe zones (`SafeZonesScreen` — AsyncStorage only)
-- Server-persisted emergency contacts (`EmergencyContactsScreen`)
-- Trip/driving history from GPS backend (`TripHistoryScreen`, `DrivingHistoryScreen`)
-- Place geocoding details (`PlaceDetailsScreen`)
-- Geofence enter/exit notifications
+## Blocked
 
-## Client-Side Only Data
+| Item | Blocker |
+|---|---|
+| **Production deployment** | The Railway service is unbound — the edge returns `x-railway-fallback: true`, meaning no app is deployed. Needs account access. The backend is verified working locally (20/20 smoke). See `DEPLOYMENT.md` |
 
-| Data | Storage | Notes |
-|------|---------|-------|
-| Safe zones | AsyncStorage | Per user |
-| Emergency contacts | AsyncStorage | Per user |
-| SOS history | AsyncStorage | Local log |
-| Trip points | AsyncStorage | No server sync |
-| Location settings | AsyncStorage | Sharing preferences |
-| Memory view counts | AsyncStorage | Analytics approximation |
-| Legacy profiles (memories) | AsyncStorage | Until API exists |
+---
 
-## Performance
+## Architecture notes
 
-- **Duplicate API calls**: Dashboard, Family, and Map hooks each fetch `getFamilyLocations()`. Dashboard and module hooks independently fetch events/memories. Acceptable for MVP; shared cache layer recommended for v1.1.
-- **No request deduplication**: Parallel tab focus can trigger overlapping fetches.
-- **FlatList optimization**: Most lists use `keyExtractor`; `getItemLayout` not universally applied.
-
-## Offline
-
-- Offline banner and queue **architecture** is in place (`NetworkContext`, `offlineQueue.js`).
-- Queue processors are not yet registered per domain — mutating actions fail immediately when offline.
-- Read-only cached data is not served from a unified cache (hooks hold in-memory state only).
-
-## Accessibility
-
-- `accessibilityLabel` added incrementally; not every interactive element is labeled.
-- Elder/minor UI modes adjust scale; full VoiceOver audit not completed.
-- Color contrast generally meets WCAG in light/dark themes; not formally certified.
-
-## Security
-
-- `CLIENT_URL=*` in development allows any origin; must be restricted in production.
-- Refresh token rotation is implemented; no device binding.
-- No certificate pinning on mobile.
-- File upload MIME validation relies on server middleware; client does not pre-validate all media types.
+- **Safe zones are orphaned on mobile.** A complete, tested backend API exists at
+  `/api/safezones`, but `SafeZonesScreen` still reads and writes AsyncStorage.
+  Connecting them is straightforward and worth doing.
+- **The production API URL is hardcoded in five places**: `.env.production`,
+  `eas.json` (twice), `src/services/api.js`, and `backend/server.js` (CORS).
+  Changing hosts means changing all five.
+- **Duplicate fetches.** Dashboard, family and map hooks each fetch locations
+  independently. Acceptable at family scale.
+- **No CI.** The test suite only runs when someone runs it.
 
 ## Testing
 
-- No automated E2E or unit test suite in CI.
-- Manual QA checklist provided in `docs/QA_CHECKLIST.md`.
+- **154 Jest tests** across unit, integration and performance suites, all
+  passing. Statement coverage ~43%, concentrated on the security-critical paths
+  (models 100%, guest and consent middleware 84–100%).
+- **The mobile app has no automated tests.** It is verified by parse checks
+  against the project's Babel preset, API contract tracing, and the manual
+  device plan. This is a real gap, stated plainly rather than papered over.
+- **No physical-device testing has been performed during development.**
 
-## Platform
+## Security
 
-- iOS build scripts exist but primary dev target is Android emulator.
-- Web target (`expo start --web`) is not production-tested.
-- Push notifications require physical device + Firebase configuration.
+- `helmet`, CORS allowlist, rate limiting, bcrypt cost 12, JWT with refresh
+  rotation, family-scoped queries throughout.
+- No certificate pinning on mobile.
+- No device binding on refresh tokens.
+- Client-side file validation is minimal; the server enforces type and size.
