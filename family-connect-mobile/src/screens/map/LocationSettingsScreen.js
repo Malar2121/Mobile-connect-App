@@ -95,7 +95,7 @@ export default function LocationSettingsScreen() {
         />
         <SettingRow
           label="Background tracking"
-          description="TODO: requires always-on permission"
+          description="Needs always-on location permission in your device settings"
           value={draft.backgroundTracking}
           onValueChange={() => toggle('backgroundTracking')}
           disabled={shareDisabled}

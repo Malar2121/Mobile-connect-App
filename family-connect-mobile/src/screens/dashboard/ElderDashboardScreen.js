@@ -63,6 +63,49 @@ export default function ElderDashboardScreen() {
         navigation.navigate('Chat');
       },
     },
+    // Events, Celebrations, Memories and the Family Tree live in the Profile
+    // stack so the tab bar can stay at four large targets. Without these tiles
+    // an elder had no route to them at all.
+    {
+      id: 'events',
+      label: t('elder.events'),
+      icon: 'calendar',
+      color: colors.secondary,
+      onPress: () => {
+        voice.speakKey('elder.events');
+        navigation.navigate('Profile', { screen: 'EventsModule', params: { screen: 'EventsHome' } });
+      },
+    },
+    {
+      id: 'celebrations',
+      label: t('elder.celebrations'),
+      icon: 'gift',
+      color: colors.warning,
+      onPress: () => {
+        voice.speakKey('elder.celebrations');
+        navigation.navigate('Profile', { screen: 'EventsModule', params: { screen: 'Celebrations' } });
+      },
+    },
+    {
+      id: 'memories',
+      label: t('elder.memories'),
+      icon: 'images',
+      color: colors.accent,
+      onPress: () => {
+        voice.speakKey('elder.memories');
+        navigation.navigate('Profile', { screen: 'MemoriesModule', params: { screen: 'MemoriesHome' } });
+      },
+    },
+    {
+      id: 'tree',
+      label: t('elder.familyTree'),
+      icon: 'git-network',
+      color: colors.success,
+      onPress: () => {
+        voice.speakKey('elder.familyTree');
+        navigation.navigate('Profile', { screen: 'FamilyTreeModule', params: { screen: 'FamilyTreeHome' } });
+      },
+    },
   ];
 
   return (
@@ -188,9 +231,12 @@ const styles = StyleSheet.create({
     paddingVertical: 30,
   },
   sosText: { color: '#fff', fontSize: 28, fontWeight: '800' },
-  grid: { flexDirection: 'row', gap: 16, marginTop: 20 },
+  // Wraps to two tiles per row. Tile styling is unchanged — only the row
+  // wrapping is new, so six destinations fit without shrinking any target.
+  grid: { flexDirection: 'row', flexWrap: 'wrap', gap: 16, marginTop: 20 },
   action: {
-    flex: 1,
+    flexGrow: 1,
+    flexBasis: '44%',
     alignItems: 'center',
     justifyContent: 'center',
     paddingVertical: 34,

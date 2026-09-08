@@ -90,7 +90,8 @@
     "language": "භාෂාව",
     "languageSubtitle": "ඔබේ භාෂාව තෝරන්න",
     "notificationsInbox": "දැනුම්දීම්",
-    "settings": "සැකසුම්"
+    "settings": "සැකසුම්",
+    "modeLockedHint": "ඔබේ දර්ශන ආකාරය ඔබේ පවුල් ගිණුම මගින් සකසා ඇති අතර මෙහිදී වෙනස් කළ නොහැක."
   },
   "language": {
     "title": "භාෂාව",
@@ -134,7 +135,11 @@
     "voicePrompts": "හඬ ඇඟවීම්",
     "voicePromptsHint": "සෑම තිරයක්ම සහ වැදගත් ක්‍රියා හඬින් කියවයි.",
     "voiceOn": "හඬ ඇඟවීම් සක්‍රීයයි",
-    "voiceOff": "හඬ ඇඟවීම් අක්‍රීයයි"
+    "voiceOff": "හඬ ඇඟවීම් අක්‍රීයයි",
+    "events": "සිදුවීම්",
+    "celebrations": "සැමරුම්",
+    "memories": "මතකයන්",
+    "familyTree": "පවුල් රුක"
   },
   "dashboard": {
     "greetingMorning": "සුභ උදෑසනක්",
@@ -252,7 +257,9 @@
     "familyOnly": "පවුල පමණි",
     "inviteesOnly": "ආරාධිතයන් පමණි",
     "continue": "ඉදිරියට",
-    "createEvent": "සිදුවීම සාදන්න"
+    "createEvent": "සිදුවීම සාදන්න",
+    "repeatNote": "පුනරාවර්තන සැකසුම් මෙම උපාංගයේ සුරැකේ.",
+    "reminderNote": "සිදුවීම සෑදූ පසු ඔබට එයින් මතක් කිරීම් සැකසිය හැක."
   },
   "memories": {
     "title": "මතකයන්",

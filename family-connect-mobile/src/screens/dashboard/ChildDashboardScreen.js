@@ -7,6 +7,8 @@ import { useTheme } from '../../hooks/useTheme';
 import { useAuth } from '../../contexts/AuthContext';
 import { useDashboardData } from '../../hooks/useDashboardData';
 import { GlassCard } from '../../design-system';
+import { ConsentBanner } from '../../components/family/ConsentBanner';
+import { useUIMode } from '../../contexts/UIModeContext';
 
 export default function ChildDashboardScreen() {
   const { colors, radii, spacing, typography, shadows, setUiMode } = useTheme();
@@ -15,6 +17,9 @@ export default function ChildDashboardScreen() {
   const navigation = useNavigation();
   const { liveCount, members } = useDashboardData();
   const [showModeSwitch, setShowModeSwitch] = useState(false);
+  // A child account is locked into minor mode, so the mode switcher would
+  // open a dialog whose options silently do nothing.
+  const { modeLocked } = useUIMode();
 
   const MODES = [
     { id: 'standard', label: 'Standard Mode', icon: 'phone-portrait-outline', desc: 'Full app access' },
@@ -33,10 +38,13 @@ export default function ChildDashboardScreen() {
             <Text style={[typography.h1, { color: colors.text, flex: 1 }]}>
               Hi, {user?.fullName?.split(' ')[0] || 'Buddy'}! 👋
             </Text>
+            {/* A locked child account cannot change mode, so the switcher would
+                open a sheet whose options do nothing. Send them to their own
+                settings instead, where language actually is changeable. */}
             <Pressable
-              onPress={() => setShowModeSwitch(true)}
+              onPress={() => (modeLocked ? navigation.navigate('Profile') : setShowModeSwitch(true))}
               style={[styles.settingsBtn, { backgroundColor: colors.surfaceSecondary, borderRadius: radii.full || 999 }]}
-              accessibilityLabel="Switch mode"
+              accessibilityLabel={modeLocked ? 'Open settings' : 'Switch mode'}
               accessibilityRole="button"
             >
               <Ionicons name="settings-outline" size={22} color={colors.textSecondary} />
@@ -45,6 +53,13 @@ export default function ChildDashboardScreen() {
           <Text style={[typography.body, { color: colors.textSecondary, marginTop: spacing.xs }]}>
             Your family is online and safe.
           </Text>
+        </View>
+
+        {/* A child account is blocked from family content until a guardian
+            approves it. Without this the app just returns 403s with nothing
+            explaining why — and this is the dashboard a minor actually sees. */}
+        <View style={{ paddingHorizontal: spacing.lg }}>
+          <ConsentBanner />
         </View>
 
         {/* Big Quick Actions */}

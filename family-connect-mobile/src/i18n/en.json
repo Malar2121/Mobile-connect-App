@@ -90,7 +90,8 @@
     "language": "Language",
     "languageSubtitle": "Choose your preferred language",
     "notificationsInbox": "Notifications inbox",
-    "settings": "Settings"
+    "settings": "Settings",
+    "modeLockedHint": "Your display mode is set by your family account and cannot be changed here."
   },
   "language": {
     "title": "Language",
@@ -134,7 +135,11 @@
     "voicePrompts": "Spoken prompts",
     "voicePromptsHint": "Read out each screen and important actions aloud.",
     "voiceOn": "Spoken prompts turned on",
-    "voiceOff": "Spoken prompts turned off"
+    "voiceOff": "Spoken prompts turned off",
+    "events": "Events",
+    "celebrations": "Celebrations",
+    "memories": "Memories",
+    "familyTree": "Family tree"
   },
   "dashboard": {
     "greetingMorning": "Good morning",
@@ -252,7 +257,9 @@
     "familyOnly": "Family only",
     "inviteesOnly": "Invitees only",
     "continue": "Continue",
-    "createEvent": "Create event"
+    "createEvent": "Create event",
+    "repeatNote": "Repeat settings are saved on this device.",
+    "reminderNote": "You can set reminders from the event once it is created."
   },
   "memories": {
     "title": "Memories",

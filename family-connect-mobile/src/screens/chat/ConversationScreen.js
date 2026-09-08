@@ -230,8 +230,6 @@ export default function ConversationScreen() {
         familyName={family.name}
         members={members}
         onlineCount={onlineCount}
-        onVoiceCall={() => Alert.alert('Voice call', 'Coming soon')}
-        onVideoCall={() => Alert.alert('Video call', 'Coming soon')}
         onSearch={() => navigation.navigate('ChatSearch')}
         onMore={() => navigation.navigate('ChatSettings')}
         onBack={() => navigation.goBack()}

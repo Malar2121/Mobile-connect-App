@@ -58,7 +58,7 @@ export default function RelationshipEditorScreen() {
       toast.success(`Relationship updated for ${selectedMember.fullName}`);
     } catch (e) {
       if (e.status === 404) {
-        toast.error('FamilyMember record not found. TODO: auto-create tree nodes for all members.');
+        toast.error('This member is not in the family tree yet. Ask an admin to add them first.');
       } else {
         toast.error(e.message || 'Could not update relationship');
       }

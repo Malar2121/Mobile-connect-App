@@ -82,8 +82,10 @@ export function ChatHeader({
         </View>
 
         <View style={styles.actions}>
-          <HeaderButton icon="call-outline" onPress={onVoiceCall} colors={colors} isDark={isDark} />
-          <HeaderButton icon="videocam-outline" onPress={onVideoCall} colors={colors} isDark={isDark} />
+          {/* Calling is not part of this project. The buttons render only
+              if a handler is supplied, so no dead control is shown. */}
+          {onVoiceCall ? <HeaderButton icon="call-outline" onPress={onVoiceCall} colors={colors} isDark={isDark} /> : null}
+          {onVideoCall ? <HeaderButton icon="videocam-outline" onPress={onVideoCall} colors={colors} isDark={isDark} /> : null}
           {uiMode !== 'minor' && (
             <>
               <HeaderButton icon="search-outline" onPress={onSearch} colors={colors} isDark={isDark} />

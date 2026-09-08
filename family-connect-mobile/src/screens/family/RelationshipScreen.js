@@ -53,7 +53,7 @@ export default function RelationshipScreen() {
     } catch (e) {
       if (e.status === 404) {
         toast.error(
-          'FamilyMember record not found. TODO: Backend should auto-create tree nodes for all members.',
+          'This member is not in the family tree yet. Ask an admin to add them first.',
         );
       } else {
         toast.error(e.message || 'Could not update relationship');

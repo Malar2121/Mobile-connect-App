@@ -11,19 +11,33 @@ import NotificationsScreen from '../screens/notifications/NotificationsScreen';
 import LanguageScreen from '../screens/profile/LanguageScreen';
 import SecurityScreen from '../screens/profile/SecurityScreen';
 import FamilyNavigator from './FamilyNavigator';
+import EventsNavigator from './EventsNavigator';
+import MemoriesNavigator from './MemoriesNavigator';
+import FamilyTreeNavigator from './FamilyTreeNavigator';
 import { FloatingTabBar } from '../components/navigation/FloatingTabBar';
 import { useTabConfig } from '../hooks/useTabConfig';
 
 const Tab = createBottomTabNavigator();
 const ProfileStack = createNativeStackNavigator();
 
-// Same profile stack as the standard app so elders can still manage
-// family, language, security and notifications.
+/**
+ * The same profile stack as the standard app, so elders can manage family,
+ * language, security and notifications — and can reach Events, Memories and
+ * the Family Tree.
+ *
+ * Those three modules were previously absent here while a comment claimed they
+ * were reachable, which meant an elder could not open the celebration calendar
+ * or the memory archive at all. The tab bar deliberately stays at four large
+ * targets; the modules are reached from the elder dashboard's big action tiles.
+ */
 function ElderProfileNavigator() {
   return (
     <ProfileStack.Navigator screenOptions={{ headerShown: false }}>
       <ProfileStack.Screen name="ProfileMain" component={ProfileScreen} />
       <ProfileStack.Screen name="FamilyModule" component={FamilyNavigator} />
+      <ProfileStack.Screen name="EventsModule" component={EventsNavigator} />
+      <ProfileStack.Screen name="MemoriesModule" component={MemoriesNavigator} />
+      <ProfileStack.Screen name="FamilyTreeModule" component={FamilyTreeNavigator} />
       <ProfileStack.Screen name="CreateFamily" component={CreateFamilyScreen} />
       <ProfileStack.Screen name="JoinFamily" component={JoinFamilyScreen} />
       <ProfileStack.Screen name="Notifications" component={NotificationsScreen} />
@@ -34,9 +48,12 @@ function ElderProfileNavigator() {
 }
 
 /**
- * Elder mode navigation: only four large targets — Home, Chat, Map, Profile.
- * Events/Memories/Family-tree remain reachable through the profile hub,
- * keeping the tab bar uncluttered for elder users.
+ * Elder mode navigation: four large tab targets — Home, Chat, Map, Profile —
+ * so the bar stays uncluttered and every target stays big enough to hit.
+ *
+ * Events, Celebrations, Memories and the Family Tree are reached from the
+ * large action tiles on the elder dashboard, which route into the Profile
+ * stack above.
  */
 function ElderTabNavigatorInner() {
   const tabConfig = useTabConfig();

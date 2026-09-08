@@ -14,7 +14,7 @@ function PermissionCardComponent({
   selectedOption,
   onSelectOption,
   readOnly,
-  todoNote,
+  note,
 }) {
   const { colors, layout, radii } = useTheme();
 
@@ -82,9 +82,9 @@ function PermissionCardComponent({
         </View>
       ) : null}
 
-      {todoNote ? (
+      {note ? (
         <Text style={{ color: colors.textTertiary, fontSize: 11 * layout.fontScale, marginTop: 10 }}>
-          {todoNote}
+          {note}
         </Text>
       ) : null}
     </Card>

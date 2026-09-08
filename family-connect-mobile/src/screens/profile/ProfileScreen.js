@@ -17,6 +17,7 @@ import { useAuth } from '../../contexts/AuthContext';
 import { useFamily } from '../../contexts/FamilyContext';
 import { useI18n, SUPPORTED_LOCALES } from '../../i18n';
 import { useTheme } from '../../hooks/useTheme';
+import { useUIMode } from '../../contexts/UIModeContext';
 import { useAccessibilityPolicy } from '../../hooks/useAccessibilityPolicy';
 import { useVoicePrompts } from '../../hooks/useVoicePrompts';
 import { createInviteCode } from '../../services/familyService';
@@ -26,6 +27,7 @@ export default function ProfileScreen({ navigation }) {
   const { t, locale } = useI18n();
   const policy = useAccessibilityPolicy();
   const voice = useVoicePrompts();
+  const { modeLocked } = useUIMode();
   const toast = useToast();
   const { user, signOut } = useAuth();
   const { family, members, loading: familyLoading } = useFamily();
@@ -110,12 +112,17 @@ export default function ProfileScreen({ navigation }) {
               >
                 {t('profile.noFamily')}
               </Text>
-              <Button title={t('profile.createFamily')} onPress={() => navigation.navigate('CreateFamily')} />
+              {/* Creating a family makes the creator an admin, which would let
+                  a minor step outside the guardian model — so minors are
+                  offered joining only. */}
+              {policy.isMinor ? null : (
+                <Button title={t('profile.createFamily')} onPress={() => navigation.navigate('CreateFamily')} />
+              )}
               <Button
                 title={t('profile.joinFamily')}
                 variant="secondary"
                 onPress={() => navigation.navigate('JoinFamily')}
-                style={{ marginTop: 10 }}
+                style={{ marginTop: policy.isMinor ? 0 : 10 }}
               />
             </>
           ) : (
@@ -133,11 +140,15 @@ export default function ProfileScreen({ navigation }) {
               <Text style={{ color: colors.textSecondary, marginTop: 6, fontSize: 14 * layout.fontScale }}>
                 {memberLabel}
               </Text>
-              <Button
-                title={t('profile.openFamilyHub')}
-                onPress={() => navigation.navigate('FamilyModule', { screen: 'FamilyHome' })}
-                style={{ marginTop: 16 }}
-              />
+              {/* The family hub is family administration, and it is not in a
+                  minor's navigation stack — offering it would dead-end. */}
+              {policy.isMinor ? null : (
+                <Button
+                  title={t('profile.openFamilyHub')}
+                  onPress={() => navigation.navigate('FamilyModule', { screen: 'FamilyHome' })}
+                  style={{ marginTop: 16 }}
+                />
+              )}
               {policy.canPerformAdminAction ? (
                 <View style={{ marginTop: 20 }}>
                   <Text
@@ -209,6 +220,13 @@ export default function ProfileScreen({ navigation }) {
 
         <SectionTitle title={t('profile.accessibility')} subtitle={t('profile.accessibilitySubtitle')} />
         <Card>
+          {/* A child account is locked into minor mode by its memberType, so
+              these chips would look tappable and do nothing. Explain instead. */}
+          {modeLocked ? (
+            <Text style={{ color: colors.textSecondary, fontSize: 14 * layout.fontScale, lineHeight: 21 }}>
+              {t('profile.modeLockedHint')}
+            </Text>
+          ) : (
           <View style={styles.chipRow}>
             {UI_MODES.map((mode) => (
               <Chip
@@ -228,6 +246,7 @@ export default function ProfileScreen({ navigation }) {
               />
             ))}
           </View>
+          )}
           {uiMode === 'elder' ? (
             <>
               <Text style={{ color: colors.textSecondary, fontSize: 13 * layout.fontScale, marginTop: 12 }}>

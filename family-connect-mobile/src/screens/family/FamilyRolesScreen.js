@@ -46,12 +46,15 @@ export default function FamilyRolesScreen() {
         onBack={() => navigation.goBack()}
       />
       <View style={{ paddingBottom: 12 }}>
+        {/* This screen is the reference list of what each role can do. Roles
+            are changed on a member's own profile, which is where the update
+            actually happens. */}
         <Text style={{ color: colors.textSecondary, fontSize: 14 * layout.fontScale, marginBottom: 12 }}>
-          Role assignment requires a backend API. Roles are displayed based on each member&apos;s account role. Family
-          owners are identified as the family creator with admin privileges.
+          What each role can do in your family. The family owner is whoever created it and always has admin
+          rights.
         </Text>
-        <Text style={{ color: colors.textTertiary, fontSize: 11, marginBottom: 8 }}>
-          TODO: PUT /api/family/members/:id/role for role management.
+        <Text style={{ color: colors.textTertiary, fontSize: 12 * layout.fontScale, marginBottom: 8 }}>
+          To change someone&apos;s role, open Members, choose the person, and pick a role on their profile.
         </Text>
       </View>
       <FlatList

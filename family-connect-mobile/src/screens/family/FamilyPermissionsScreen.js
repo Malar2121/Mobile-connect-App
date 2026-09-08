@@ -86,7 +86,7 @@ export default function FamilyPermissionsScreen() {
           selectedOption={permissions.familyPrivacy}
           onSelectOption={(v) => update('familyPrivacy', v)}
           readOnly={!canManage}
-          todoNote="TODO: Sync with backend family privacy settings."
+          note="Saved on this device for now."
         />
 
         <PermissionCard

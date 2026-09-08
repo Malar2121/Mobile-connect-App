@@ -149,7 +149,7 @@ export default function InviteMembersScreen() {
             </>
           )}
 
-          <SectionTitle title="Invite history" subtitle="Stored locally until backend sync" style={{ marginTop: 20 }} />
+          <SectionTitle title="Invite history" subtitle="Recent activity on this device" style={{ marginTop: 20 }} />
           {history.length === 0 ? (
             <Text style={{ color: colors.textSecondary, fontSize: 14 * layout.fontScale }}>
               Share or regenerate an invite to build history.
@@ -163,7 +163,7 @@ export default function InviteMembersScreen() {
             />
           )}
           <Text style={{ color: colors.textTertiary, fontSize: 11, marginTop: 12 }}>
-            TODO: Backend invite history and expiration API not yet available.
+            Recent invite activity on this device. For links that expire and work only once, use email invitations.
           </Text>
         </View>
       </ScrollView>

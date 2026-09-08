@@ -93,9 +93,13 @@ function InviteCardComponent({
         </View>
       ) : null}
 
+      {/* A shared family code deliberately has no expiry — it stays valid until
+          an admin regenerates it. Email invitations are the expiring, one-time
+          option. Say that plainly rather than leaving it unexplained. */}
       {!expiresAt ? (
-        <Text style={{ color: colors.textTertiary, fontSize: 11 * layout.fontScale, marginTop: 12 }}>
-          TODO: Backend invite expiration not yet configured (expiresAt returns null).
+        <Text style={{ color: colors.textTertiary, fontSize: 12 * layout.fontScale, marginTop: 12 }}>
+          This code stays valid until you generate a new one. For a link that expires and works only once, send
+          an email invitation instead.
         </Text>
       ) : null}
     </Card>

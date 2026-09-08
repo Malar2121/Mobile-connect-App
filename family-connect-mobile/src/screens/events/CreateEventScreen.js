@@ -108,7 +108,7 @@ export default function CreateEventScreen({ navigation }) {
           <TextField label={t('events.dateField')} value={date} onChangeText={setDate} placeholder="2026-07-15" hint="YYYY-MM-DD" />
           <TextField label={t('events.startTime')} value={startTime} onChangeText={setStartTime} placeholder="18:00" />
           <TextField label={t('events.endTime')} value={endTime} onChangeText={setEndTime} placeholder="21:00" />
-          <Text style={{ color: colors.textTertiary, fontSize: 11, marginTop: 8 }}>TODO: Repeat rules stored locally until backend recurrence API.</Text>
+          <Text style={{ color: colors.textTertiary, fontSize: 12 * layout.fontScale, marginTop: 8 }}>{t('events.repeatNote')}</Text>
           <View style={[styles.chips, { marginTop: 12 }]}>
             {REPEAT_OPTIONS.map((r) => (
               <Chip key={r.id} label={r.label} selected={repeat === r.id} onPress={() => setRepeat(r.id)} />
@@ -127,7 +127,7 @@ export default function CreateEventScreen({ navigation }) {
             <Chip label={t('events.familyOnly')} selected={privacy === 'family'} onPress={() => setPrivacy('family')} />
             <Chip label={t('events.inviteesOnly')} selected={privacy === 'invitees'} onPress={() => setPrivacy('invitees')} />
           </View>
-          <Text style={{ color: colors.textTertiary, fontSize: 11, marginTop: 8 }}>TODO: Reminder scheduling — configure in Event Reminders after creation.</Text>
+          <Text style={{ color: colors.textTertiary, fontSize: 12 * layout.fontScale, marginTop: 8 }}>{t('events.reminderNote')}</Text>
         </>
       ) : null}
 
