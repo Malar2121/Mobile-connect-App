@@ -26,8 +26,9 @@ function hasKey(dotted) {
 
 const files = walk(MOBILE_SRC).filter((f) => !f.includes(`${path.sep}i18n${path.sep}`));
 
-// t('a.b') or t("a.b") or t(`a.b`) — template keys with ${} are dynamic and skipped.
-const T_CALL = /\bt\(\s*['"`]([A-Za-z0-9_.]+)['"`]/g;
+// t('a.b') or translate('a.b') (quotes or backticks) — template keys with ${}
+// are dynamic and skipped.
+const T_CALL = /\b(?:t|translate)\(\s*['"`]([A-Za-z0-9_.]+)['"`]/g;
 
 describe('i18n usage across the app', () => {
   const usages = [];
@@ -74,10 +75,11 @@ describe('i18n usage across the app', () => {
     const screens = files.filter((f) => f.includes(`${path.sep}screens${path.sep}`));
     const localised = screens.filter((f) => /useI18n/.test(fs.readFileSync(f, 'utf8')));
     const pct = Math.round((localised.length / screens.length) * 100);
-    // Informational, and a floor so coverage cannot silently regress. Three
-    // screens are pure layout with no user-facing copy, so 78 is the ceiling.
+    // Informational, and a floor so coverage cannot silently regress.
+    // ChatScreen, FamilyDashboard and FamilyMapScreen only compose other
+    // components and have no text of their own, so 82 is every screen with copy.
     console.log(`      localised screens: ${localised.length}/${screens.length} (${pct}%)`);
-    expect(localised.length).toBeGreaterThanOrEqual(78);
+    expect(localised.length).toBeGreaterThanOrEqual(82);
   });
 
   describe('no hardcoded user-facing English', () => {
