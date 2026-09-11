@@ -58,7 +58,7 @@ const familySchema = new mongoose.Schema(
   }
 );
 
-// Index for fast invite-code lookups
-familySchema.index({ inviteCode: 1 });
+// `unique: true` on inviteCode already creates the index for invite-code
+// lookups; declaring it again made Mongoose warn about a duplicate index.
 
 module.exports = mongoose.model('Family', familySchema);
