@@ -5,6 +5,8 @@ import { PageHeader, Screen, SectionTitle, useToast } from '../../design-system'
 import { SUPPORTED_LOCALES, useI18n } from '../../i18n';
 import { useTheme } from '../../hooks/useTheme';
 import { useResponsive } from '../../design-system';
+import { useAuth } from '../../contexts/AuthContext';
+import { updateProfile } from '../../services/authService';
 
 function LanguageOption({ option, selected, onSelect, colors, layout, t }) {
   const label = t(option.labelKey) || option.nativeLabel;
@@ -38,13 +40,16 @@ export default function LanguageScreen({ navigation }) {
   const { horizontalPadding } = useResponsive();
   const toast = useToast();
   const { locale, setLocale, t } = useI18n();
+  const { isAuthenticated } = useAuth();
 
   const handleSelect = useCallback(
     async (id) => {
       await setLocale(id);
+      // Notifications and push messages follow the language chosen here.
+      if (isAuthenticated) updateProfile({ language: id }).catch(() => {});
       toast.success(t('language.changed'));
     },
-    [setLocale, t, toast],
+    [setLocale, t, toast, isAuthenticated],
   );
 
   return (

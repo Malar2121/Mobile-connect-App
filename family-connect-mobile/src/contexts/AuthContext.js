@@ -2,6 +2,7 @@ import React, { createContext, useCallback, useContext, useEffect, useMemo, useS
 import * as SecureStore from 'expo-secure-store';
 import { api, bindSessionExpiredCallback, setAuthToken } from '../services/api';
 import * as authService from '../services/authService';
+import { getCurrentLocale } from '../i18n';
 import { disconnectSocket } from '../socket/socketClient';
 
 const AuthContext = createContext(undefined);
@@ -74,6 +75,9 @@ export function AuthProvider({ children }) {
     }
     setTokenState(accessToken);
     setUser(profile);
+    // Tell the server which language this member reads, so notifications and
+    // push messages arrive in it. Best effort: signing in never waits on it.
+    authService.updateProfile({ language: getCurrentLocale() }).catch(() => {});
   }, []);
 
   const signIn = useCallback(async (email, password) => {
