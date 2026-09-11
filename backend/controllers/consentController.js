@@ -34,6 +34,7 @@ async function requestConsentForChild(childUser, familyId) {
         userIds: guardians.map((g) => g._id),
         familyId,
         type: 'consent_requested',
+        params: { child: childUser.fullName },
         title: 'A child account needs your approval',
         body: `${childUser.fullName} has joined and is waiting for a guardian to approve their account.`,
         data: { consentId: String(consent._id), childId: String(childUser._id) },
@@ -145,6 +146,7 @@ async function decide(req, res, status) {
       userIds: [consent.child._id],
       familyId,
       type: status === 'approved' ? 'consent_approved' : 'consent_rejected',
+      params: { name: req.user.fullName },
       title: status === 'approved' ? 'Your account was approved' : 'Your account was not approved',
       body:
         status === 'approved'

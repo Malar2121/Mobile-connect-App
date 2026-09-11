@@ -248,7 +248,7 @@ const getMe = async (req, res) => {
 // ══════════════════════════════════════════════════════════
 const updateMe = async (req, res) => {
   try {
-    const { pushPreferences, pushToken, fullName, avatar, dateOfBirth, elderMode } = req.body;
+    const { pushPreferences, pushToken, fullName, avatar, dateOfBirth, elderMode, language } = req.body;
     const updateData = {};
     if (pushPreferences) updateData.pushPreferences = pushPreferences;
     if (pushToken !== undefined) updateData.pushToken = pushToken;
@@ -256,6 +256,8 @@ const updateMe = async (req, res) => {
     if (avatar !== undefined) updateData.avatar = avatar;
     if (dateOfBirth !== undefined) updateData.dateOfBirth = dateOfBirth || null;
     if (typeof elderMode === 'boolean') updateData.elderMode = elderMode;
+    // The language this member reads notifications and push messages in.
+    if (['en', 'si', 'ta'].includes(language)) updateData.language = language;
 
     const user = await User.findByIdAndUpdate(req.user._id, { $set: updateData }, { new: true }).populate('familyId', 'name');
     return res.status(200).json({

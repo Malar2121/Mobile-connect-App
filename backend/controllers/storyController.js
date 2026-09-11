@@ -141,6 +141,7 @@ const createStory = async (req, res) => {
       familyId,
       excludeUserId: userId,
       type: 'story_created',
+      params: { name: fullName, title: story.title },
       title: `${fullName} shared a family story`,
       body: story.title,
       data: { storyId: String(story._id) },

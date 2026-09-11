@@ -52,6 +52,12 @@ const userSchema = new mongoose.Schema(
       enum: ['adult', 'child', 'elder'],
       default: 'adult',
     },
+    // Language for notifications and push messages sent to this member.
+    language: {
+      type: String,
+      enum: ['en', 'si', 'ta'],
+      default: 'en',
+    },
     dateOfBirth: {
       type: Date,
       default: null,

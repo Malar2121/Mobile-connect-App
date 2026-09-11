@@ -77,6 +77,7 @@ async function sweepEvents(now, results) {
       await notifyFamilyMembers({
         familyId: event.familyId,
         type: 'event_reminder',
+        params: { title: event.title, days: until, location: event.location },
         title: `${event.title} is ${formatWhen(until)}`,
         body: event.location ? `At ${event.location}` : 'Tap to see the details.',
         data: { eventId: String(event._id), kind: 'event_reminder' },
@@ -110,6 +111,7 @@ async function sweepCelebrations(now, results) {
       await notifyFamilyMembers({
         familyId: celebration.familyId,
         type: 'celebration_reminder',
+        params: { title: celebration.title, days: until, celebrationType: celebration.type },
         title: `${celebration.title} is ${formatWhen(until)}`,
         body: celebration.type === 'anniversary' ? 'An anniversary is coming up.' : 'A family celebration is coming up.',
         data: { celebrationId: String(celebration._id), kind: 'celebration_reminder' },
@@ -151,6 +153,7 @@ async function sweepBirthdays(now, results) {
           familyId,
           excludeUserId: who?._id, // don't remind someone about their own birthday
           type: 'birthday_reminder',
+          params: { name: who?.fullName ?? '', days: birthday.daysUntil, age: birthday.turningAge },
           title: `${birthday.title} is ${formatWhen(birthday.daysUntil)}`,
           body: birthday.turningAge ? `Turning ${birthday.turningAge}.` : 'Don\'t forget to wish them well.',
           data: { userId: String(who?._id ?? ''), kind: 'birthday_reminder' },

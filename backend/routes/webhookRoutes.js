@@ -26,6 +26,7 @@ router.post('/geofence', protect, async (req, res) => {
       familyId,
       excludeUserId: userId,
       type: 'geofence_alert',
+      params: { place: locationName, action },
       title,
       body,
       data: { action, locationName, userId },

@@ -2,6 +2,7 @@ const { admin, isInitialized } = require('../config/firebase');
 const Notification = require('../models/Notification');
 const User = require('../models/User');
 const logger = require('../utils/logger');
+const { renderNotification } = require('./notificationText');
 
 /**
  * Send a push notification via Firebase Cloud Messaging
@@ -35,7 +36,7 @@ const sendPush = async ({ tokens, title, body, data = {} }) => {
  * Automatically create Notification items for an entire family array of Users
  * and push via FCM / Expo if tokens exist.
  */
-const notifyFamilyMembers = async ({ familyId, excludeUserId, skipUserIds = [], type, title, body, data = {} }) => {
+const notifyFamilyMembers = async ({ familyId, excludeUserId, skipUserIds = [], type, title, body, data = {}, params }) => {
   try {
     // 1. Get all members of the family except the triggerer, and except anyone
     //    already alerted more specifically (e.g. @mentioned in this message).
@@ -45,8 +46,11 @@ const notifyFamilyMembers = async ({ familyId, excludeUserId, skipUserIds = [], 
     );
 
     if (users.length === 0) return;
+    const fallback = { title, body };
 
     for (const user of users) {
+      // Each member reads the notification in the language they chose.
+      const { title, body } = renderNotification(type, params, user.language) ?? fallback;
       // Check pushPreferences based on type
       let shouldPush = true;
       if (type.startsWith('chat_') && user.pushPreferences?.chat === false) shouldPush = false;
@@ -104,7 +108,7 @@ const notifyFamilyMembers = async ({ familyId, excludeUserId, skipUserIds = [], 
  * Notify a specific set of users rather than the whole family.
  * Used for @mentions, where only the people named should be alerted.
  */
-const notifyUsers = async ({ userIds, familyId, excludeUserId, type, title, body, data = {} }) => {
+const notifyUsers = async ({ userIds, familyId, excludeUserId, type, title, body, data = {}, params }) => {
   try {
     const ids = [...new Set((userIds || []).map(String))].filter(
       (id) => !excludeUserId || id !== String(excludeUserId),
@@ -113,8 +117,10 @@ const notifyUsers = async ({ userIds, familyId, excludeUserId, type, title, body
 
     // Scoped by familyId so a caller can never notify outside its own family.
     const users = await User.find({ _id: { $in: ids }, familyId });
+    const fallback = { title, body };
 
     for (const user of users) {
+      const { title, body } = renderNotification(type, params, user.language) ?? fallback;
       await Notification.create({ recipient: user._id, familyId, type, title, body, data });
 
       if (user.fcmTokens?.length) {

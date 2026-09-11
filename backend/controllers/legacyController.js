@@ -71,6 +71,7 @@ const createLegacyProfile = async (req, res) => {
       familyId,
       excludeUserId: req.user._id,
       type: 'legacy_created',
+      params: { person: profile.memberId.fullName },
       title: 'Legacy Profile Created',
       body: `A memorial profile has been created for ${profile.memberId.fullName}.`,
     });
@@ -103,6 +104,7 @@ const addTribute = async (req, res) => {
       familyId,
       excludeUserId: userId,
       type: 'legacy_tribute',
+      params: { name: req.user.fullName },
       title: 'New Tribute',
       body: `${req.user.fullName} shared a tribute on a memorial profile.`,
     });
