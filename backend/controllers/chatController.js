@@ -266,17 +266,18 @@ const editMessage = async (req, res) => {
 
     message.text = text.trim();
     // Re-resolve mentions: an edit can add or remove an @name.
-    message.mentions = parseMentions(message.text, await getMentionableMembers(familyId));
+    const mentionIds = parseMentions(message.text, await getMentionableMembers(familyId)).map(String);
+    message.mentions = mentionIds;
     message.editedAt = new Date();
     await message.save();
+    // Populating replaces message.mentions with user objects, so the ids
+    // resolved above are what decides who to notify.
     const populated = await populateMessage(message);
     emitToFamily(req, familyId, 'message_updated', populated);
 
     // Only alert people the edit newly mentioned, so repeated edits do not
     // re-notify someone who was already tagged.
-    const newlyMentioned = (message.mentions || [])
-      .map(String)
-      .filter((id) => !previousMentions.has(id));
+    const newlyMentioned = mentionIds.filter((id) => !previousMentions.has(id));
 
     if (newlyMentioned.length > 0) {
       notifyUsers({
