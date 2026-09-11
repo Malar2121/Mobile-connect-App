@@ -4,6 +4,8 @@ import { useAuth } from '../contexts/AuthContext';
 import { useFamily } from '../contexts/FamilyContext';
 import { useTheme } from './useTheme';
 import { getFamilyTree } from '../services/familyTreeService';
+import { getFamilyHistory } from '../services/archiveService';
+import { useI18n } from '../i18n';
 import { getFamilyMemories } from '../services/memoryService';
 import { getFamilyEvents } from '../services/eventService';
 import { loadLegacyProfiles } from '../utils/memoryModuleHelpers';
@@ -17,7 +19,6 @@ import {
   getPersonRelations,
   layoutTree,
   loadAchievements,
-  loadFamilyHistory,
   loadTreeSettings,
   searchTree,
 } from '../utils/familyTreeModuleHelpers';
@@ -26,6 +27,7 @@ export function useFamilyTreeModuleData(searchFilters = {}) {
   const { user } = useAuth();
   const { members, family } = useFamily();
   const { uiMode } = useTheme();
+  const { t } = useI18n();
 
   const [treeNodes, setTreeNodes] = useState([]);
   const [memories, setMemories] = useState([]);
@@ -52,7 +54,8 @@ export function useFamilyTreeModuleData(searchFilters = {}) {
         getFamilyEvents().catch(() => []),
         loadLegacyProfiles(family._id),
         loadAchievements(family._id),
-        loadFamilyHistory(family._id),
+        // Shared journal from the server, so every member sees the same history.
+        getFamilyHistory().catch(() => null),
         loadTreeSettings(family._id),
       ]);
       setTreeNodes(tree);
@@ -63,11 +66,11 @@ export function useFamilyTreeModuleData(searchFilters = {}) {
       setFamilyHistory(history);
       setTreeSettings(settings);
     } catch (e) {
-      setError(e.message || 'Could not load the family tree.');
+      setError(t('tree.loadFailed'));
     } finally {
       setLoading(false);
     }
-  }, [family]);
+  }, [family, t]);
 
   const refresh = useCallback(async () => {
     setRefreshing(true);

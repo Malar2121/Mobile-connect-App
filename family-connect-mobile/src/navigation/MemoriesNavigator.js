@@ -13,6 +13,9 @@ import SearchMemoriesScreen from '../screens/memories/SearchMemoriesScreen';
 import MemoryMapScreen from '../screens/memories/MemoryMapScreen';
 import TaggedMembersScreen from '../screens/memories/TaggedMembersScreen';
 import MemoryApprovalsScreen from '../screens/memories/MemoryApprovalsScreen';
+import FamilyStoriesScreen from '../screens/memories/FamilyStoriesScreen';
+import StoryEditorScreen from '../screens/memories/StoryEditorScreen';
+import StoryDetailsScreen from '../screens/memories/StoryDetailsScreen';
 
 const Stack = createNativeStackNavigator();
 
@@ -32,6 +35,9 @@ export default function MemoriesNavigator() {
       <Stack.Screen name="MemoryMap" component={MemoryMapScreen} />
       <Stack.Screen name="TaggedMembers" component={TaggedMembersScreen} />
       <Stack.Screen name="MemoryApprovals" component={MemoryApprovalsScreen} />
+      <Stack.Screen name="FamilyStories" component={FamilyStoriesScreen} />
+      <Stack.Screen name="StoryEditor" component={StoryEditorScreen} />
+      <Stack.Screen name="StoryDetails" component={StoryDetailsScreen} />
     </Stack.Navigator>
   );
 }

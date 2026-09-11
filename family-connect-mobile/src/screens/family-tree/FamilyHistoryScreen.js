@@ -1,32 +1,33 @@
 import React, { useCallback, useEffect, useState } from 'react';
-import { ScrollView, Text, View } from 'react-native';
+import { KeyboardAvoidingView, Platform, ScrollView, Text, View } from 'react-native';
 import { useNavigation } from '@react-navigation/native';
 import { PageHeader, Screen, SectionTitle, TextField, Button, useToast } from '../../design-system';
+import { useAuth } from '../../contexts/AuthContext';
 import { useFamilyTreeModuleData } from '../../hooks/useFamilyTreeModuleData';
-import { saveFamilyHistory, DEFAULT_FAMILY_HISTORY } from '../../utils/familyTreeModuleHelpers';
+import { DEFAULT_FAMILY_HISTORY } from '../../utils/familyTreeModuleHelpers';
+import { HISTORY_FIELDS, HISTORY_FIELD_MAX, updateFamilyHistory } from '../../services/archiveService';
 import { useTheme } from '../../hooks/useTheme';
-import { useResponsive } from '../../design-system';
 import { useI18n } from '../../i18n';
 
-const SECTIONS = [
-  { key: 'origins', title: 'Origins', placeholder: 'Where does your family come from?' },
-  { key: 'traditions', title: 'Traditions', placeholder: 'Holiday rituals, recipes, customs…' },
-  { key: 'culturalNotes', title: 'Cultural notes', placeholder: 'Language, heritage, identity…' },
-  { key: 'importantEvents', title: 'Important events', placeholder: 'Migrations, reunions, milestones…' },
-  { key: 'achievements', title: 'Family achievements', placeholder: 'Collective accomplishments…' },
-  { key: 'historicalMemories', title: 'Historical memories', placeholder: 'Stories passed down generations…' },
-];
-
+/**
+ * The shared family history journal — origins, traditions and the stories
+ * passed down through generations. Saved on the server, so every member of the
+ * family reads the same text on every device.
+ */
 export default function FamilyHistoryScreen() {
   const navigation = useNavigation();
   const toast = useToast();
+  const { user } = useAuth();
   const { colors, layout } = useTheme();
-
   const { t } = useI18n();
-  const { horizontalPadding } = useResponsive();
   const { family, familyHistory, setFamilyHistory } = useFamilyTreeModuleData();
+
   const [draft, setDraft] = useState(familyHistory ?? DEFAULT_FAMILY_HISTORY);
   const [saving, setSaving] = useState(false);
+  const [error, setError] = useState('');
+
+  // Guests read the journal but cannot change it (the server enforces this too).
+  const readOnly = user?.role === 'guest';
 
   useEffect(() => {
     if (familyHistory) setDraft(familyHistory);
@@ -37,44 +38,70 @@ export default function FamilyHistoryScreen() {
   }, []);
 
   const handleSave = useCallback(async () => {
-    if (!family?._id) return;
+    if (!family?._id || readOnly) return;
+    if (HISTORY_FIELDS.some((field) => (draft[field] ?? '').length > HISTORY_FIELD_MAX)) {
+      setError(t('tree.historyTooLong'));
+      return;
+    }
+    setError('');
     setSaving(true);
     try {
-      await saveFamilyHistory(family._id, draft);
-      setFamilyHistory(draft);
+      const saved = await updateFamilyHistory(draft);
+      setFamilyHistory(saved);
       toast.success(t('tree.journalSaved'));
     } catch {
       toast.error(t('tree.journalSaveFailed'));
     } finally {
       setSaving(false);
     }
-  }, [family, draft, setFamilyHistory, toast]);
+  }, [family, draft, readOnly, setFamilyHistory, toast, t]);
+
+  const updatedBy = familyHistory?.updatedBy?.fullName;
 
   return (
     <Screen edges={['top']}>
       <PageHeader title={t('tree.history')} subtitle={t('tree.journalSubtitle')} onBack={() => navigation.goBack()} />
 
-      <ScrollView contentContainerStyle={{ paddingBottom: 40 }} keyboardShouldPersistTaps="handled">
-        <Text style={{ color: colors.textSecondary, fontSize: 14 * layout.fontScale, marginBottom: 16, lineHeight: 22 }}>
-          Preserve origins, traditions, and stories. Stored on device until a shared family journal API is available.
-        </Text>
+      <KeyboardAvoidingView behavior={Platform.OS === 'ios' ? 'padding' : undefined} style={{ flex: 1 }}>
+        <ScrollView contentContainerStyle={{ paddingBottom: 40 }} keyboardShouldPersistTaps="handled">
+          <Text style={{ color: colors.textSecondary, fontSize: 14 * layout.fontScale, marginBottom: 8, lineHeight: 22 }}>
+            {t('tree.historyIntro')}
+          </Text>
+          {updatedBy ? (
+            <Text style={{ color: colors.textTertiary, fontSize: 12 * layout.fontScale, marginBottom: 16 }}>
+              {t('tree.historyUpdatedBy', { name: updatedBy })}
+            </Text>
+          ) : null}
+          {readOnly ? (
+            <Text style={{ color: colors.textSecondary, fontSize: 13 * layout.fontScale, marginBottom: 16 }}>
+              {t('tree.historyReadOnly')}
+            </Text>
+          ) : null}
 
-        {SECTIONS.map((section) => (
-          <View key={section.key} style={{ marginBottom: layout.sectionGap }}>
-            <SectionTitle title={section.title} />
-            <TextField
-              value={draft[section.key] ?? ''}
-              onChangeText={(v) => updateField(section.key, v)}
-              placeholder={section.placeholder}
-              multiline
-              numberOfLines={4}
-              style={{ minHeight: 100, textAlignVertical: 'top' }}
-            />
-          </View>
-        ))}
+          {HISTORY_FIELDS.map((key) => (
+            <View key={key} style={{ marginBottom: layout.sectionGap }}>
+              <SectionTitle title={t(`tree.historySections.${key}`)} />
+              <TextField
+                value={draft[key] ?? ''}
+                onChangeText={(value) => updateField(key, value)}
+                placeholder={t(`tree.historyPlaceholders.${key}`)}
+                accessibilityLabel={t(`tree.historySections.${key}`)}
+                multiline
+                numberOfLines={4}
+                maxLength={HISTORY_FIELD_MAX}
+                editable={!readOnly}
+                style={{ minHeight: 100, textAlignVertical: 'top' }}
+              />
+            </View>
+          ))}
 
-        <Button title={t('tree.saveJournal')} onPress={handleSave} loading={saving} />
-      </ScrollView>
+          {error ? (
+            <Text style={{ color: colors.error, fontSize: 14 * layout.fontScale, marginBottom: 8 }}>{error}</Text>
+          ) : null}
+
+          {!readOnly ? <Button title={t('tree.saveJournal')} onPress={handleSave} loading={saving} /> : null}
+        </ScrollView>
+      </KeyboardAvoidingView>
     </Screen>
   );
 }

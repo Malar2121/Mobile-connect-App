@@ -457,7 +457,12 @@
     "notFound": "Memory not found",
     "commentFailed": "Could not post your comment.",
     "deleteFailed": "Could not delete this memory.",
-    "likeCount": "{{count}} likes"
+    "likeCount": "{{count}} likes",
+    "quickUpload": "Upload",
+    "quickLegacy": "Legacy",
+    "quickSearch": "Search",
+    "quickMap": "Map",
+    "quickStories": "Stories"
   },
   "tree": {
     "title": "Family tree",
@@ -517,7 +522,28 @@
     "emptyTitle": "Your family tree awaits",
     "mostConnected": "Most connected",
     "legend": "Relationship key",
-    "minimap": "Tree overview"
+    "minimap": "Tree overview",
+    "historyIntro": "Preserve your family’s origins, traditions and the stories passed down. Everyone in your family sees the same journal.",
+    "historySections": {
+      "origins": "Origins",
+      "traditions": "Traditions",
+      "culturalNotes": "Cultural notes",
+      "importantEvents": "Important events",
+      "achievements": "Family achievements",
+      "historicalMemories": "Historical memories"
+    },
+    "historyPlaceholders": {
+      "origins": "Where does your family come from?",
+      "traditions": "Festival rituals, recipes, customs…",
+      "culturalNotes": "Language, heritage, identity…",
+      "importantEvents": "Migrations, reunions, milestones…",
+      "achievements": "Things the family achieved together…",
+      "historicalMemories": "Stories passed down through generations…"
+    },
+    "historyUpdatedBy": "Last updated by {{name}}",
+    "historyReadOnly": "Guests can read the family history but cannot change it.",
+    "historyTooLong": "Each section can be up to 5,000 characters.",
+    "loadFailed": "Could not load the family tree."
   },
   "chat": {
     "title": "Chat",
@@ -883,5 +909,47 @@
     "reviewerNotice": "This memory is waiting for approval. Approve it to share it with the family.",
     "yourUploads": "Your uploads awaiting approval",
     "reviewedBy": "Reviewed by {{name}}"
+  },
+  "stories": {
+    "title": "Family stories",
+    "subtitle": "Written memories, traditions and event notes",
+    "tabStories": "Stories",
+    "tabNotes": "Event notes",
+    "share": "Share a story",
+    "edit": "Edit story",
+    "new": "New story",
+    "titleLabel": "Title",
+    "titlePlaceholder": "Give your story a title",
+    "bodyLabel": "Story",
+    "bodyPlaceholder": "Write what happened, who was there and why it matters…",
+    "categoryLabel": "Type",
+    "categories": {
+      "story": "Story",
+      "tradition": "Tradition",
+      "origin": "Family origins",
+      "milestone": "Milestone",
+      "recipe": "Recipe"
+    },
+    "titleRequired": "Add a title.",
+    "bodyRequired": "Write the story first.",
+    "titleTooLong": "Keep the title under 120 characters.",
+    "bodyTooLong": "A story can be up to 5,000 characters.",
+    "saved": "Story saved",
+    "shared": "Story shared with your family",
+    "saveFailed": "Could not save the story. Try again.",
+    "deleteTitle": "Delete this story?",
+    "deleteMessage": "It will be removed for the whole family.",
+    "deleted": "Story deleted",
+    "deleteFailed": "Could not delete the story.",
+    "loadFailed": "Could not load stories.",
+    "notFound": "Story not found",
+    "emptyTitle": "No stories yet",
+    "emptyBody": "Share a family story, tradition or recipe so it is never forgotten.",
+    "notesEmptyTitle": "No event notes yet",
+    "notesEmptyBody": "Notes added to family events will appear here.",
+    "notesLoadFailed": "Could not load event notes.",
+    "byAuthor": "By {{name}}",
+    "onEvent": "On {{title}}",
+    "readOnlyGuest": "Guests can read stories but cannot add them."
   }
 }

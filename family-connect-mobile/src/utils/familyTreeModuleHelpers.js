@@ -1,7 +1,6 @@
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import { findRelationshipOption } from './familyModuleHelpers';
 
-const HISTORY_KEY = (familyId) => `fc_family_history_${familyId}`;
 const TREE_SETTINGS_KEY = (familyId) => `fc_tree_settings_${familyId}`;
 const ACHIEVEMENTS_KEY = (familyId) => `fc_tree_achievements_${familyId}`;
 
@@ -491,20 +490,6 @@ export function getEventsForMember(events, memberId) {
   });
 }
 
-export async function loadFamilyHistory(familyId) {
-  if (!familyId) return { ...DEFAULT_FAMILY_HISTORY };
-  try {
-    const raw = await AsyncStorage.getItem(HISTORY_KEY(familyId));
-    return raw ? { ...DEFAULT_FAMILY_HISTORY, ...JSON.parse(raw) } : { ...DEFAULT_FAMILY_HISTORY };
-  } catch {
-    return { ...DEFAULT_FAMILY_HISTORY };
-  }
-}
-
-export async function saveFamilyHistory(familyId, history) {
-  if (!familyId) return;
-  await AsyncStorage.setItem(HISTORY_KEY(familyId), JSON.stringify(history));
-}
 
 export async function loadTreeSettings(familyId) {
   if (!familyId) return { ...DEFAULT_TREE_SETTINGS };

@@ -6,12 +6,13 @@ import { useTheme } from '../../hooks/useTheme';
 import { useI18n } from '../../i18n';
 
 const ACTIONS = [
-  { id: 'upload', label: 'Upload', icon: 'cloud-upload-outline', screen: 'UploadMemory' },
-  { id: 'albums', label: 'Albums', icon: 'albums-outline', screen: 'Albums' },
-  { id: 'timeline', label: 'Timeline', icon: 'time-outline', screen: 'StoryTimeline' },
-  { id: 'legacy', label: 'Legacy', icon: 'heart-outline', screen: 'LegacyMode' },
-  { id: 'search', label: 'Search', icon: 'search-outline', screen: 'SearchMemories' },
-  { id: 'map', label: 'Map', icon: 'map-outline', screen: 'MemoryMap' },
+  { id: 'upload', labelKey: 'memories.quickUpload', icon: 'cloud-upload-outline', screen: 'UploadMemory' },
+  { id: 'stories', labelKey: 'memories.quickStories', icon: 'book-outline', screen: 'FamilyStories' },
+  { id: 'albums', labelKey: 'memories.albums', icon: 'albums-outline', screen: 'Albums' },
+  { id: 'timeline', labelKey: 'memories.timeline', icon: 'time-outline', screen: 'StoryTimeline' },
+  { id: 'legacy', labelKey: 'memories.quickLegacy', icon: 'heart-outline', screen: 'LegacyMode' },
+  { id: 'search', labelKey: 'memories.quickSearch', icon: 'search-outline', screen: 'SearchMemories' },
+  { id: 'map', labelKey: 'memories.quickMap', icon: 'map-outline', screen: 'MemoryMap' },
 ];
 
 function MemoriesQuickActionsComponent({ onNavigate, isMinor }) {
@@ -33,10 +34,10 @@ function MemoriesQuickActionsComponent({ onNavigate, isMinor }) {
               { backgroundColor: colors.surface, borderColor: colors.border, borderRadius: radii.xl, minHeight: layout.minTouch + 12, opacity: pressed ? 0.9 : 1 },
             ]}
             accessibilityRole="button"
-            accessibilityLabel={a.label}
+            accessibilityLabel={t(a.labelKey)}
           >
             <Ionicons name={a.icon} size={22} color={colors.primary} />
-            <Text style={{ color: colors.text, fontFamily: 'Inter_600SemiBold', fontSize: 12, marginTop: 8 }}>{a.label}</Text>
+            <Text style={{ color: colors.text, fontFamily: 'Inter_600SemiBold', fontSize: 12, marginTop: 8 }}>{t(a.labelKey)}</Text>
           </Pressable>
         ))}
       </View>
