@@ -10,9 +10,13 @@ import { memberLocationSummary, haversineKm, formatDistance } from '../../utils/
 import { getLocationHistory } from '../../services/locationService';
 import { useTheme } from '../../hooks/useTheme';
 import { useResponsive } from '../../design-system';
-import { useI18n } from '../../i18n';
+import { useI18n, translate } from '../../i18n';
 
-const TYPE_LABEL = { child: '🧒 Child — tracked', elder: '👴 Elder — tracked', adult: null };
+const TYPE_LABEL = {
+  get child() { return translate('map.childTracked'); },
+  get elder() { return translate('map.elderTracked'); },
+  adult: null,
+};
 
 export default function MemberLocationDetailsScreen() {
   const navigation = useNavigation();

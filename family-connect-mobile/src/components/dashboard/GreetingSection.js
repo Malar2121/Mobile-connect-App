@@ -36,7 +36,7 @@ function GreetingSectionComponent({
         <View style={styles.identity}>
           <Avatar
             uri={undefined}
-            name={userName ?? 'You'}
+            name={userName ?? t('common.you')}
             size={layout.avatarSize}
             accessibilityLabel={t('dash.usernameProfile', { userName })}
           />

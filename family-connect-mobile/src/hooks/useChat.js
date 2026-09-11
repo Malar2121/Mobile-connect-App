@@ -118,7 +118,7 @@ export function useChat({ user, token, family, members, prefs, chatActions }) {
 
     const onTyping = ({ userId: typerId, name }) => {
       if (String(typerId) === String(userId)) return;
-      setTypingName(name || 'Someone');
+      setTypingName(name || t('family.someone'));
       setActiveTypers((prev) => new Set(prev).add(String(typerId)));
       if (typingDisplayTimer.current) clearTimeout(typingDisplayTimer.current);
       typingDisplayTimer.current = setTimeout(() => {

@@ -45,14 +45,14 @@ export function haversineKm(lat1, lon1, lat2, lon2) {
 
 export function formatDistance(km) {
   if (km == null || Number.isNaN(km)) return '—';
-  if (km < 1) return `${Math.round(km * 1000)} m`;
-  return `${km.toFixed(1)} km`;
+  if (km < 1) return translate('map.metersValue', { value: Math.round(km * 1000) });
+  return translate('map.kmValue', { value: km.toFixed(1) });
 }
 
 export function formatSpeed(speedMps) {
   if (speedMps == null) return null;
   const kmh = speedMps * 3.6;
-  return `${kmh.toFixed(0)} km/h`;
+  return translate('map.kmhValue', { value: kmh.toFixed(0) });
 }
 
 export function getTravelStatus(speed) {

@@ -3,21 +3,22 @@ import { StyleSheet, Text, View } from 'react-native';
 import { Card } from '../../design-system';
 import { PollOption } from './PollOption';
 import { useTheme } from '../../hooks/useTheme';
-import { useI18n } from '../../i18n';
+import { useI18n, translate } from '../../i18n';
 
+// Keyed by the reason and confidence codes the server returns with a suggestion.
 const REASON_TEXT = {
-  no_responses_yet: 'No one has voted yet — this is just the earliest option.',
-  works_for_everyone_who_replied: 'Works for everyone who has replied so far.',
-  best_available_with_conflicts: 'Best available, but someone has said no to it.',
-  all_options_past: 'Every proposed date has already passed.',
-  no_options: 'This poll has no date options.',
+  get no_responses_yet() { return translate('events.pollReason.noResponsesYet'); },
+  get works_for_everyone_who_replied() { return translate('events.pollReason.worksForEveryoneWhoReplied'); },
+  get best_available_with_conflicts() { return translate('events.pollReason.bestAvailableWithConflicts'); },
+  get all_options_past() { return translate('events.pollReason.allOptionsPast'); },
+  get no_options() { return translate('events.pollReason.noOptions'); },
 };
 
 const CONFIDENCE_TEXT = {
-  high: 'Most of the family has replied.',
-  medium: 'About half the family has replied.',
-  low: 'Only a few people have replied so far.',
-  none: 'Waiting on votes.',
+  get high() { return translate('events.pollConfidence.high'); },
+  get medium() { return translate('events.pollConfidence.medium'); },
+  get low() { return translate('events.pollConfidence.low'); },
+  get none() { return translate('events.pollConfidence.none'); },
 };
 
 function PollCardComponent({ poll, results, suggestion, suggestionReason, onVote, onClose, canManage, voting }) {

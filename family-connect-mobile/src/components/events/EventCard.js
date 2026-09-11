@@ -5,9 +5,15 @@ import { CategoryChip } from './CategoryChip';
 import { useTheme } from '../../hooks/useTheme';
 import { formatEventDateShort, getMyRsvpStatus } from '../../utils/eventFormat';
 import { getEventCategory, getEventCountdown } from '../../utils/eventModuleHelpers';
+import { translate } from '../../i18n';
 
 const RSVP_VARIANT = { accepted: 'success', maybe: 'warning', declined: 'danger', pending: 'default' };
-const RSVP_LABEL = { accepted: 'Going', maybe: 'Maybe', declined: "Can't go", pending: 'No reply' };
+const RSVP_LABEL = {
+  get accepted() { return translate('events.rsvpLabel.accepted'); },
+  get maybe() { return translate('events.rsvpLabel.maybe'); },
+  get declined() { return translate('events.rsvpLabel.declined'); },
+  get pending() { return translate('events.rsvpLabel.pending'); },
+};
 
 function EventCardComponent({ event, userId, onPress, compact }) {
   const { colors, layout } = useTheme();

@@ -146,7 +146,7 @@ function InsightsSectionComponent({ insights, weeklyActivity }) {
         <InsightTile
           label={t('dashboard.rsvpParticipation')}
           value={`${insights.participationPct}%`}
-          sub="Across scheduled events"
+          sub={t('dashboard.acrossScheduledEvents')}
           colors={colors}
           layout={layout}
           radii={radii}

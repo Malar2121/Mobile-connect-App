@@ -25,7 +25,7 @@ function EmptyFamilyStateComponent({ title, description, onCreate, onJoin, actio
         description={description ?? t('family.createAFamilyOrJoinWith')}
         actionLabel={t('family.createButton')}
         onAction={onCreate}
-        secondaryLabel={onJoin ? 'Join with code' : undefined}
+        secondaryLabel={onJoin ? t('family.joinWithCode') : undefined}
         onSecondary={onJoin}
       />
     </View>

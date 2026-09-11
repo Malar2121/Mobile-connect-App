@@ -8,6 +8,7 @@ import { getFamilyMemories } from '../services/memoryService';
 import { getFamilyLocations } from '../services/locationService';
 import { getNotifications } from '../services/notificationService';
 import { getAllMessages } from '../services/chatService';
+import { translate } from '../i18n';
 import {
   pickUpcomingEvents,
   countLiveMembers,
@@ -70,7 +71,7 @@ export function useDashboardData() {
       setNotifications(notif);
       setMessages(msgs);
     } catch (e) {
-      setSectionError(e.message || 'Could not refresh dashboard.');
+      setSectionError(e.message || translate('dash.couldNotRefreshDashboard'));
     } finally {
       setSectionLoading(false);
     }
@@ -82,7 +83,7 @@ export function useDashboardData() {
       const data = await refreshFamily();
       await loadSections(!!data?.family);
     } catch (e) {
-      setSectionError(e.message || 'Could not load dashboard.');
+      setSectionError(e.message || translate('dash.couldNotLoadDashboard'));
     } finally {
       setRefreshing(false);
     }

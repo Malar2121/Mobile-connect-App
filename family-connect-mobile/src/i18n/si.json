@@ -40,7 +40,8 @@
     "locationSharingStaysOnForChildren": "පවුලේ ආරක්ෂාව සඳහා ළමුන් සහ වැඩිහිටියන් වෙනුවෙන් ස්ථානය බෙදාගැනීම සක්‍රියව පවතී.",
     "couldNotPauseSharing": "බෙදාගැනීම නැවැත්විය නොහැකි විය.",
     "locationUnavailableForSos": "SOS සඳහා ස්ථානය ලබාගත නොහැක",
-    "joinRequestSentWaitingForAdmin": "එක්වීමේ ඉල්ලීම යවන ලදී. පරිපාලක අනුමැතිය බලාපොරොත්තුවෙන්."
+    "joinRequestSentWaitingForAdmin": "එක්වීමේ ඉල්ලීම යවන ලදී. පරිපාලක අනුමැතිය බලාපොරොත්තුවෙන්.",
+    "you": "ඔබ"
   },
   "tabs": {
     "dashboard": "මුල් පිටුව",
@@ -227,7 +228,8 @@
     "qaPoll": "මත විමසුමක් සාදන්න",
     "qaPollSub": "දිනයක් තෝරන්න",
     "qaTree": "පවුලේ ගස",
-    "qaTreeSub": "සම්බන්ධතා බලන්න"
+    "qaTreeSub": "සම්බන්ධතා බලන්න",
+    "acrossScheduledEvents": "සැලසුම් කළ සියලු සිදුවීම්වල"
   },
   "family": {
     "title": "පවුල",
@@ -436,7 +438,8 @@
     "permChat": "කතාබහ",
     "permRsvpEvents": "සිදුවීම්වලට පිළිතුරු දීම",
     "permLimitedChat": "සීමිත කතාබහ දෘශ්‍යතාව",
-    "permViewFamilyContent": "පවුලේ අන්තර්ගතය බැලීම"
+    "permViewFamilyContent": "පවුලේ අන්තර්ගතය බැලීම",
+    "joinWithCode": "කේතයෙන් එක්වන්න"
   },
   "events": {
     "title": "සිදුවීම්",
@@ -618,7 +621,29 @@
     "stepGeneral": "සාමාන්‍ය",
     "stepSchedule": "කාලසටහන",
     "stepDetails": "විස්තර",
-    "stepReview": "සමාලෝචනය"
+    "stepReview": "සමාලෝචනය",
+    "pollReason": {
+      "noResponsesYet": "තවම කිසිවෙක් ඡන්දය දී නැත — මෙය මුල්ම විකල්පය පමණි.",
+      "worksForEveryoneWhoReplied": "මෙතෙක් පිළිතුරු දුන් සැමට ගැළපේ.",
+      "bestAvailableWithConflicts": "ලබාගත හැකි හොඳම විකල්පයයි, නමුත් කෙනෙක් එයට එකඟ නැත.",
+      "allOptionsPast": "යෝජිත සියලු දින දැනටමත් ගත වී ඇත.",
+      "noOptions": "මෙම ඡන්ද විමසීමේ දින විකල්ප නැත."
+    },
+    "pollConfidence": {
+      "high": "පවුලේ බොහෝ දෙනා පිළිතුරු දී ඇත.",
+      "medium": "පවුලෙන් අඩක් පමණ පිළිතුරු දී ඇත.",
+      "low": "මෙතෙක් පිළිතුරු දී ඇත්තේ ස්වල්ප දෙනෙක් පමණි.",
+      "none": "ඡන්ද සඳහා රැඳී සිටිමින්."
+    },
+    "rsvpLabel": {
+      "accepted": "සහභාගී වේ",
+      "maybe": "සමහරවිට",
+      "declined": "සහභාගී විය නොහැක",
+      "pending": "පිළිතුරක් නැත"
+    },
+    "pollDefaultQuestion": "සැමට වඩාත් ගැළපෙන්නේ කවදාද?",
+    "pollOptionA": "විකල්පය A",
+    "pollOptionB": "විකල්පය B"
   },
   "memories": {
     "title": "මතකයන්",
@@ -893,7 +918,11 @@
     "remembered": "සිහිපත් කරනු ලබයි",
     "living": "ජීවතුන් අතර",
     "nameLegacy": "{{name}} — උරුමය",
-    "previewMembers": "සාමාජිකයන් {{count}} · සම්පූර්ණ ගසේ විශාලනය කිරීමට ඇඟිලි දෙකෙන් විහිදන්න"
+    "previewMembers": "සාමාජිකයන් {{count}} · සම්පූර්ණ ගසේ විශාලනය කිරීමට ඇඟිලි දෙකෙන් විහිදන්න",
+    "zoomIn": "විශාලනය කරන්න",
+    "zoomOut": "කුඩා කරන්න",
+    "fitTree": "ගස තිරයට ගළපන්න",
+    "resetView": "දර්ශනය යළි සකසන්න"
   },
   "chat": {
     "title": "කතාබහ",
@@ -1011,7 +1040,8 @@
     "replyingTo": "{{name}} ට පිළිතුරු දෙමින්",
     "nameIsTyping": "{{name}} ටයිප් කරමින් සිටී…",
     "homeStats": "පණිවිඩ {{messages}} · මාධ්‍ය {{media}} · සාමාජිකයන් {{members}}",
-    "membersList": "සාමාජිකයන්: {{names}}"
+    "membersList": "සාමාජිකයන්: {{names}}",
+    "scheduledMessage": "නියමිත පණිවිඩය"
   },
   "map": {
     "title": "සජීවී සිතියම",
@@ -1132,7 +1162,14 @@
     "whoCanSeeMe": "මාව දැකිය හැක්කේ: {{audience}}",
     "yourFamily": "ඔබේ පවුල",
     "sosExplain": "ඔබේ සජීවී ස්ථානය පවුලේ සියලු සාමාජිකයන්ට යවයි. අවලංගු කිරීමට ඔබට තත්පර {{seconds}} ක් ඇත.",
-    "notReported": "වාර්තා කර නැත"
+    "notReported": "වාර්තා කර නැත",
+    "kmValue": "කි.මී. {{value}}",
+    "metersValue": "මීටර් {{value}}",
+    "kmhValue": "පැයට කි.මී. {{value}}",
+    "childTracked": "🧒 ළමයා — ස්ථානය නිරීක්ෂණය වේ",
+    "elderTracked": "👴 වැඩිහිටි — ස්ථානය නිරීක්ෂණය වේ",
+    "safeZone": "ආරක්ෂිත කලාපය",
+    "sosDefaultMessage": "මට උදව් අවශ්‍යයි!"
   },
   "notifications": {
     "title": "දැනුම්දීම්",
@@ -1154,7 +1191,9 @@
     "justNow": "මේ දැන්",
     "minutesAgo": "මිනිත්තු {{count}}කට පෙර",
     "hoursAgo": "පැය {{count}}කට පෙර",
-    "daysAgo": "දින {{count}}කට පෙර"
+    "daysAgo": "දින {{count}}කට පෙර",
+    "todayAt": "අද {{time}} ට",
+    "tomorrowAt": "හෙට {{time}} ට"
   },
   "calendar": {
     "sun": "ඉරි",
@@ -1414,7 +1453,9 @@
     "newPhoto": "නව ඡායාරූපය",
     "hiName": "ආයුබෝවන්, {{name}}! 👋",
     "nameSharedAMemory": "{{name}} මතකයක් බෙදාගත්තා",
-    "rsvpProgress": "පිළිතුරු {{responded}}/{{total}}"
+    "rsvpProgress": "පිළිතුරු {{responded}}/{{total}}",
+    "couldNotRefreshDashboard": "මුල් පිටුව නැවුම් කළ නොහැකි විය.",
+    "couldNotLoadDashboard": "මුල් පිටුව පූරණය කළ නොහැකි විය."
   },
   "memoryReview": {
     "sentForApproval": "අනුමැතිය සඳහා යවන ලදී. වෙනත් සාමාජිකයෙකු අනුමත කළ පසු ඔබේ පවුලට එය පෙනේ.",

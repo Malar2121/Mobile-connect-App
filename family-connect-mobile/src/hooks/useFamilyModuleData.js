@@ -118,7 +118,7 @@ export function useFamilyModuleData() {
         return {
           ...m,
           displayRole,
-          relationshipLabel: tree?.relationshipLabel ?? 'Family member',
+          relationshipLabel: tree?.relationshipLabel ?? t('family.familyMember'),
           relationshipType: tree?.relationshipType,
           nickname: tree?.nickname,
           relatedToName: tree?.relatedToName,

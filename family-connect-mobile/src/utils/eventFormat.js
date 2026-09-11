@@ -1,5 +1,6 @@
 
-import { translate } from '../i18n';export function formatEventDateShort(dateVal, locale = 'en') {
+import { translate } from '../i18n';
+export function formatEventDateShort(dateVal, locale = 'en') {
   if (!dateVal) return translate('events.dateTbd');
   const d = new Date(dateVal);
   if (Number.isNaN(d.getTime())) return translate('events.dateTbd');

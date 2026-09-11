@@ -37,7 +37,7 @@ export default function ProfileScreen({ navigation }) {
   const hasFamily = Boolean(family);
   const memberCount = members.length;
   const inviteCode = family?.inviteCode ?? '';
-  const currentLanguage = SUPPORTED_LOCALES.find((l) => l.id === locale)?.nativeLabel ?? 'English';
+  const currentLanguage = SUPPORTED_LOCALES.find((l) => l.id === locale)?.nativeLabel ?? t('language.english');
 
   const UI_MODES = [
     { id: 'standard', label: t('profile.uiModeStandard'), icon: 'phone-portrait-outline' },
@@ -77,7 +77,7 @@ export default function ProfileScreen({ navigation }) {
       <PageHeader title={t('profile.title')} subtitle={t('profile.subtitle')} large />
       <ScrollView showsVerticalScrollIndicator={false} contentContainerStyle={styles.scroll}>
         <View style={styles.profileRow}>
-          <Avatar uri={user?.avatar} name={user?.fullName ?? 'You'} size={layout.avatarSize + 12} />
+          <Avatar uri={user?.avatar} name={user?.fullName ?? t('common.you')} size={layout.avatarSize + 12} />
           <View style={styles.profileCopy}>
             <Text
               accessibilityRole="header"

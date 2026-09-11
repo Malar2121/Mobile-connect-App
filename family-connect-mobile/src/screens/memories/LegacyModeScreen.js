@@ -110,7 +110,7 @@ export default function LegacyModeScreen() {
             return (
               <LegacyCard
                 key={String(p._id)}
-                profile={{ ...p, story: p.biography, years: p.deathDate ? new Date(p.deathDate).getFullYear().toString() : 'Unknown' }}
+                profile={{ ...p, story: p.biography, years: p.deathDate ? new Date(p.deathDate).getFullYear().toString() : t('family.unknown') }}
                 member={member}
                 memoryCount={count}
                 onPress={(_, m) => setSelectedMember(m ?? member)}

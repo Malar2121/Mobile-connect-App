@@ -1,7 +1,9 @@
+import { translate } from '../i18n';
+
 export function getUploader(memory) {
   const u = memory?.uploadedBy;
   if (u && typeof u === 'object') return u;
-  return { fullName: 'Member', avatar: null, _id: u };
+  return { fullName: translate('common.member'), avatar: null, _id: u };
 }
 
 export function getUploaderId(memory) {

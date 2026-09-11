@@ -1,5 +1,7 @@
 
-import { translate } from '../i18n';export function normalizeLocation(raw) {
+import { translate } from '../i18n';
+
+export function normalizeLocation(raw) {
   if (!raw) return null;
 
   const user = raw.userId;
@@ -11,7 +13,7 @@ import { translate } from '../i18n';export function normalizeLocation(raw) {
     user:
       user && typeof user === 'object'
         ? user
-        : { fullName: 'Family member', avatar: null, _id: userId },
+        : { fullName: translate('map.familyMember'), avatar: null, _id: userId },
     latitude: Number(raw.latitude),
     longitude: Number(raw.longitude),
     accuracy: raw.accuracy != null ? Number(raw.accuracy) : null,

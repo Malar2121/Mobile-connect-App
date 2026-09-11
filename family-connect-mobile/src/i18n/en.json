@@ -40,7 +40,8 @@
     "locationSharingStaysOnForChildren": "Location sharing stays on for children and elders — family safety policy.",
     "couldNotPauseSharing": "Could not pause sharing.",
     "locationUnavailableForSos": "Location unavailable for SOS",
-    "joinRequestSentWaitingForAdmin": "Join request sent. Waiting for admin approval."
+    "joinRequestSentWaitingForAdmin": "Join request sent. Waiting for admin approval.",
+    "you": "You"
   },
   "tabs": {
     "dashboard": "Home",
@@ -227,7 +228,8 @@
     "qaPoll": "Create Poll",
     "qaPollSub": "Pick a date",
     "qaTree": "Family Tree",
-    "qaTreeSub": "View connections"
+    "qaTreeSub": "View connections",
+    "acrossScheduledEvents": "Across scheduled events"
   },
   "family": {
     "title": "Family",
@@ -436,7 +438,8 @@
     "permChat": "Chat",
     "permRsvpEvents": "RSVP events",
     "permLimitedChat": "Limited chat visibility",
-    "permViewFamilyContent": "View family content"
+    "permViewFamilyContent": "View family content",
+    "joinWithCode": "Join with code"
   },
   "events": {
     "title": "Events",
@@ -618,7 +621,29 @@
     "stepGeneral": "General",
     "stepSchedule": "Schedule",
     "stepDetails": "Details",
-    "stepReview": "Review"
+    "stepReview": "Review",
+    "pollReason": {
+      "noResponsesYet": "No one has voted yet — this is just the earliest option.",
+      "worksForEveryoneWhoReplied": "Works for everyone who has replied so far.",
+      "bestAvailableWithConflicts": "Best available, but someone has said no to it.",
+      "allOptionsPast": "Every proposed date has already passed.",
+      "noOptions": "This poll has no date options."
+    },
+    "pollConfidence": {
+      "high": "Most of the family has replied.",
+      "medium": "About half the family has replied.",
+      "low": "Only a few people have replied so far.",
+      "none": "Waiting on votes."
+    },
+    "rsvpLabel": {
+      "accepted": "Going",
+      "maybe": "Maybe",
+      "declined": "Can't go",
+      "pending": "No reply"
+    },
+    "pollDefaultQuestion": "When works best for everyone?",
+    "pollOptionA": "Option A",
+    "pollOptionB": "Option B"
   },
   "memories": {
     "title": "Memories",
@@ -893,7 +918,11 @@
     "remembered": "Remembered",
     "living": "Living",
     "nameLegacy": "{{name}} — legacy",
-    "previewMembers": "{{count}} members · Pinch to zoom in the full tree"
+    "previewMembers": "{{count}} members · Pinch to zoom in the full tree",
+    "zoomIn": "Zoom in",
+    "zoomOut": "Zoom out",
+    "fitTree": "Fit tree",
+    "resetView": "Reset view"
   },
   "chat": {
     "title": "Chat",
@@ -1011,7 +1040,8 @@
     "replyingTo": "Replying to {{name}}",
     "nameIsTyping": "{{name}} is typing…",
     "homeStats": "{{messages}} messages · {{media}} media · {{members}} members",
-    "membersList": "Members: {{names}}"
+    "membersList": "Members: {{names}}",
+    "scheduledMessage": "Scheduled message"
   },
   "map": {
     "title": "Live map",
@@ -1132,7 +1162,14 @@
     "whoCanSeeMe": "Who can see me: {{audience}}",
     "yourFamily": "Your family",
     "sosExplain": "Sends your live location to all family members. You have {{seconds}} seconds to cancel.",
-    "notReported": "Not reported"
+    "notReported": "Not reported",
+    "kmValue": "{{value}} km",
+    "metersValue": "{{value}} m",
+    "kmhValue": "{{value}} km/h",
+    "childTracked": "🧒 Child — tracked",
+    "elderTracked": "👴 Elder — tracked",
+    "safeZone": "Safe zone",
+    "sosDefaultMessage": "I need help!"
   },
   "notifications": {
     "title": "Notifications",
@@ -1154,7 +1191,9 @@
     "justNow": "Just now",
     "minutesAgo": "{{count}} min ago",
     "hoursAgo": "{{count}} hr ago",
-    "daysAgo": "{{count}} days ago"
+    "daysAgo": "{{count}} days ago",
+    "todayAt": "Today at {{time}}",
+    "tomorrowAt": "Tomorrow at {{time}}"
   },
   "calendar": {
     "sun": "Sun",
@@ -1414,7 +1453,9 @@
     "newPhoto": "New photo",
     "hiName": "Hi, {{name}}! 👋",
     "nameSharedAMemory": "{{name}} shared a memory",
-    "rsvpProgress": "RSVP {{responded}}/{{total}}"
+    "rsvpProgress": "RSVP {{responded}}/{{total}}",
+    "couldNotRefreshDashboard": "Could not refresh dashboard.",
+    "couldNotLoadDashboard": "Could not load dashboard."
   },
   "memoryReview": {
     "sentForApproval": "Sent for approval. Your family will see it once another member approves it.",

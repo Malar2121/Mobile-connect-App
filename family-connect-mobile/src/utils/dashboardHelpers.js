@@ -4,16 +4,12 @@ import { getUploader, getLikeCount } from './memoryHelpers';
 import { getReadByIds, getSenderId } from './chatHelpers';
 import { translate } from '../i18n';
 
-export function getGreeting(t) {
+// Callers may still pass t; translate() reads the same current language.
+export function getGreeting() {
   const hour = new Date().getHours();
-  if (t) {
-    if (hour < 12) return t('dashboard.greetingMorning');
-    if (hour < 17) return t('dashboard.greetingAfternoon');
-    return t('dashboard.greetingEvening');
-  }
-  if (hour < 12) return 'Good morning';
-  if (hour < 17) return 'Good afternoon';
-  return 'Good evening';
+  if (hour < 12) return translate('dashboard.greetingMorning');
+  if (hour < 17) return translate('dashboard.greetingAfternoon');
+  return translate('dashboard.greetingEvening');
 }
 
 export function formatTodayDate(locale) {
@@ -160,10 +156,10 @@ export function deriveReminders(events) {
 
       if (isSameDay(eventDate, today)) {
         priority = 'high';
-        timeLabel = event.startTime ? `Today at ${event.startTime}` : 'Today';
+        timeLabel = event.startTime ? translate('dates.todayAt', { time: event.startTime }) : translate('dates.today');
       } else if (isSameDay(eventDate, tomorrow)) {
         priority = 'medium';
-        timeLabel = event.startTime ? `Tomorrow at ${event.startTime}` : 'Tomorrow';
+        timeLabel = event.startTime ? translate('dates.tomorrowAt', { time: event.startTime }) : translate('dates.tomorrow');
       } else {
         timeLabel = eventDate.toLocaleDateString(undefined, {
           weekday: 'short',

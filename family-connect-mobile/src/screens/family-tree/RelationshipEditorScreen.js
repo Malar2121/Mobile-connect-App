@@ -114,7 +114,7 @@ export default function RelationshipEditorScreen() {
                 onSave={handleSave}
                 saving={saving}
                 canEdit={canEdit}
-                warning={!memberNode ? 'No FamilyMember tree record — save may fail until backend seeds nodes.' : null}
+                warning={!memberNode ? t('family.thisMemberIsNotInThe') : null}
               />
             ) : (
               <Text style={{ color: colors.textSecondary, fontSize: 14 * layout.fontScale, marginBottom: 12 }}>

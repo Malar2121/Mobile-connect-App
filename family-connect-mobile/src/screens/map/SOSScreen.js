@@ -30,7 +30,7 @@ export default function SOSScreen() {
   const confirmSOS = useCallback(async () => {
     setSending(true);
     try {
-      await sendSOS(message.trim() || 'I need help!');
+      await sendSOS(message.trim() || t('map.sosDefaultMessage'));
       toast.success(t('map.sosSent'));
       navigation.goBack();
     } catch (e) {

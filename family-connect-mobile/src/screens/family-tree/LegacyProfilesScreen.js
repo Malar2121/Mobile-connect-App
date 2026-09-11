@@ -64,7 +64,7 @@ export default function LegacyProfilesScreen() {
             return (
               <LegacyProfileCard
                 key={String(profile._id)}
-                profile={{ ...profile, story: profile.biography, years: profile.deathDate ? new Date(profile.deathDate).getFullYear().toString() : 'Unknown' }}
+                profile={{ ...profile, story: profile.biography, years: profile.deathDate ? new Date(profile.deathDate).getFullYear().toString() : t('family.unknown') }}
                 member={member}
                 memoryCount={count}
                 onPress={() => openProfile(profile)}

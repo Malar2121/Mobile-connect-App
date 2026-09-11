@@ -21,7 +21,7 @@ import {
   getMyRsvpStatus,
   resolveEventCreatorName,
 } from '../../utils/eventFormat';
-import { useI18n } from '../../i18n';
+import { useI18n, translate } from '../../i18n';
 
 const RSVP_VARIANT = {
   accepted: 'success',
@@ -31,10 +31,10 @@ const RSVP_VARIANT = {
 };
 
 const RSVP_LABEL = {
-  accepted: 'Going',
-  maybe: 'Maybe',
-  declined: "Can't go",
-  pending: 'No reply',
+  get accepted() { return translate('events.rsvpLabel.accepted'); },
+  get maybe() { return translate('events.rsvpLabel.maybe'); },
+  get declined() { return translate('events.rsvpLabel.declined'); },
+  get pending() { return translate('events.rsvpLabel.pending'); },
 };
 
 export default function EventsListScreen({ navigation }) {

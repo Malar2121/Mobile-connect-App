@@ -31,7 +31,7 @@ export default function PlaceDetailsScreen() {
         userId: user._id,
         familyId: family._id,
         action,
-        locationName: zone.label || 'Safe zone',
+        locationName: zone.label || t('map.safeZone'),
       });
       toast.success(t('map.testAlertSent'));
     } catch (err) {

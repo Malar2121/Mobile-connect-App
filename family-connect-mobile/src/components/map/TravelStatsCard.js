@@ -11,10 +11,10 @@ function TravelStatsCardComponent({ analytics }) {
   if (!analytics) return null;
 
   const stats = [
-    { label: t('map.distanceToday'), value: `${analytics.distanceTodayKm} km` },
+    { label: t('map.distanceToday'), value: t('map.kmValue', { value: analytics.distanceTodayKm }) },
     { label: t('map.trips'), value: analytics.tripsToday },
     { label: t('map.places'), value: analytics.visitedPlaces },
-    { label: t('map.travelTime'), value: `${analytics.travelTimeMin}m` },
+    { label: t('map.travelTime'), value: t('map.minutesValue', { count: analytics.travelTimeMin }) },
   ];
 
   return (

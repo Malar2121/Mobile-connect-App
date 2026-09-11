@@ -131,7 +131,7 @@ export default function ConversationScreen() {
           handleToggleStar(message);
           break;
         case 'schedule':
-          handleSchedule(text || 'Scheduled message', new Date(Date.now() + 3600000).toISOString());
+          handleSchedule(text || t('chat.scheduledMessage'), new Date(Date.now() + 3600000).toISOString());
           Alert.alert(t('chat.scheduled'), t('chat.messageWillSendIn1Hour'));
           break;
         case 'delete':
@@ -214,7 +214,7 @@ export default function ConversationScreen() {
       const duration = recordingStart.current ? Math.round((Date.now() - recordingStart.current) / 1000) : null;
       recordingRef.current = null;
       if (uri) {
-        await sendTextMessage('🎤 Voice message', {
+        await sendTextMessage(`🎤 ${t('chat.voiceMessage')}`, {
           mediaOptions: { mediaUri: uri, mimeType: 'audio/m4a', mediaType: 'audio', mediaDuration: duration },
         });
       }

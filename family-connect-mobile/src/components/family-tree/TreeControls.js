@@ -2,9 +2,11 @@ import React, { memo } from 'react';
 import { Pressable, StyleSheet, Text, View } from 'react-native';
 import { Ionicons } from '@expo/vector-icons';
 import { useTheme } from '../../hooks/useTheme';
+import { useI18n } from '../../i18n';
 
 function TreeControlsComponent({ onZoomIn, onZoomOut, onReset, onFit }) {
   const { colors, layout, radii } = useTheme();
+  const { t } = useI18n();
 
   const btn = (icon, label, onPress) => (
     <Pressable
@@ -30,10 +32,10 @@ function TreeControlsComponent({ onZoomIn, onZoomOut, onReset, onFit }) {
 
   return (
     <View style={styles.wrap} pointerEvents="box-none">
-      {btn('add-outline', 'Zoom in', onZoomIn)}
-      {btn('remove-outline', 'Zoom out', onZoomOut)}
-      {btn('scan-outline', 'Fit tree', onFit)}
-      {btn('refresh-outline', 'Reset view', onReset)}
+      {btn('add-outline', t('tree.zoomIn'), onZoomIn)}
+      {btn('remove-outline', t('tree.zoomOut'), onZoomOut)}
+      {btn('scan-outline', t('tree.fitTree'), onFit)}
+      {btn('refresh-outline', t('tree.resetView'), onReset)}
     </View>
   );
 }

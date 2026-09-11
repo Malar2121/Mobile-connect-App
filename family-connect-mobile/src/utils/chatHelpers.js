@@ -1,5 +1,7 @@
 
-import { translate } from '../i18n';export function getSenderId(message) {
+import { translate } from '../i18n';
+
+export function getSenderId(message) {
   const s = message?.sender;
   if (!s) return '';
   return String(s._id ?? s);
@@ -8,7 +10,7 @@ import { translate } from '../i18n';export function getSenderId(message) {
 export function getSender(message) {
   const s = message?.sender;
   if (s && typeof s === 'object') return s;
-  return { fullName: 'Family', avatar: null, _id: s };
+  return { fullName: translate('family.familyMember'), avatar: null, _id: s };
 }
 
 export function isMyMessage(message, userId) {

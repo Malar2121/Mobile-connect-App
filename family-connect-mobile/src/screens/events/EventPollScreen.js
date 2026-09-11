@@ -22,11 +22,11 @@ export default function EventPollScreen() {
   const [loading, setLoading] = useState(true);
   const [voting, setVoting] = useState(false);
   const [creating, setCreating] = useState(false);
-  const [question, setQuestion] = useState('When works best for everyone?');
+  const [question, setQuestion] = useState(() => t('events.pollDefaultQuestion'));
   const [option1, setOption1] = useState('');
   const [option2, setOption2] = useState('');
-  const [label1, setLabel1] = useState('Option A');
-  const [label2, setLabel2] = useState('Option B');
+  const [label1, setLabel1] = useState(() => t('events.pollOptionA'));
+  const [label2, setLabel2] = useState(() => t('events.pollOptionB'));
 
   const loadPoll = useCallback(async () => {
     setLoading(true);
