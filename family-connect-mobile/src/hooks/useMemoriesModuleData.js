@@ -3,8 +3,10 @@ import { useFocusEffect } from '@react-navigation/native';
 import { useAuth } from '../contexts/AuthContext';
 import { useFamily } from '../contexts/FamilyContext';
 import { useTheme } from './useTheme';
-import { getFamilyMemories } from '../services/memoryService';
+import { useI18n } from '../i18n';
+import { getFamilyMemories, getPendingMemories } from '../services/memoryService';
 import { getAlbums } from '../services/albumService';
+import { canReviewMemories, isSharedMemory, isUploadedBy } from '../utils/memoryHelpers';
 import {
   buildMemoryAnalytics,
   filterPhotos,
@@ -21,8 +23,13 @@ export function useMemoriesModuleData(searchFilters = {}) {
   const { user } = useAuth();
   const { members, family } = useFamily();
   const { uiMode } = useTheme();
+  const { t } = useI18n();
+  const reviewer = canReviewMemories(user);
 
-  const [memories, setMemories] = useState([]);
+  // Everything the API returned: approved memories plus the user's own
+  // pending or rejected uploads (proposal §8).
+  const [allMemories, setAllMemories] = useState([]);
+  const [pendingReview, setPendingReview] = useState([]);
   const [albums, setAlbums] = useState([]);
   const [viewCounts, setViewCounts] = useState({});
   const [legacyProfiles, setLegacyProfiles] = useState([]);
@@ -32,29 +39,32 @@ export function useMemoriesModuleData(searchFilters = {}) {
 
   const load = useCallback(async () => {
     if (!family) {
-      setMemories([]);
+      setAllMemories([]);
+      setPendingReview([]);
       setAlbums([]);
       setLoading(false);
       return;
     }
     setError('');
     try {
-      const [mem, alb, counts, legacy] = await Promise.all([
+      const [mem, alb, counts, legacy, queue] = await Promise.all([
         getFamilyMemories(),
         getAlbums().then((r) => r.albums).catch(() => []),
         loadViewCounts(family._id),
         loadLegacyProfiles(family._id),
+        reviewer ? getPendingMemories().catch(() => []) : Promise.resolve([]),
       ]);
-      setMemories(mem);
+      setAllMemories(mem);
+      setPendingReview(queue);
       setAlbums(alb);
       setViewCounts(counts);
       setLegacyProfiles(legacy);
     } catch (e) {
-      setError(e.message || 'Could not load memories.');
+      setError(e.message || t('memories.loadFailed'));
     } finally {
       setLoading(false);
     }
-  }, [family]);
+  }, [family, reviewer, t]);
 
   const refresh = useCallback(async () => {
     setRefreshing(true);
@@ -64,9 +74,16 @@ export function useMemoriesModuleData(searchFilters = {}) {
 
   useFocusEffect(
     useCallback(() => {
-      setLoading((prev) => (memories.length ? prev : true));
+      setLoading((prev) => (allMemories.length ? prev : true));
       load();
-    }, [load, memories.length]),
+    }, [load, allMemories.length]),
+  );
+
+  // Shared views only ever show memories the family is allowed to see.
+  const memories = useMemo(() => allMemories.filter(isSharedMemory), [allMemories]);
+  const myHiddenUploads = useMemo(
+    () => allMemories.filter((m) => !isSharedMemory(m) && isUploadedBy(m, user)),
+    [allMemories, user],
   );
 
   const photos = useMemo(() => filterPhotos(memories), [memories]);
@@ -86,6 +103,9 @@ export function useMemoriesModuleData(searchFilters = {}) {
 
   return {
     memories,
+    myHiddenUploads,
+    pendingReview,
+    canReview: reviewer,
     albums,
     members,
     family,

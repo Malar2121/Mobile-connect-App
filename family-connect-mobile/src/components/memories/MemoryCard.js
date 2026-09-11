@@ -4,16 +4,32 @@ import { Image } from 'expo-image';
 import { Ionicons } from '@expo/vector-icons';
 import { Avatar } from '../../design-system';
 import { useTheme } from '../../hooks/useTheme';
+import { useI18n } from '../../i18n';
 import { formatMemoryDate, getLikeCount, getUploader } from '../../utils/memoryHelpers';
 
 function MemoryCardComponent({ memory, onPress, compact }) {
   const { colors, layout, radii } = useTheme();
+  const { t } = useI18n();
   const uploader = getUploader(memory);
   const isVideo = memory.mediaType === 'video';
   const thumbSize = compact ? 72 : 88;
+  const title = memory.caption || (isVideo ? t('memories.memoryVideo') : t('memories.memoryPhoto'));
+
+  // Only the uploader ever receives their own pending or rejected memory.
+  const statusLabel =
+    memory.status === 'pending'
+      ? t('memoryReview.awaitingApproval')
+      : memory.status === 'rejected'
+        ? t('memoryReview.notApproved')
+        : null;
+  const statusColor = memory.status === 'rejected' ? colors.error : colors.primary;
 
   return (
-    <Pressable onPress={() => onPress?.(memory)} accessibilityRole="button" accessibilityLabel={memory.caption || 'Memory'}>
+    <Pressable
+      onPress={() => onPress?.(memory)}
+      accessibilityRole="button"
+      accessibilityLabel={statusLabel ? `${title}. ${statusLabel}` : title}
+    >
       <View style={[styles.row, { marginBottom: compact ? 8 : 12 }]}>
         <View style={[styles.thumb, { width: thumbSize, height: thumbSize, borderRadius: radii.lg, borderColor: colors.border }]}>
           <Image source={{ uri: memory.mediaUrl }} style={styles.image} contentFit="cover" />
@@ -25,14 +41,22 @@ function MemoryCardComponent({ memory, onPress, compact }) {
         </View>
         <View style={styles.body}>
           <Text style={{ color: colors.text, fontFamily: 'Inter_600SemiBold', fontSize: 15 * layout.fontScale }} numberOfLines={2}>
-            {memory.caption || (isVideo ? 'Video memory' : 'Photo memory')}
+            {title}
           </Text>
+          {statusLabel ? (
+            <View style={[styles.status, { borderColor: statusColor, borderRadius: radii.sm }]}>
+              <Ionicons name={memory.status === 'rejected' ? 'eye-off-outline' : 'time-outline'} size={12} color={statusColor} />
+              <Text style={{ color: statusColor, fontSize: 11.5 * layout.fontScale, marginLeft: 4 }} numberOfLines={1}>
+                {statusLabel}
+              </Text>
+            </View>
+          ) : null}
           <View style={styles.meta}>
             <Avatar uri={uploader.avatar} name={uploader.fullName} size={20} />
             <Text style={{ color: colors.textSecondary, fontSize: 12, marginLeft: 6 }}>{uploader.fullName}</Text>
           </View>
           <Text style={{ color: colors.textTertiary, fontSize: 11, marginTop: 4 }}>
-            {formatMemoryDate(memory.createdAt)} · {getLikeCount(memory)} likes
+            {formatMemoryDate(memory.createdAt)} · {t('memories.likeCount', { count: getLikeCount(memory) })}
           </Text>
         </View>
       </View>
@@ -48,5 +72,14 @@ const styles = StyleSheet.create({
   image: { width: '100%', height: '100%' },
   play: { ...StyleSheet.absoluteFillObject, backgroundColor: 'rgba(0,0,0,0.35)', alignItems: 'center', justifyContent: 'center' },
   body: { flex: 1, marginLeft: 12, justifyContent: 'center' },
+  status: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    alignSelf: 'flex-start',
+    borderWidth: 1,
+    paddingHorizontal: 6,
+    paddingVertical: 2,
+    marginTop: 4,
+  },
   meta: { flexDirection: 'row', alignItems: 'center', marginTop: 6 },
 });

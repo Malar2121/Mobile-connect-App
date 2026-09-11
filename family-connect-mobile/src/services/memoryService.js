@@ -7,6 +7,7 @@ function normalizeAxiosError(error) {
       `Server error (${error.response.status})`;
     const err = new Error(msg);
     err.status = error.response.status;
+    err.code = error.response.data?.code;
     return err;
   }
   if (error.request) {
@@ -125,6 +126,35 @@ export async function deleteMemory(memoryId) {
     if (!data.success) {
       throw new Error(data.message || 'Could not delete memory');
     }
+  } catch (e) {
+    throw normalizeAxiosError(e);
+  }
+}
+
+/**
+ * GET /api/memories/pending — other members' uploads awaiting approval.
+ * @returns {object[]}
+ */
+export async function getPendingMemories() {
+  try {
+    const { data } = await api.get('/memories/pending');
+    return Array.isArray(data?.data) ? data.data : [];
+  } catch (e) {
+    throw normalizeAxiosError(e);
+  }
+}
+
+/**
+ * POST /api/memories/:id/approve or /reject (proposal §8).
+ * @param {string} memoryId
+ * @param {'approve' | 'reject'} decision
+ * @returns {object} the reviewed memory
+ */
+export async function reviewMemory(memoryId, decision) {
+  try {
+    const action = decision === 'approve' ? 'approve' : 'reject';
+    const { data } = await api.post(`/memories/${encodeURIComponent(memoryId)}/${action}`);
+    return data.data;
   } catch (e) {
     throw normalizeAxiosError(e);
   }

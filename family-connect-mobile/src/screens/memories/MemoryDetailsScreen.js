@@ -1,26 +1,34 @@
 import React, { useCallback, useEffect, useState } from 'react';
 import { ScrollView, Text, View, TextInput } from 'react-native';
-import { useRoute, useNavigation } from '@react-navigation/native';
 import { Ionicons } from '@expo/vector-icons';
 import {
   Avatar,
   Button,
   Card,
+  EmptyState,
   Loader,
   PageHeader,
   Screen,
   SectionTitle,
+  useDialog,
   useToast,
 } from '../../design-system';
 import { MemoryHero } from '../../components/memories';
 import { useAuth } from '../../contexts/AuthContext';
-import { getMemoryDetails, likeMemory, deleteMemory, getMemoryComments, addMemoryComment } from '../../services/memoryService';
-import { addMediaToAlbum } from '../../services/albumService';
+import {
+  getMemoryDetails,
+  likeMemory,
+  deleteMemory,
+  getMemoryComments,
+  addMemoryComment,
+  reviewMemory,
+} from '../../services/memoryService';
 import {
   canDeleteMemory,
-  formatMemoryDate,
+  canReviewMemories,
   getLikeCount,
   isLikedByUser,
+  isUploadedBy,
   toggleLikeOptimistic,
 } from '../../utils/memoryHelpers';
 import { incrementMemoryView, loadMemoryMeta } from '../../utils/memoryModuleHelpers';
@@ -32,12 +40,13 @@ import { useI18n } from '../../i18n';
 export default function MemoryDetailsScreen({ route, navigation }) {
   const { id } = route.params ?? {};
   const toast = useToast();
+  const dialog = useDialog();
   const { user } = useAuth();
 
-  const { t } = useI18n();
+  const { t, localeTag } = useI18n();
   const { family } = useFamily();
   const { horizontalPadding } = useResponsive();
-  const { colors, radii } = useTheme();
+  const { colors, radii, layout } = useTheme();
 
   const [memory, setMemory] = useState(null);
   const [meta, setMeta] = useState({});
@@ -47,6 +56,7 @@ export default function MemoryDetailsScreen({ route, navigation }) {
   const [postingComment, setPostingComment] = useState(false);
   const [loading, setLoading] = useState(true);
   const [liking, setLiking] = useState(false);
+  const [reviewing, setReviewing] = useState(false);
 
   const load = useCallback(async () => {
     try {
@@ -62,16 +72,22 @@ export default function MemoryDetailsScreen({ route, navigation }) {
         const c = await getMemoryComments(id);
         setComments(c);
       } catch (err) {
+        // Comments are unavailable until a memory is approved.
         setComments([]);
       }
     } catch (e) {
-      toast.error(e.message || 'Memory not found');
+      setMemory(null);
     } finally {
       setLoading(false);
     }
-  }, [id, family?._id, toast]);
+  }, [id, family?._id]);
 
   useEffect(() => { load(); }, [load]);
+
+  const retry = useCallback(() => {
+    setLoading(true);
+    load();
+  }, [load]);
 
   const handleLike = useCallback(async () => {
     if (!memory || liking) return;
@@ -95,35 +111,126 @@ export default function MemoryDetailsScreen({ route, navigation }) {
       const added = await addMemoryComment(id, newComment);
       setComments((prev) => [...prev, added]);
       setNewComment('');
-    } catch (e) {
-      toast.error(e.message || 'Failed to post comment');
+    } catch {
+      toast.error(t('memories.commentFailed'));
     } finally {
       setPostingComment(false);
     }
-  }, [id, newComment, toast]);
+  }, [id, newComment, toast, t]);
 
   const handleDelete = useCallback(async () => {
+    const ok = await dialog.confirm({
+      title: t('memories.deleteMemory'),
+      message: t('memories.deleteMemoryBody'),
+      confirmLabel: t('common.delete'),
+      destructive: true,
+    });
+    if (!ok) return;
     try {
       await deleteMemory(id);
       navigation.goBack();
-    } catch (e) {
-      toast.error(e.message || 'Delete failed');
+    } catch {
+      toast.error(t('memories.deleteFailed'));
     }
-  }, [id, navigation, toast]);
+  }, [id, navigation, toast, dialog, t]);
+
+  // Proposal §8: another member approves before the family sees a memory.
+  const handleReview = useCallback(
+    async (approve) => {
+      const ok = await dialog.confirm({
+        title: approve ? t('memoryReview.approveTitle') : t('memoryReview.rejectTitle'),
+        message: approve
+          ? t('memoryReview.approveMessage')
+          : t('memoryReview.rejectMessage', { name: memory?.uploadedBy?.fullName ?? '' }),
+        confirmLabel: approve ? t('memoryReview.approve') : t('memoryReview.reject'),
+        destructive: !approve,
+      });
+      if (!ok) return;
+
+      setReviewing(true);
+      try {
+        const updated = await reviewMemory(id, approve ? 'approve' : 'reject');
+        toast.success(approve ? t('memoryReview.approved') : t('memoryReview.rejected'));
+        if (approve) {
+          setMemory((prev) => ({ ...prev, ...updated }));
+        } else {
+          // A rejected memory is no longer visible to the reviewer.
+          navigation.goBack();
+        }
+      } catch {
+        toast.error(t('memoryReview.decisionFailed'));
+        await load();
+      } finally {
+        setReviewing(false);
+      }
+    },
+    [dialog, id, load, memory, navigation, toast, t],
+  );
 
   if (loading) return <Loader fullScreen />;
-  if (!memory) return null;
+
+  if (!memory) {
+    return (
+      <Screen edges={['top']}>
+        <PageHeader title={t('memories.memory')} onBack={() => navigation.goBack()} />
+        <EmptyState icon="images-outline" title={t('memories.notFound')} />
+        <Button title={t('common.retry')} variant="secondary" onPress={retry} style={{ marginTop: 12 }} />
+      </Screen>
+    );
+  }
 
   const liked = isLikedByUser(memory, user?._id);
   const tags = memory.tags ?? [];
+  const status = memory.status ?? 'approved';
+  const isShared = status === 'approved';
+  const canDecide = status === 'pending' && !isUploadedBy(memory, user) && canReviewMemories(user);
+  const statusColor = status === 'rejected' ? colors.error : colors.primary;
 
   return (
     <Screen edges={['top']} noPadding>
       <View style={{ paddingHorizontal: horizontalPadding }}>
-        <PageHeader title="Memory" onBack={() => navigation.goBack()} />
+        <PageHeader title={t('memories.memory')} onBack={() => navigation.goBack()} />
       </View>
       <ScrollView contentContainerStyle={{ paddingHorizontal: horizontalPadding, paddingBottom: 40 }}>
         <MemoryHero memory={memory} viewCount={viewCount} />
+
+        {!isShared ? (
+          <Card style={{ marginTop: 12, borderWidth: 1, borderColor: statusColor }}>
+            <View style={{ flexDirection: 'row', alignItems: 'center', gap: 8 }}>
+              <Ionicons name={status === 'rejected' ? 'eye-off-outline' : 'time-outline'} size={20} color={statusColor} />
+              <Text style={{ color: colors.text, fontFamily: 'Inter_600SemiBold', fontSize: 15 * layout.fontScale }}>
+                {status === 'rejected' ? t('memoryReview.notApproved') : t('memoryReview.awaitingApproval')}
+              </Text>
+            </View>
+            <Text style={{ color: colors.textSecondary, marginTop: 6, fontSize: 13.5 * layout.fontScale, lineHeight: 20 }}>
+              {status === 'rejected'
+                ? t('memoryReview.rejectedNotice')
+                : canDecide
+                  ? t('memoryReview.reviewerNotice')
+                  : t('memoryReview.pendingNotice')}
+            </Text>
+            {status === 'rejected' && memory.review?.reason ? (
+              <Text style={{ color: colors.text, marginTop: 6, fontSize: 13.5 * layout.fontScale }}>{memory.review.reason}</Text>
+            ) : null}
+            {memory.review?.reviewedBy?.fullName ? (
+              <Text style={{ color: colors.textTertiary, marginTop: 6, fontSize: 12 * layout.fontScale }}>
+                {t('memoryReview.reviewedBy', { name: memory.review.reviewedBy.fullName })}
+              </Text>
+            ) : null}
+            {canDecide ? (
+              <View style={{ flexDirection: 'row', gap: 10, marginTop: 12 }}>
+                <Button title={t('memoryReview.approve')} onPress={() => handleReview(true)} loading={reviewing} style={{ flex: 1 }} />
+                <Button
+                  title={t('memoryReview.reject')}
+                  variant="secondary"
+                  onPress={() => handleReview(false)}
+                  disabled={reviewing}
+                  style={{ flex: 1 }}
+                />
+              </View>
+            ) : null}
+          </Card>
+        ) : null}
 
         {(memory.location || meta.location) ? (
           <Card style={{ marginTop: 12 }}>
@@ -139,53 +246,70 @@ export default function MemoryDetailsScreen({ route, navigation }) {
           <Text style={{ color: colors.textSecondary }}>{t('memories.noTagged')}</Text>
         ) : (
           <View style={{ flexDirection: 'row', flexWrap: 'wrap', gap: 10 }}>
-            {tags.map((t) => (
-              <View key={String(t._id ?? t)} style={{ alignItems: 'center' }}>
-                <Avatar uri={t.avatar} name={t.fullName} size={44} />
-                <Text style={{ fontSize: 12, marginTop: 4, color: colors.text }}>{t.fullName}</Text>
+            {tags.map((tag) => (
+              <View key={String(tag._id ?? tag)} style={{ alignItems: 'center' }}>
+                <Avatar uri={tag.avatar} name={tag.fullName} size={44} />
+                <Text style={{ fontSize: 12, marginTop: 4, color: colors.text }}>{tag.fullName}</Text>
               </View>
             ))}
           </View>
         )}
 
-        <SectionTitle title="Engagement" style={{ marginTop: 16 }} />
-        <Button
-          title={liked ? `Liked · ${getLikeCount(memory)}` : `Like · ${getLikeCount(memory)}`}
-          variant={liked ? 'primary' : 'secondary'}
-          onPress={handleLike}
-          loading={liking}
-        />
-
-        <SectionTitle title="Comments" subtitle={`${comments.length} comments`} style={{ marginTop: 20 }} />
-        <View style={{ marginTop: 8 }}>
-          {comments.map((c, idx) => (
-            <Card key={c._id || idx} style={{ marginBottom: 8, padding: 12 }}>
-              <View style={{ flexDirection: 'row', justifyContent: 'space-between' }}>
-                <Text style={{ color: colors.text, fontFamily: 'Inter_600SemiBold', fontSize: 13 }}>{c.author?.fullName}</Text>
-                <Text style={{ color: colors.textTertiary, fontSize: 11 }}>{new Date(c.createdAt).toLocaleDateString()}</Text>
-              </View>
-              <Text style={{ color: colors.textSecondary, fontSize: 14, marginTop: 4 }}>{c.content}</Text>
-            </Card>
-          ))}
-          <View style={{ flexDirection: 'row', marginTop: 8 }}>
-            <TextInput
-              style={{
-                flex: 1,
-                borderWidth: 1,
-                borderColor: colors.border,
-                borderRadius: radii.md,
-                paddingHorizontal: 12,
-                color: colors.text,
-                fontFamily: 'Inter_400Regular',
-              }}
-              placeholder={t('memories.addNote')}
-              placeholderTextColor={colors.textTertiary}
-              value={newComment}
-              onChangeText={setNewComment}
+        {isShared ? (
+          <>
+            <SectionTitle title={t('memories.engagement')} style={{ marginTop: 16 }} />
+            <Button
+              title={liked ? t('memories.liked', { count: getLikeCount(memory) }) : t('memories.like', { count: getLikeCount(memory) })}
+              variant={liked ? 'primary' : 'secondary'}
+              onPress={handleLike}
+              loading={liking}
             />
-            <Button title="Post" onPress={handlePostComment} loading={postingComment} disabled={!newComment.trim()} style={{ marginLeft: 8 }} />
-          </View>
-        </View>
+
+            <SectionTitle
+              title={t('memories.comments')}
+              subtitle={t('memories.commentCount', { count: comments.length })}
+              style={{ marginTop: 20 }}
+            />
+            <View style={{ marginTop: 8 }}>
+              {comments.map((c, idx) => (
+                <Card key={c._id || idx} style={{ marginBottom: 8, padding: 12 }}>
+                  <View style={{ flexDirection: 'row', justifyContent: 'space-between' }}>
+                    <Text style={{ color: colors.text, fontFamily: 'Inter_600SemiBold', fontSize: 13 }}>{c.author?.fullName}</Text>
+                    <Text style={{ color: colors.textTertiary, fontSize: 11 }}>
+                      {new Date(c.createdAt).toLocaleDateString(localeTag)}
+                    </Text>
+                  </View>
+                  <Text style={{ color: colors.textSecondary, fontSize: 14, marginTop: 4 }}>{c.content}</Text>
+                </Card>
+              ))}
+              <View style={{ flexDirection: 'row', marginTop: 8 }}>
+                <TextInput
+                  style={{
+                    flex: 1,
+                    borderWidth: 1,
+                    borderColor: colors.border,
+                    borderRadius: radii.md,
+                    paddingHorizontal: 12,
+                    color: colors.text,
+                    fontFamily: 'Inter_400Regular',
+                  }}
+                  placeholder={t('memories.addNote')}
+                  placeholderTextColor={colors.textTertiary}
+                  value={newComment}
+                  onChangeText={setNewComment}
+                  accessibilityLabel={t('memories.addNote')}
+                />
+                <Button
+                  title={t('memories.post')}
+                  onPress={handlePostComment}
+                  loading={postingComment}
+                  disabled={!newComment.trim()}
+                  style={{ marginLeft: 8 }}
+                />
+              </View>
+            </View>
+          </>
+        ) : null}
 
         {canDeleteMemory(memory, user) ? (
           <Button title={t('memories.deleteMemory')} variant="danger" onPress={handleDelete} style={{ marginTop: 20 }} />

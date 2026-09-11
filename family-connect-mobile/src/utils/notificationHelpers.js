@@ -35,9 +35,15 @@ export function formatNotificationTime(dateVal) {
 export function getNotificationIcon(type) {
   switch (type) {
     case 'chat_message':
+    case 'chat_mention':
       return 'chatbubble-outline';
     case 'memory_uploaded':
+    case 'memory_approved':
       return 'images-outline';
+    case 'memory_review_requested':
+      return 'shield-checkmark-outline';
+    case 'memory_rejected':
+      return 'eye-off-outline';
     case 'event_created':
       return 'calendar-outline';
     default:
@@ -54,8 +60,16 @@ export function getNavigationTarget(notification) {
 
   switch (type) {
     case 'chat_message':
+    case 'chat_mention':
       return { tab: 'Chat' };
+    case 'memory_review_requested':
+      return { tab: 'Memories', screen: 'MemoryApprovals' };
     case 'memory_uploaded':
+    case 'memory_approved':
+    case 'memory_rejected':
+      if (data.memoryId) {
+        return { tab: 'Memories', screen: 'MemoryDetails', params: { id: String(data.memoryId) } };
+      }
       return { tab: 'Memories', screen: 'MemoriesHome' };
     case 'event_created':
       if (data.eventId) {

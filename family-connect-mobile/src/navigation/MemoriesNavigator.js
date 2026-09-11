@@ -12,6 +12,7 @@ import SharedAlbumsScreen from '../screens/memories/SharedAlbumsScreen';
 import SearchMemoriesScreen from '../screens/memories/SearchMemoriesScreen';
 import MemoryMapScreen from '../screens/memories/MemoryMapScreen';
 import TaggedMembersScreen from '../screens/memories/TaggedMembersScreen';
+import MemoryApprovalsScreen from '../screens/memories/MemoryApprovalsScreen';
 
 const Stack = createNativeStackNavigator();
 
@@ -30,6 +31,7 @@ export default function MemoriesNavigator() {
       <Stack.Screen name="SearchMemories" component={SearchMemoriesScreen} />
       <Stack.Screen name="MemoryMap" component={MemoryMapScreen} />
       <Stack.Screen name="TaggedMembers" component={TaggedMembersScreen} />
+      <Stack.Screen name="MemoryApprovals" component={MemoryApprovalsScreen} />
     </Stack.Navigator>
   );
 }

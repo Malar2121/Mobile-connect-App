@@ -26,6 +26,20 @@ export function canDeleteMemory(memory, user) {
   return getUploaderId(memory) === String(user._id);
 }
 
+/** Pending and rejected memories are hidden from the family (proposal §8). */
+export function isSharedMemory(memory) {
+  return memory?.status !== 'pending' && memory?.status !== 'rejected';
+}
+
+/** Adults and elders review other members' uploads; guests and children do not. */
+export function canReviewMemories(user) {
+  return Boolean(user) && user.role !== 'guest' && user.memberType !== 'child';
+}
+
+export function isUploadedBy(memory, user) {
+  return Boolean(user) && getUploaderId(memory) === String(user._id);
+}
+
 export function formatMemoryDate(dateVal) {
   if (!dateVal) return '';
   const d = new Date(dateVal);

@@ -127,12 +127,14 @@ export default function UploadMemoryScreen({ navigation }) {
         formData.append('caption', caption.trim());
       }
 
-      await uploadMemory(formData);
-      toast.success(t('memories.shared'));
+      const created = await uploadMemory(formData);
+      // Proposal §8: another member approves before the family sees it.
+      toast.success(created?.status === 'pending' ? t('memoryReview.sentForApproval') : t('memories.shared'));
       navigation.navigate('MemoriesHome', { refresh: Date.now() });
     } catch (e) {
-      setError(e.message || 'Upload failed.');
-      toast.error(e.message || 'Upload failed');
+      const message = e.code === 'MEDIA_QUOTA_EXCEEDED' ? t('memories.quotaExceeded') : e.message || t('memories.uploadFailed');
+      setError(message);
+      toast.error(message);
     } finally {
       setLoading(false);
     }
