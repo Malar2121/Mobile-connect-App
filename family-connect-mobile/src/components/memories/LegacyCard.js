@@ -10,7 +10,7 @@ function LegacyCardComponent({ profile, member, memoryCount, onPress }) {
   const { colors, layout, radii, isDark } = useTheme();
 
   const { t } = useI18n();
-  const name = profile?.displayName ?? member?.fullName ?? 'Beloved family member';
+  const name = profile?.displayName ?? member?.fullName ?? t('memories.belovedFamilyMember');
 
   return (
     <Pressable onPress={() => onPress?.(profile, member)} style={({ pressed }) => [{ opacity: pressed ? 0.95 : 1, marginBottom: 16 }]}>
@@ -37,9 +37,9 @@ function LegacyCardComponent({ profile, member, memoryCount, onPress }) {
           </Text>
         ) : null}
         <View style={styles.stats}>
-          <Text style={{ color: colors.textTertiary, fontSize: 12 }}>{memoryCount} memories preserved</Text>
+          <Text style={{ color: colors.textTertiary, fontSize: 12 }}>{t('memories.memoriesPreserved', { count: memoryCount })}</Text>
         </View>
-        <Text style={{ color: colors.primary, fontFamily: 'Inter_600SemiBold', marginTop: 12, fontSize: 14 }}>View remembrance →</Text>
+        <Text style={{ color: colors.primary, fontFamily: 'Inter_600SemiBold', marginTop: 12, fontSize: 14 }}>{t('memories.viewRemembrance')}</Text>
       </LinearGradient>
     </Pressable>
   );

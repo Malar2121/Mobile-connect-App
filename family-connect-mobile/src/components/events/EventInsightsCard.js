@@ -14,8 +14,8 @@ function EventInsightsCardComponent({ insights }) {
     { label: t('events.thisMonth'), value: insights.eventsThisMonth },
     { label: t('events.avgRsvp'), value: `${insights.avgRsvp}%` },
     { label: t('events.pendingRsvps'), value: insights.pendingRsvps },
-    { label: 'Birthdays', value: insights.upcomingBirthdays },
-    { label: 'Anniversaries', value: insights.upcomingAnniversaries },
+    { label: t('events.birthdays'), value: insights.upcomingBirthdays },
+    { label: t('events.anniversaries'), value: insights.upcomingAnniversaries },
   ];
 
   return (

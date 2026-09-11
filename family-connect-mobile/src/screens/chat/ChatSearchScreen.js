@@ -60,7 +60,7 @@ export default function ChatSearchScreen() {
 
   return (
     <Screen edges={['top']}>
-      <PageHeader title="Search" subtitle={t('chat.searchSubtitle')} onBack={() => navigation.goBack()} />
+      <PageHeader title={t('common.search')} subtitle={t('chat.searchSubtitle')} onBack={() => navigation.goBack()} />
       <View >
         <SearchBar value={query} onChangeText={setQuery} placeholder={t('chat.searchPlaceholder')} />
         <View style={{ flexDirection: 'row', flexWrap: 'wrap', gap: 8, marginVertical: 12 }}>
@@ -70,7 +70,7 @@ export default function ChatSearchScreen() {
         </View>
         {filter === 'member' ? (
           <Text style={{ color: colors.textSecondary, fontSize: 13, marginBottom: 8 }}>
-            Members: {(members ?? []).map((m) => m.fullName).join(', ')}
+            {t('chat.membersList', { names: (members ?? []).map((m) => m.fullName).join(', ') })}
           </Text>
         ) : null}
       </View>
@@ -83,7 +83,7 @@ export default function ChatSearchScreen() {
         ListEmptyComponent={
           !loading ? (
             <Text style={{ color: colors.textTertiary, textAlign: 'center', marginTop: 24, fontSize: 14 * layout.fontScale }}>
-              {query ? 'No messages found' : 'Type to search your family chat'}
+              {query ? t('chat.noMessagesFound') : t('chat.typeToSearchYourFamilyChat')}
             </Text>
           ) : null
         }

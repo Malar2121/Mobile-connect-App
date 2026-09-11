@@ -2,8 +2,10 @@ import React, { memo } from 'react';
 import { Pressable, StyleSheet, Text, View } from 'react-native';
 import { Avatar, Button, Card } from '../../design-system';
 import { useTheme } from '../../hooks/useTheme';
+import { useI18n } from '../../i18n';
 
 function JoinRequestCardComponent({ request, onApprove, onReject, onViewProfile, processing }) {
+  const { t } = useI18n();
   const { colors, layout, radii } = useTheme();
 
   return (
@@ -16,7 +18,7 @@ function JoinRequestCardComponent({ request, onApprove, onReject, onViewProfile,
               {request.fullName}
             </Text>
             <Text style={{ color: colors.textSecondary, fontSize: 13 * layout.fontScale, marginTop: 2 }}>
-              {request.email ?? 'Requested to join'}
+              {request.email ?? t('family.requestedToJoin')}
             </Text>
             {request.requestedAt ? (
               <Text style={{ color: colors.textTertiary, fontSize: 12 * layout.fontScale, marginTop: 4 }}>
@@ -25,19 +27,19 @@ function JoinRequestCardComponent({ request, onApprove, onReject, onViewProfile,
             ) : null}
           </View>
           <View style={[styles.badge, { backgroundColor: colors.warning + '22', borderRadius: radii.full }]}>
-            <Text style={{ color: colors.warning, fontSize: 11, fontFamily: 'Inter_600SemiBold' }}>Pending</Text>
+            <Text style={{ color: colors.warning, fontSize: 11, fontFamily: 'Inter_600SemiBold' }}>{t('invite.status_pending')}</Text>
           </View>
         </View>
       </Pressable>
 
       <View style={styles.actions}>
         <Button
-          title="Approve"
+          title={t('consent.approve')}
           onPress={() => onApprove?.(request)}
           loading={processing}
           style={{ flex: 1 }}
         />
-        <Button title="Reject" variant="danger" onPress={() => onReject?.(request)} style={{ flex: 1 }} />
+        <Button title={t('consent.reject')} variant="danger" onPress={() => onReject?.(request)} style={{ flex: 1 }} />
       </View>
     </Card>
   );

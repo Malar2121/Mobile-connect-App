@@ -61,7 +61,7 @@ export default function EventsListScreen({ navigation }) {
       const list = await getFamilyEvents();
       setEvents(list);
     } catch (e) {
-      setError(e.message || 'Could not load events.');
+      setError(e.message || t('events.couldNotLoadEvents'));
       setEvents([]);
     } finally {
       setLoading(false);
@@ -87,7 +87,7 @@ export default function EventsListScreen({ navigation }) {
   if (loading && !refreshing) {
     return (
       <Screen edges={['top']}>
-        <PageHeader title="Events" subtitle={t('common.loadingEllipsis')} large />
+        <PageHeader title={t('events.title')} subtitle={t('common.loadingEllipsis')} large />
         <Skeleton variant="list-row" count={4} />
       </Screen>
     );
@@ -96,7 +96,7 @@ export default function EventsListScreen({ navigation }) {
   return (
     <Screen edges={['top']} noPadding>
       <View style={{ paddingHorizontal: layout.contentPadding }}>
-        <PageHeader title="Events" subtitle={`${events.length} scheduled`} large />
+        <PageHeader title={t('events.title')} subtitle={t('events.scheduled', { count: events.length })} large />
         {error ? (
           <Text style={{ color: colors.error, marginBottom: 8, fontSize: 14 * layout.fontScale }}>
             {error}
@@ -127,10 +127,10 @@ export default function EventsListScreen({ navigation }) {
             title={t('events.noneYet')}
             description={
               isMinor
-                ? 'Family events will appear here.'
-                : 'Plan a gathering — tap + to create your first event.'
+                ? t('events.familyEventsWillAppearHere')
+                : t('events.planAGatheringTapToCreate')
             }
-            actionLabel={isMinor ? undefined : 'Create event'}
+            actionLabel={isMinor ? undefined : t('events.create')}
             onAction={isMinor ? undefined : () => navigation.navigate('CreateEvent')}
             compact
           />

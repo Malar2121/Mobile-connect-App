@@ -26,16 +26,16 @@ export default function SharedFilesScreen() {
 
       <FlatList
         data={[
-          { key: 'images', title: 'Images', items: groups.images, icon: 'image' },
-          { key: 'videos', title: 'Videos', items: groups.videos, icon: 'videocam' },
-          { key: 'documents', title: 'Documents', items: groups.documents, icon: 'document-text' },
-          { key: 'audio', title: 'Audio', items: groups.audio, icon: 'mic' },
+          { key: 'images', title: t('chat.images'), items: groups.images, icon: 'image' },
+          { key: 'videos', title: t('memories.videos'), items: groups.videos, icon: 'videocam' },
+          { key: 'documents', title: t('chat.documents'), items: groups.documents, icon: 'document-text' },
+          { key: 'audio', title: t('chat.audio'), items: groups.audio, icon: 'mic' },
         ]}
         keyExtractor={(s) => s.key}
         contentContainerStyle={{ paddingBottom: insets.bottom + 24 }}
         renderItem={({ item: section }) => (
           <View style={{ marginBottom: layout.sectionGap }}>
-            <SectionTitle title={section.title} subtitle={`${section.items.length} files`} />
+            <SectionTitle title={section.title} subtitle={t('chat.countFiles', { count: section.items.length })} />
             {section.items.length ? (
               section.items.slice(0, 12).map((m) => (
                 <Pressable
@@ -56,7 +56,7 @@ export default function SharedFilesScreen() {
                 </Pressable>
               ))
             ) : (
-              <Text style={{ color: colors.textTertiary, fontSize: 13 }}>No {section.title.toLowerCase()} yet</Text>
+              <Text style={{ color: colors.textTertiary, fontSize: 13 }}>{t('common.noData')}</Text>
             )}
           </View>
         )}

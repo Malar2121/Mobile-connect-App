@@ -8,7 +8,7 @@ function EventSearchBarComponent({ value, onChangeText, placeholder }) {
     <SearchBar
       value={value}
       onChangeText={onChangeText}
-      placeholder={placeholder ?? 'Search events…'}
+      placeholder={placeholder ?? t('events.searchEvents2')}
       accessibilityLabel={t('events.searchEvents')}
     />
   );

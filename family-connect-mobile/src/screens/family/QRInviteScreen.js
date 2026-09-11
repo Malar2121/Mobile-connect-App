@@ -24,8 +24,8 @@ export default function QRInviteScreen() {
           onPress={() =>
             Share.share({
               message: inviteLink
-                ? `Join our family! Code: ${inviteCode}\n${inviteLink}`
-                : `Join our family! Code: ${inviteCode}`,
+                ? t('family.joinOurFamilyCodeInvitecodeInvitelink', { inviteCode, inviteLink })
+                : t('family.joinOurFamilyCodeInvitecode', { inviteCode }),
             })
           }
           style={{ marginTop: 16 }}

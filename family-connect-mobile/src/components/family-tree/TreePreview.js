@@ -36,7 +36,7 @@ function TreePreviewComponent({ nodes, onPress }) {
           ))}
         </View>
         <Text style={{ color: colors.textTertiary, fontSize: 12, marginTop: 12 }}>
-          {(nodes ?? []).length} members · Pinch to zoom in full tree
+          {t('tree.previewMembers', { count: (nodes ?? []).length })}
         </Text>
       </LinearGradient>
     </Pressable>

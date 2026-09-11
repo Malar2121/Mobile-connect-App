@@ -4,6 +4,7 @@ import { Marker } from 'react-native-maps';
 import Animated, { useAnimatedStyle, useSharedValue, withRepeat, withSequence, withTiming } from 'react-native-reanimated';
 import { Avatar } from '../../design-system';
 import { isLocationOnline } from '../../utils/mapModuleHelpers';
+import { useI18n } from '../../i18n';
 
 const AnimatedView = Animated.createAnimatedComponent(View);
 
@@ -15,7 +16,8 @@ const TYPE_BADGE = {
 };
 
 function MemberMarkerComponent({ location, onPress, isElder, isDark, colors, selected }) {
-  const name = location.user?.fullName ?? 'Member';
+  const { t } = useI18n();
+  const name = location.user?.fullName ?? t('common.member');
   const size = isElder ? 48 : 40;
   const online = isLocationOnline(location.updatedAt);
   const badge = TYPE_BADGE[location.memberType ?? location.user?.memberType];

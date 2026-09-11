@@ -29,7 +29,7 @@ export default function EventHistoryScreen() {
         <Card style={{ marginBottom: 10 }}>
           <Text style={{ color: colors.text, fontFamily: 'Inter_700Bold', fontSize: 16 * layout.fontScale }}>{item.event.title}</Text>
           <Text style={{ color: colors.textSecondary, marginTop: 4 }}>
-            {item.attendance} attended · {item.memoriesCount} linked memories
+            {t('events.historyStats', { attended: item.attendance, memories: item.memoriesCount })}
           </Text>
         </Card>
       </Pressable>
@@ -54,7 +54,7 @@ export default function EventHistoryScreen() {
               <Text style={{ color: colors.text, fontFamily: 'Inter_700Bold', fontSize: 28 * layout.fontScale }}>{insights.avgRsvp}%</Text>
               <Text style={{ color: colors.textTertiary, fontSize: 12, marginTop: 4 }}>{t('events.attendanceHint')}</Text>
             </Card>
-            <EventTimeline items={timelineItems} title="Timeline" />
+            <EventTimeline items={timelineItems} title={t('memories.timeline')} />
           </View>
         }
         ListEmptyComponent={<Text style={{ color: colors.textSecondary, textAlign: 'center' }}>{t('events.noCompleted')}</Text>}

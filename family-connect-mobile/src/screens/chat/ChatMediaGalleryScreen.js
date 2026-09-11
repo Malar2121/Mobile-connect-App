@@ -21,7 +21,7 @@ export default function ChatMediaGalleryScreen() {
 
   return (
     <Screen edges={['top']}>
-      <PageHeader title={t('chat.mediaGallery')} subtitle={`${media.length} items`} onBack={() => navigation.goBack()} />
+      <PageHeader title={t('chat.mediaGallery')} subtitle={t('chat.countItems', { count: media.length })} onBack={() => navigation.goBack()} />
       <FlatList
         data={media}
         numColumns={3}

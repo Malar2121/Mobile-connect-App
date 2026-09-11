@@ -15,7 +15,7 @@ function StoryRingsComponent({ memories, onOpenStory }) {
 
   return (
     <View style={{ marginBottom: layout.sectionGap }}>
-      <Text style={{ color: colors.text, fontFamily: 'Inter_700Bold', fontSize: 16 * layout.fontScale, marginBottom: 12 }}>Stories</Text>
+      <Text style={{ color: colors.text, fontFamily: 'Inter_700Bold', fontSize: 16 * layout.fontScale, marginBottom: 12 }}>{t('memories.quickStories')}</Text>
       <ScrollView horizontal showsHorizontalScrollIndicator={false} contentContainerStyle={{ gap: 14 }}>
         {stories.map((m, index) => (
           <Pressable key={String(m._id)} onPress={() => onOpenStory?.(index)} accessibilityLabel={t('memories.viewStory')}>
@@ -25,7 +25,7 @@ function StoryRingsComponent({ memories, onOpenStory }) {
               </View>
             </LinearGradient>
             <Text style={{ color: colors.textSecondary, fontSize: 11, marginTop: 6, maxWidth: 72, textAlign: 'center' }} numberOfLines={1}>
-              {m.caption || 'Memory'}
+              {m.caption || t('memories.memory')}
             </Text>
           </Pressable>
         ))}

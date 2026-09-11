@@ -26,7 +26,7 @@ export default function StoryTimelineScreen() {
 
   return (
     <Screen edges={['top']}>
-      <PageHeader title="Timeline" subtitle={t('memories.familyStory')} onBack={() => navigation.goBack()} />
+      <PageHeader title={t('memories.timeline')} subtitle={t('memories.familyStory')} onBack={() => navigation.goBack()} />
       <FlatList
         data={timeline}
         keyExtractor={(item) => item.label}

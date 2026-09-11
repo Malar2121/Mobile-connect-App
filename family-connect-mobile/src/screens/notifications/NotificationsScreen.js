@@ -111,12 +111,12 @@ export default function NotificationsScreen({ navigation }) {
       <View style={{ paddingHorizontal: layout.contentPadding }}>
         <PageHeader
           title={t('notifications.title')}
-          subtitle={unreadCount > 0 ? `${unreadCount} unread` : 'All caught up'}
+          subtitle={unreadCount > 0 ? t('notifications.unreadcountUnread', { unreadCount }) : t('notifications.allCaughtUp')}
           onBack={() => navigation.goBack()}
           large
         />
         {unreadCount > 0 ? (
-          <Badge label={`${unreadCount} new`} variant="primary" style={{ marginBottom: 12 }} />
+          <Badge label={t('notifications.unreadcountNew', { unreadCount })} variant="primary" style={{ marginBottom: 12 }} />
         ) : null}
       </View>
 

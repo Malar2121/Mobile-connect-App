@@ -34,6 +34,7 @@ import {
   saveTrips,
   ZONE_PRESETS,
 } from '../utils/mapModuleHelpers';
+import { useI18n } from '../i18n';
 
 const UPDATE_THROTTLE_MS = 30_000;
 const WATCH_OPTIONS = {
@@ -74,6 +75,7 @@ export function normalizeZone(raw) {
 }
 
 export function useMapModuleData() {
+  const { t } = useI18n();
   const { user, token } = useAuth();
   const { family, members } = useFamily();
   const { uiMode } = useTheme();
@@ -138,7 +140,7 @@ export function useMapModuleData() {
       const list = await getFamilyLocations();
       setLocationMap((prev) => mergeLocationsList(prev, list));
     } catch (e) {
-      setError(e.message || 'Could not load family locations.');
+      setError(e.message || t('common.couldNotLoadFamilyLocations'));
     } finally {
       setLoading(false);
     }
@@ -165,7 +167,7 @@ export function useMapModuleData() {
         // locally we only keep the trip trail.
         await recordTripPoint(user._id, coords);
       } catch (e) {
-        setError(e.message || 'Could not share location.');
+        setError(e.message || t('common.couldNotShareLocation'));
       }
     },
     [user],
@@ -210,7 +212,7 @@ export function useMapModuleData() {
       setSharing(true);
       return true;
     } catch (e) {
-      setError(e.message || 'Could not start location sharing.');
+      setError(e.message || t('common.couldNotStartLocationSharing'));
       setSharing(false);
       return false;
     } finally {
@@ -223,7 +225,7 @@ export function useMapModuleData() {
       // Children and elders cannot pause sharing — safety policy,
       // enforced by the server as well.
       if (!next && isTrackedMember) {
-        setError('Location sharing stays on for children and elders — family safety policy.');
+        setError(t('common.locationSharingStaysOnForChildren'));
         return;
       }
       if (next) {
@@ -241,7 +243,7 @@ export function useMapModuleData() {
         try {
           await setLocationSharing(false);
         } catch (e) {
-          setError(e.message || 'Could not pause sharing.');
+          setError(e.message || t('common.couldNotPauseSharing'));
         }
       }
       if (user?._id) {
@@ -341,7 +343,7 @@ export function useMapModuleData() {
           coords = { latitude: current.coords.latitude, longitude: current.coords.longitude };
         }
       }
-      if (!coords) throw new Error('Location unavailable for SOS');
+      if (!coords) throw new Error(t('common.locationUnavailableForSos'));
       const result = await sendSOSAlert({ latitude: coords.latitude, longitude: coords.longitude, message });
       await appendSosHistory(family._id, { ...result, message, userId: user._id, userName: user.fullName });
       const history = await loadSosHistory(family._id);

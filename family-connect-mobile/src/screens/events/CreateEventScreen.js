@@ -3,15 +3,15 @@ import { ScrollView, StyleSheet, Text, View } from 'react-native';
 import { Button, Chip, PageHeader, Screen, TextField, useToast } from '../../design-system';
 import { CategoryChip } from '../../components/events';
 import { useTheme } from '../../hooks/useTheme';
-import { useI18n } from '../../i18n';
+import { useI18n, translate } from '../../i18n';
 import { createEvent } from '../../services/eventService';
 import { EVENT_CATEGORIES, saveEventMeta } from '../../utils/eventModuleHelpers';
 
-const STEPS = ['General', 'Schedule', 'Details', 'Review'];
+const STEP_KEYS = ['events.stepGeneral', 'events.stepSchedule', 'events.stepDetails', 'events.stepReview'];
 const REPEAT_OPTIONS = [
   { id: 'none', label: t('events.noRepeat') },
-  { id: 'weekly', label: 'Weekly' },
-  { id: 'monthly', label: 'Monthly' },
+  { id: 'weekly', get label() { return translate('events.weekly'); } },
+  { id: 'monthly', get label() { return translate('events.monthly'); } },
 ];
 
 export default function CreateEventScreen({ navigation }) {
@@ -73,7 +73,7 @@ export default function CreateEventScreen({ navigation }) {
       toast.success(t('events.created'));
       navigation.replace('EventDetails', { id: String(created._id) });
     } catch (e) {
-      toast.error(e.message || 'Could not create event');
+      toast.error(e.message || translate('events.couldNotCreateEvent'));
     } finally {
       setLoading(false);
     }
@@ -81,10 +81,10 @@ export default function CreateEventScreen({ navigation }) {
 
   return (
     <Screen edges={['top']} scroll>
-      <PageHeader title={t('events.newEvent')} subtitle={`Step ${step + 1} of ${STEPS.length} — ${STEPS[step]}`} onBack={() => (step > 0 ? setStep(step - 1) : navigation.goBack())} />
+      <PageHeader title={t('events.newEvent')} subtitle={t('events.stepValueOfCountStep', { value: step + 1, count: STEP_KEYS.length, step: t(STEP_KEYS[step]) })} onBack={() => (step > 0 ? setStep(step - 1) : navigation.goBack())} />
       <View style={styles.steps}>
-        {STEPS.map((s, i) => (
-          <Chip key={s} label={s} selected={i === step} onPress={() => setStep(i)} />
+        {STEP_KEYS.map((s, i) => (
+          <Chip key={s} label={t(s)} selected={i === step} onPress={() => setStep(i)} />
         ))}
       </View>
 
@@ -94,7 +94,7 @@ export default function CreateEventScreen({ navigation }) {
         <>
           <TextField label={t('events.titleField')} value={title} onChangeText={setTitle} placeholder={t('events.titlePlaceholder')} />
           <TextField label={t('events.descriptionField')} value={description} onChangeText={setDescription} multiline numberOfLines={4} placeholder={t('events.descriptionPlaceholder')} />
-          <Text style={{ color: colors.textSecondary, marginBottom: 8, marginTop: 8 }}>Category</Text>
+          <Text style={{ color: colors.textSecondary, marginBottom: 8, marginTop: 8 }}>{t('events.category')}</Text>
           <View style={styles.chips}>
             {EVENT_CATEGORIES.map((c) => (
               <CategoryChip key={c.id} label={c.label} color={c.color} selected={category === c.id} onPress={() => setCategory(c.id)} />
@@ -121,8 +121,8 @@ export default function CreateEventScreen({ navigation }) {
         <>
           <TextField label={t('events.locationField')} value={location} onChangeText={setLocation} placeholder={t('events.locationPlaceholder')} />
           <TextField label={t('events.coverImage')} value={image} onChangeText={setImage} placeholder="https://…" />
-          <TextField label={t('events.maxParticipants')} value={maxParticipants} onChangeText={setMaxParticipants} placeholder="Optional" keyboardType="number-pad" />
-          <Text style={{ color: colors.textSecondary, marginTop: 12, marginBottom: 8 }}>Privacy</Text>
+          <TextField label={t('events.maxParticipants')} value={maxParticipants} onChangeText={setMaxParticipants} placeholder={t('events.optional')} keyboardType="number-pad" />
+          <Text style={{ color: colors.textSecondary, marginTop: 12, marginBottom: 8 }}>{t('events.privacy')}</Text>
           <View style={styles.chips}>
             <Chip label={t('events.familyOnly')} selected={privacy === 'family'} onPress={() => setPrivacy('family')} />
             <Chip label={t('events.inviteesOnly')} selected={privacy === 'invitees'} onPress={() => setPrivacy('invitees')} />
@@ -133,15 +133,15 @@ export default function CreateEventScreen({ navigation }) {
 
       {step === 3 ? (
         <View style={{ marginBottom: 16 }}>
-          <Text style={{ color: colors.text, fontFamily: 'Inter_700Bold', fontSize: 20 * layout.fontScale }}>{title || 'Untitled'}</Text>
-          <Text style={{ color: colors.textSecondary, marginTop: 8 }}>{description || 'No description'}</Text>
-          <Text style={{ color: colors.text, marginTop: 12 }}>{date || 'Date TBD'} {startTime ? `· ${startTime}` : ''}</Text>
-          <Text style={{ color: colors.textSecondary, marginTop: 4 }}>{location || 'No location'}</Text>
+          <Text style={{ color: colors.text, fontFamily: 'Inter_700Bold', fontSize: 20 * layout.fontScale }}>{title || t('events.untitled')}</Text>
+          <Text style={{ color: colors.textSecondary, marginTop: 8 }}>{description || t('events.noDescription')}</Text>
+          <Text style={{ color: colors.text, marginTop: 12 }}>{date || t('events.dateTbd')} {startTime ? `· ${startTime}` : ''}</Text>
+          <Text style={{ color: colors.textSecondary, marginTop: 4 }}>{location || t('events.noLocation')}</Text>
           <CategoryChip label={EVENT_CATEGORIES.find((c) => c.id === category)?.label} color={EVENT_CATEGORIES.find((c) => c.id === category)?.color} />
         </View>
       ) : null}
 
-      {step < STEPS.length - 1 ? (
+      {step < STEP_KEYS.length - 1 ? (
         <Button title={t('events.continue')} onPress={() => setStep(step + 1)} size="lg" style={{ marginTop: 16 }} />
       ) : (
         <Button title={t('events.createEvent')} onPress={handleSubmit} loading={loading} size="lg" style={{ marginTop: 16, marginBottom: 32 }} />

@@ -11,17 +11,17 @@ import { PinnedBanner } from '../../components/chat/PinnedBanner';
 import { getChatAnalytics } from '../../utils/chatModuleHelpers';
 import { useTheme } from '../../hooks/useTheme';
 import { useResponsive } from '../../design-system';
-import { useI18n } from '../../i18n';
+import { useI18n, translate } from '../../i18n';
 
 const SHORTCUTS = [
   { id: 'conversation', label: t('chat.openChat'), icon: 'chatbubbles', screen: 'Conversation', primary: true },
-  { id: 'search', label: 'Search', icon: 'search', screen: 'ChatSearch' },
-  { id: 'media', label: 'Media', icon: 'images', screen: 'ChatMediaGallery' },
-  { id: 'files', label: 'Files', icon: 'folder', screen: 'SharedFiles' },
-  { id: 'pinned', label: 'Pinned', icon: 'pin', screen: 'PinnedMessages' },
-  { id: 'starred', label: 'Starred', icon: 'star', screen: 'StarredMessages' },
-  { id: 'voice', label: 'Voice', icon: 'mic', screen: 'VoiceMessage' },
-  { id: 'settings', label: 'Settings', icon: 'settings', screen: 'ChatSettings' },
+  { id: 'search', get label() { return translate('common.search'); }, icon: 'search', screen: 'ChatSearch' },
+  { id: 'media', get label() { return translate('chat.media'); }, icon: 'images', screen: 'ChatMediaGallery' },
+  { id: 'files', get label() { return translate('chat.files'); }, icon: 'folder', screen: 'SharedFiles' },
+  { id: 'pinned', get label() { return translate('chat.pinned'); }, icon: 'pin', screen: 'PinnedMessages' },
+  { id: 'starred', get label() { return translate('chat.starred'); }, icon: 'star', screen: 'StarredMessages' },
+  { id: 'voice', get label() { return translate('chat.voice'); }, icon: 'mic', screen: 'VoiceMessage' },
+  { id: 'settings', get label() { return translate('profile.settings'); }, icon: 'settings', screen: 'ChatSettings' },
 ];
 
 export default function ChatHomeScreen() {
@@ -50,10 +50,10 @@ export default function ChatHomeScreen() {
         <View style={{ alignItems: 'center', marginTop: 40, paddingHorizontal: horizontalPadding }}>
           <Text style={{ fontSize: 48 }}>👨‍👩‍👧‍👦</Text>
           <Text style={{ color: colors.text, fontFamily: 'Inter_700Bold', fontSize: 28, marginTop: 24, textAlign: 'center' }}>
-            Family Chat
+            {t('chat.familyChat2')}
           </Text>
           <Text style={{ color: colors.textSecondary, fontSize: 18, marginTop: 12, textAlign: 'center' }}>
-            Talk to Mom, Dad, and the rest of the family!
+            {t('chat.talkToMomDadAndThe')}
           </Text>
           
           <Pressable
@@ -73,7 +73,7 @@ export default function ChatHomeScreen() {
           >
             <Ionicons name="chatbubbles" size={40} color="#fff" />
             <Text style={{ color: '#fff', fontSize: 24, fontWeight: 'bold', marginTop: 12 }}>
-              Open Chat
+              {t('dashboard.qaOpenChat')}
             </Text>
           </Pressable>
         </View>
@@ -96,10 +96,10 @@ export default function ChatHomeScreen() {
         >
           <Text style={{ color: colors.text, fontFamily: 'Inter_700Bold', fontSize: 20 * layout.fontScale }}>{t('chat.familyChat')}</Text>
           <Text style={{ color: colors.textSecondary, marginTop: 6, lineHeight: 22 }}>
-            {analytics.total} messages · {analytics.media} media · {members?.length ?? 0} members
+            {t('chat.homeStats', { messages: analytics.total, media: analytics.media, members: members?.length ?? 0 })}
           </Text>
           {typingName ? (
-            <Text style={{ color: colors.primary, marginTop: 8, fontFamily: 'Inter_600SemiBold' }}>{typingName} is typing…</Text>
+            <Text style={{ color: colors.primary, marginTop: 8, fontFamily: 'Inter_600SemiBold' }}>{t('chat.nameIsTyping', { name: typingName })}</Text>
           ) : null}
         </LinearGradient>
 

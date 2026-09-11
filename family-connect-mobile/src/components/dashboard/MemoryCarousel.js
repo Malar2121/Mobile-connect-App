@@ -15,6 +15,7 @@ import { useI18n } from '../../i18n';
 const STORY_WIDTH = Dimensions.get('window').width * 0.72;
 
 function StoryCard({ memory, onPress, colors, layout, radii, isDark }) {
+  const { t } = useI18n();
   const uploader = getUploader(memory);
   const likes = getLikeCount(memory);
   const isVideo = memory.mediaType === 'video';
@@ -22,7 +23,7 @@ function StoryCard({ memory, onPress, colors, layout, radii, isDark }) {
   return (
     <DashboardPressable
       onPress={() => onPress?.(memory)}
-      accessibilityLabel={`Memory by ${uploader.fullName}`}
+      accessibilityLabel={t('dash.memoryByFullname', { fullName: uploader.fullName })}
     >
       <View style={[styles.story, { borderRadius: radii['2xl'], width: STORY_WIDTH }]}>
         {isVideo ? (
@@ -97,10 +98,10 @@ function MemoryCarouselComponent({ memories, onMemoryPress, onViewAll }) {
           >
             <Ionicons name="images-outline" size={36} color={colors.primary} />
             <Text style={{ color: colors.text, fontFamily: 'Inter_600SemiBold', marginTop: 12, fontSize: 16 * layout.fontScale }}>
-              Your family story starts here
+              {t('dash.yourFamilyStoryStartsHere')}
             </Text>
             <Text style={{ color: colors.textSecondary, textAlign: 'center', marginTop: 6, fontSize: 14 * layout.fontScale }}>
-              Upload photos and videos to fill this carousel with shared moments.
+              {t('dash.uploadPhotosAndVideosToFill')}
             </Text>
           </View>
         </View>

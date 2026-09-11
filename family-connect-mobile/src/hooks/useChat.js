@@ -13,6 +13,7 @@ import {
   upsertMessage,
 } from '../utils/chatHelpers';
 import { getPinnedMessage } from '../utils/chatModuleHelpers';
+import { useI18n } from '../i18n';
 
 const PAGE_SIZE = 60;
 
@@ -20,6 +21,7 @@ const TYPING_EMIT_MS = 400;
 const TYPING_HIDE_MS = 2500;
 
 export function useChat({ user, token, family, members, prefs, chatActions }) {
+  const { t } = useI18n();
   const [messages, setMessages] = useState([]);
   const [hasMore, setHasMore] = useState(false);
   const [loadingMore, setLoadingMore] = useState(false);
@@ -82,7 +84,7 @@ export function useChat({ user, token, family, members, prefs, chatActions }) {
       setHasMore(more);
       markUnreadAsRead(history);
     } catch (e) {
-      setError(e.message || 'Could not load messages.');
+      setError(e.message || t('chat.couldNotLoadMessages'));
     } finally {
       setLoading(false);
       setTimeout(() => scrollToBottom(false), 200);
@@ -261,7 +263,7 @@ export function useChat({ user, token, family, members, prefs, chatActions }) {
         scrollToBottom();
       } catch (e) {
         setMessages((prev) => prev.filter((m) => m.clientId !== optimistic.clientId));
-        setError(e.message || 'Could not send message.');
+        setError(e.message || t('chat.couldNotSendMessage'));
         setDraft(text);
       } finally {
         setSending(false);
@@ -280,7 +282,7 @@ export function useChat({ user, token, family, members, prefs, chatActions }) {
         setMessages((prev) => prev.filter((m) => m._id !== message._id));
         Haptics.notificationAsync(Haptics.NotificationFeedbackType.Success).catch(() => {});
       } catch (e) {
-        setError(e.message || 'Could not delete message.');
+        setError(e.message || t('chat.couldNotDeleteMessage'));
       }
     },
     [],
@@ -295,7 +297,7 @@ export function useChat({ user, token, family, members, prefs, chatActions }) {
   const handleForward = useCallback(
     (message, editedTexts) => {
       const text = editedTexts?.[String(message._id)] ?? message.text ?? '';
-      const prefix = text ? `↪ ${text}` : '↪ Forwarded message';
+      const prefix = text ? `↪ ${text}` : t('chat.forwardedMessage');
       sendTextMessage(prefix);
     },
     [sendTextMessage],

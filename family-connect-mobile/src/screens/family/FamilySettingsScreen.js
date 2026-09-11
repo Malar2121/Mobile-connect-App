@@ -48,7 +48,7 @@ export default function FamilySettingsScreen() {
       }
       toast.success(t('familySettings.saved'));
     } catch (e) {
-      toast.error(e.message || 'Could not save settings');
+      toast.error(e.message || t('tree.settingsSaveFailed'));
     } finally {
       setSaving(false);
     }
@@ -56,9 +56,9 @@ export default function FamilySettingsScreen() {
 
   const handleLeave = useCallback(async () => {
     const confirmed = await dialog.confirm({
-      title: 'Leave family?',
-      message: 'You will lose access to shared memories, events, and chat.',
-      confirmLabel: 'Leave',
+      title: t('family.leaveFamily'),
+      message: t('family.youWillLoseAccessToShared'),
+      confirmLabel: t('family.leave'),
       destructive: true,
     });
     if (!confirmed) return;
@@ -70,7 +70,7 @@ export default function FamilySettingsScreen() {
       toast.success(t('familySettings.left'));
       (navigation.getParent() ?? navigation).navigate('ProfileMain');
     } catch (e) {
-      toast.error(e.message || 'Could not leave family');
+      toast.error(e.message || t('family.couldNotLeaveFamily'));
     } finally {
       setLeaving(false);
     }
@@ -101,7 +101,7 @@ export default function FamilySettingsScreen() {
         ) : (
           <Card>
             <Text style={{ color: colors.textSecondary, fontSize: 13 * layout.fontScale, marginBottom: 8 }}>
-              Family name
+              {t('family.nameField')}
             </Text>
             <Text style={{ color: colors.text, fontFamily: 'Inter_700Bold', fontSize: 20 * layout.fontScale }}>
               {family?.name}
@@ -115,7 +115,7 @@ export default function FamilySettingsScreen() {
         )}
 
         <Card style={{ marginTop: 12 }}>
-          <Text style={{ color: colors.text, fontFamily: 'Inter_600SemiBold', marginBottom: 12 }}>Administration</Text>
+          <Text style={{ color: colors.text, fontFamily: 'Inter_600SemiBold', marginBottom: 12 }}>{t('family.administration')}</Text>
           <Button title={t('familySettings.permissions')} variant="secondary" onPress={() => navigation.navigate('FamilyPermissions')} />
           <Button title={t('familySettings.joinRequests')} variant="secondary" onPress={() => navigation.navigate('JoinRequests')} style={{ marginTop: 10 }} />
           <Button title={t('familySettings.roles')} variant="secondary" onPress={() => navigation.navigate('FamilyRoles')} style={{ marginTop: 10 }} />
@@ -125,7 +125,7 @@ export default function FamilySettingsScreen() {
           <Button title={t('familySettings.leave')} variant="danger" onPress={handleLeave} loading={leaving} style={{ marginTop: 24 }} />
         ) : (
           <Text style={{ color: colors.textTertiary, fontSize: 13, marginTop: 24, textAlign: 'center' }}>
-            Family owners cannot leave until ownership is transferred.
+            {t('family.familyOwnersCannotLeaveUntilOwnership')}
           </Text>
         )}
       </ScrollView>

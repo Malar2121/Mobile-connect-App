@@ -58,12 +58,12 @@ export default function RelationshipEditorScreen() {
         ...treeRelationshipToPayload(relOption, relatedToId),
       });
       await refresh();
-      toast.success(`Relationship updated for ${selectedMember.fullName}`);
+      toast.success(t('tree.relationshipUpdatedForFullname', { fullName: selectedMember.fullName }));
     } catch (e) {
       if (e.status === 404) {
         toast.error(t('tree.notInTree'));
       } else {
-        toast.error(e.message || 'Could not update relationship');
+        toast.error(e.message || t('tree.couldNotUpdateRelationship'));
       }
     } finally {
       setSaving(false);
@@ -118,7 +118,7 @@ export default function RelationshipEditorScreen() {
               />
             ) : (
               <Text style={{ color: colors.textSecondary, fontSize: 14 * layout.fontScale, marginBottom: 12 }}>
-                Select a member below to edit their relationship.
+                {t('tree.selectAMemberBelowToEdit')}
               </Text>
             )
           }

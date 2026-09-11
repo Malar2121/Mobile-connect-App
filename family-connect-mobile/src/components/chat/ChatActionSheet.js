@@ -6,19 +6,21 @@ import * as Haptics from 'expo-haptics';
 import { REACTION_EMOJIS } from '../../constants/chatTheme';
 import { chatTypography } from '../../constants/chatTheme';
 import { useTheme } from '../../hooks/useTheme';
+import { useI18n, translate } from '../../i18n';
 
 const ACTIONS = [
-  { id: 'reply', icon: 'arrow-undo', label: 'Reply' },
-  { id: 'copy', icon: 'copy-outline', label: 'Copy' },
-  { id: 'forward', icon: 'arrow-redo', label: 'Forward' },
-  { id: 'edit', icon: 'create-outline', label: 'Edit' },
-  { id: 'pin', icon: 'pin', label: 'Pin' },
-  { id: 'star', icon: 'star-outline', label: 'Star' },
-  { id: 'schedule', icon: 'time-outline', label: 'Schedule' },
-  { id: 'delete', icon: 'trash-outline', label: 'Delete', danger: true },
+  { id: 'reply', icon: 'arrow-undo', get label() { return translate('chat.reply'); } },
+  { id: 'copy', icon: 'copy-outline', get label() { return translate('chat.copy'); } },
+  { id: 'forward', icon: 'arrow-redo', get label() { return translate('chat.forward'); } },
+  { id: 'edit', icon: 'create-outline', get label() { return translate('common.edit'); } },
+  { id: 'pin', icon: 'pin', get label() { return translate('chat.pin'); } },
+  { id: 'star', icon: 'star-outline', get label() { return translate('chat.star'); } },
+  { id: 'schedule', icon: 'time-outline', get label() { return translate('chat.schedule'); } },
+  { id: 'delete', icon: 'trash-outline', get label() { return translate('common.delete'); }, danger: true },
 ];
 
 export function ChatActionSheet({ visible, message, isMine, isPinned, isStarred, onClose, onAction, onReaction }) {
+  const { t } = useI18n();
   const { colors, isDark } = useTheme();
   if (!message) return null;
 
@@ -77,7 +79,7 @@ export function ChatActionSheet({ visible, message, isMine, isPinned, isStarred,
                   },
                 ]}
               >
-                {action.id === 'pin' && isPinned ? 'Unpin' : action.id === 'star' && isStarred ? 'Unstar' : action.label}
+                {action.id === 'pin' && isPinned ? t('chat.unpin') : action.id === 'star' && isStarred ? t('chat.unstar') : action.label}
               </Text>
             </Pressable>
           ))}
@@ -85,7 +87,7 @@ export function ChatActionSheet({ visible, message, isMine, isPinned, isStarred,
 
         <Pressable onPress={onClose} style={[styles.cancel, { backgroundColor: isDark ? colors.card : '#fff' }]}>
           <Text style={[styles.cancelText, { color: colors.primary, fontFamily: chatTypography.fontFamilySemi }]}>
-            Cancel
+            {t('common.cancel')}
           </Text>
         </Pressable>
       </View>

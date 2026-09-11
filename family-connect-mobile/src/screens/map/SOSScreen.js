@@ -34,7 +34,7 @@ export default function SOSScreen() {
       toast.success(t('map.sosSent'));
       navigation.goBack();
     } catch (e) {
-      toast.error(e.message || 'Could not send SOS');
+      toast.error(e.message || t('map.couldNotSendSos'));
     } finally {
       setSending(false);
       setCountdown(0);
@@ -55,7 +55,7 @@ export default function SOSScreen() {
 
   const timeline = (sosHistory ?? []).map((h) => ({
     id: h.id,
-    title: h.userName ? `SOS from ${h.userName}` : 'SOS alert',
+    title: h.userName ? t('map.sosFromUsername', { userName: h.userName }) : t('map.sosAlert'),
     subtitle: h.message,
     time: h.sentAt ? new Date(h.sentAt).toLocaleString() : '',
   }));
@@ -79,7 +79,7 @@ export default function SOSScreen() {
 
       <ScrollView contentContainerStyle={{ paddingBottom: 40, alignItems: 'center' }}>
         <Text style={{ color: colors.textSecondary, textAlign: 'center', lineHeight: 22, marginBottom: 24, fontSize: 15 * layout.fontScale }}>
-          Sends your live location to all family members. You have {COUNTDOWN_SEC} seconds to cancel.
+          {t('map.sosExplain', { seconds: COUNTDOWN_SEC })}
         </Text>
 
         <SOSButton onPress={startSOS} countdown={countdown} onCancel={cancelSOS} disabled={sending} />

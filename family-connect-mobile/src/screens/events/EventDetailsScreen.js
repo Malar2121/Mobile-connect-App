@@ -78,7 +78,7 @@ export default function EventDetailsScreen({ route, navigation }) {
         setMemories([]);
       }
     } catch (e) {
-      toast.error(e.message || 'Could not load event.');
+      toast.error(e.message || t('events.couldNotLoadEvent'));
       setEvent(null);
     } finally {
       setLoading(false);
@@ -94,7 +94,7 @@ export default function EventDetailsScreen({ route, navigation }) {
       await load();
       toast.success(t('events.rsvpUpdated'));
     } catch (e) {
-      toast.error(e.message || 'RSVP failed');
+      toast.error(e.message || t('events.rsvpFailed'));
     } finally {
       setSubmitting(null);
     }
@@ -108,14 +108,14 @@ export default function EventDetailsScreen({ route, navigation }) {
       setComments((prev) => [...prev, added]);
       setNewComment('');
     } catch (e) {
-      toast.error(e.message || 'Failed to post comment');
+      toast.error(e.message || t('events.failedToPostComment'));
     } finally {
       setPostingComment(false);
     }
   }, [id, newComment, toast]);
 
   const handleDelete = useCallback(async () => {
-    const ok = await dialog.confirm({ title: 'Delete event?', message: 'This cannot be undone.', destructive: true, confirmLabel: 'Delete' });
+    const ok = await dialog.confirm({ title: t('events.deleteEvent2'), message: t('events.thisCannotBeUndone'), destructive: true, confirmLabel: t('common.delete') });
     if (!ok) return;
     setDeleting(true);
     try {
@@ -123,7 +123,7 @@ export default function EventDetailsScreen({ route, navigation }) {
       toast.success(t('events.deleted'));
       navigation.goBack();
     } catch (e) {
-      toast.error(e.message || 'Delete failed');
+      toast.error(e.message || t('events.deleteFailed'));
     } finally {
       setDeleting(false);
     }
@@ -140,13 +140,13 @@ export default function EventDetailsScreen({ route, navigation }) {
   if (!event) {
     return (
       <Screen edges={['top']}>
-        <PageHeader title="Event" onBack={() => navigation.goBack()} />
-        <EmptyState icon="calendar-outline" title={t('events.notFound')} actionLabel="Go back" onAction={() => navigation.goBack()} />
+        <PageHeader title={t('events.event')} onBack={() => navigation.goBack()} />
+        <EmptyState icon="calendar-outline" title={t('events.notFound')} actionLabel={t('common.back')} onAction={() => navigation.goBack()} />
       </Screen>
     );
   }
 
-  const creatorName = event.createdBy?.fullName ?? 'Family member';
+  const creatorName = event.createdBy?.fullName ?? t('events.familyMember');
   const myStatus = getMyRsvpStatus(event, userId);
   const countdown = getEventCountdown(event);
   const past = isEventPast(event);
@@ -169,11 +169,11 @@ export default function EventDetailsScreen({ route, navigation }) {
         </Card>
 
         <Card style={{ marginTop: 12 }}>
-          <DetailRow icon="calendar-outline" label="Date" value={formatEventDateLong(event.date)} colors={colors} layout={layout} />
-          <DetailRow icon="time-outline" label="Time" value={[event.startTime, event.endTime].filter(Boolean).join(' – ') || null} colors={colors} layout={layout} />
-          <DetailRow icon="person-outline" label="Host" value={creatorName} colors={colors} layout={layout} />
+          <DetailRow icon="calendar-outline" label={t('events.dateField')} value={formatEventDateLong(event.date)} colors={colors} layout={layout} />
+          <DetailRow icon="time-outline" label={t('events.time')} value={[event.startTime, event.endTime].filter(Boolean).join(' – ') || null} colors={colors} layout={layout} />
+          <DetailRow icon="person-outline" label={t('events.host')} value={creatorName} colors={colors} layout={layout} />
           {event.location ? (
-            <DetailRow icon="location-outline" label="Location" value={event.location} colors={colors} layout={layout} />
+            <DetailRow icon="location-outline" label={t('events.locationField')} value={event.location} colors={colors} layout={layout} />
           ) : null}
         </Card>
 
@@ -193,9 +193,9 @@ export default function EventDetailsScreen({ route, navigation }) {
           <>
             <SectionTitle title={t('events.yourRsvp')} style={{ marginTop: 20 }} />
             <Badge label={myStatus} variant={myStatus === 'accepted' ? 'success' : myStatus === 'declined' ? 'danger' : 'default'} style={{ marginBottom: 12 }} />
-            <Button title="Accept" onPress={() => respond('accepted')} loading={submitting === 'accepted'} disabled={Boolean(submitting)} />
-            <Button title="Maybe" variant="secondary" onPress={() => respond('maybe')} loading={submitting === 'maybe'} style={{ marginTop: 8 }} disabled={Boolean(submitting)} />
-            <Button title="Decline" variant="outline" onPress={() => respond('declined')} loading={submitting === 'declined'} style={{ marginTop: 8 }} disabled={Boolean(submitting)} />
+            <Button title={t('events.accept')} onPress={() => respond('accepted')} loading={submitting === 'accepted'} disabled={Boolean(submitting)} />
+            <Button title={t('events.maybe')} variant="secondary" onPress={() => respond('maybe')} loading={submitting === 'maybe'} style={{ marginTop: 8 }} disabled={Boolean(submitting)} />
+            <Button title={t('events.decline')} variant="outline" onPress={() => respond('declined')} loading={submitting === 'declined'} style={{ marginTop: 8 }} disabled={Boolean(submitting)} />
           </>
         ) : null}
 
@@ -216,10 +216,10 @@ export default function EventDetailsScreen({ route, navigation }) {
           </Card>
         )}
 
-        <SectionTitle title="Gallery" style={{ marginTop: 20 }} />
+        <SectionTitle title={t('events.gallery')} style={{ marginTop: 20 }} />
         <EventGallery memories={memories} eventTitle={event.title} />
 
-        <SectionTitle title="Comments" subtitle={`${comments.length} comments`} style={{ marginTop: 20 }} />
+        <SectionTitle title={t('memories.comments')} subtitle={t('memories.commentCount', { count: comments.length })} style={{ marginTop: 20 }} />
         <View style={{ marginTop: 8 }}>
           {comments.map((c, idx) => (
             <Card key={c._id || idx} style={{ marginBottom: 8, padding: 12 }}>
@@ -246,14 +246,14 @@ export default function EventDetailsScreen({ route, navigation }) {
               value={newComment}
               onChangeText={setNewComment}
             />
-            <Button title="Post" onPress={handlePostComment} loading={postingComment} disabled={!newComment.trim()} style={{ marginLeft: 8 }} />
+            <Button title={t('memories.post')} onPress={handlePostComment} loading={postingComment} disabled={!newComment.trim()} style={{ marginLeft: 8 }} />
           </View>
         </View>
 
         <View style={{ marginTop: 20, gap: 10 }}>
           <Button title={t('events.rsvpManagement')} variant="secondary" onPress={() => navigation.navigate('RSVPManagement', { id })} />
-          <Button title="Reminders" variant="secondary" onPress={() => navigation.navigate('EventReminders', { eventId: id })} />
-          <Button title="Attachments" variant="secondary" onPress={() => navigation.navigate('EventAttachments', { eventId: id })} />
+          <Button title={t('events.reminders')} variant="secondary" onPress={() => navigation.navigate('EventReminders', { eventId: id })} />
+          <Button title={t('events.attachments')} variant="secondary" onPress={() => navigation.navigate('EventAttachments', { eventId: id })} />
           {isHost ? (
             <>
               <Button title={t('events.editEvent')} variant="secondary" onPress={() => navigation.navigate('EditEvent', { id })} />

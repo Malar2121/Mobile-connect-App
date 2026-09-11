@@ -1,7 +1,8 @@
-export function formatEventDateShort(dateVal, locale = 'en') {
-  if (!dateVal) return 'Date TBD';
+
+import { translate } from '../i18n';export function formatEventDateShort(dateVal, locale = 'en') {
+  if (!dateVal) return translate('events.dateTbd');
   const d = new Date(dateVal);
-  if (Number.isNaN(d.getTime())) return 'Date TBD';
+  if (Number.isNaN(d.getTime())) return translate('events.dateTbd');
   const tag = locale === 'ta' ? 'ta-LK' : locale === 'si' ? 'si-LK' : 'en-US';
   return d.toLocaleDateString(tag, {
     weekday: 'short',
@@ -39,8 +40,8 @@ export function getMyRsvpStatus(event, userId) {
 export function resolveEventCreatorName(event, members) {
   const cb = event?.createdBy;
   if (cb && typeof cb === 'object' && cb.fullName) return cb.fullName;
-  if (!cb) return 'Family';
+  if (!cb) return translate('profile.family');
   const id = String(cb);
   const m = (members ?? []).find((u) => String(u._id) === id);
-  return m?.fullName ?? 'Family member';
+  return m?.fullName ?? translate('events.familyMember');
 }

@@ -18,13 +18,13 @@ import { useMapModule } from '../../contexts/MapModuleContext';
 import { MemberMarker, MapSkeleton, TravelStatsCard, SOSButton } from '../../components/map';
 import { useTheme } from '../../hooks/useTheme';
 import { MAP_DARK_STYLE } from '../../utils/locationHelpers';
-import { useI18n } from '../../i18n';
+import { useI18n, translate } from '../../i18n';
 
 const SHORTCUTS = [
   { id: 'zones', label: t('map.safeZones'), icon: 'shield', screen: 'SafeZones' },
   { id: 'sos', label: 'SOS', icon: 'warning', screen: 'SOSScreen' },
-  { id: 'trips', label: 'Trips', icon: 'car', screen: 'TripHistory' },
-  { id: 'settings', label: 'Settings', icon: 'settings', screen: 'LocationSettings' },
+  { id: 'trips', get label() { return translate('map.trips'); }, icon: 'car', screen: 'TripHistory' },
+  { id: 'settings', get label() { return translate('profile.settings'); }, icon: 'settings', screen: 'LocationSettings' },
 ];
 
 export default function LiveFamilyMapScreen() {
@@ -116,7 +116,7 @@ export default function LiveFamilyMapScreen() {
       <View style={[styles.header, { paddingHorizontal: layout.sectionGap }]}>
         <Text style={[styles.title, { color: colors.text, fontSize: titleSize }]}>{t('map.liveMap')}</Text>
         <Text style={{ color: colors.textSecondary, marginTop: 4, fontSize: 13 * layout.fontScale }}>
-          {locations.length} sharing · {safeZones.length} safe zones
+          {t('map.sharingAndZones', { sharing: locations.length, zones: safeZones.length })}
         </Text>
 
         {permissionDenied ? (
@@ -127,7 +127,7 @@ export default function LiveFamilyMapScreen() {
           <View style={[styles.shareRow, { backgroundColor: colors.card, borderColor: colors.border, marginTop: 10, padding: isElder ? 16 : 12 }]}>
             <View style={{ flex: 1 }}>
               <Text style={{ color: colors.text, fontWeight: '700', fontSize: 15 * layout.fontScale }}>{t('map.shareMyLocation')}</Text>
-              <Text style={{ color: colors.textSecondary, marginTop: 4, fontSize: 12 }}>Foreground · ~30s updates</Text>
+              <Text style={{ color: colors.textSecondary, marginTop: 4, fontSize: 12 }}>{t('map.foreground30sUpdates')}</Text>
             </View>
             {sharingBusy ? <ActivityIndicator color={colors.primary} /> : (
               <Switch value={sharing} onValueChange={toggleSharing} trackColor={{ false: colors.border, true: colors.primaryMuted }} thumbColor={sharing ? colors.primary : '#f4f3f4'} />

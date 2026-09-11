@@ -3,6 +3,7 @@ import { Pressable, StyleSheet, Text, View } from 'react-native';
 import Animated, { FadeIn } from 'react-native-reanimated';
 import { Avatar } from '../../design-system';
 import { useTheme } from '../../hooks/useTheme';
+import { useI18n } from '../../i18n';
 
 function TreeNodeComponent({
   node,
@@ -18,6 +19,7 @@ function TreeNodeComponent({
   showNickname,
   large,
 }) {
+  const { t } = useI18n();
   const { colors, layout, radii } = useTheme();
   const size = large ? 56 : 48;
 
@@ -91,7 +93,7 @@ function TreeNodeComponent({
             },
           ]}
           accessibilityRole="button"
-          accessibilityLabel={collapsed ? 'Expand branch' : 'Collapse branch'}
+          accessibilityLabel={collapsed ? t('tree.expandBranch') : t('tree.collapseBranch')}
         >
           <Text style={{ color: colors.text, fontSize: 14, fontFamily: 'Inter_700Bold' }}>{collapsed ? '+' : '−'}</Text>
         </Pressable>

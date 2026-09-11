@@ -4,15 +4,16 @@ import {
   getMediaMessages,
   searchMessages as localSearchMessages,
 } from './chatHelpers';
+import { translate } from '../i18n';
 
 export const SEARCH_FILTERS = [
-  { id: 'text', label: 'Text' },
-  { id: 'media', label: 'Media' },
-  { id: 'document', label: 'Documents' },
-  { id: 'audio', label: 'Audio' },
-  { id: 'link', label: 'Links' },
-  { id: 'member', label: 'Members' },
-  { id: 'date', label: 'Dates' },
+  { id: 'text', get label() { return translate('chat.text'); } },
+  { id: 'media', get label() { return translate('chat.media'); } },
+  { id: 'document', get label() { return translate('chat.documents'); } },
+  { id: 'audio', get label() { return translate('chat.audio'); } },
+  { id: 'link', get label() { return translate('chat.links'); } },
+  { id: 'member', get label() { return translate('common.members'); } },
+  { id: 'date', get label() { return translate('chat.dates'); } },
 ];
 
 export function getMessageReactions(message, localReactions = {}) {
@@ -58,9 +59,9 @@ export function shouldHidePreview(message, uiMode) {
 
 export function getPreviewLabel(message, uiMode) {
   if (!shouldHidePreview(message, uiMode)) return null;
-  if (message.mediaType === 'image') return 'Photo hidden in minor mode';
-  if (message.mediaType === 'video') return 'Video hidden in minor mode';
-  return 'Link hidden in minor mode';
+  if (message.mediaType === 'image') return translate('chat.photoHiddenInMinorMode');
+  if (message.mediaType === 'video') return translate('chat.videoHiddenInMinorMode');
+  return translate('chat.linkHiddenInMinorMode');
 }
 
 export function buildSearchParams({ query, filter, memberId, date }) {

@@ -22,7 +22,7 @@ export default function TripHistoryScreen() {
 
   const timeline = (focusTrip?.waypoints ?? []).map((w, i) => ({
     id: `wp-${i}`,
-    title: `Waypoint ${i + 1}`,
+    title: t('map.waypointValue', { value: i + 1 }),
     subtitle: `${w.latitude?.toFixed(4)}, ${w.longitude?.toFixed(4)}`,
     time: w.at ? new Date(w.at).toLocaleTimeString() : '',
   }));
@@ -44,7 +44,7 @@ export default function TripHistoryScreen() {
 
         {!trips.length ? (
           <Text style={{ color: colors.textTertiary, textAlign: 'center', marginTop: 24, fontSize: 14 * layout.fontScale }}>
-            Trips are built from your location points while sharing. Enable location sharing on the live map.
+            {t('map.tripsAreBuiltFromYourLocation')}
           </Text>
         ) : null}
       </ScrollView>

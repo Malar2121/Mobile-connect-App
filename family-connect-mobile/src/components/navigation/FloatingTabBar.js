@@ -20,6 +20,7 @@ import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import { useTabConfig } from '../../hooks/useTabConfig';
 import { useTheme } from '../../hooks/useTheme';
 import { useMotion } from '../../hooks/useMotion';
+import { useI18n } from '../../i18n';
 
 
 
@@ -28,6 +29,7 @@ const AnimatedPressable = Animated.createAnimatedComponent(Pressable);
 
 
 function TabItem({ item, focused, onPress, colors, isDark, onLayout, index, layout, radii, reduceMotion }) {
+  const { t } = useI18n();
 
   const scale = useSharedValue(focused ? 1 : 0.94);
 
@@ -65,7 +67,7 @@ function TabItem({ item, focused, onPress, colors, isDark, onLayout, index, layo
 
       accessibilityLabel={item.label}
 
-      accessibilityHint={focused ? undefined : `${item.label} tab`}
+      accessibilityHint={focused ? undefined : t('common.labelTab', { label: item.label })}
 
     >
 

@@ -4,7 +4,7 @@ import { useTheme } from '../../hooks/useTheme';
 import { useI18n } from '../../i18n';
 import { getEventCategory } from '../../utils/eventModuleHelpers';
 
-const WEEKDAYS = ['Sun', 'Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat'];
+const WEEKDAY_KEYS = ['calendar.sun', 'calendar.mon', 'calendar.tue', 'calendar.wed', 'calendar.thu', 'calendar.fri', 'calendar.sat'];
 
 function CalendarGridComponent({ month, year, selectedDate, eventsByDay, onSelectDate, onEventPress }) {
   const { colors, layout, radii } = useTheme();
@@ -28,9 +28,9 @@ function CalendarGridComponent({ month, year, selectedDate, eventsByDay, onSelec
   return (
     <View>
       <View style={styles.weekRow}>
-        {WEEKDAYS.map((d) => (
+        {WEEKDAY_KEYS.map((d) => (
           <Text key={d} style={[styles.weekday, { color: colors.textTertiary, fontSize: 11 * layout.fontScale }]}>
-            {d}
+            {t(d)}
           </Text>
         ))}
       </View>

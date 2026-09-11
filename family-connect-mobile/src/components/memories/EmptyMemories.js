@@ -1,13 +1,15 @@
 import React, { memo } from 'react';
 import { EmptyState } from '../../design-system';
+import { useI18n } from '../../i18n';
 
 function EmptyMemoriesComponent({ title, description, onUpload, isMinor }) {
+  const { t } = useI18n();
   return (
     <EmptyState
       icon="images-outline"
-      title={title ?? 'Your archive awaits'}
-      description={description ?? (isMinor ? 'Family memories will appear here.' : 'Upload photos and videos to begin preserving your family history.')}
-      actionLabel={isMinor ? undefined : 'Upload memory'}
+      title={title ?? t('memories.yourArchiveAwaits')}
+      description={description ?? (isMinor ? t('memories.familyMemoriesWillAppearHere') : t('memories.uploadPhotosAndVideosToBegin'))}
+      actionLabel={isMinor ? undefined : t('memories.upload')}
       onAction={isMinor ? undefined : onUpload}
     />
   );

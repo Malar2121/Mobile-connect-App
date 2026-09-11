@@ -29,9 +29,9 @@ function SOSButtonComponent({ onPress, countdown, onCancel, disabled }) {
     return (
       <View style={styles.countdownWrap}>
         <Text style={{ color: colors.text, fontFamily: 'Inter_700Bold', fontSize: 48 * layout.fontScale }}>{seconds}</Text>
-        <Text style={{ color: colors.textSecondary, marginTop: 8 }}>Sending SOS…</Text>
+        <Text style={{ color: colors.textSecondary, marginTop: 8 }}>{t('map.sendingSos')}</Text>
         <Pressable onPress={onCancel} style={[styles.cancel, { borderColor: colors.border, borderRadius: radii.lg }]}>
-          <Text style={{ color: colors.primary, fontFamily: 'Inter_600SemiBold' }}>Cancel</Text>
+          <Text style={{ color: colors.primary, fontFamily: 'Inter_600SemiBold' }}>{t('common.cancel')}</Text>
         </Pressable>
       </View>
     );
@@ -42,7 +42,7 @@ function SOSButtonComponent({ onPress, countdown, onCancel, disabled }) {
       <Pressable onPress={onPress} disabled={disabled} accessibilityRole="button" accessibilityLabel={t('map.emergencySos')}>
         <LinearGradient colors={['#DC2626', '#EF4444', '#F87171']} style={[styles.btn, { borderRadius: radii.full }]}>
           <Text style={styles.label}>SOS</Text>
-          <Text style={styles.sub}>Emergency</Text>
+          <Text style={styles.sub}>{t('map.emergency')}</Text>
         </LinearGradient>
       </Pressable>
     </Animated.View>

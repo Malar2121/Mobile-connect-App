@@ -4,17 +4,17 @@ import { Ionicons } from '@expo/vector-icons';
 import { SectionTitle } from '../../design-system';
 import { useTheme } from '../../hooks/useTheme';
 import { useResponsive } from '../../design-system';
-import { useI18n } from '../../i18n';
+import { useI18n, translate } from '../../i18n';
 
 const ACTIONS = [
   { id: 'tree', label: t('tree.interactive'), icon: 'git-network', screen: 'InteractiveTree' },
-  { id: 'ancestors', label: 'Ancestors', icon: 'arrow-up', screen: 'Ancestors' },
-  { id: 'descendants', label: 'Descendants', icon: 'arrow-down', screen: 'Descendants' },
-  { id: 'timeline', label: 'Heritage', icon: 'time', screen: 'HeritageTimeline' },
-  { id: 'legacy', label: 'Legacy', icon: 'heart', screen: 'LegacyProfiles' },
-  { id: 'history', label: 'Journal', icon: 'book', screen: 'FamilyHistory' },
-  { id: 'edit', label: 'Relationships', icon: 'create', screen: 'RelationshipEditor' },
-  { id: 'settings', label: 'Settings', icon: 'options', screen: 'TreeSettings' },
+  { id: 'ancestors', get label() { return translate('tree.ancestors'); }, icon: 'arrow-up', get screen() { return translate('tree.ancestors'); } },
+  { id: 'descendants', get label() { return translate('tree.descendants'); }, icon: 'arrow-down', get screen() { return translate('tree.descendants'); } },
+  { id: 'timeline', get label() { return translate('tree.heritage2'); }, icon: 'time', screen: 'HeritageTimeline' },
+  { id: 'legacy', get label() { return translate('memories.quickLegacy'); }, icon: 'heart', screen: 'LegacyProfiles' },
+  { id: 'history', get label() { return translate('tree.journal'); }, icon: 'book', screen: 'FamilyHistory' },
+  { id: 'edit', get label() { return translate('tree.relationships'); }, icon: 'create', screen: 'RelationshipEditor' },
+  { id: 'settings', get label() { return translate('profile.settings'); }, icon: 'options', screen: 'TreeSettings' },
 ];
 
 function TreeQuickActionsComponent({ onNavigate, isMinor }) {
@@ -26,7 +26,7 @@ function TreeQuickActionsComponent({ onNavigate, isMinor }) {
 
   return (
     <View style={{ paddingHorizontal: horizontalPadding, marginBottom: layout.sectionGap }}>
-      <SectionTitle title="Explore" subtitle={t('tree.navigateHeritage')} />
+      <SectionTitle title={t('tree.explore')} subtitle={t('tree.navigateHeritage')} />
       <View style={[styles.grid, { gap: 10 }]}>
         {visible.map((action) => (
           <Pressable

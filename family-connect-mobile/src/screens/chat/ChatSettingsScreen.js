@@ -26,7 +26,7 @@ export default function ChatSettingsScreen() {
       <PageHeader title={t('chat.settingsTitle')} subtitle={t('chat.notificationsAppearance')} onBack={() => navigation.goBack()} />
 
       <ScrollView contentContainerStyle={{ paddingBottom: 40 }}>
-        <SectionTitle title="Notifications" />
+        <SectionTitle title={t('notifications.title')} />
         <SettingRow label={t('chat.mute')} value={prefs.muted} onChange={setMuted} colors={colors} layout={layout} />
         <SettingRow
           label={t('events.pushNotifications')}
@@ -43,22 +43,22 @@ export default function ChatSettingsScreen() {
           layout={layout}
         />
 
-        <SectionTitle title="Chat" />
+        <SectionTitle title={t('chat.title')} />
         <SettingRow label={t('chat.archive')} value={prefs.archived} onChange={setArchived} colors={colors} layout={layout} />
 
-        <NavRow label="Wallpaper" onPress={async () => {
+        <NavRow label={t('chat.wallpaper')} onPress={async () => {
           const r = await ImagePicker.launchImageLibraryAsync({ mediaTypes: ['images'] });
           if (!r.canceled && r.assets[0]) setWallpaper(r.assets[0].uri);
         }} colors={colors} />
 
         <NavRow label={t('chat.pinnedMessages')} onPress={() => navigation.navigate('PinnedMessages')} colors={colors} />
-        <NavRow label={`Starred messages (${starredCount || prefs.starredIds.length})`} onPress={() => navigation.navigate('StarredMessages')} colors={colors} />
+        <NavRow label={t('chat.starredMessagesValue', { value: starredCount || prefs.starredIds.length })} onPress={() => navigation.navigate('StarredMessages')} colors={colors} />
         <NavRow label={t('chat.sharedFiles')} onPress={() => navigation.navigate('SharedFiles')} colors={colors} />
         <NavRow label={t('chat.mediaGallery')} onPress={() => navigation.navigate('ChatMediaGallery')} colors={colors} />
 
         <SectionTitle title={t('chat.familySafety')} subtitle={t('chat.minorProtections')} />
         <Text style={{ color: colors.textSecondary, fontSize: 14 * layout.fontScale, lineHeight: 22 }}>
-          Sensitive media previews are hidden in minor mode. Parental visibility architecture prepared for admin message review API.
+          {t('chat.sensitiveMediaPreviewsAreHiddenIn')}
         </Text>
       </ScrollView>
     </Screen>

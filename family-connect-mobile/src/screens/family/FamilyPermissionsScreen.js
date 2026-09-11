@@ -11,12 +11,12 @@ import {
 } from '../../utils/familyModuleHelpers';
 import { useResponsive } from '../../design-system';
 import { useTheme } from '../../hooks/useTheme';
-import { useI18n } from '../../i18n';
+import { useI18n, translate } from '../../i18n';
 
 const PRIVACY_OPTIONS = [
   { id: 'members_only', label: t('perms.membersOnly') },
   { id: 'extended', label: t('perms.extendedFamily') },
-  { id: 'private', label: 'Private' },
+  { id: 'private', get label() { return translate('family.private'); } },
 ];
 
 const MEMORY_OPTIONS = [
@@ -62,7 +62,7 @@ export default function FamilyPermissionsScreen() {
       await saveFamilyPermissions(familyId, permissions);
       toast.success(t('perms.saved'));
     } catch (e) {
-      toast.error(e.message || 'Could not save');
+      toast.error(e.message || t('family.couldNotSave'));
     } finally {
       setSaving(false);
     }
@@ -71,14 +71,13 @@ export default function FamilyPermissionsScreen() {
   return (
     <Screen edges={['top']}>
       <PageHeader
-        title="Permissions"
+        title={t('family.permissions')}
         subtitle={t('perms.subtitle')}
         onBack={() => navigation.goBack()}
       />
       <ScrollView contentContainerStyle={{ paddingBottom: 32 }}>
         <Text style={{ color: colors.textSecondary, fontSize: 14 * layout.fontScale, marginBottom: 16 }}>
-          Configure how your family shares content. Settings are stored on-device until a backend permissions API is
-          available.
+          {t('family.configureHowYourFamilySharesContent')}
         </Text>
 
         <PermissionCard
@@ -131,7 +130,7 @@ export default function FamilyPermissionsScreen() {
         />
 
         <PermissionCard
-          title="Notifications"
+          title={t('notifications.title')}
           description={t('perms.notificationHint')}
           icon="notifications-outline"
           value={permissions.notificationPreferences}

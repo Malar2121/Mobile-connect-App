@@ -12,10 +12,10 @@ function MemoryAnalyticsCardComponent({ analytics }) {
   if (!analytics) return null;
 
   const metrics = [
-    { label: 'Total', value: analytics.totalMemories },
-    { label: 'Photos', value: analytics.totalPhotos },
-    { label: 'Videos', value: analytics.totalVideos },
-    { label: 'Albums', value: analytics.totalAlbums },
+    { label: t('memories.total'), value: analytics.totalMemories },
+    { label: t('memories.photos'), value: analytics.totalPhotos },
+    { label: t('memories.videos'), value: analytics.totalVideos },
+    { label: t('memories.albums'), value: analytics.totalAlbums },
   ];
 
   return (
@@ -40,7 +40,7 @@ function MemoryAnalyticsCardComponent({ analytics }) {
       </View>
       {analytics.oldestMemory ? (
         <Text style={{ color: colors.textTertiary, fontSize: 12, marginTop: 12 }}>
-          Oldest: {formatMemoryDate(analytics.oldestMemory.createdAt)}
+          {t('memories.oldestValue', { date: formatMemoryDate(analytics.oldestMemory.createdAt) })}
         </Text>
       ) : null}
       <View style={[styles.chart, { marginTop: 12 }]}>

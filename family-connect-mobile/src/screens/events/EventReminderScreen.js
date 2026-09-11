@@ -76,10 +76,10 @@ export default function EventReminderScreen() {
     if (pushEnabled) {
       try {
         await Notifications.scheduleNotificationAsync({
-          content: { title: 'Family Connect Reminder', body: title },
+          content: { title: t('events.familyConnectReminder'), body: title },
           trigger: { type: 'date', date: when },
         });
-        toast.success(`Reminder set for ${when.toLocaleString()}`);
+        toast.success(t('events.reminderSetForValue', { value: when.toLocaleString() }));
       } catch (e) {
         toast.error(t('events.reminderScheduleFailed'));
         return;
@@ -101,7 +101,7 @@ export default function EventReminderScreen() {
       await saveEventReminders(family._id, reminders);
       toast.success(t('events.remindersSaved'));
     } catch (e) {
-      toast.error(e.message || 'Save failed');
+      toast.error(e.message || t('events.saveFailed'));
     } finally {
       setSaving(false);
     }
@@ -109,7 +109,7 @@ export default function EventReminderScreen() {
 
   return (
     <Screen edges={['top']}>
-      <PageHeader title="Reminders" subtitle={t('events.remindersSubtitle')} onBack={() => navigation.goBack()} />
+      <PageHeader title={t('events.reminders')} subtitle={t('events.remindersSubtitle')} onBack={() => navigation.goBack()} />
       <ScrollView contentContainerStyle={{ paddingBottom: 32 }}>
         <Card>
           <View style={styles.row}>
@@ -117,8 +117,7 @@ export default function EventReminderScreen() {
             <Switch value={pushEnabled} onValueChange={setPushEnabled} accessibilityLabel={t('events.pushNotifications')} />
           </View>
           <Text style={{ color: colors.textTertiary, fontSize: 11, marginTop: 8 }}>
-            Event, birthday and celebration reminders are sent by the server at their
-            scheduled time — you do not need this screen open to receive them.
+            {t('events.eventBirthdayAndCelebrationRemindersAre')}
           </Text>
         </Card>
 
@@ -144,10 +143,6 @@ export default function EventReminderScreen() {
             <Text style={{ color: colors.textTertiary, fontSize: 12 }}>{r.type} · {new Date(r.at).toLocaleString()}</Text>
           </Card>
         ))}
-
-        <Text style={{ color: colors.textTertiary, fontSize: 11, marginTop: 12 }}>
-          Birthday and anniversary reminders are inferred from event titles until dedicated User DOB APIs exist.
-        </Text>
 
         <Button title={t('events.saveReminders')} onPress={handleSave} loading={saving} style={{ marginTop: 20 }} />
       </ScrollView>

@@ -16,6 +16,7 @@ import { formatEventDateShort } from '../../utils/eventFormat';
 import { useI18n } from '../../i18n';
 
 function EventCard({ event, index, onPress, colors, layout, radii, gradients, isDark }) {
+  const { t } = useI18n();
   const category = inferEventCategory(event.title);
   const countdown = getEventCountdown(event);
   const rsvp = getEventRsvpProgress(event);
@@ -23,7 +24,7 @@ function EventCard({ event, index, onPress, colors, layout, radii, gradients, is
 
   return (
     <Animated.View entering={FadeInRight.delay(index * 60).duration(420).springify()}>
-      <DashboardPressable onPress={() => onPress?.(event)} accessibilityLabel={`Event ${event.title}`}>
+      <DashboardPressable onPress={() => onPress?.(event)} accessibilityLabel={t('dash.eventTitle', { title: event.title })}>
         <View
           style={[
             styles.card,
@@ -87,7 +88,7 @@ function EventCard({ event, index, onPress, colors, layout, radii, gradients, is
                   />
                 </View>
                 <Text style={{ color: colors.textTertiary, fontSize: 11, marginTop: 4 }}>
-                  RSVP {rsvp.responded}/{rsvp.total}
+                  {t('dash.rsvpProgress', { responded: rsvp.responded, total: rsvp.total })}
                 </Text>
               </View>
             ) : null}

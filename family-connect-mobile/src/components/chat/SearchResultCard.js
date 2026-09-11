@@ -3,8 +3,10 @@ import { Pressable, StyleSheet, Text, View } from 'react-native';
 import { Ionicons } from '@expo/vector-icons';
 import { getSender } from '../../utils/chatHelpers';
 import { useTheme } from '../../hooks/useTheme';
+import { useI18n } from '../../i18n';
 
 function SearchResultCardComponent({ message, query, onPress }) {
+  const { t } = useI18n();
   const { colors, layout, radii } = useTheme();
   const sender = getSender(message);
 
@@ -16,10 +18,11 @@ function SearchResultCardComponent({ message, query, onPress }) {
           {message.mediaType ? <Ionicons name="attach" size={14} color={colors.textTertiary} /> : null}
         </View>
         <Text style={{ color: colors.text, fontSize: 15 * layout.fontScale }} numberOfLines={2}>
-          {message.text || `${message.mediaType} message`}
+          {message.text ||
+            t({ image: 'chat.photoMessage', video: 'chat.videoMessage', audio: 'chat.voiceMessageLabel', document: 'chat.documentMessage' }[message.mediaType] ?? 'chat.mediaMessage')}
         </Text>
         {query ? (
-          <Text style={{ color: colors.textTertiary, fontSize: 12, marginTop: 4 }}>Matched: {query}</Text>
+          <Text style={{ color: colors.textTertiary, fontSize: 12, marginTop: 4 }}>{t('chat.matchedQuery', { query })}</Text>
         ) : null}
       </View>
     </Pressable>

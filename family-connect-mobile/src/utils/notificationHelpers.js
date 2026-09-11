@@ -1,4 +1,5 @@
-/** Notification types hidden from Minor mode (sensitive / private). */
+
+import { translate } from '../i18n';/** Notification types hidden from Minor mode (sensitive / private). */
 const MINOR_HIDDEN_TYPES = new Set(['chat_message']);
 
 export function filterNotificationsForMode(notifications, uiMode) {
@@ -18,9 +19,9 @@ export function formatNotificationTime(dateVal) {
   const now = new Date();
   const diffMs = now.getTime() - d.getTime();
 
-  if (diffMs < 60_000) return 'Just now';
-  if (diffMs < 3_600_000) return `${Math.floor(diffMs / 60_000)}m ago`;
-  if (diffMs < 86_400_000) return `${Math.floor(diffMs / 3_600_000)}h ago`;
+  if (diffMs < 60_000) return translate('dates.justNow');
+  if (diffMs < 3_600_000) return translate('notifications.valueMAgo', { value: Math.floor(diffMs / 60_000) });
+  if (diffMs < 86_400_000) return translate('notifications.valueHAgo', { value: Math.floor(diffMs / 3_600_000) });
   if (diffMs < 604_800_000) {
     return d.toLocaleDateString(undefined, { weekday: 'short' });
   }

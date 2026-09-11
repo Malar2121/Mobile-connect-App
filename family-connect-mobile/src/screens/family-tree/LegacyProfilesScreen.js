@@ -74,7 +74,7 @@ export default function LegacyProfilesScreen() {
         ) : (
           <View style={{ padding: 20, backgroundColor: colors.surfaceSecondary, borderRadius: radii.xl }}>
             <Text style={{ color: colors.textSecondary, fontSize: 15 * layout.fontScale, lineHeight: 22 }}>
-              No legacy profiles yet. Create remembrance pages in Memories → Legacy Mode to honor beloved family members.
+              {t('tree.noLegacyProfilesYetCreateRemembrance')}
             </Text>
           </View>
         )}

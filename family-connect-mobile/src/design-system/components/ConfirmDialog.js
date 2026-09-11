@@ -11,6 +11,7 @@ import Animated, { FadeIn, ZoomIn } from 'react-native-reanimated';
 import { useTheme } from '../../hooks/useTheme';
 import { useMotion } from '../../hooks/useMotion';
 import { Button } from './Button';
+import { translate } from '../../i18n';
 
 const DialogContext = createContext(undefined);
 
@@ -23,7 +24,7 @@ export function DialogProvider({ children }) {
   const hide = useCallback(() => setState(null), []);
 
   const confirm = useCallback(
-    ({ title, message, confirmLabel = 'Confirm', cancelLabel = 'Cancel', destructive }) =>
+    ({ title, message, confirmLabel = translate('common.confirm'), cancelLabel = translate('common.cancel'), destructive }) =>
       new Promise((resolve) => {
         setState({
           title,

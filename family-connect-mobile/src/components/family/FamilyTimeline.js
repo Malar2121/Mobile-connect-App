@@ -29,7 +29,7 @@ function FamilyTimelineComponent({ items, title = t('family.timeline'), subtitle
         >
           <Ionicons name="time-outline" size={28} color={colors.textTertiary} />
           <Text style={{ color: colors.textSecondary, marginTop: 8, fontSize: 14 * layout.fontScale }}>
-            Family milestones will appear here.
+            {t('family.familyMilestonesWillAppearHere')}
           </Text>
         </View>
       ) : (

@@ -1,4 +1,5 @@
-export function normalizeLocation(raw) {
+
+import { translate } from '../i18n';export function normalizeLocation(raw) {
   if (!raw) return null;
 
   const user = raw.userId;
@@ -42,16 +43,16 @@ export function upsertLocationInMap(existingMap, raw) {
 }
 
 export function formatLastActive(dateVal) {
-  if (!dateVal) return 'Unknown';
+  if (!dateVal) return translate('map.unknown');
   const d = new Date(dateVal);
-  if (Number.isNaN(d.getTime())) return 'Unknown';
+  if (Number.isNaN(d.getTime())) return translate('map.unknown');
 
   const now = new Date();
   const diffMs = now.getTime() - d.getTime();
 
-  if (diffMs < 60_000) return 'Just now';
-  if (diffMs < 3_600_000) return `${Math.floor(diffMs / 60_000)}m ago`;
-  if (diffMs < 86_400_000) return `${Math.floor(diffMs / 3_600_000)}h ago`;
+  if (diffMs < 60_000) return translate('dates.justNow');
+  if (diffMs < 3_600_000) return translate('map.valueMAgo', { value: Math.floor(diffMs / 60_000) });
+  if (diffMs < 86_400_000) return translate('map.valueHAgo', { value: Math.floor(diffMs / 3_600_000) });
 
   return d.toLocaleString(undefined, {
     month: 'short',

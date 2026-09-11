@@ -1,4 +1,5 @@
-export function getSenderId(message) {
+
+import { translate } from '../i18n';export function getSenderId(message) {
   const s = message?.sender;
   if (!s) return '';
   return String(s._id ?? s);
@@ -157,8 +158,8 @@ export function formatDateSeparator(dateVal) {
   const target = new Date(d.getFullYear(), d.getMonth(), d.getDate());
   const diffDays = Math.round((today - target) / (1000 * 60 * 60 * 24));
 
-  if (diffDays === 0) return 'Today';
-  if (diffDays === 1) return 'Yesterday';
+  if (diffDays === 0) return translate('dates.today');
+  if (diffDays === 1) return translate('dates.yesterday');
   if (diffDays < 7) {
     return d.toLocaleDateString(undefined, { weekday: 'long' });
   }
@@ -232,12 +233,12 @@ export function getSeenByLabel(message, userId, familyMemberCount) {
   const status = getOutgoingStatus(message, userId, familyMemberCount);
   if (status === 'seen') {
     const others = getReadByIds(message).filter((id) => id !== String(userId));
-    if (others.length >= familyMemberCount - 1) return 'Seen by everyone';
-    return `Seen by ${others.length}`;
+    if (others.length >= familyMemberCount - 1) return translate('chat.seenByEveryone');
+    return translate('chat.seenByCount', { count: others.length });
   }
-  if (status === 'delivered') return 'Delivered';
-  if (status === 'sent') return 'Sent';
-  if (status === 'sending') return 'Sending…';
+  if (status === 'delivered') return translate('chat.delivered');
+  if (status === 'sent') return translate('chat.sent');
+  if (status === 'sending') return translate('chat.sending');
   return null;
 }
 

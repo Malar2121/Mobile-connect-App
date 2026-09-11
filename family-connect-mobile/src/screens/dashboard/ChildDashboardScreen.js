@@ -39,7 +39,7 @@ export default function ChildDashboardScreen() {
         <View style={[styles.header, { paddingHorizontal: spacing.lg, paddingVertical: spacing.xl }]}>
           <View style={styles.headerRow}>
             <Text style={[typography.h1, { color: colors.text, flex: 1 }]}>
-              Hi, {user?.fullName?.split(' ')[0] || 'Buddy'}! 👋
+              {t('dash.hiName', { name: user?.fullName?.split(' ')[0] || t('dash.buddy') })}
             </Text>
             {/* A locked child account cannot change mode, so the switcher would
                 open a sheet whose options do nothing. Send them to their own
@@ -47,14 +47,14 @@ export default function ChildDashboardScreen() {
             <Pressable
               onPress={() => (modeLocked ? navigation.navigate('Profile') : setShowModeSwitch(true))}
               style={[styles.settingsBtn, { backgroundColor: colors.surfaceSecondary, borderRadius: radii.full || 999 }]}
-              accessibilityLabel={modeLocked ? 'Open settings' : 'Switch mode'}
+              accessibilityLabel={modeLocked ? t('dash.openSettings') : t('dash.switchMode')}
               accessibilityRole="button"
             >
               <Ionicons name="settings-outline" size={22} color={colors.textSecondary} />
             </Pressable>
           </View>
           <Text style={[typography.body, { color: colors.textSecondary, marginTop: spacing.xs }]}>
-            Your family is online and safe.
+            {t('dash.yourFamilyIsOnlineAndSafe')}
           </Text>
         </View>
 
@@ -84,7 +84,7 @@ export default function ChildDashboardScreen() {
             <View style={styles.iconCircle}>
               <Ionicons name="chatbubbles" size={32} color="#1e3a8a" />
             </View>
-            <Text style={styles.buttonText}>Messages</Text>
+            <Text style={styles.buttonText}>{t('elder.messages')}</Text>
           </Pressable>
         </View>
 
@@ -133,10 +133,10 @@ export default function ChildDashboardScreen() {
           <View style={[styles.modalSheet, { backgroundColor: colors.surface, borderRadius: radii['2xl'], paddingBottom: insets.bottom + 24 }]}>
             <View style={[styles.modalHandle, { backgroundColor: colors.border }]} />
             <Text style={[typography.h2, { color: colors.text, paddingHorizontal: spacing.lg, marginBottom: 8 }]}>
-              Switch Mode
+              {t('dash.switchMode2')}
             </Text>
             <Text style={{ color: colors.textSecondary, paddingHorizontal: spacing.lg, marginBottom: spacing.lg, fontSize: 14 }}>
-              Choose how you want to use Family Connect
+              {t('dash.chooseHowYouWantToUse')}
             </Text>
             {MODES.map((mode) => (
               <Pressable
@@ -144,7 +144,7 @@ export default function ChildDashboardScreen() {
                 style={[styles.modeRow, { borderColor: colors.border, marginHorizontal: spacing.lg }]}
                 onPress={() => { setUiMode(mode.id); setShowModeSwitch(false); }}
                 accessibilityRole="button"
-                accessibilityLabel={`Switch to ${mode.label}`}
+                accessibilityLabel={t('dash.switchToLabel', { label: mode.label })}
               >
                 <View style={[styles.modeIcon, { backgroundColor: colors.primarySubtle, borderRadius: radii.xl }]}>
                   <Ionicons name={mode.icon} size={24} color={colors.primary} />
@@ -160,7 +160,7 @@ export default function ChildDashboardScreen() {
               style={[styles.cancelBtn, { borderColor: colors.border, marginHorizontal: spacing.lg, borderRadius: radii.lg }]}
               onPress={() => setShowModeSwitch(false)}
             >
-              <Text style={{ color: colors.textSecondary, fontFamily: 'Inter_600SemiBold', fontSize: 15 }}>Cancel</Text>
+              <Text style={{ color: colors.textSecondary, fontFamily: 'Inter_600SemiBold', fontSize: 15 }}>{t('common.cancel')}</Text>
             </Pressable>
           </View>
         </View>

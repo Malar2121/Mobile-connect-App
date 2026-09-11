@@ -8,14 +8,15 @@ import {
   isSameDay,
 } from './dashboardHelpers';
 import { getMyRsvpStatus, guestEntryUserId, resolveEventCreatorName } from './eventFormat';
+import { translate } from '../i18n';
 
 export const EVENT_CATEGORIES = [
-  { id: 'gathering', label: 'Gathering', color: '#10B981' },
-  { id: 'birthday', label: 'Birthday', color: '#F59E0B' },
-  { id: 'anniversary', label: 'Anniversary', color: '#EC4899' },
-  { id: 'meal', label: 'Meal', color: '#F97316' },
-  { id: 'trip', label: 'Trip', color: '#0EA5E9' },
-  { id: 'holiday', label: 'Holiday', color: '#8B5CF6' },
+  { id: 'gathering', get label() { return translate('events.gathering'); }, color: '#10B981' },
+  { id: 'birthday', get label() { return translate('events.birthday'); }, color: '#F59E0B' },
+  { id: 'anniversary', get label() { return translate('celebrations.anniversary'); }, color: '#EC4899' },
+  { id: 'meal', get label() { return translate('events.meal'); }, color: '#F97316' },
+  { id: 'trip', get label() { return translate('events.trip'); }, color: '#0EA5E9' },
+  { id: 'holiday', get label() { return translate('events.holiday'); }, color: '#8B5CF6' },
 ];
 
 const REMINDER_KEY = (familyId) => `fc_event_reminders_${familyId}`;
@@ -127,7 +128,7 @@ export function searchAndFilterEvents(events, { query, category, status, hostId,
 export function groupEventsByDate(events) {
   const groups = {};
   (events ?? []).forEach((e) => {
-    const key = e.date ? new Date(e.date).toDateString() : 'No date';
+    const key = e.date ? new Date(e.date).toDateString() : translate('events.noDate');
     if (!groups[key]) groups[key] = [];
     groups[key].push(e);
   });
@@ -216,8 +217,8 @@ export function buildRsvpSummary(event) {
 
 export function getGuestDisplayName(guest) {
   const u = guest?.userId;
-  if (u && typeof u === 'object') return u.fullName ?? 'Member';
-  return 'Member';
+  if (u && typeof u === 'object') return u.fullName ?? translate('common.member');
+  return translate('common.member');
 }
 
 export function getGuestAvatar(guest) {

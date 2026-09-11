@@ -12,6 +12,7 @@ import Animated, { FadeIn, SlideInDown, SlideOutDown } from 'react-native-reanim
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import { useTheme } from '../../hooks/useTheme';
 import { useResponsive } from '../utils/responsive';
+import { useI18n } from '../../i18n';
 
 /**
  * Bottom sheet — glass backdrop, slide-up panel.
@@ -23,6 +24,7 @@ export function BottomSheet({
   children,
   snapHeight,
 }) {
+  const { t } = useI18n();
   const { colors, isDark, radii, layout } = useTheme();
   const insets = useSafeAreaInsets();
   const { height } = useWindowDimensions();
@@ -34,7 +36,7 @@ export function BottomSheet({
   return (
     <Modal transparent visible animationType="none" onRequestClose={onClose}>
       <View style={styles.root}>
-        <Pressable style={StyleSheet.absoluteFill} onPress={onClose} accessibilityLabel="Close">
+        <Pressable style={StyleSheet.absoluteFill} onPress={onClose} accessibilityLabel={t('common.close')}>
           <Animated.View entering={FadeIn.duration(200)} style={StyleSheet.absoluteFill}>
             <BlurView
               intensity={isDark ? 40 : 60}

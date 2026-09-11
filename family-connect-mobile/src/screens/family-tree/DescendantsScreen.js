@@ -26,13 +26,13 @@ export default function DescendantsScreen() {
 
   return (
     <Screen edges={['top']}>
-      <PageHeader title="Descendants" subtitle={t('tree.descendantsSubtitle')} onBack={() => navigation.goBack()} />
+      <PageHeader title={t('tree.descendants')} subtitle={t('tree.descendantsSubtitle')} onBack={() => navigation.goBack()} />
 
       <ScrollView contentContainerStyle={{ paddingBottom: 40 }}>
         {lineage.length ? (
           lineage.map((level) => (
             <View key={level.depth} style={{ marginBottom: layout.sectionGap }}>
-              <SectionTitle title={level.label} subtitle={`${level.members.length} member(s)`} />
+              <SectionTitle title={level.label} subtitle={t('tree.countMemberS', { count: level.members.length })} />
               {level.members.map((p) => (
                 <PersonCard key={p.id} person={p} onPress={openPerson} />
               ))}
@@ -40,15 +40,10 @@ export default function DescendantsScreen() {
           ))
         ) : (
           <Text style={{ color: colors.textSecondary, fontSize: 15 * layout.fontScale, lineHeight: 22 }}>
-            No descendants mapped yet. Connect children and grandchildren in the relationship editor.
+            {t('tree.noDescendantsMappedYetConnectChildren')}
           </Text>
         )}
 
-        <View style={{ marginTop: 24, padding: 16, backgroundColor: colors.surfaceSecondary, borderRadius: 16 }}>
-          <Text style={{ color: colors.textTertiary, fontSize: 13 * layout.fontScale }}>
-            Architecture ready for future generations — extended lineage depth will use the same graph traversal when backend adds multi-hop relationship APIs.
-          </Text>
-        </View>
       </ScrollView>
     </Screen>
   );

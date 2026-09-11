@@ -3,8 +3,10 @@ import { Pressable, StyleSheet, Text, View } from 'react-native';
 import { Image } from 'react-native';
 import { useTheme } from '../../hooks/useTheme';
 import { formatMemoryDate } from '../../utils/memoryHelpers';
+import { useI18n } from '../../i18n';
 
 function TimelineCardComponent({ group, onMemoryPress }) {
+  const { t } = useI18n();
   const { colors, layout, radii } = useTheme();
 
   return (
@@ -21,7 +23,7 @@ function TimelineCardComponent({ group, onMemoryPress }) {
           <Image source={{ uri: m.mediaUrl }} style={[styles.thumb, { borderRadius: radii.md }]} />
           <View style={{ flex: 1, marginLeft: 12 }}>
             <Text style={{ color: colors.text, fontFamily: 'Inter_600SemiBold' }} numberOfLines={2}>
-              {m.caption || (m.mediaType === 'video' ? 'Video' : 'Photo')}
+              {m.caption || (m.mediaType === 'video' ? t('memories.video') : t('memories.photo'))}
             </Text>
             <Text style={{ color: colors.textTertiary, fontSize: 12, marginTop: 4 }}>{formatMemoryDate(m.createdAt)}</Text>
           </View>

@@ -26,13 +26,13 @@ export default function AncestorsScreen() {
 
   return (
     <Screen edges={['top']}>
-      <PageHeader title="Ancestors" subtitle={t('tree.ancestorsSubtitle')} onBack={() => navigation.goBack()} />
+      <PageHeader title={t('tree.ancestors')} subtitle={t('tree.ancestorsSubtitle')} onBack={() => navigation.goBack()} />
 
       <ScrollView contentContainerStyle={{ paddingBottom: 40 }}>
         {lineage.length ? (
           lineage.map((level) => (
             <View key={level.depth} style={{ marginBottom: layout.sectionGap }}>
-              <SectionTitle title={level.label} subtitle={`${level.members.length} member(s)`} />
+              <SectionTitle title={level.label} subtitle={t('tree.countMemberS', { count: level.members.length })} />
               {level.members.map((p) => (
                 <PersonCard key={p.id} person={p} onPress={openPerson} />
               ))}
@@ -40,7 +40,7 @@ export default function AncestorsScreen() {
           ))
         ) : (
           <Text style={{ color: colors.textSecondary, fontSize: 15 * layout.fontScale, lineHeight: 22 }}>
-            No ancestor relationships mapped yet. Use the relationship editor to connect parents and grandparents.
+            {t('tree.noAncestorRelationshipsMappedYetUse')}
           </Text>
         )}
       </ScrollView>

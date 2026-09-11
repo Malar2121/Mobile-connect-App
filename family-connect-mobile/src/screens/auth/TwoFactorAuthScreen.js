@@ -35,7 +35,7 @@ export default function TwoFactorAuthScreen({ navigation, route }) {
       await completeTwoFactorSignIn(tempToken, code);
       toast.success(t('auth.verified'));
     } catch (e) {
-      toast.error(e?.message || 'Invalid verification code');
+      toast.error(e?.message || t('auth.invalidVerificationCode'));
       setCode('');
     } finally {
       setLoading(false);
@@ -61,17 +61,17 @@ export default function TwoFactorAuthScreen({ navigation, route }) {
                     { color: colors.text, fontSize: layout.fontScale * 32, fontFamily: 'Inter_900Black', letterSpacing: -1 },
                   ]}
                 >
-                  Verify
+                  {t('auth.verify')}
                 </Text>
                 <Text style={[styles.sub, { color: colors.textSecondary, fontSize: 15 * layout.fontScale }]}>
-                  Enter the 6-digit code from your authenticator app
+                  {t('auth.enterThe6DigitCodeFrom')}
                 </Text>
               </View>
 
               <OtpInput value={code} onChangeText={setCode} length={6} />
               
               <Button
-                title="Verify"
+                title={t('auth.verify')}
                 onPress={handleVerify}
                 loading={loading}
                 disabled={loading}

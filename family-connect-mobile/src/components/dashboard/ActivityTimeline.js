@@ -85,7 +85,7 @@ function ActivityTimelineComponent({ items }) {
         >
           <Ionicons name="pulse-outline" size={28} color={colors.textTertiary} />
           <Text style={{ color: colors.textSecondary, marginTop: 8, fontSize: 14 * layout.fontScale }}>
-            Activity will appear as your family connects.
+            {t('dash.activityWillAppearAsYourFamily')}
           </Text>
         </View>
       ) : (

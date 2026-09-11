@@ -50,7 +50,7 @@ export default function MemberLocationDetailsScreen() {
         return {
           id: String(p._id ?? p.recordedAt),
           title: `${p.latitude.toFixed(4)}, ${p.longitude.toFixed(4)}`,
-          subtitle: moved != null ? `Moved ${formatDistance(moved)}` : 'Trail start',
+          subtitle: moved != null ? t('map.movedValue', { value: formatDistance(moved) }) : t('map.trailStart'),
           time: new Date(p.recordedAt).toLocaleTimeString([], { hour: 'numeric', minute: '2-digit' }),
         };
       });
@@ -85,13 +85,13 @@ export default function MemberLocationDetailsScreen() {
   if (!location) {
     return (
       <Screen edges={['top']}>
-        <PageHeader title="Member" onBack={() => navigation.goBack()} />
+        <PageHeader title={t('common.member')} onBack={() => navigation.goBack()} />
         <Text style={{ padding: horizontalPadding, color: colors.textSecondary }}>{t('map.locationUnavailable')}</Text>
       </Screen>
     );
   }
 
-  const name = location.user?.fullName ?? member?.fullName ?? 'Family member';
+  const name = location.user?.fullName ?? member?.fullName ?? t('map.familyMember');
 
   return (
     <Screen edges={['top']}>
@@ -101,7 +101,7 @@ export default function MemberLocationDetailsScreen() {
           <Avatar uri={location.user?.avatar ?? member?.avatar} name={name} size={72} />
           <View style={[styles.badge, { backgroundColor: summary?.online ? colors.success + '22' : colors.border, borderRadius: radii.full, marginTop: 12 }]}>
             <Text style={{ color: summary?.online ? colors.success : colors.textSecondary, fontFamily: 'Inter_600SemiBold', fontSize: 12 }}>
-              {summary?.online ? 'Online' : 'Offline'} · {summary?.lastActive}
+              {summary?.online ? t('map.online') : t('map.offline')} · {summary?.lastActive}
             </Text>
           </View>
           {TYPE_LABEL[memberType] ? (
@@ -111,13 +111,13 @@ export default function MemberLocationDetailsScreen() {
           ) : null}
         </Card>
 
-        <InfoRow icon="location" label="Address" value={address || 'Resolving address…'} colors={colors} />
-        <InfoRow icon="navigate" label="Coordinates" value={`${location.latitude.toFixed(5)}, ${location.longitude.toFixed(5)}`} colors={colors} />
-        <InfoRow icon="resize" label="Distance" value={summary?.distanceLabel ?? '—'} colors={colors} />
-        <InfoRow icon="speedometer" label="Speed" value={summary?.speedLabel ?? '—'} colors={colors} />
-        <InfoRow icon="battery-half" label="Battery" value={location.battery != null ? `${location.battery}%` : 'Not reported'} colors={colors} />
-        <InfoRow icon="compass" label="Heading" value={location.heading != null ? `${Math.round(location.heading)}°` : '—'} colors={colors} />
-        <InfoRow icon="time" label="ETA" value={summary?.etaMin ? `~${summary.etaMin} min` : '—'} colors={colors} />
+        <InfoRow icon="location" label={t('map.address')} value={address || t('map.resolvingAddress')} colors={colors} />
+        <InfoRow icon="navigate" label={t('map.coordinates')} value={`${location.latitude.toFixed(5)}, ${location.longitude.toFixed(5)}`} colors={colors} />
+        <InfoRow icon="resize" label={t('map.distance')} value={summary?.distanceLabel ?? '—'} colors={colors} />
+        <InfoRow icon="speedometer" label={t('map.speed')} value={summary?.speedLabel ?? '—'} colors={colors} />
+        <InfoRow icon="battery-half" label={t('map.battery')} value={location.battery != null ? `${location.battery}%` : t('map.notReported')} colors={colors} />
+        <InfoRow icon="compass" label={t('map.heading')} value={location.heading != null ? `${Math.round(location.heading)}°` : '—'} colors={colors} />
+        <InfoRow icon="time" label={t('map.eta')} value={summary?.etaMin ? `~${t('map.minutesValue', { count: summary.etaMin })}` : '—'} colors={colors} />
 
         <Pressable onPress={openNavigation} style={[styles.navBtn, { backgroundColor: colors.primary, borderRadius: radii.xl, marginTop: 20 }]}>
           <Ionicons name="navigate" size={20} color="#fff" />
@@ -126,7 +126,7 @@ export default function MemberLocationDetailsScreen() {
 
         {trailItems.length > 0 ? (
           <View style={{ marginTop: 24 }}>
-            <LocationTimeline items={trailItems} title={t('map.last24Hours')} subtitle={`${history?.points?.length ?? 0} recorded points`} />
+            <LocationTimeline items={trailItems} title={t('map.last24Hours')} subtitle={t('map.valueRecordedPoints', { value: history?.points?.length ?? 0 })} />
           </View>
         ) : null}
       </ScrollView>

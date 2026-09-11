@@ -31,8 +31,8 @@ function MemoryHeroComponent({ memory, viewCount }) {
           <Text style={{ color: 'rgba(255,255,255,0.9)', marginLeft: 8, fontSize: 14 }}>{uploader.fullName}</Text>
         </View>
         <Text style={{ color: 'rgba(255,255,255,0.75)', fontSize: 12, marginTop: 6 }}>
-          {formatMemoryDate(memory.createdAt)} · {getLikeCount(memory)} likes
-          {viewCount ? ` · ${viewCount} views` : ''}
+          {formatMemoryDate(memory.createdAt)} · {t('memories.likeCount', { count: getLikeCount(memory) })}
+          {viewCount ? t('memories.viewcountViews', { viewCount }) : ''}
         </Text>
       </LinearGradient>
     </View>

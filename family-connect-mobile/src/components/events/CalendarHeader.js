@@ -2,26 +2,28 @@ import React, { memo } from 'react';
 import { Pressable, StyleSheet, Text, View } from 'react-native';
 import { Ionicons } from '@expo/vector-icons';
 import { useTheme } from '../../hooks/useTheme';
+import { useI18n } from '../../i18n';
 
-const MONTHS = [
-  'January', 'February', 'March', 'April', 'May', 'June',
-  'July', 'August', 'September', 'October', 'November', 'December',
+const MONTH_KEYS = [
+  'calendar.january', 'calendar.february', 'calendar.march', 'calendar.april', 'calendar.may', 'calendar.june',
+  'calendar.july', 'calendar.august', 'calendar.september', 'calendar.october', 'calendar.november', 'calendar.december',
 ];
 
 function CalendarHeaderComponent({ month, year, viewMode, onPrev, onNext, onViewChange }) {
+  const { t } = useI18n();
   const { colors, layout, radii } = useTheme();
   const modes = ['month', 'week', 'day', 'agenda'];
 
   return (
     <View style={styles.wrap}>
       <View style={styles.nav}>
-        <Pressable onPress={onPrev} accessibilityLabel="Previous" style={styles.navBtn}>
+        <Pressable onPress={onPrev} accessibilityLabel={t('events.previous')} style={styles.navBtn}>
           <Ionicons name="chevron-back" size={22} color={colors.text} />
         </Pressable>
         <Text style={{ color: colors.text, fontFamily: 'Inter_700Bold', fontSize: 18 * layout.fontScale }}>
-          {MONTHS[month]} {year}
+          {t('calendar.monthYear', { month: t(MONTH_KEYS[month]), year })}
         </Text>
-        <Pressable onPress={onNext} accessibilityLabel="Next" style={styles.navBtn}>
+        <Pressable onPress={onNext} accessibilityLabel={t('events.next')} style={styles.navBtn}>
           <Ionicons name="chevron-forward" size={22} color={colors.text} />
         </Pressable>
       </View>

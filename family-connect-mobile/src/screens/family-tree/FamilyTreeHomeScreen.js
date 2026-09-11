@@ -80,20 +80,20 @@ export default function FamilyTreeHomeScreen() {
         >
           <Text style={{ color: colors.text, fontFamily: 'Inter_700Bold', fontSize: 22 * layout.fontScale }}>{t('tree.overview')}</Text>
           <Text style={{ color: colors.textSecondary, fontSize: 14 * layout.fontScale, marginTop: 6, lineHeight: 22 }}>
-            Visualize relationships, preserve stories, and explore your lineage across generations.
+            {t('tree.visualizeRelationshipsPreserveStoriesAndExplore')}
           </Text>
           <View style={{ flexDirection: 'row', marginTop: 14, gap: 16 }}>
             <View>
               <Text style={{ color: colors.primary, fontFamily: 'Inter_700Bold', fontSize: 24 }}>{analytics.memberCount}</Text>
-              <Text style={{ color: colors.textTertiary, fontSize: 12 }}>Members</Text>
+              <Text style={{ color: colors.textTertiary, fontSize: 12 }}>{t('common.members')}</Text>
             </View>
             <View>
               <Text style={{ color: colors.primary, fontFamily: 'Inter_700Bold', fontSize: 24 }}>{analytics.generationCount}</Text>
-              <Text style={{ color: colors.textTertiary, fontSize: 12 }}>Generations</Text>
+              <Text style={{ color: colors.textTertiary, fontSize: 12 }}>{t('tree.generations')}</Text>
             </View>
             <View>
               <Text style={{ color: colors.primary, fontFamily: 'Inter_700Bold', fontSize: 24 }}>{analytics.legacyProfileCount}</Text>
-              <Text style={{ color: colors.textTertiary, fontSize: 12 }}>Legacy</Text>
+              <Text style={{ color: colors.textTertiary, fontSize: 12 }}>{t('memories.quickLegacy')}</Text>
             </View>
           </View>
         </LinearGradient>
@@ -104,14 +104,14 @@ export default function FamilyTreeHomeScreen() {
 
         {searchQuery ? (
           <>
-            <SectionTitle title={t('tree.searchResults')} subtitle={`${searchResults.length} matches`} />
+            <SectionTitle title={t('tree.searchResults')} subtitle={t('tree.countMatches', { count: searchResults.length })} />
             {searchResults.map((p) => (
               <PersonCard key={p.id} person={p} onPress={openPerson} compact />
             ))}
           </>
         ) : null}
 
-        <SectionTitle title="Members" subtitle={t('tree.tapToView')} />
+        <SectionTitle title={t('common.members')} subtitle={t('tree.tapToView')} />
         {enrichedNodes.length ? (
           enrichedNodes.slice(0, 8).map((p) => <PersonCard key={p.id} person={p} onPress={openPerson} compact />)
         ) : (

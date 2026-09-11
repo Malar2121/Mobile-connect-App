@@ -1,21 +1,22 @@
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import { findRelationshipOption } from './familyModuleHelpers';
+import { translate } from '../i18n';
 
 const TREE_SETTINGS_KEY = (familyId) => `fc_tree_settings_${familyId}`;
 const ACHIEVEMENTS_KEY = (familyId) => `fc_tree_achievements_${familyId}`;
 
 /** UI labels mapped to backend family-tree enums (extends family module options). */
 export const TREE_RELATIONSHIP_OPTIONS = [
-  { id: 'father', label: 'Father', backendType: 'parent', nickname: 'Father' },
-  { id: 'mother', label: 'Mother', backendType: 'parent', nickname: 'Mother' },
-  { id: 'brother', label: 'Brother', backendType: 'sibling', nickname: 'Brother' },
-  { id: 'sister', label: 'Sister', backendType: 'sibling', nickname: 'Sister' },
-  { id: 'grandparent', label: 'Grandparent', backendType: 'grandparent' },
-  { id: 'grandchild', label: 'Grandchild', backendType: 'grandchild' },
-  { id: 'guardian', label: 'Guardian', backendType: 'other', nickname: 'Guardian' },
-  { id: 'spouse', label: 'Spouse', backendType: 'spouse' },
-  { id: 'child', label: 'Child', backendType: 'child' },
-  { id: 'relative', label: 'Relative', backendType: 'other', nickname: 'Relative' },
+  { id: 'father', get label() { return translate('tree.father'); }, backendType: 'parent', get nickname() { return translate('tree.father'); } },
+  { id: 'mother', get label() { return translate('tree.mother'); }, backendType: 'parent', get nickname() { return translate('tree.mother'); } },
+  { id: 'brother', get label() { return translate('tree.brother'); }, backendType: 'sibling', get nickname() { return translate('tree.brother'); } },
+  { id: 'sister', get label() { return translate('tree.sister'); }, backendType: 'sibling', get nickname() { return translate('tree.sister'); } },
+  { id: 'grandparent', get label() { return translate('tree.grandparent'); }, backendType: 'grandparent' },
+  { id: 'grandchild', get label() { return translate('tree.grandchild'); }, backendType: 'grandchild' },
+  { id: 'guardian', get label() { return translate('tree.guardian'); }, backendType: 'other', get nickname() { return translate('tree.guardian'); } },
+  { id: 'spouse', get label() { return translate('tree.spouse'); }, backendType: 'spouse' },
+  { id: 'child', get label() { return translate('auth.memberChild'); }, backendType: 'child' },
+  { id: 'relative', get label() { return translate('tree.relative'); }, backendType: 'other', get nickname() { return translate('tree.relative'); } },
 ];
 
 export const DEFAULT_TREE_SETTINGS = {
@@ -48,7 +49,7 @@ export function enrichTreeNodes(treeNodes, members) {
 
   const enriched = (treeNodes ?? []).map((node) => {
     const member = memberMap.get(String(node.id));
-    const name = normalizeName(node.name) ?? member?.fullName ?? 'Family member';
+    const name = normalizeName(node.name) ?? member?.fullName ?? translate('tree.familyMember');
     return {
       ...node,
       id: String(node.id),
@@ -176,11 +177,11 @@ export function computeGenerations(nodes) {
 }
 
 export function getGenerationLabel(gen) {
-  if (gen === 0) return 'Founders';
-  if (gen === 1) return 'Parents';
-  if (gen === 2) return 'Children';
-  if (gen === 3) return 'Grandchildren';
-  return `Generation ${gen + 1}`;
+  if (gen === 0) return translate('tree.founders');
+  if (gen === 1) return translate('tree.parents');
+  if (gen === 2) return translate('tree.children');
+  if (gen === 3) return translate('tree.grandchildren');
+  return translate('tree.generationValue', { value: gen + 1 });
 }
 
 /** Layout positions for interactive canvas. */
@@ -280,7 +281,7 @@ export function getAncestors(nodeId, nodes, maxDepth = 4) {
     });
     if (!level.length) break;
     const levelNodes = level.map((id) => nodes.find((n) => String(n.id) === id)).filter(Boolean);
-    result.push({ depth, label: depth === 1 ? 'Parents' : depth === 2 ? 'Grandparents' : `Generation −${depth}`, members: levelNodes });
+    result.push({ depth, label: depth === 1 ? translate('tree.parents') : depth === 2 ? translate('tree.grandparents') : translate('tree.generationDepth', { depth }), members: levelNodes });
     current = level;
   }
   return result;
@@ -306,7 +307,7 @@ export function getDescendants(nodeId, nodes, maxDepth = 3) {
     const levelNodes = level.map((id) => nodes.find((n) => String(n.id) === id)).filter(Boolean);
     result.push({
       depth,
-      label: depth === 1 ? 'Children' : depth === 2 ? 'Grandchildren' : `Generation +${depth}`,
+      label: depth === 1 ? translate('tree.children') : depth === 2 ? translate('tree.grandchildren') : translate('tree.generationDepth2', { depth }),
       members: levelNodes,
     });
     current = level;
@@ -341,7 +342,7 @@ export function buildHeritageTimeline({ nodes, events, memories, legacyProfiles,
       items.push({
         id: `birth-${n.id}`,
         type: 'birth',
-        title: `${n.name} born`,
+        title: translate('tree.nameBorn', { name: n.name }),
         date: n.dateOfBirth,
         memberId: n.id,
         icon: 'gift-outline',
@@ -374,7 +375,7 @@ export function buildHeritageTimeline({ nodes, events, memories, legacyProfiles,
     items.push({
       id: `memory-${m._id}`,
       type: 'memory',
-      title: m.caption || 'Family memory',
+      title: m.caption || translate('tree.familyMemory'),
       date: m.createdAt,
       body: m.uploadedBy?.fullName,
       icon: 'images-outline',
@@ -385,7 +386,7 @@ export function buildHeritageTimeline({ nodes, events, memories, legacyProfiles,
     items.push({
       id: `legacy-${p.memberId}`,
       type: 'legacy',
-      title: `${p.displayName ?? 'Beloved member'} — legacy`,
+      title: translate('tree.nameLegacy', { name: p.displayName ?? translate('tree.belovedMember') }),
       date: p.createdAt,
       body: p.story,
       memberId: p.memberId,
@@ -524,17 +525,17 @@ export async function saveAchievements(familyId, items) {
 export function getFamilyMilestones({ nodes, events, legacyProfiles }) {
   const milestones = [];
   if ((nodes ?? []).length >= 5) {
-    milestones.push({ id: 'm-grow', title: 'Growing family', body: `${nodes.length} members in your tree`, icon: 'people' });
+    milestones.push({ id: 'm-grow', title: translate('tree.growingFamily'), body: translate('tree.countMembersInYourTree', { count: nodes.length }), icon: 'people' });
   }
   const mapped = (nodes ?? []).filter((n) => n.relationshipType !== 'other').length;
   if (mapped >= 3) {
-    milestones.push({ id: 'm-rel', title: 'Connections mapped', body: `${mapped} relationships documented`, icon: 'git-network' });
+    milestones.push({ id: 'm-rel', title: translate('tree.connectionsMapped'), body: translate('tree.mappedRelationshipsDocumented', { mapped }), icon: 'git-network' });
   }
   if ((legacyProfiles ?? []).length) {
-    milestones.push({ id: 'm-legacy', title: 'Legacy preserved', body: `${legacyProfiles.length} remembrance profiles`, icon: 'heart' });
+    milestones.push({ id: 'm-legacy', title: translate('tree.legacyPreserved'), body: translate('tree.countRemembranceProfiles', { count: legacyProfiles.length }), icon: 'heart' });
   }
   if ((events ?? []).length) {
-    milestones.push({ id: 'm-events', title: 'Shared history', body: `${events.length} family events on record`, icon: 'calendar' });
+    milestones.push({ id: 'm-events', title: translate('tree.sharedHistory'), body: translate('tree.countFamilyEventsOnRecord', { count: events.length }), icon: 'calendar' });
   }
   return milestones;
 }

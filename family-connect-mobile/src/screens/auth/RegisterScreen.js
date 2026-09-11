@@ -54,14 +54,14 @@ export default function RegisterScreen({ navigation }) {
       await signUp(n, em, password, memberType);
       toast.success(t('auth.accountCreated'));
       const go = await dialog.confirm({
-        title: 'Account created',
-        message: 'You can sign in now with your new credentials.',
-        confirmLabel: 'Sign in',
-        cancelLabel: 'Later',
+        title: t('auth.accountCreated2'),
+        message: t('auth.youCanSignInNowWith'),
+        confirmLabel: t('auth.signIn'),
+        cancelLabel: t('auth.later'),
       });
       if (go) navigation.navigate('Login');
     } catch (e) {
-      const msg = e.message || 'Registration failed.';
+      const msg = e.message || t('auth.registrationFailed');
       setError(msg);
       if (e.status >= 500) toast.error(msg);
     } finally {
@@ -101,7 +101,7 @@ export default function RegisterScreen({ navigation }) {
                 </View>
               ) : null}
 
-              <TextField label={t('auth.name')} value={name} onChangeText={setName} placeholder="Alex" />
+              <TextField label={t('auth.name')} value={name} onChangeText={setName} placeholder={t('auth.alex')} />
               <TextField
                 label={t('auth.email')}
                 value={email}

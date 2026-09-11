@@ -23,10 +23,10 @@ function QRInviteCardComponent({ inviteLink, inviteCode }) {
   return (
     <Card>
       <Text style={{ color: colors.text, fontFamily: 'Inter_700Bold', fontSize: 18 * layout.fontScale }}>
-        Scan to join
+        {t('family.scanToJoin2')}
       </Text>
       <Text style={{ color: colors.textSecondary, fontSize: 13 * layout.fontScale, marginTop: 4, marginBottom: 16 }}>
-        Share this QR code for a quick family join experience.
+        {t('family.shareThisQrCodeForA')}
       </Text>
 
       {data ? (

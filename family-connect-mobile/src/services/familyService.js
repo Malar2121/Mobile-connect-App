@@ -1,5 +1,6 @@
 import { api } from './api';
 import { normalizeApiError as normalizeAxiosError, apiFailure } from './apiError';
+import { translate } from '../i18n';
 
 /**
  * GET /api/family/my-family
@@ -53,7 +54,7 @@ export async function joinFamily(inviteCode) {
       return {
         pending: true,
         request: data.data?.request,
-        message: data.message || 'Join request sent. Waiting for admin approval.',
+        message: data.message || translate('common.joinRequestSentWaitingForAdmin'),
       };
     }
     if (!data.data?.family) {

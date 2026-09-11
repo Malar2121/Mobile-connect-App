@@ -4,6 +4,7 @@ import { Avatar } from '../../design-system';
 import { MemberAvatarStack } from '../family/MemberAvatarStack';
 import { useTheme } from '../../hooks/useTheme';
 import { buildRsvpSummary, getGuestAvatar, getGuestDisplayName } from '../../utils/eventModuleHelpers';
+import { useI18n } from '../../i18n';
 
 const STATUS_COLORS = {
   accepted: '#10B981',
@@ -13,6 +14,7 @@ const STATUS_COLORS = {
 };
 
 function RSVPCardComponent({ event, showGuests }) {
+  const { t } = useI18n();
   const { colors, layout, radii } = useTheme();
   const summary = buildRsvpSummary(event);
   const { progress } = summary;
@@ -25,7 +27,7 @@ function RSVPCardComponent({ event, showGuests }) {
 
   return (
     <View style={[styles.wrap, { backgroundColor: colors.surface, borderColor: colors.border, borderRadius: radii.xl }]}>
-      <Text style={{ color: colors.text, fontFamily: 'Inter_700Bold', fontSize: 16 * layout.fontScale }}>RSVP</Text>
+      <Text style={{ color: colors.text, fontFamily: 'Inter_700Bold', fontSize: 16 * layout.fontScale }}>{t('events.rsvp')}</Text>
       <View style={[styles.bar, { backgroundColor: colors.border, borderRadius: radii.full, marginTop: 12 }]}>
         <View
           style={[
@@ -35,7 +37,7 @@ function RSVPCardComponent({ event, showGuests }) {
         />
       </View>
       <Text style={{ color: colors.textSecondary, fontSize: 12, marginTop: 6 }}>
-        {progress.responded} of {progress.total} responded ({progress.pct}%)
+        {t('events.rsvpResponded', { responded: progress.responded, total: progress.total, percent: progress.pct })}
       </Text>
 
       <View style={styles.stats}>

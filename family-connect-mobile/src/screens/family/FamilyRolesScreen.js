@@ -22,7 +22,7 @@ export default function FamilyRolesScreen() {
         <RoleBadge role={item.id} />
         {item.readOnly ? (
           <View style={[styles.readOnly, { backgroundColor: colors.surfaceSecondary, borderRadius: radii.full }]}>
-            <Text style={{ color: colors.textTertiary, fontSize: 10, fontFamily: 'Inter_600SemiBold' }}>READ-ONLY</Text>
+            <Text style={{ color: colors.textTertiary, fontSize: 10, fontFamily: 'Inter_600SemiBold' }}>{t('family.readOnly')}</Text>
           </View>
         ) : null}
       </View>
@@ -30,12 +30,12 @@ export default function FamilyRolesScreen() {
         {item.description}
       </Text>
       <Text style={{ color: colors.text, fontFamily: 'Inter_600SemiBold', fontSize: 13 * layout.fontScale, marginTop: 14 }}>
-        Permissions
+        {t('family.permissions')}
       </Text>
-      {item.permissions.map((p) => (
+      {item.permissionKeys.map((p) => (
         <View key={p} style={styles.permRow}>
           <Ionicons name="checkmark-circle" size={16} color={colors.success} />
-          <Text style={{ color: colors.text, fontSize: 13 * layout.fontScale, marginLeft: 8 }}>{p}</Text>
+          <Text style={{ color: colors.text, fontSize: 13 * layout.fontScale, marginLeft: 8 }}>{t(p)}</Text>
         </View>
       ))}
     </Card>
@@ -53,11 +53,10 @@ export default function FamilyRolesScreen() {
             are changed on a member's own profile, which is where the update
             actually happens. */}
         <Text style={{ color: colors.textSecondary, fontSize: 14 * layout.fontScale, marginBottom: 12 }}>
-          What each role can do in your family. The family owner is whoever created it and always has admin
-          rights.
+          {t('family.whatEachRoleCanDoIn')}
         </Text>
         <Text style={{ color: colors.textTertiary, fontSize: 12 * layout.fontScale, marginBottom: 8 }}>
-          To change someone&apos;s role, open Members, choose the person, and pick a role on their profile.
+          {t('family.toChangeSomeoneSRoleOpen')}
         </Text>
       </View>
       <FlatList

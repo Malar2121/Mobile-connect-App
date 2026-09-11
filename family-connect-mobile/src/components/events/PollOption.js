@@ -1,8 +1,10 @@
 import React, { memo } from 'react';
 import { Pressable, StyleSheet, Text, View } from 'react-native';
 import { useTheme } from '../../hooks/useTheme';
+import { useI18n } from '../../i18n';
 
 function PollOptionComponent({ option, result, onVote, disabled }) {
+  const { t } = useI18n();
   const { colors, layout, radii } = useTheme();
   const score = result?.availabilityScore ?? 0;
   const votes = result?.votes ?? { yes: 0, maybe: 0, no: 0, total: 0 };
@@ -20,7 +22,7 @@ function PollOptionComponent({ option, result, onVote, disabled }) {
         <View style={[styles.fill, { width: `${score}%`, backgroundColor: colors.primary, borderRadius: radii.full }]} />
       </View>
       <Text style={{ color: colors.textTertiary, fontSize: 11, marginTop: 4 }}>
-        {votes.yes} yes · {votes.maybe} maybe · {votes.no} no · {score}% score
+        {t('events.voteSummary', { yes: votes.yes, maybe: votes.maybe, no: votes.no, score })}
       </Text>
 
       {!disabled ? (
@@ -30,7 +32,7 @@ function PollOptionComponent({ option, result, onVote, disabled }) {
               key={v}
               onPress={() => onVote?.(v)}
               style={[styles.voteBtn, { backgroundColor: colors.primarySubtle, borderRadius: radii.md, minHeight: layout.minTouch }]}
-              accessibilityLabel={`Vote ${v}`}
+              accessibilityLabel={t('events.voteV', { v })}
             >
               <Text style={{ color: colors.primary, fontFamily: 'Inter_600SemiBold', fontSize: 13, textTransform: 'capitalize' }}>
                 {v}

@@ -28,6 +28,7 @@ import { getLikeCount, getUploader } from '../../utils/memoryHelpers';
 import { useI18n } from '../../i18n';
 
 function MemoryGridItem({ memory, size, onPress, colors, layout, isElder, isDark }) {
+  const { t } = useI18n();
   const uploader = getUploader(memory);
   const likeCount = getLikeCount(memory);
   const isVideo = memory.mediaType === 'video';
@@ -39,7 +40,7 @@ function MemoryGridItem({ memory, size, onPress, colors, layout, isElder, isDark
       onPress={() => onPress(memory)}
       style={({ pressed }) => [{ width: size, opacity: pressed ? 0.92 : 1 }]}
       accessibilityRole="button"
-      accessibilityLabel={memory.caption || 'Memory'}
+      accessibilityLabel={memory.caption || t('memories.memory')}
     >
       <View
         style={[
@@ -70,7 +71,7 @@ function MemoryGridItem({ memory, size, onPress, colors, layout, isElder, isDark
       <View style={styles.metaRow}>
         <Avatar uri={uploader.avatar} name={uploader.fullName} size={avatarSize} />
         <Text numberOfLines={1} style={{ color: colors.text, fontWeight: '600', fontSize: nameSize, marginLeft: 6, flex: 1 }}>
-          {uploader.fullName ?? 'Member'}
+          {uploader.fullName ?? t('common.member')}
         </Text>
       </View>
     </Pressable>
@@ -108,7 +109,7 @@ export default function MemoryGalleryScreen({ navigation, route }) {
   );
 
   const title =
-    filter === 'photos' ? 'Photos' : filter === 'videos' ? 'Videos' : 'Gallery';
+    filter === 'photos' ? t('memories.photos') : filter === 'videos' ? t('memories.videos') : t('memories.gallery');
 
   if (loading && !refreshing) {
     return (
@@ -124,13 +125,13 @@ export default function MemoryGalleryScreen({ navigation, route }) {
       <View style={{ paddingHorizontal: horizontalPadding }}>
         <PageHeader
           title={title}
-          subtitle={`${memories.length} items`}
+          subtitle={t('memories.countItems', { count: memories.length })}
           large
           onBack={() => navigation.goBack()}
           rightAction={
             !isMinor ? (
               <Pressable onPress={() => navigation.navigate('UploadMemory')} hitSlop={8}>
-                <Text style={{ color: colors.primary, fontFamily: 'Inter_700Bold', fontSize: 15 * layout.fontScale }}>Upload</Text>
+                <Text style={{ color: colors.primary, fontFamily: 'Inter_700Bold', fontSize: 15 * layout.fontScale }}>{t('memories.quickUpload')}</Text>
               </Pressable>
             ) : undefined
           }
@@ -158,8 +159,8 @@ export default function MemoryGalleryScreen({ navigation, route }) {
           <EmptyState
             icon="images-outline"
             title={t('memories.noneYet')}
-            description={isMinor ? 'Family photos and videos will appear here.' : 'Share the first family moment — tap + to upload.'}
-            actionLabel={isMinor ? undefined : 'Upload memory'}
+            description={isMinor ? t('memories.familyPhotosAndVideosWillAppear') : t('memories.shareTheFirstFamilyMomentTap')}
+            actionLabel={isMinor ? undefined : t('memories.upload')}
             onAction={isMinor ? undefined : () => navigation.navigate('UploadMemory')}
             compact
           />

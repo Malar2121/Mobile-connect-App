@@ -1,5 +1,6 @@
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import { formatLastActive } from './locationHelpers';
+import { translate } from '../i18n';
 
 const ZONES_KEY = (familyId) => `fc_safe_zones_${familyId}`;
 const CONTACTS_KEY = (familyId) => `fc_emergency_contacts_${familyId}`;
@@ -9,11 +10,11 @@ const SETTINGS_KEY = (userId) => `fc_location_settings_${userId}`;
 const TRIP_POINTS_KEY = (userId) => `fc_trip_points_${userId}`;
 
 export const ZONE_PRESETS = [
-  { id: 'home', label: 'Home', icon: 'home', color: '#6366F1' },
-  { id: 'school', label: 'School', icon: 'school', color: '#10B981' },
-  { id: 'office', label: 'Office', icon: 'business', color: '#F59E0B' },
-  { id: 'hospital', label: 'Hospital', icon: 'medical', color: '#EF4444' },
-  { id: 'custom', label: 'Custom', icon: 'location', color: '#8B5CF6' },
+  { id: 'home', get label() { return translate('tabs.dashboard'); }, icon: 'home', color: '#6366F1' },
+  { id: 'school', get label() { return translate('map.school'); }, icon: 'school', color: '#10B981' },
+  { id: 'office', get label() { return translate('map.office'); }, icon: 'business', color: '#F59E0B' },
+  { id: 'hospital', get label() { return translate('map.hospital'); }, icon: 'medical', color: '#EF4444' },
+  { id: 'custom', get label() { return translate('map.custom'); }, icon: 'location', color: '#8B5CF6' },
 ];
 
 export const DEFAULT_LOCATION_SETTINGS = {
@@ -55,11 +56,11 @@ export function formatSpeed(speedMps) {
 }
 
 export function getTravelStatus(speed) {
-  if (speed == null) return 'Stationary';
-  if (speed < 0.5) return 'Stationary';
-  if (speed < 3) return 'Walking';
-  if (speed < 15) return 'Cycling';
-  return 'Driving';
+  if (speed == null) return translate('map.stationary');
+  if (speed < 0.5) return translate('map.stationary');
+  if (speed < 3) return translate('map.walking');
+  if (speed < 15) return translate('map.cycling');
+  return translate('map.driving');
 }
 
 export function estimateEtaMinutes(distanceKm, speedMps = 13.9) {
@@ -100,7 +101,7 @@ export function buildMapAnalytics(trips, zones) {
   const placeCounts = {};
   (trips ?? []).forEach((t) => {
     (t.waypoints ?? []).forEach((w) => {
-      const k = w.label ?? 'Unknown';
+      const k = w.label ?? translate('map.unknown');
       placeCounts[k] = (placeCounts[k] ?? 0) + 1;
     });
   });

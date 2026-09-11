@@ -65,7 +65,7 @@ export default function TreeSettingsScreen() {
       <PageHeader title={t('tree.settingsTitle')} subtitle={t('tree.displayAccessibility')} onBack={() => navigation.goBack()} />
 
       <ScrollView contentContainerStyle={{ paddingBottom: 40 }}>
-        <SectionTitle title="Visualization" />
+        <SectionTitle title={t('tree.visualization')} />
         <SettingRow
           label={t('tree.generationLabels')}
           description={t('tree.generationHint')}
@@ -99,7 +99,7 @@ export default function TreeSettingsScreen() {
           layout={layout}
         />
 
-        <SectionTitle title="Accessibility" subtitle={t('tree.elderEnhancements')} />
+        <SectionTitle title={t('profile.accessibility')} subtitle={t('tree.elderEnhancements')} />
         <SettingRow
           label={t('tree.largeNodes')}
           description={t('tree.largeNodesHint')}
@@ -110,7 +110,7 @@ export default function TreeSettingsScreen() {
         />
 
         <Text style={{ color: colors.textTertiary, fontSize: 12, marginTop: 16, marginBottom: 20 }}>
-          Dynamic fonts follow your app accessibility settings. VoiceOver labels are on all tree nodes and controls.
+          {t('tree.dynamicFontsFollowYourAppAccessibility')}
         </Text>
 
         <Button title={t('tree.saveSettings')} onPress={handleSave} loading={saving} />

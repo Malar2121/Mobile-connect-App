@@ -4,13 +4,15 @@ import { Ionicons } from '@expo/vector-icons';
 import { chatTypography } from '../../constants/chatTheme';
 import { useTheme } from '../../hooks/useTheme';
 import { getSender } from '../../utils/chatHelpers';
+import { useI18n } from '../../i18n';
 
 export function ChatReplyBar({ message, editedTexts, onClose }) {
+  const { t } = useI18n();
   const { colors, isDark } = useTheme();
   if (!message) return null;
 
   const text = editedTexts?.[String(message._id)] ?? message.text ?? '';
-  const sender = getSender(message).fullName ?? 'Family';
+  const sender = getSender(message).fullName ?? t('profile.family');
 
   return (
     <View
@@ -25,10 +27,10 @@ export function ChatReplyBar({ message, editedTexts, onClose }) {
       <View style={[styles.accent, { backgroundColor: colors.primary }]} />
       <View style={styles.content}>
         <Text style={[styles.label, { color: colors.primary, fontFamily: chatTypography.fontFamilySemi }]}>
-          Replying to {sender}
+          {t('chat.replyingTo', { name: sender })}
         </Text>
         <Text style={[styles.preview, { color: colors.textSecondary }]} numberOfLines={2}>
-          {text || (message.mediaUrl ? 'Media' : '')}
+          {text || (message.mediaUrl ? t('chat.media') : '')}
         </Text>
       </View>
       <Pressable onPress={onClose} hitSlop={8} style={styles.close}>

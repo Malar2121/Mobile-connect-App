@@ -70,7 +70,7 @@ export default function LegacyModeScreen() {
       setBurialLocation('');
       setSelectedMember(null);
     } catch (e) {
-      toast.error(e.message || 'Save failed');
+      toast.error(e.message || t('memories.saveFailed'));
     } finally {
       setSaving(false);
     }
@@ -94,10 +94,10 @@ export default function LegacyModeScreen() {
           style={{ padding: 20, borderRadius: 20, marginBottom: 20 }}
         >
           <Text style={{ color: colors.text, fontFamily: 'Inter_700Bold', fontSize: 20 * layout.fontScale }}>
-            Preserve their story forever
+            {t('memories.preserveTheirStoryForever')}
           </Text>
           <Text style={{ color: colors.textSecondary, marginTop: 8, lineHeight: 22, fontSize: 14 * layout.fontScale }}>
-            Legacy Mode creates beautiful remembrance pages for family members — their photos, stories, and contributions live on for future generations.
+            {t('memories.legacyModeCreatesBeautifulRemembrancePages')}
           </Text>
         </LinearGradient>
 
@@ -139,7 +139,7 @@ export default function LegacyModeScreen() {
                 <>
                   <TextField label={t('legacy.dateOfDeath')} value={deathDate} onChangeText={setDeathDate} />
                   <TextField label={t('legacy.restingPlace')} value={burialLocation} onChangeText={setBurialLocation} />
-                  <TextField label="Biography" value={biography} onChangeText={setBiography} multiline numberOfLines={5} placeholder={t('legacy.storyPlaceholder')} />
+                  <TextField label={t('memories.biography')} value={biography} onChangeText={setBiography} multiline numberOfLines={5} placeholder={t('legacy.storyPlaceholder')} />
                   <Button title={t('legacy.save')} onPress={handleSave} loading={saving} style={{ marginTop: 12 }} />
                 </>
               ) : selectedMember ? (
@@ -151,7 +151,7 @@ export default function LegacyModeScreen() {
 
         {selectedMember ? (
           <>
-            <SectionTitle title={`${selectedMember.fullName || selectedMember.displayName}'s memories`} style={{ marginTop: 20 }} />
+            <SectionTitle title={t('memories.valueSMemories', { value: selectedMember.fullName || selectedMember.displayName })} style={{ marginTop: 20 }} />
             {legacyMemories.length === 0 ? (
               <Text style={{ color: colors.textSecondary }}>{t('legacy.tagHint')}</Text>
             ) : (

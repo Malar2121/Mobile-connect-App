@@ -73,12 +73,12 @@ export function ChatHeader({
               ]}
               numberOfLines={1}
             >
-              {familyName || 'Family'}
+              {familyName || t('profile.family')}
             </Text>
             <View style={styles.statusRow}>
               <View style={[styles.onlineDot, { backgroundColor: colors.success }]} />
               <Text style={[styles.subtitle, { color: colors.textSecondary }]}>
-                {onlineCount} online · {memberTotal} members
+                {t('chat.onlineAndMembers', { online: onlineCount, count: memberTotal })}
               </Text>
             </View>
           </View>

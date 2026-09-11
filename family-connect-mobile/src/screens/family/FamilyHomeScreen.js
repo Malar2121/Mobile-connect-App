@@ -51,7 +51,7 @@ export default function FamilyHomeScreen() {
   if (familyLoading && !family) {
     return (
       <Screen edges={['top']}>
-        <PageHeader title="Family" subtitle={t('family.homeSubtitle')} large onBack={() => navigation.goBack()} />
+        <PageHeader title={t('family.title')} subtitle={t('family.homeSubtitle')} large onBack={() => navigation.goBack()} />
         <Loader />
       </Screen>
     );
@@ -60,7 +60,7 @@ export default function FamilyHomeScreen() {
   if (noFamily) {
     return (
       <Screen edges={['top']}>
-        <PageHeader title="Family" subtitle={t('family.getStarted')} large showBack onBack={() => navigation.goBack()} />
+        <PageHeader title={t('family.title')} subtitle={t('family.getStarted')} large showBack onBack={() => navigation.goBack()} />
         <EmptyFamilyState
           onCreate={() => navigation.navigate('CreateFamily')}
           onJoin={() => navigation.navigate('JoinFamily')}
@@ -73,7 +73,7 @@ export default function FamilyHomeScreen() {
     <Screen edges={['top']} noPadding>
       <View style={{ paddingHorizontal: horizontalPadding }}>
         <PageHeader
-          title="Family"
+          title={t('family.title')}
           subtitle={family.name}
           large
           onBack={() => navigation.goBack()}
@@ -98,8 +98,8 @@ export default function FamilyHomeScreen() {
         />
 
         <View style={[styles.statsRow, { paddingHorizontal: horizontalPadding }]}>
-          <FamilyStatCard label="Memories" value={analytics.totalMemories} icon="images-outline" onPress={() => navigation.getParent()?.navigate('Memories')} />
-          <FamilyStatCard label="Events" value={analytics.totalEvents} icon="calendar-outline" onPress={() => navigation.getParent()?.navigate('Events')} />
+          <FamilyStatCard label={t('tabs.memories')} value={analytics.totalMemories} icon="images-outline" onPress={() => navigation.getParent()?.navigate(t('tabs.memories'))} />
+          <FamilyStatCard label={t('tabs.events')} value={analytics.totalEvents} icon="calendar-outline" onPress={() => navigation.getParent()?.navigate(t('tabs.events'))} />
           <FamilyStatCard label={t('family.thisWeek')} value={analytics.activityThisWeek} icon="pulse-outline" accent="#10B981" />
         </View>
 
@@ -110,16 +110,16 @@ export default function FamilyHomeScreen() {
         ) : (
           <>
             <View style={{ paddingHorizontal: horizontalPadding }}>
-              <SectionTitle title="Participation" subtitle={t('family.realActivity')} />
+              <SectionTitle title={t('family.participation')} subtitle={t('family.realActivity')} />
               <AnalyticsCard
                 title={t('family.analytics')}
                 highlightMember={analytics.mostActiveMember}
                 highlightAvatar={analytics.mostActiveAvatar}
                 metrics={[
-                  { label: 'Members', value: analytics.memberCount },
-                  { label: 'Messages', value: analytics.totalMessages },
-                  { label: 'Albums', value: analytics.totalMemories },
-                  { label: 'Relationships', value: analytics.relationshipsMapped },
+                  { label: t('family.members'), value: analytics.memberCount },
+                  { label: t('elder.messages'), value: analytics.totalMessages },
+                  { label: t('memories.albums'), value: analytics.totalMemories },
+                  { label: t('family.relationships'), value: analytics.relationshipsMapped },
                 ]}
               />
             </View>

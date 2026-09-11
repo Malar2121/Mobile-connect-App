@@ -1,15 +1,17 @@
 import React, { memo } from 'react';
 import { Image, ScrollView, StyleSheet, Text, View } from 'react-native';
 import { useTheme } from '../../hooks/useTheme';
+import { useI18n } from '../../i18n';
 
 function EventGalleryComponent({ memories, eventTitle }) {
+  const { t } = useI18n();
   const { colors, layout, radii } = useTheme();
   const images = (memories ?? []).filter((m) => m.mediaUrl || m.url).slice(0, 12);
 
   if (!images.length) {
     return (
       <Text style={{ color: colors.textSecondary, fontSize: 14 * layout.fontScale }}>
-        No photos linked to {eventTitle ?? 'this event'} yet.
+        {eventTitle ? t('events.noPhotosLinkedTo', { title: eventTitle }) : t('events.noPhotosLinkedYet')}
       </Text>
     );
   }
@@ -21,7 +23,7 @@ function EventGalleryComponent({ memories, eventTitle }) {
           key={String(m._id)}
           source={{ uri: m.mediaUrl ?? m.url }}
           style={[styles.thumb, { borderRadius: radii.lg }]}
-          accessibilityLabel={m.caption || 'Event photo'}
+          accessibilityLabel={m.caption || t('events.eventPhoto')}
         />
       ))}
     </ScrollView>

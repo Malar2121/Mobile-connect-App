@@ -3,9 +3,11 @@ import { Pressable, StyleSheet, Text, View } from 'react-native';
 import { Avatar } from '../../design-system';
 import { RelationshipBadge } from '../family/RelationshipBadge';
 import { useTheme } from '../../hooks/useTheme';
+import { useI18n } from '../../i18n';
 
 function TaggedMemberCardComponent({ member, memoryCount, relationshipLabel, onPress }) {
   const { colors, layout, radii } = useTheme();
+  const { t } = useI18n();
 
   return (
     <Pressable
@@ -16,7 +18,7 @@ function TaggedMemberCardComponent({ member, memoryCount, relationshipLabel, onP
       <View style={{ flex: 1, marginLeft: 14 }}>
         <Text style={{ color: colors.text, fontFamily: 'Inter_700Bold', fontSize: 16 * layout.fontScale }}>{member.fullName}</Text>
         {relationshipLabel ? <RelationshipBadge label={relationshipLabel} compact /> : null}
-        <Text style={{ color: colors.textSecondary, fontSize: 12, marginTop: 6 }}>{memoryCount} tagged memories</Text>
+        <Text style={{ color: colors.textSecondary, fontSize: 12, marginTop: 6 }}>{t('memories.taggedMemoriesCount', { count: memoryCount })}</Text>
       </View>
     </Pressable>
   );

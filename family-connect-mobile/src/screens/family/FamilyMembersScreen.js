@@ -61,7 +61,7 @@ export default function FamilyMembersScreen() {
   if (noFamily && !familyLoading) {
     return (
       <Screen edges={['top']}>
-        <PageHeader title="Members" showBack onBack={() => navigation.goBack()} />
+        <PageHeader title={t('family.members')} showBack onBack={() => navigation.goBack()} />
         <EmptyFamilyState
           onCreate={() => navigation.navigate('CreateFamily')}
           onJoin={() => navigation.navigate('JoinFamily')}
@@ -73,7 +73,7 @@ export default function FamilyMembersScreen() {
   return (
     <Screen edges={['top']}>
       <PageHeader
-        title="Members"
+        title={t('family.members')}
         subtitle={t('family.membersInFamily', { count: members.length })}
         onBack={() => navigation.goBack()}
       />

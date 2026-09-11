@@ -21,14 +21,14 @@ import {
 } from '../../design-system';
 import { useTheme } from '../../hooks/useTheme';
 import { uploadMemory } from '../../services/memoryService';
-import { useI18n } from '../../i18n';
+import { useI18n, translate } from '../../i18n';
 
 async function ensureLibraryPermission() {
   const { status } = await ImagePicker.requestMediaLibraryPermissionsAsync();
   if (status !== 'granted') {
     Alert.alert(
       t('memories.permissionNeeded'),
-      'Allow access to your photo library to share family memories.',
+      translate('memories.allowAccessToYourPhotoLibrary'),
     );
     return false;
   }
@@ -40,7 +40,7 @@ async function ensureCameraPermission() {
   if (status !== 'granted') {
     Alert.alert(
       t('memories.permissionNeeded'),
-      'Allow camera access to capture new memories.',
+      translate('memories.allowCameraAccessToCaptureNew'),
     );
     return false;
   }
@@ -95,10 +95,10 @@ export default function UploadMemoryScreen({ navigation }) {
   }
 
   function showPickerOptions() {
-    Alert.alert(t('memories.addMedia'), 'Choose a source', [
-      { text: 'Photo library', onPress: pickFromLibrary },
-      { text: 'Camera', onPress: captureWithCamera },
-      { text: 'Cancel', style: 'cancel' },
+    Alert.alert(t('memories.addMedia'), t('memories.chooseASource'), [
+      { text: t('memories.photoLibrary'), onPress: pickFromLibrary },
+      { text: t('memories.camera'), onPress: captureWithCamera },
+      { text: t('common.cancel'), style: 'cancel' },
     ]);
   }
 
@@ -145,12 +145,12 @@ export default function UploadMemoryScreen({ navigation }) {
   if (isMinor) {
     return (
       <Screen edges={['top']}>
-        <PageHeader title="Upload" onBack={() => navigation.goBack()} />
+        <PageHeader title={t('memories.quickUpload')} onBack={() => navigation.goBack()} />
         <EmptyState
           icon="shield-outline"
           title={t('memories.uploadsDisabled')}
           description={t('memories.minorUploadHint')}
-          actionLabel="Back to gallery"
+          actionLabel={t('memories.backToGallery')}
           onAction={() => navigation.goBack()}
         />
       </Screen>
@@ -167,7 +167,7 @@ export default function UploadMemoryScreen({ navigation }) {
           fontSize: 15 * layout.fontScale,
         }}
       >
-        Share a photo or video with your family.
+        {t('memories.shareAPhotoOrVideoWith')}
       </Text>
 
         {error ? (
@@ -225,10 +225,10 @@ export default function UploadMemoryScreen({ navigation }) {
                   fontSize: (isElder ? 17 : 15) * layout.fontScale,
                 }}
               >
-                Choose photo or video
+                {t('memories.choosePhotoOrVideo')}
               </Text>
               <Text style={{ color: colors.textSecondary, marginTop: 6, fontSize: 13 * layout.fontScale }}>
-                Library or camera
+                {t('memories.libraryOrCamera')}
               </Text>
             </Pressable>
           )}
@@ -244,7 +244,7 @@ export default function UploadMemoryScreen({ navigation }) {
         ) : null}
 
         <TextField
-          label="Caption"
+          label={t('memories.caption')}
           value={caption}
           onChangeText={setCaption}
           placeholder={t('memories.captionPlaceholder')}
@@ -253,7 +253,7 @@ export default function UploadMemoryScreen({ navigation }) {
         />
 
         <Button
-          title="Upload"
+          title={t('memories.quickUpload')}
           onPress={handleUpload}
           loading={loading}
           disabled={loading || !asset}

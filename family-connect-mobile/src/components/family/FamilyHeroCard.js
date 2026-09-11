@@ -75,7 +75,7 @@ function FamilyHeroCardComponent({
                   ) : null}
                   {createdLabel ? (
                     <Text style={{ color: colors.textTertiary, fontSize: 12 * layout.fontScale, marginTop: 6 }}>
-                      Est. {createdLabel}
+                      {t('family.establishedOn', { date: createdLabel })}
                     </Text>
                   ) : null}
                 </View>
@@ -84,19 +84,19 @@ function FamilyHeroCardComponent({
               <MemberAvatarStack members={members} style={{ marginTop: 18 }} />
 
               <View style={styles.statsRow}>
-                <StatPill colors={colors} layout={layout} value={memberCount} label="Members" />
-                <StatPill colors={colors} layout={layout} value={onlineCount} label="Online" accent={colors.success} />
+                <StatPill colors={colors} layout={layout} value={memberCount} label={t('family.members')} />
+                <StatPill colors={colors} layout={layout} value={onlineCount} label={t('family.online')} accent={colors.success} />
                 {inviteCode ? (
                   <StatPill colors={colors} layout={layout} value={inviteCode} label={t('profile.inviteCode')} accent={colors.primary} mono />
                 ) : null}
                 {pendingRequests > 0 ? (
-                  <StatPill colors={colors} layout={layout} value={pendingRequests} label="Requests" accent={colors.warning} />
+                  <StatPill colors={colors} layout={layout} value={pendingRequests} label={t('family.requests')} accent={colors.warning} />
                 ) : null}
               </View>
 
               <View style={styles.actions}>
                 <ActionBtn
-                  label="Invite"
+                  label={t('family.invite')}
                   icon="person-add-outline"
                   primary
                   gradients={gradients}
@@ -104,7 +104,7 @@ function FamilyHeroCardComponent({
                   onPress={onInvite}
                 />
                 <ActionBtn
-                  label="Settings"
+                  label={t('profile.settings')}
                   icon="settings-outline"
                   colors={colors}
                   radii={radii}

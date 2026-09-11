@@ -115,9 +115,9 @@ export default function ConversationScreen() {
           break;
         case 'edit':
           if (Platform.OS === 'ios') {
-            Alert.prompt('Edit message', undefined, [
-              { text: 'Cancel', style: 'cancel' },
-              { text: 'Save', onPress: (val) => handleEdit(message, val) },
+            Alert.prompt(t('chat.editMessage'), undefined, [
+              { text: t('common.cancel'), style: 'cancel' },
+              { text: t('common.save'), onPress: (val) => handleEdit(message, val) },
             ], 'plain-text', text);
           } else {
             handleEdit(message, `${text} ✏️`);
@@ -132,12 +132,12 @@ export default function ConversationScreen() {
           break;
         case 'schedule':
           handleSchedule(text || 'Scheduled message', new Date(Date.now() + 3600000).toISOString());
-          Alert.alert('Scheduled', 'Message will send in 1 hour.');
+          Alert.alert(t('chat.scheduled'), t('chat.messageWillSendIn1Hour'));
           break;
         case 'delete':
-          Alert.alert(t('chat.deleteMessage'), 'This cannot be undone.', [
-            { text: 'Cancel', style: 'cancel' },
-            { text: 'Delete', style: 'destructive', onPress: () => handleDelete(message) },
+          Alert.alert(t('chat.deleteMessage'), t('chat.thisCannotBeUndone'), [
+            { text: t('common.cancel'), style: 'cancel' },
+            { text: t('common.delete'), style: 'destructive', onPress: () => handleDelete(message) },
           ]);
           break;
         default:
@@ -185,7 +185,7 @@ export default function ConversationScreen() {
           handleDraftChange(`${draft} 🎬`);
         }
       } catch (e) {
-        setError(e.message || 'Attachment failed.');
+        setError(e.message || t('chat.attachmentFailed'));
       }
     },
     [draft, sendTextMessage, handleDraftChange, setError],

@@ -17,8 +17,10 @@ import {
   groupEventsByDate,
   searchAndFilterEvents,
 } from '../utils/eventModuleHelpers';
+import { useI18n } from '../i18n';
 
 export function useEventsModuleData(filters = {}) {
+  const { t } = useI18n();
   const { user } = useAuth();
   const { members, family } = useFamily();
   const { uiMode } = useTheme();
@@ -49,7 +51,7 @@ export function useEventsModuleData(filters = {}) {
       setMemories(mem);
       setCelebrations(cel);
     } catch (e) {
-      setError(e.message || 'Could not load events.');
+      setError(e.message || t('common.couldNotLoadEvents'));
     } finally {
       setLoading(false);
     }

@@ -12,8 +12,8 @@ function TravelStatsCardComponent({ analytics }) {
 
   const stats = [
     { label: t('map.distanceToday'), value: `${analytics.distanceTodayKm} km` },
-    { label: 'Trips', value: analytics.tripsToday },
-    { label: 'Places', value: analytics.visitedPlaces },
+    { label: t('map.trips'), value: analytics.tripsToday },
+    { label: t('map.places'), value: analytics.visitedPlaces },
     { label: t('map.travelTime'), value: `${analytics.travelTimeMin}m` },
   ];
 
@@ -31,7 +31,7 @@ function TravelStatsCardComponent({ analytics }) {
           </View>
         ))}
       </View>
-      <Text style={{ color: colors.textTertiary, fontSize: 12, marginTop: 12 }}>Most visited: {analytics.mostVisited}</Text>
+      <Text style={{ color: colors.textTertiary, fontSize: 12, marginTop: 12 }}>{t('map.mostVisited', { place: analytics.mostVisited })}</Text>
     </LinearGradient>
   );
 }

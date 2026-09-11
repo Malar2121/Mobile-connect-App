@@ -12,10 +12,10 @@ function TreeAnalyticsCardComponent({ analytics }) {
   if (!analytics) return null;
 
   const stats = [
-    { label: 'Generations', value: analytics.generationCount },
-    { label: 'Members', value: analytics.memberCount },
-    { label: 'Relationships', value: analytics.relationshipCount },
-    { label: 'Legacy', value: analytics.legacyProfileCount },
+    { label: t('tree.generations'), value: analytics.generationCount },
+    { label: t('common.members'), value: analytics.memberCount },
+    { label: t('tree.relationships'), value: analytics.relationshipCount },
+    { label: t('memories.quickLegacy'), value: analytics.legacyProfileCount },
   ];
 
   return (
@@ -24,7 +24,7 @@ function TreeAnalyticsCardComponent({ analytics }) {
       style={[styles.wrap, { borderRadius: radii['2xl'], borderColor: colors.border }]}
     >
       <Text style={{ color: colors.text, fontFamily: 'Inter_700Bold', fontSize: 17 * layout.fontScale, marginBottom: 12 }}>
-        Tree analytics
+        {t('tree.treeAnalytics')}
       </Text>
       <View style={styles.grid}>
         {stats.map((s) => (
@@ -43,7 +43,7 @@ function TreeAnalyticsCardComponent({ analytics }) {
           </Text>
         </View>
         <View style={{ alignItems: 'flex-end' }}>
-          <Text style={{ color: colors.textSecondary, fontSize: 12 }}>Completeness</Text>
+          <Text style={{ color: colors.textSecondary, fontSize: 12 }}>{t('tree.completeness')}</Text>
           <Text style={{ color: colors.primary, fontFamily: 'Inter_700Bold', fontSize: 18 * layout.fontScale }}>
             {analytics.treeCompleteness}%
           </Text>

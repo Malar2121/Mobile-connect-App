@@ -2,7 +2,7 @@ import React from 'react';
 import { Pressable, StyleSheet, TextInput, View } from 'react-native';
 import { Ionicons } from '@expo/vector-icons';
 import { useTheme } from '../../hooks/useTheme';
-import { useI18n } from '../../i18n';
+import { useI18n, translate } from '../../i18n';
 
 /**
  * Search bar — Telegram / Instagram inspired, with clear button.
@@ -10,11 +10,11 @@ import { useI18n } from '../../i18n';
 export function SearchBar({
   value,
   onChangeText,
-  placeholder = 'Search',
+  placeholder = translate('common.search'),
   onClear,
   autoFocus,
   style,
-  accessibilityLabel = 'Search',
+  accessibilityLabel = translate('common.search'),
 }) {
   const { colors, layout, radii, isDark } = useTheme();
 

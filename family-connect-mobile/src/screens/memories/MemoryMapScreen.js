@@ -27,7 +27,7 @@ export default function MemoryMapScreen() {
           memory: m,
           latitude: m.coordinates.lat,
           longitude: m.coordinates.lng,
-          label: m.location || 'Location',
+          label: m.location || t('events.locationField'),
         })),
     [memories],
   );
@@ -50,7 +50,7 @@ export default function MemoryMapScreen() {
                 <Marker
                   key={String(item.memory._id)}
                   coordinate={{ latitude: item.latitude, longitude: item.longitude }}
-                  title={item.memory.caption || 'Memory'}
+                  title={item.memory.caption || t('memories.memory')}
                   onCalloutPress={() => navigation.navigate('MemoryDetails', { id: String(item.memory._id) })}
                 />
               ))}

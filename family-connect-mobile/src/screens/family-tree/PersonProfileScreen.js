@@ -49,7 +49,7 @@ export default function PersonProfileScreen() {
   if (loading && !person) {
     return (
       <Screen edges={['top']}>
-        <PageHeader title="Profile" onBack={() => navigation.goBack()} />
+        <PageHeader title={t('tabs.profile')} onBack={() => navigation.goBack()} />
         <Loader />
       </Screen>
     );
@@ -58,7 +58,7 @@ export default function PersonProfileScreen() {
   if (!person) {
     return (
       <Screen edges={['top']}>
-        <PageHeader title="Profile" onBack={() => navigation.goBack()} />
+        <PageHeader title={t('tabs.profile')} onBack={() => navigation.goBack()} />
         <Text style={{ color: colors.textSecondary, padding: horizontalPadding }}>{t('family.memberNotFound')}</Text>
       </Screen>
     );
@@ -72,10 +72,10 @@ export default function PersonProfileScreen() {
 
       <ScrollView contentContainerStyle={{ paddingHorizontal: horizontalPadding, paddingBottom: 40 }}>
         <View style={[styles.hero, { backgroundColor: colors.surface, borderColor: colors.border, borderRadius: radii['2xl'] }]}>
-          <PersonCard person={person} subtitle={`Role: ${person.role ?? 'member'}`} />
+          <PersonCard person={person} subtitle={t('tree.roleValue', { value: ['owner', 'admin', 'parent', 'member', 'child', 'guest'].includes(person.role) ? t(`family.roleNames.${person.role}`) : person.role || t('family.roleNames.member') })} />
           <View style={styles.metaRow}>
-            <MetaChip icon="calendar-outline" label="Birth" value={person.dateOfBirth ? new Date(person.dateOfBirth).toLocaleDateString() : 'Not recorded'} colors={colors} layout={layout} />
-            <MetaChip icon="pulse-outline" label="Status" value={legacy ? 'Remembered' : 'Living'} colors={colors} layout={layout} />
+            <MetaChip icon="calendar-outline" label={t('tree.birth')} value={person.dateOfBirth ? new Date(person.dateOfBirth).toLocaleDateString() : t('tree.notRecorded')} colors={colors} layout={layout} />
+            <MetaChip icon="pulse-outline" label={t('tree.status')} value={legacy ? t('tree.remembered') : t('tree.living')} colors={colors} layout={layout} />
           </View>
           {legacy ? (
             <View style={[styles.legacyBadge, { backgroundColor: colors.primarySubtle, borderRadius: radii.full }]}>
@@ -85,10 +85,10 @@ export default function PersonProfileScreen() {
           ) : null}
         </View>
 
-        <RelationSection title="Parents" people={relations.parents} onPress={openPerson} />
-        <RelationSection title="Partner" people={relations.partner} onPress={openPerson} />
-        <RelationSection title="Siblings" people={relations.siblings} onPress={openPerson} />
-        <RelationSection title="Children" people={relations.children} onPress={openPerson} />
+        <RelationSection title={t('tree.parents')} people={relations.parents} onPress={openPerson} />
+        <RelationSection title={t('tree.partner')} people={relations.partner} onPress={openPerson} />
+        <RelationSection title={t('tree.siblings')} people={relations.siblings} onPress={openPerson} />
+        <RelationSection title={t('tree.children')} people={relations.children} onPress={openPerson} />
 
         {personEvents.length ? (
           <>
@@ -101,7 +101,7 @@ export default function PersonProfileScreen() {
 
         {personMemories.length ? (
           <>
-            <SectionTitle title="Memories" subtitle={`${personMemories.length} preserved`} />
+            <SectionTitle title={t('tabs.memories')} subtitle={t('tree.countPreserved', { count: personMemories.length })} />
             <FlatList
               data={personMemories.slice(0, 6)}
               horizontal
@@ -109,7 +109,7 @@ export default function PersonProfileScreen() {
               showsHorizontalScrollIndicator={false}
               renderItem={({ item }) => (
                 <HeritageCard
-                  item={{ id: item._id, type: 'memory', title: item.caption || 'Memory', date: item.createdAt, icon: 'images-outline' }}
+                  item={{ id: item._id, type: 'memory', title: item.caption || t('memories.memory'), date: item.createdAt, icon: 'images-outline' }}
                 />
               )}
             />
@@ -118,14 +118,14 @@ export default function PersonProfileScreen() {
 
         {personAchievements.length ? (
           <>
-            <SectionTitle title="Achievements" />
+            <SectionTitle title={t('tree.achievements')} />
             {personAchievements.map((a) => (
               <HeritageCard key={a.id} item={{ id: a.id, type: 'achievement', title: a.title, body: a.description, date: a.date, icon: 'trophy-outline' }} />
             ))}
           </>
         ) : null}
 
-        <SectionTitle title="Timeline" subtitle={t('tree.lifeEvents')} style={{ marginTop: 20 }} />
+        <SectionTitle title={t('memories.timeline')} subtitle={t('tree.lifeEvents')} style={{ marginTop: 20 }} />
         {person.lifeEvents && person.lifeEvents.length > 0 ? (
           person.lifeEvents.map((evt, i) => (
             <Card key={evt._id || i} style={{ marginBottom: 8 }}>
@@ -143,7 +143,7 @@ export default function PersonProfileScreen() {
           ))
         ) : (
           <Text style={{ color: colors.textSecondary, fontSize: 13, marginBottom: 16 }}>
-            No life events recorded yet.
+            {t('tree.noLifeEventsRecordedYet')}
           </Text>
         )}
       </ScrollView>

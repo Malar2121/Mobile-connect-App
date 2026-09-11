@@ -29,6 +29,7 @@ import {
   highlightSearchText,
   splitMentionText,
 } from '../../utils/chatHelpers';
+import { useI18n } from '../../i18n';
 
 function StatusIcon({ status, size }) {
   if (status === 'sending') {
@@ -77,6 +78,7 @@ export function ChatMessageBubble({
   onReactionPress,
   uiMode,
 }) {
+  const { t } = useI18n();
   const { colors, isDark } = useTheme();
   const sender = getSender(message);
   const status = isMine ? getOutgoingStatus(message, userId, familyMemberCount) : null;
@@ -157,7 +159,7 @@ export function ChatMessageBubble({
             }}
             numberOfLines={2}
           >
-            {replyToMessage.text || 'Media'}
+            {replyToMessage.text || t('chat.media')}
           </Text>
         </View>
       ) : null}
@@ -206,7 +208,7 @@ export function ChatMessageBubble({
       <View style={styles.metaRow}>
         {isEdited ? (
           <Text style={[styles.edited, { color: isMine ? 'rgba(255,255,255,0.65)' : colors.textSecondary }]}>
-            edited
+            {t('chat.edited')}
           </Text>
         ) : null}
         <Text
@@ -244,7 +246,7 @@ export function ChatMessageBubble({
         <Animated.View style={[styles.bubbleCol, isMine && styles.bubbleColMine, animStyle]}>
           {!isMine ? (
             <Text style={[styles.senderName, { color: colors.textSecondary, fontFamily: chatTypography.fontFamilySemi, fontSize: uiMode === 'minor' ? 14 : 12 }]}>
-              {sender.fullName ?? 'Family'}
+              {sender.fullName ?? t('profile.family')}
             </Text>
           ) : null}
 

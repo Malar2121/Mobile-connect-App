@@ -71,7 +71,7 @@ function VoiceBubbleComponent({ uri, duration, isMine }) {
 
   return (
     <View style={[styles.row, { backgroundColor: isMine ? 'rgba(255,255,255,0.12)' : 'rgba(0,0,0,0.04)' }]}>
-      <Pressable onPress={togglePlay} accessibilityLabel={playing ? 'Pause voice message' : 'Play voice message'}>
+      <Pressable onPress={togglePlay} accessibilityLabel={playing ? t('chat.pauseVoiceMessage') : t('chat.playVoiceMessage')}>
         <Ionicons name={playing ? 'pause' : 'play'} size={22} color={isMine ? '#fff' : colors.primary} />
       </Pressable>
       <View style={styles.waveform}>

@@ -27,7 +27,7 @@ export default function AlbumDetailsScreen() {
       const result = await getAlbum(id);
       setData(result);
     } catch (e) {
-      toast.error(e.message || 'Album not found');
+      toast.error(e.message || t('memories.albumNotFound'));
     } finally {
       setLoading(false);
     }
@@ -45,18 +45,18 @@ export default function AlbumDetailsScreen() {
       toast.success(t('memories.shareLinkReady'));
       if (result?.shareLink) toast.success(result.shareLink);
     } catch (e) {
-      toast.error(e.message || 'Share failed');
+      toast.error(e.message || t('memories.shareFailed'));
     }
   }, [id, toast]);
 
   const handleDelete = useCallback(async () => {
-    const ok = await dialog.confirm({ title: 'Delete album?', destructive: true, confirmLabel: 'Delete' });
+    const ok = await dialog.confirm({ title: t('memories.deleteAlbum'), destructive: true, confirmLabel: t('common.delete') });
     if (!ok) return;
     try {
       await deleteAlbum(id);
       navigation.goBack();
     } catch (e) {
-      toast.error(e.message || 'Delete failed');
+      toast.error(e.message || t('memories.deleteFailed2'));
     }
   }, [dialog, id, navigation, toast]);
 
@@ -64,7 +64,7 @@ export default function AlbumDetailsScreen() {
 
   return (
     <Screen edges={['top']}>
-      <PageHeader title={data?.album?.title ?? 'Album'} onBack={() => navigation.goBack()} />
+      <PageHeader title={data?.album?.title ?? t('memories.album')} onBack={() => navigation.goBack()} />
       <ScrollView contentContainerStyle={{ paddingBottom: 32 }}>
         <AlbumHeader album={data?.album} onShare={handleShare} canManage={isOwner} />
         {(data?.media ?? []).length === 0 ? (
@@ -77,7 +77,7 @@ export default function AlbumDetailsScreen() {
         )}
         {isOwner ? (
           <Text onPress={handleDelete} style={{ color: '#EF4444', marginTop: 24, textAlign: 'center' }}>
-            Delete album
+            {t('memories.deleteAlbum2')}
           </Text>
         ) : null}
       </ScrollView>

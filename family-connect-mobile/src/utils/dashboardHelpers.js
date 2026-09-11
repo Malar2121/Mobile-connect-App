@@ -2,6 +2,7 @@ import { filterNotificationsForMode, formatNotificationTime, getNotificationIcon
 import { getMyRsvpStatus } from './eventFormat';
 import { getUploader, getLikeCount } from './memoryHelpers';
 import { getReadByIds, getSenderId } from './chatHelpers';
+import { translate } from '../i18n';
 
 export function getGreeting(t) {
   const hour = new Date().getHours();
@@ -89,11 +90,11 @@ export function isSameDay(a, b) {
 
 export function inferEventCategory(title = '') {
   const t = title.toLowerCase();
-  if (t.includes('birthday')) return { label: 'Birthday', color: 'warm' };
-  if (t.includes('dinner') || t.includes('lunch') || t.includes('meal')) return { label: 'Meal', color: 'sunset' };
-  if (t.includes('trip') || t.includes('travel') || t.includes('vacation')) return { label: 'Trip', color: 'cool' };
-  if (t.includes('anniversary')) return { label: 'Anniversary', color: 'warm' };
-  return { label: 'Gathering', color: 'mint' };
+  if (t.includes('birthday')) return { label: translate('dash.birthday'), color: 'warm' };
+  if (t.includes('dinner') || t.includes('lunch') || t.includes('meal')) return { label: translate('dash.meal'), color: 'sunset' };
+  if (t.includes('trip') || t.includes('travel') || t.includes('vacation')) return { label: translate('dash.trip'), color: 'cool' };
+  if (t.includes('anniversary')) return { label: translate('celebrations.anniversary'), color: 'warm' };
+  return { label: translate('dash.gathering'), color: 'mint' };
 }
 
 export function getEventCountdown(event) {
@@ -122,10 +123,10 @@ export function getEventCountdown(event) {
         }
       }
     }
-    return 'Today';
+    return translate('dates.today');
   }
-  if (dayDiff === 1) return 'Tomorrow';
-  if (dayDiff > 1 && dayDiff <= 7) return `${dayDiff} days`;
+  if (dayDiff === 1) return translate('dates.tomorrow');
+  if (dayDiff > 1 && dayDiff <= 7) return translate('dash.daydiffDays', { dayDiff });
   return null;
 }
 
@@ -194,7 +195,7 @@ export function buildActivityFeed(notifications, memories, members, uiMode) {
     items.push({
       id: `n-${n._id}`,
       type: n.type,
-      title: n.title || 'Family update',
+      title: n.title || translate('dash.familyUpdate'),
       body: n.body,
       time: formatNotificationTime(n.createdAt),
       timestamp: new Date(n.createdAt).getTime(),
@@ -209,8 +210,8 @@ export function buildActivityFeed(notifications, memories, members, uiMode) {
     items.push({
       id: `m-${m._id}`,
       type: 'memory_uploaded',
-      title: `${uploader.fullName ?? 'Someone'} shared a memory`,
-      body: m.caption || (m.mediaType === 'video' ? 'New video' : 'New photo'),
+      title: translate('dash.nameSharedAMemory', { name: uploader.fullName ?? translate('dash.someone') }),
+      body: m.caption || (m.mediaType === 'video' ? translate('dash.newVideo') : translate('dash.newPhoto')),
       time: formatNotificationTime(m.createdAt),
       timestamp: new Date(m.createdAt).getTime(),
       icon: 'images-outline',

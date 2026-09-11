@@ -4,13 +4,13 @@ import { BlurView } from 'expo-blur';
 import { Ionicons } from '@expo/vector-icons';
 import { chatTypography } from '../../constants/chatTheme';
 import { useTheme } from '../../hooks/useTheme';
-import { useI18n } from '../../i18n';
+import { useI18n, translate } from '../../i18n';
 
 const OPTIONS = [
   { id: 'gallery', icon: 'images-outline', label: t('chat.photoVideo'), color: '#8B5CF6' },
-  { id: 'camera', icon: 'camera-outline', label: 'Camera', color: '#EC4899' },
-  { id: 'document', icon: 'document-outline', label: 'Document', color: '#3B82F6' },
-  { id: 'gif', icon: 'happy-outline', label: 'GIF', color: '#F59E0B' },
+  { id: 'camera', icon: 'camera-outline', get label() { return translate('chat.camera'); }, color: '#EC4899' },
+  { id: 'document', icon: 'document-outline', get label() { return translate('chat.document'); }, color: '#3B82F6' },
+  { id: 'gif', icon: 'happy-outline', get label() { return translate('chat.gif'); }, color: '#F59E0B' },
 ];
 
 export function ChatAttachmentSheet({ visible, onClose, onSelect }) {

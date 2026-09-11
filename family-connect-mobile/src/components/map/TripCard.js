@@ -4,9 +4,11 @@ import { Ionicons } from '@expo/vector-icons';
 import { Card } from '../../design-system';
 import { formatDistance } from '../../utils/mapModuleHelpers';
 import { useTheme } from '../../hooks/useTheme';
+import { useI18n } from '../../i18n';
 
 function TripCardComponent({ trip, onPress }) {
   const { colors, layout, radii } = useTheme();
+  const { t } = useI18n();
   if (!trip) return null;
 
   return (
@@ -18,10 +20,10 @@ function TripCardComponent({ trip, onPress }) {
           </View>
           <View style={{ flex: 1, marginLeft: 12 }}>
             <Text style={{ color: colors.text, fontFamily: 'Inter_600SemiBold', fontSize: 15 * layout.fontScale }}>
-              {formatDistance(trip.distanceKm)} · {trip.durationMin ?? 0} min
+              {formatDistance(trip.distanceKm)} · {t('map.minutesValue', { count: trip.durationMin ?? 0 })}
             </Text>
             <Text style={{ color: colors.textSecondary, fontSize: 13, marginTop: 4 }}>
-              Avg {trip.avgSpeedKmh ?? 0} km/h · {new Date(trip.startedAt).toLocaleString()}
+              {t('map.avgSpeed', { speed: trip.avgSpeedKmh ?? 0 })} · {new Date(trip.startedAt).toLocaleString()}
             </Text>
           </View>
           <Ionicons name="chevron-forward" size={18} color={colors.textTertiary} />

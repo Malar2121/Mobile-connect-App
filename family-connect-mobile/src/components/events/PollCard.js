@@ -3,6 +3,7 @@ import { StyleSheet, Text, View } from 'react-native';
 import { Card } from '../../design-system';
 import { PollOption } from './PollOption';
 import { useTheme } from '../../hooks/useTheme';
+import { useI18n } from '../../i18n';
 
 const REASON_TEXT = {
   no_responses_yet: 'No one has voted yet — this is just the earliest option.',
@@ -20,6 +21,7 @@ const CONFIDENCE_TEXT = {
 };
 
 function PollCardComponent({ poll, results, suggestion, suggestionReason, onVote, onClose, canManage, voting }) {
+  const { t } = useI18n();
   const { colors, layout, radii } = useTheme();
   if (!poll) return null;
 
@@ -36,14 +38,14 @@ function PollCardComponent({ poll, results, suggestion, suggestionReason, onVote
         </Text>
         {poll.isClosed ? (
           <View style={[styles.badge, { backgroundColor: colors.surfaceSecondary, borderRadius: radii.full }]}>
-            <Text style={{ color: colors.textSecondary, fontSize: 11 }}>Closed</Text>
+            <Text style={{ color: colors.textSecondary, fontSize: 11 }}>{t('events.closed')}</Text>
           </View>
         ) : null}
       </View>
 
       {poll.deadline ? (
         <Text style={{ color: colors.textTertiary, fontSize: 12, marginTop: 4 }}>
-          Deadline: {new Date(poll.deadline).toLocaleString()}
+          {t('events.deadlineValue', { date: new Date(poll.deadline).toLocaleString() })}
         </Text>
       ) : null}
 
@@ -65,11 +67,11 @@ function PollCardComponent({ poll, results, suggestion, suggestionReason, onVote
       {winning ? (
         <View style={[styles.winner, { backgroundColor: colors.success + '18', borderRadius: radii.lg }]}>
           <Text style={{ color: colors.success, fontFamily: 'Inter_600SemiBold', fontSize: 14 * layout.fontScale }}>
-            {poll.isClosed ? 'Chosen slot' : 'Suggested date'}: {winning.label || new Date(winning.dateTime).toDateString()}
+            {poll.isClosed ? t('events.chosenSlot') : t('events.suggestedDate')}: {winning.label || new Date(winning.dateTime).toDateString()}
           </Text>
           <Text style={{ color: colors.textSecondary, fontSize: 12.5 * layout.fontScale, marginTop: 4 }}>
-            {winning.availabilityScore}% of the family available
-            {winning.blockers > 0 ? ` · ${winning.blockers} can't make it` : ''}
+            {t('events.familyAvailablePercent', { percent: winning.availabilityScore })}
+            {winning.blockers > 0 ? t('events.blockersCanTMakeIt', { blockers: winning.blockers }) : ''}
           </Text>
           <Text style={{ color: colors.textTertiary, fontSize: 11.5 * layout.fontScale, marginTop: 3 }}>
             {REASON_TEXT[suggestionReason] ?? ''} {CONFIDENCE_TEXT[winning.confidence] ?? ''}
@@ -83,7 +85,7 @@ function PollCardComponent({ poll, results, suggestion, suggestionReason, onVote
           style={{ color: colors.primary, fontFamily: 'Inter_600SemiBold', marginTop: 14, fontSize: 14 }}
           accessibilityRole="button"
         >
-          Close poll & pick winner
+          {t('events.closePollPickWinner')}
         </Text>
       ) : null}
     </Card>

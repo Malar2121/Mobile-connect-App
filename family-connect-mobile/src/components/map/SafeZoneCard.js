@@ -3,8 +3,10 @@ import { Pressable, StyleSheet, Text, View } from 'react-native';
 import { Ionicons } from '@expo/vector-icons';
 import { Card } from '../../design-system';
 import { useTheme } from '../../hooks/useTheme';
+import { useI18n } from '../../i18n';
 
 function SafeZoneCardComponent({ zone, onPress, onDelete }) {
+  const { t } = useI18n();
   const { colors, layout, radii } = useTheme();
 
   return (
@@ -17,7 +19,7 @@ function SafeZoneCardComponent({ zone, onPress, onDelete }) {
           <View style={{ flex: 1, marginLeft: 12 }}>
             <Text style={{ color: colors.text, fontFamily: 'Inter_600SemiBold', fontSize: 16 * layout.fontScale }}>{zone.label}</Text>
             <Text style={{ color: colors.textSecondary, fontSize: 13, marginTop: 4 }}>
-              {zone.radiusM ?? 200}m radius · {zone.notifyEnter !== false ? 'Enter alerts' : 'No enter'} · {zone.notifyExit !== false ? 'Exit alerts' : 'No exit'}
+              {t('map.radiusMeters', { meters: zone.radiusM ?? 200 })} · {zone.notifyEnter !== false ? t('map.enterAlerts') : t('map.noEnter')} · {zone.notifyExit !== false ? t('map.exitAlerts') : t('map.noExit')}
             </Text>
           </View>
           {onDelete ? (

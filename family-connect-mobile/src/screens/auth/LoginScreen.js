@@ -34,7 +34,7 @@ export default function LoginScreen({ navigation }) {
         navigation.navigate('TwoFactorAuth', { tempToken: result.tempToken });
       }
     } catch (e) {
-      setError(e?.message || 'Login failed. Please try again.');
+      setError(e?.message || t('auth.loginFailedPleaseTryAgain'));
     } finally {
       setLoading(false);
     }

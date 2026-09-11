@@ -4,8 +4,10 @@ import { LinearGradient } from 'expo-linear-gradient';
 import { Ionicons } from '@expo/vector-icons';
 import { chatGradients, chatTypography } from '../../constants/chatTheme';
 import { useTheme } from '../../hooks/useTheme';
+import { useI18n } from '../../i18n';
 
 export function ChatEmptyState() {
+  const { t } = useI18n();
   const { colors, isDark } = useTheme();
 
   return (
@@ -19,10 +21,10 @@ export function ChatEmptyState() {
         <Ionicons name="chatbubbles" size={32} color="#fff" />
       </LinearGradient>
       <Text style={[styles.title, { color: colors.text, fontFamily: chatTypography.fontFamilyBold }]}>
-        Start the conversation
+        {t('chat.startTheConversation')}
       </Text>
       <Text style={[styles.subtitle, { color: colors.textSecondary, fontFamily: chatTypography.fontFamilyRegular }]}>
-        Say hello to your family. Share photos, voice notes, and memories together.
+        {t('chat.sayHelloToYourFamilyShare')}
       </Text>
     </View>
   );

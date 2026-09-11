@@ -19,9 +19,16 @@ import { formatNotificationTime, getNotificationIcon } from '../../utils/notific
 import { useTheme } from '../../hooks/useTheme';
 import { useResponsive, Button, useToast } from '../../design-system';
 import { updateMemberRole, updateMemberType } from '../../services/familyService';
-import { useI18n } from '../../i18n';
+import { translate, useI18n } from '../../i18n';
 
-const MEMBER_TYPE_LABEL = { adult: 'Adult', child: 'Child', elder: 'Elder' };
+const MEMBER_TYPE_LABEL = {
+  get adult() { return translate('auth.memberAdult'); },
+  get child() { return translate('auth.memberChild'); },
+  get elder() { return translate('auth.memberElder'); },
+};
+
+const ROLE_NAMES = ['owner', 'admin', 'parent', 'member', 'child', 'guest'];
+const roleName = (t, role) => (ROLE_NAMES.includes(role) ? t(`family.roleNames.${role}`) : role);
 
 export default function MemberProfileScreen() {
   const navigation = useNavigation();
@@ -66,7 +73,7 @@ export default function MemberProfileScreen() {
   if (loading && !member) {
     return (
       <Screen edges={['top']}>
-        <PageHeader title="Member" onBack={() => navigation.goBack()} />
+        <PageHeader title={t('common.member')} onBack={() => navigation.goBack()} />
         <Loader />
       </Screen>
     );
@@ -75,7 +82,7 @@ export default function MemberProfileScreen() {
   if (!member) {
     return (
       <Screen edges={['top']}>
-        <PageHeader title="Member" onBack={() => navigation.goBack()} />
+        <PageHeader title={t('common.member')} onBack={() => navigation.goBack()} />
         <Text style={{ color: colors.textSecondary, padding: horizontalPadding }}>{t('family.memberNotFound')}</Text>
       </Screen>
     );
@@ -84,7 +91,7 @@ export default function MemberProfileScreen() {
   const online = isMemberOnline(member.lastSeen, member.location?.updatedAt);
   const joinedDate = member.joinedAt
     ? new Date(member.joinedAt).toLocaleDateString(undefined, { month: 'long', day: 'numeric', year: 'numeric' })
-    : 'Unknown';
+    : t('family.unknown');
 
   return (
     <Screen edges={['top']}>
@@ -97,21 +104,21 @@ export default function MemberProfileScreen() {
             <RoleBadge role={member.displayRole} />
           </View>
           <Text style={{ color: colors.textSecondary, fontSize: 14 * layout.fontScale, marginTop: 10 }}>
-            {online ? 'Online now' : `Last active ${formatLastActive(member.lastSeen)}`}
+            {online ? t('dashboard.onlineNow') : t('family.lastActiveValue', { value: formatLastActive(member.lastSeen) })}
           </Text>
           <Text style={{ color: colors.textTertiary, fontSize: 13 * layout.fontScale, marginTop: 4 }}>
-            Joined {joinedDate}
+            {t('family.joinedDate', { date: joinedDate })}
           </Text>
         </View>
 
         <View style={styles.stats}>
-          <StatCard label="Participation" value={stats?.participation ?? 0} gradientKey="primary" />
-          <StatCard label="Memories" value={stats?.memoriesShared ?? 0} gradientKey="warm" />
-          <StatCard label="Events" value={stats?.eventsAttended ?? 0} gradientKey="cool" />
+          <StatCard label={t('family.participation')} value={stats?.participation ?? 0} gradientKey="primary" />
+          <StatCard label={t('tabs.memories')} value={stats?.memoriesShared ?? 0} gradientKey="warm" />
+          <StatCard label={t('tabs.events')} value={stats?.eventsAttended ?? 0} gradientKey="cool" />
         </View>
 
         <View >
-          <SectionTitle title={t('family.sharedMemories')} subtitle={`${memberMemories.length} recent uploads`} />
+          <SectionTitle title={t('family.sharedMemories')} subtitle={t('family.countRecentUploads', { count: memberMemories.length })} />
           {memberMemories.length === 0 ? (
             <Card>
               <Text style={{ color: colors.textSecondary }}>{t('family.noSharedMemories')}</Text>
@@ -120,7 +127,7 @@ export default function MemberProfileScreen() {
             memberMemories.map((m) => (
               <Card key={m._id} style={{ marginBottom: 8 }}>
                 <Text style={{ color: colors.text, fontFamily: 'Inter_600SemiBold' }} numberOfLines={2}>
-                  {m.caption || 'Memory upload'}
+                  {m.caption || t('family.memoryUpload')}
                 </Text>
                 <Text style={{ color: colors.textTertiary, fontSize: 12, marginTop: 4 }}>
                   {new Date(m.createdAt).toLocaleDateString()}
@@ -140,30 +147,30 @@ export default function MemberProfileScreen() {
             ))
           )}
 
-          <SectionTitle title="Privacy" subtitle={t('family.visibilitySettings')} style={{ marginTop: 20 }} />
+          <SectionTitle title={t('family.privacy')} subtitle={t('family.visibilitySettings')} style={{ marginTop: 20 }} />
           <Card>
-            <PrivacyRow icon="location-outline" label={t('family.locationSharing')} value={member.hasLocation ? 'Enabled' : 'Not shared'} colors={colors} layout={layout} />
-            <PrivacyRow icon="images-outline" label={t('family.albumContributions')} value={`${stats?.memoriesShared ?? 0} albums`} colors={colors} layout={layout} />
-            <PrivacyRow icon="chatbubble-outline" label="Chat" value="Family chat enabled" colors={colors} layout={layout} />
+            <PrivacyRow icon="location-outline" label={t('family.locationSharing')} value={member.hasLocation ? t('family.enabled') : t('family.notShared')} colors={colors} layout={layout} />
+            <PrivacyRow icon="images-outline" label={t('family.albumContributions')} value={t('family.albumCount', { count: stats?.memoriesShared ?? 0 })} colors={colors} layout={layout} />
+            <PrivacyRow icon="chatbubble-outline" label={t('tabs.chat')} value={t('family.familyChatEnabled')} colors={colors} layout={layout} />
           </Card>
 
           {canManage && (
             <>
-              <SectionTitle title="Administration" subtitle={t('family.manageRole')} style={{ marginTop: 20 }} />
+              <SectionTitle title={t('family.administration')} subtitle={t('family.manageRole')} style={{ marginTop: 20 }} />
               <Card>
                 <Text style={{ color: colors.textSecondary, fontSize: 13 * layout.fontScale, marginBottom: 8 }}>
-                  Current Role: {member.displayRole}
+                  {t('family.currentRole', { role: roleName(t, member.displayRole) })}
                 </Text>
                 <View style={{ flexDirection: 'row', gap: 8, flexWrap: 'wrap' }}>
                   {['admin', 'parent', 'member', 'child', 'guest'].map(r => (
                     <Button 
                       key={r}
-                      title={r.charAt(0).toUpperCase() + r.slice(1)} 
+                      title={roleName(t, r)}
                       variant={member.displayRole === r ? 'primary' : 'secondary'} 
                       onPress={async () => {
                         try {
                           await updateMemberRole(memberId, r);
-                          toast.success(`Role updated to ${r}`);
+                          toast.success(t('family.roleUpdated', { role: roleName(t, r) }));
                           refresh();
                         } catch(e) {
                           toast.error(e.message);
@@ -181,7 +188,7 @@ export default function MemberProfileScreen() {
               />
               <Card>
                 <Text style={{ color: colors.textSecondary, fontSize: 13 * layout.fontScale, marginBottom: 8 }}>
-                  Current type: {MEMBER_TYPE_LABEL[member.memberType] ?? 'Adult'}
+                  {t('family.currentType', { type: MEMBER_TYPE_LABEL[member.memberType] ?? t('auth.memberAdult') })}
                 </Text>
                 <View style={{ flexDirection: 'row', gap: 8, flexWrap: 'wrap' }}>
                   {['adult', 'child', 'elder'].map((type) => (
@@ -192,7 +199,7 @@ export default function MemberProfileScreen() {
                       onPress={async () => {
                         try {
                           await updateMemberType(memberId, type);
-                          toast.success(`Member type updated to ${MEMBER_TYPE_LABEL[type]}`);
+                          toast.success(t('family.memberTypeUpdatedToType', { type: MEMBER_TYPE_LABEL[type] }));
                           refresh();
                         } catch (e) {
                           toast.error(e.message);

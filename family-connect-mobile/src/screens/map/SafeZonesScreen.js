@@ -25,14 +25,14 @@ export default function SafeZonesScreen() {
   const addZone = useCallback(
     async (preset) => {
       if (!myLocation) {
-        Alert.alert(t('map.locationNeeded'), 'Share your location first to place a zone at your position.');
+        Alert.alert(t('map.locationNeeded'), t('map.shareYourLocationFirstToPlace'));
         return;
       }
       setSaving(true);
       try {
         await addSafeZone(preset, { latitude: myLocation.latitude, longitude: myLocation.longitude });
       } catch (e) {
-        Alert.alert(t('map.addZoneFailed'), e.message || 'Please try again.');
+        Alert.alert(t('map.addZoneFailed'), e.message || t('map.pleaseTryAgain'));
       } finally {
         setSaving(false);
       }
@@ -45,7 +45,7 @@ export default function SafeZonesScreen() {
       try {
         await removeSafeZone(zone);
       } catch (e) {
-        Alert.alert(t('map.deleteZoneFailed'), e.message || 'Please try again.');
+        Alert.alert(t('map.deleteZoneFailed'), e.message || t('map.pleaseTryAgain'));
       }
     },
     [removeSafeZone],
@@ -57,29 +57,29 @@ export default function SafeZonesScreen() {
 
       <ScrollView contentContainerStyle={{ paddingBottom: 40 }}>
         <Text style={{ color: colors.textSecondary, fontSize: 14 * layout.fontScale, marginBottom: 16, lineHeight: 22 }}>
-          Zones are saved for the whole family. Everyone gets an alert when a child or elder enters or leaves a zone.
+          {t('map.zonesAreSavedForTheWhole')}
         </Text>
 
         {canManage ? (
           <>
             <SectionTitle title={t('map.addZoneHere')} />
             {ZONE_PRESETS.map((p) => (
-              <Button key={p.id} title={`Add ${p.label}`} onPress={() => addZone(p)} loading={saving} variant="secondary" style={{ marginBottom: 8 }} />
+              <Button key={p.id} title={t('map.addLabel', { label: p.label })} onPress={() => addZone(p)} loading={saving} variant="secondary" style={{ marginBottom: 8 }} />
             ))}
           </>
         ) : (
           <Card style={{ marginBottom: 16 }}>
             <Text style={{ color: colors.textSecondary, fontSize: 13 * layout.fontScale }}>
-              Only parents and admins can add or remove safe zones.
+              {t('map.onlyParentsAndAdminsCanAdd')}
             </Text>
           </Card>
         )}
 
-        <SectionTitle title={t('map.familyZones')} subtitle={`${safeZones.length} configured`} />
+        <SectionTitle title={t('map.familyZones')} subtitle={t('map.countConfigured', { count: safeZones.length })} />
         {safeZones.length === 0 ? (
           <Card>
             <Text style={{ color: colors.textSecondary, fontSize: 13 * layout.fontScale }}>
-              No safe zones yet. Add one at your current position.
+              {t('map.noSafeZonesYetAddOne')}
             </Text>
           </Card>
         ) : null}
@@ -98,7 +98,7 @@ export default function SafeZonesScreen() {
             {zoneAlerts.map((a) => (
               <Card key={a.id} style={{ marginBottom: 8 }}>
                 <Text style={{ color: colors.text, fontWeight: '700', fontSize: 14 * layout.fontScale }}>
-                  {a.fullName} {a.action === 'enter' ? 'arrived at' : 'left'} {a.zoneName}
+                  {t(a.action === 'enter' ? 'map.zoneArrived' : 'map.zoneLeft', { name: a.fullName, zone: a.zoneName })}
                 </Text>
                 <Text style={{ color: colors.textSecondary, fontSize: 12 * layout.fontScale, marginTop: 2 }}>
                   {new Date(a.createdAt).toLocaleTimeString()}

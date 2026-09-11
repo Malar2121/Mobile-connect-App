@@ -4,17 +4,19 @@ import { Ionicons } from '@expo/vector-icons';
 import { chatTypography } from '../../constants/chatTheme';
 import { useTheme } from '../../hooks/useTheme';
 import { getSender } from '../../utils/chatHelpers';
+import { useI18n } from '../../i18n';
 
 export function ChatPinnedBar({ message, editedTexts, onPress, onUnpin }) {
+  const { t } = useI18n();
   const { colors, isDark } = useTheme();
   if (!message) return null;
 
   const text = editedTexts?.[String(message._id)] ?? message.text ?? '';
-  const sender = getSender(message).fullName ?? 'Family';
+  const sender = getSender(message).fullName ?? t('profile.family');
   const preview = message.mediaUrl
     ? message.mediaType === 'video'
-      ? '📹 Video'
-      : '🖼️ Photo'
+      ? t('chat.video')
+      : t('chat.photo')
     : text;
 
   return (
@@ -31,7 +33,7 @@ export function ChatPinnedBar({ message, editedTexts, onPress, onUnpin }) {
       <View style={[styles.accent, { backgroundColor: colors.primary }]} />
       <View style={styles.content}>
         <Text style={[styles.label, { color: colors.primary, fontFamily: chatTypography.fontFamilySemi }]}>
-          Pinned message
+          {t('chat.pinnedMessage')}
         </Text>
         <Text style={[styles.preview, { color: colors.text }]} numberOfLines={1}>
           {sender}: {preview}

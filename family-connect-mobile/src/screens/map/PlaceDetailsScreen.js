@@ -33,7 +33,7 @@ export default function PlaceDetailsScreen() {
         action,
         locationName: zone.label || 'Safe zone',
       });
-      toast.success(`Simulated ${action} webhook`);
+      toast.success(t('map.testAlertSent'));
     } catch (err) {
       toast.error(t('map.testAlertFailed'));
     } finally {
@@ -43,11 +43,11 @@ export default function PlaceDetailsScreen() {
 
   return (
     <Screen edges={['top']}>
-      <PageHeader title={zone?.label ?? 'Place'} subtitle={t('map.zoneDetails')} onBack={() => navigation.goBack()} />
+      <PageHeader title={zone?.label ?? t('map.place')} subtitle={t('map.zoneDetails')} onBack={() => navigation.goBack()} />
       <ScrollView contentContainerStyle={{ paddingBottom: 40 }}>
         {zone ? <SafeZoneCard zone={zone} /> : null}
         <Text style={{ color: colors.textSecondary, fontSize: 14 * layout.fontScale, lineHeight: 22, marginTop: 16 }}>
-          Coordinates: {zone?.latitude?.toFixed(5)}, {zone?.longitude?.toFixed(5)}
+          {t('map.coordinatesValue', { lat: zone?.latitude?.toFixed(5) ?? '—', lng: zone?.longitude?.toFixed(5) ?? '—' })}
         </Text>
         
         <View style={{ marginTop: 24 }}>

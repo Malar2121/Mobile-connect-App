@@ -1,13 +1,13 @@
 import React, { memo } from 'react';
 import { StyleSheet, Text, View } from 'react-native';
 import { useTheme } from '../../hooks/useTheme';
-import { useI18n } from '../../i18n';
+import { useI18n, translate } from '../../i18n';
 
 const LEGEND = [
-  { color: '#6366F1', label: 'Parent' },
-  { color: '#EC4899', label: 'Spouse' },
-  { color: '#10B981', label: 'Child' },
-  { color: '#F59E0B', label: 'Sibling' },
+  { color: '#6366F1', get label() { return translate('tree.parent'); } },
+  { color: '#EC4899', get label() { return translate('tree.spouse'); } },
+  { color: '#10B981', get label() { return translate('auth.memberChild'); } },
+  { color: '#F59E0B', get label() { return translate('tree.sibling'); } },
 ];
 
 function TreeLegendComponent() {

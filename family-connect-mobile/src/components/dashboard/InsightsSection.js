@@ -53,6 +53,7 @@ function InsightTile({ label, value, sub, colors, layout, radii, children }) {
 }
 
 function WeeklyGraph({ days, colors, radii }) {
+  const { t } = useI18n();
   return (
     <View
       style={[
@@ -65,11 +66,11 @@ function WeeklyGraph({ days, colors, radii }) {
       ]}
     >
       <Text style={{ color: colors.textSecondary, fontSize: 12, marginBottom: 12, fontFamily: 'Inter_600SemiBold' }}>
-        Weekly activity
+        {t('dash.weeklyActivity')}
       </Text>
       <View style={styles.bars}>
         {days.map((d) => (
-          <View key={d.key} style={styles.barCol} accessibilityLabel={`${d.label}, ${d.count} activities`}>
+          <View key={d.key} style={styles.barCol} accessibilityLabel={t('dash.labelCountActivities', { label: d.label, count: d.count })}>
             <View style={[styles.barTrack, { backgroundColor: colors.border }]}>
               <View
                 style={[

@@ -78,7 +78,7 @@ function RelationshipEditorComponent({
       ) || selectedRelId ? (
         <View style={{ marginTop: 16 }}>
           <Text style={{ color: colors.text, fontFamily: 'Inter_600SemiBold', fontSize: 15 * layout.fontScale, marginBottom: 10 }}>
-            Related to
+            {t('tree.relatedTo')}
           </Text>
           <View style={styles.grid}>
             {others.map((m) => {

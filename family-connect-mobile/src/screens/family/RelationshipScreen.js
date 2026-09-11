@@ -52,14 +52,14 @@ export default function RelationshipScreen() {
       };
       await updateMemberRelationship(payload);
       await refresh();
-      toast.success(`Relationship updated for ${selectedMember.fullName}`);
+      toast.success(t('family.relationshipUpdatedForFullname', { fullName: selectedMember.fullName }));
     } catch (e) {
       if (e.status === 404) {
         toast.error(
           t('tree.notInTree'),
         );
       } else {
-        toast.error(e.message || 'Could not update relationship');
+        toast.error(e.message || t('family.couldNotUpdateRelationship'));
       }
     } finally {
       setSaving(false);
@@ -84,7 +84,7 @@ export default function RelationshipScreen() {
                 <Text style={{ color: colors.text, fontFamily: 'Inter_600SemiBold', fontSize: 16 * layout.fontScale }}>
                   {item.fullName}
                 </Text>
-                <RelationshipBadge label={rel?.label ?? item.relationshipLabel ?? 'Family member'} compact />
+                <RelationshipBadge label={rel?.label ?? item.relationshipLabel ?? t('family.familyMember')} compact />
               </View>
               {isSelected ? <Ionicons name="checkmark-circle" size={22} color={colors.primary} /> : null}
             </View>
@@ -98,7 +98,7 @@ export default function RelationshipScreen() {
   return (
     <Screen edges={['top']}>
       <PageHeader
-        title="Relationships"
+        title={t('family.relationships')}
         subtitle={t('tree.mapConnections')}
         onBack={() => navigation.goBack()}
       />
@@ -115,8 +115,8 @@ export default function RelationshipScreen() {
             initialNumToRender={8}
             ListHeaderComponent={
               <Text style={{ color: colors.textSecondary, fontSize: 14 * layout.fontScale, marginBottom: 12 }}>
-                Select a member, then choose their relationship to the family.
-                {!canManage ? ' Only admins can edit others.' : ''}
+                {t('family.selectMemberThenRelationship')}
+                {!canManage ? ` ${t('family.onlyAdminsCanEditOthers')}` : ''}
               </Text>
             }
           />
@@ -124,7 +124,7 @@ export default function RelationshipScreen() {
           {selectedMember ? (
             <View style={[styles.panel, { backgroundColor: colors.surface, borderTopColor: colors.border, }]}>
               <Text style={{ color: colors.text, fontFamily: 'Inter_700Bold', fontSize: 16 * layout.fontScale, marginBottom: 12 }}>
-                Assign relationship for {selectedMember.fullName}
+                {t('family.assignRelationshipFor', { name: selectedMember.fullName })}
               </Text>
               <View style={styles.relGrid}>
                 {RELATIONSHIP_OPTIONS.map((opt) => {
@@ -162,7 +162,7 @@ export default function RelationshipScreen() {
 
               {!memberNode ? (
                 <Text style={{ color: colors.warning, fontSize: 12, marginTop: 10 }}>
-                  No FamilyMember tree record — save may fail until backend seeds tree nodes.
+                  {t('family.thisMemberIsNotInThe')}
                 </Text>
               ) : null}
 

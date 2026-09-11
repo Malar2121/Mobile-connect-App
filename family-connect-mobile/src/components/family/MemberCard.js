@@ -6,6 +6,7 @@ import { RelationshipBadge } from './RelationshipBadge';
 import { RoleBadge } from './RoleBadge';
 import { useTheme } from '../../hooks/useTheme';
 import { formatLastActive, isMemberOnline } from '../../utils/familyModuleHelpers';
+import { useI18n } from '../../i18n';
 
 function computeAge(dateOfBirth) {
   if (!dateOfBirth) return null;
@@ -16,6 +17,7 @@ function computeAge(dateOfBirth) {
 }
 
 function MemberCardComponent({ member, onPress, onCall, onMessage, onViewProfile }) {
+  const { t } = useI18n();
   const { colors, layout, radii } = useTheme();
   const online = isMemberOnline(member.lastSeen, member.location?.updatedAt);
   const lastActive = formatLastActive(member.lastSeen);
@@ -55,17 +57,17 @@ function MemberCardComponent({ member, onPress, onCall, onMessage, onViewProfile
             <View style={styles.meta}>
               {age != null ? (
                 <Text style={[styles.metaText, { color: colors.textSecondary, fontSize: 12 * layout.fontScale }]}>
-                  Age {age}
+                  {t('family.ageValue', { age })}
                 </Text>
               ) : null}
               <Text style={[styles.metaText, { color: colors.textSecondary, fontSize: 12 * layout.fontScale }]}>
-                {online ? 'Online now' : `Active ${lastActive}`}
+                {online ? t('dashboard.onlineNow') : t('family.activeLastactive', { lastActive })}
               </Text>
               {member.hasLocation ? (
                 <View style={styles.locRow}>
                   <Ionicons name="location-outline" size={12} color={colors.success} />
                   <Text style={{ color: colors.success, fontSize: 11 * layout.fontScale, marginLeft: 2 }}>
-                    Location shared
+                    {t('family.locationShared')}
                   </Text>
                 </View>
               ) : null}
@@ -74,9 +76,9 @@ function MemberCardComponent({ member, onPress, onCall, onMessage, onViewProfile
         </View>
 
         <View style={[styles.actions, { borderTopColor: colors.border }]}>
-          <ActionChip icon="call-outline" label="Call" onPress={() => onCall?.(member)} colors={colors} layout={layout} />
-          <ActionChip icon="chatbubble-outline" label="Message" onPress={() => onMessage?.(member)} colors={colors} layout={layout} />
-          <ActionChip icon="person-outline" label="Profile" onPress={() => onViewProfile?.(member)} colors={colors} layout={layout} />
+          <ActionChip icon="call-outline" label={t('family.call')} onPress={() => onCall?.(member)} colors={colors} layout={layout} />
+          <ActionChip icon="chatbubble-outline" label={t('family.message')} onPress={() => onMessage?.(member)} colors={colors} layout={layout} />
+          <ActionChip icon="person-outline" label={t('tabs.profile')} onPress={() => onViewProfile?.(member)} colors={colors} layout={layout} />
         </View>
       </Card>
     </Pressable>

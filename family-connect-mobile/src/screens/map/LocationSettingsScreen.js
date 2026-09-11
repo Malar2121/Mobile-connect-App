@@ -80,7 +80,7 @@ export default function LocationSettingsScreen() {
           layout={layout}
         />
         <Text style={{ color: colors.textSecondary, fontSize: 14, marginVertical: 12 }}>
-          Who can see me: {draft.visibility ?? 'family'}
+          {t('map.whoCanSeeMe', { audience: !draft.visibility || draft.visibility === 'family' ? t('map.yourFamily') : draft.visibility })}
         </Text>
 
         <SectionTitle title={t('map.locationSettings')} />

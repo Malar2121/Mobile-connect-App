@@ -2,17 +2,19 @@ import React, { memo } from 'react';
 import { Pressable, StyleSheet, Text, View } from 'react-native';
 import { Avatar } from '../../design-system';
 import { useTheme } from '../../hooks/useTheme';
+import { useI18n } from '../../i18n';
 
 const AVATAR_SIZE = 42;
 const OVERLAP = 14;
 
 function MemberAvatarStackComponent({ members, max = 6, style }) {
+  const { t } = useI18n();
   const { colors } = useTheme();
   const visible = (members ?? []).slice(0, max);
   const extra = Math.max(0, (members?.length ?? 0) - visible.length);
 
   return (
-    <View style={[styles.row, style]} accessibilityLabel={`${members?.length ?? 0} family members`}>
+    <View style={[styles.row, style]} accessibilityLabel={t('family.valueFamilyMembers', { value: members?.length ?? 0 })}>
       {visible.map((member, index) => (
         <View
           key={String(member._id ?? member.id)}

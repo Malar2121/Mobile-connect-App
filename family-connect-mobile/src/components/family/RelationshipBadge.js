@@ -1,8 +1,10 @@
 import React, { memo } from 'react';
 import { StyleSheet, Text, View } from 'react-native';
 import { useTheme } from '../../hooks/useTheme';
+import { useI18n } from '../../i18n';
 
 function RelationshipBadgeComponent({ label, compact }) {
+  const { t } = useI18n();
   const { colors, layout, radii } = useTheme();
 
   return (
@@ -16,7 +18,7 @@ function RelationshipBadgeComponent({ label, compact }) {
         },
         compact && styles.compact,
       ]}
-      accessibilityLabel={`Relationship: ${label}`}
+      accessibilityLabel={t('family.relationshipLabel', { label })}
     >
       <Text
         style={{

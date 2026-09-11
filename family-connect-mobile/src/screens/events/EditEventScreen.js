@@ -60,7 +60,7 @@ export default function EditEventScreen() {
       toast.success(t('events.updated'));
       navigation.goBack();
     } catch (e) {
-      toast.error(e.message || 'Update failed');
+      toast.error(e.message || t('events.updateFailed'));
     } finally {
       setLoading(false);
     }
@@ -69,12 +69,12 @@ export default function EditEventScreen() {
   return (
     <Screen edges={['top']} scroll>
       <PageHeader title={t('events.editEvent')} onBack={() => navigation.goBack()} />
-      <TextField label="Title" value={title} onChangeText={setTitle} />
-      <TextField label="Description" value={description} onChangeText={setDescription} multiline numberOfLines={4} />
-      <TextField label="Date" value={date} onChangeText={setDate} placeholder="YYYY-MM-DD" />
+      <TextField label={t('events.titleField')} value={title} onChangeText={setTitle} />
+      <TextField label={t('events.descriptionField')} value={description} onChangeText={setDescription} multiline numberOfLines={4} />
+      <TextField label={t('events.dateField')} value={date} onChangeText={setDate} placeholder="YYYY-MM-DD" />
       <TextField label={t('events.startTime')} value={startTime} onChangeText={setStartTime} />
       <TextField label={t('events.endTime')} value={endTime} onChangeText={setEndTime} />
-      <TextField label="Location" value={location} onChangeText={setLocation} />
+      <TextField label={t('events.locationField')} value={location} onChangeText={setLocation} />
       <TextField label={t('events.coverImage')} value={image} onChangeText={setImage} />
       <Button title={t('events.saveChanges')} onPress={handleSave} loading={loading} size="lg" style={{ marginTop: 16, marginBottom: 32 }} />
     </Screen>

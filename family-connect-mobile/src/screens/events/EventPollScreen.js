@@ -53,7 +53,7 @@ export default function EventPollScreen() {
       setPollData(fresh);
       toast.success(t('poll.voteRecorded'));
     } catch (e) {
-      toast.error(e.message || 'Vote failed');
+      toast.error(e.message || t('events.voteFailed'));
     } finally {
       setVoting(false);
     }
@@ -78,7 +78,7 @@ export default function EventPollScreen() {
       setPollData(fresh);
       toast.success(t('poll.created'));
     } catch (e) {
-      toast.error(e.message || 'Could not create poll');
+      toast.error(e.message || t('events.couldNotCreatePoll'));
     } finally {
       setCreating(false);
     }
@@ -89,9 +89,9 @@ export default function EventPollScreen() {
     // Use the server's ranked suggestion so the dialog and the card agree.
     const winner = pollData.suggestion ?? null;
     const ok = await dialog.confirm({
-      title: 'Close poll?',
-      message: winner ? `Select winning slot: ${winner.label}?` : 'Close this poll?',
-      confirmLabel: 'Close',
+      title: t('events.closePoll'),
+      message: winner ? t('events.selectWinningSlotLabel', { label: winner.label }) : t('events.closeThisPoll'),
+      confirmLabel: t('common.close'),
     });
     if (!ok) return;
     try {
@@ -99,7 +99,7 @@ export default function EventPollScreen() {
       await loadPoll();
       toast.success(t('poll.closed'));
     } catch (e) {
-      toast.error(e.message || 'Could not close poll');
+      toast.error(e.message || t('events.couldNotClosePoll'));
     }
   }, [pollData, dialog, loadPoll, toast]);
 
@@ -108,7 +108,7 @@ export default function EventPollScreen() {
       <PageHeader title={t('poll.title')} subtitle={t('poll.subtitle')} onBack={() => navigation.goBack()} />
       <ScrollView contentContainerStyle={{ paddingBottom: 32 }}>
         {loading ? (
-          <Text style={{ color: colors.textSecondary }}>Loading poll…</Text>
+          <Text style={{ color: colors.textSecondary }}>{t('events.loadingPoll')}</Text>
         ) : pollData ? (
           <PollCard
             poll={pollData.poll}

@@ -42,11 +42,11 @@ function InviteCardComponent({
         </View>
         <View style={{ flex: 1, marginLeft: 12 }}>
           <Text style={{ color: colors.text, fontFamily: 'Inter_700Bold', fontSize: 18 * layout.fontScale }}>
-            Family invite
+            {t('family.familyInvite')}
           </Text>
           <Text style={{ color: colors.textSecondary, fontSize: 13 * layout.fontScale, marginTop: 2 }}>
-            Status: {status}
-            {expiresAt ? ` · Expires ${new Date(expiresAt).toLocaleDateString()}` : ' · No expiry set'}
+            {t('family.inviteStatus', { status: status === 'active' ? t('family.statusActive') : status })}
+            {expiresAt ? t('family.expiresValue', { value: new Date(expiresAt).toLocaleDateString() }) : t('family.noExpirySet')}
           </Text>
         </View>
       </View>
@@ -56,7 +56,7 @@ function InviteCardComponent({
           onPress={copyCode}
           style={[styles.codeBox, { backgroundColor: colors.surfaceSecondary, borderRadius: radii.lg }]}
           accessibilityRole="button"
-          accessibilityLabel={`Invite code ${inviteCode}. Double tap to copy.`}
+          accessibilityLabel={t('family.inviteCodeInvitecodeDoubleTapTo', { inviteCode })}
         >
           <Text
             style={{
@@ -70,7 +70,7 @@ function InviteCardComponent({
             {inviteCode}
           </Text>
           <Text style={{ color: colors.textTertiary, fontSize: 12, textAlign: 'center', marginTop: 6 }}>
-            Tap to copy code
+            {t('family.tapToCopyCode')}
           </Text>
         </Pressable>
       ) : null}
@@ -101,8 +101,7 @@ function InviteCardComponent({
           option. Say that plainly rather than leaving it unexplained. */}
       {!expiresAt ? (
         <Text style={{ color: colors.textTertiary, fontSize: 12 * layout.fontScale, marginTop: 12 }}>
-          This code stays valid until you generate a new one. For a link that expires and works only once, send
-          an email invitation instead.
+          {t('family.thisCodeStaysValidUntilYou')}
         </Text>
       ) : null}
     </Card>

@@ -71,10 +71,10 @@ export default function JoinRequestsScreen() {
             <Ionicons name="information-circle-outline" size={28} color={colors.primary} />
           </View>
           <Text style={{ color: colors.text, fontFamily: 'Inter_700Bold', fontSize: 17 * layout.fontScale, marginTop: 14 }}>
-            Moderated joins enabled
+            {t('family.moderatedJoinsEnabled')}
           </Text>
           <Text style={{ color: colors.textSecondary, fontSize: 14 * layout.fontScale, marginTop: 8, lineHeight: 22 }}>
-            Your family uses invite codes. Members request to join and an admin must approve them.
+            {t('family.yourFamilyUsesInviteCodesMembers')}
           </Text>
         </Card>
 
@@ -82,10 +82,10 @@ export default function JoinRequestsScreen() {
           <View style={[styles.empty, { backgroundColor: colors.surfaceSecondary, borderRadius: radii.xl, borderColor: colors.border }]}>
             <Ionicons name="checkmark-circle-outline" size={40} color={colors.success} />
             <Text style={{ color: colors.text, fontFamily: 'Inter_600SemiBold', fontSize: 16 * layout.fontScale, marginTop: 12 }}>
-              No pending requests
+              {t('family.noPendingRequests')}
             </Text>
             <Text style={{ color: colors.textSecondary, textAlign: 'center', marginTop: 6, fontSize: 14 * layout.fontScale }}>
-              When someone uses your invite code, their request will appear here.
+              {t('family.whenSomeoneUsesYourInviteCode')}
             </Text>
             <Button
               title={t('family.manageInvites')}
@@ -99,18 +99,18 @@ export default function JoinRequestsScreen() {
             <Card key={req._id} style={{ marginTop: 16, flexDirection: 'row', alignItems: 'center' }}>
               <View style={{ flex: 1 }}>
                 <Text style={{ color: colors.text, fontFamily: 'Inter_600SemiBold', fontSize: 16 * layout.fontScale }}>
-                  {req.user?.fullName || req.user?.email || 'Unknown User'}
+                  {req.user?.fullName || req.user?.email || t('family.unknownUser')}
                 </Text>
                 <Text style={{ color: colors.textSecondary, fontSize: 14 * layout.fontScale, marginTop: 2 }}>
-                  Requested to join
+                  {t('family.requestedToJoin')}
                 </Text>
               </View>
               {processing === req._id ? (
                 <ActivityIndicator color={colors.primary} />
               ) : (
                 <View style={{ flexDirection: 'row', gap: 8 }}>
-                  <Button variant="secondary" title="Reject" onPress={() => handleReject(req._id)} />
-                  <Button variant="primary" title="Approve" onPress={() => handleApprove(req._id)} />
+                  <Button variant="secondary" title={t('consent.reject')} onPress={() => handleReject(req._id)} />
+                  <Button variant="primary" title={t('consent.approve')} onPress={() => handleApprove(req._id)} />
                 </View>
               )}
             </Card>

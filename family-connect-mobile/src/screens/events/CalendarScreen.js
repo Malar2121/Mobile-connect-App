@@ -79,7 +79,7 @@ export default function CalendarScreen() {
 
   return (
     <Screen edges={['top']}>
-      <PageHeader title="Calendar" subtitle={t('events.calendarViews')} onBack={() => navigation.goBack()} />
+      <PageHeader title={t('events.calendar')} subtitle={t('events.calendarViews')} onBack={() => navigation.goBack()} />
       <ScrollView contentContainerStyle={{ paddingBottom: 32 }}>
         <CalendarHeader
           month={month}

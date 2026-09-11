@@ -3,16 +3,16 @@ import { Pressable, StyleSheet, Text, View } from 'react-native';
 import { Ionicons } from '@expo/vector-icons';
 import { SectionTitle } from '../../design-system';
 import { useTheme } from '../../hooks/useTheme';
-import { useI18n } from '../../i18n';
+import { useI18n, translate } from '../../i18n';
 
 const ACTIONS = [
-  { id: 'create', label: 'Create', icon: 'add-circle-outline', screen: 'CreateEvent' },
-  { id: 'calendar', label: 'Calendar', icon: 'calendar-outline', screen: 'Calendar' },
-  { id: 'poll', label: 'Poll', icon: 'stats-chart-outline', screen: 'EventPoll', needsEvent: true },
-  { id: 'celebrations', label: 'Celebrations', icon: 'gift-outline', screen: 'Celebrations' },
-  { id: 'reminders', label: 'Reminders', icon: 'alarm-outline', screen: 'EventReminders' },
-  { id: 'history', label: 'History', icon: 'time-outline', screen: 'EventHistory' },
-  { id: 'agenda', label: 'Agenda', icon: 'list-outline', screen: 'Agenda' },
+  { id: 'create', get label() { return translate('events.create2'); }, icon: 'add-circle-outline', screen: 'CreateEvent' },
+  { id: 'calendar', get label() { return translate('events.calendar'); }, icon: 'calendar-outline', get screen() { return translate('events.calendar'); } },
+  { id: 'poll', get label() { return translate('events.poll'); }, icon: 'stats-chart-outline', screen: 'EventPoll', needsEvent: true },
+  { id: 'celebrations', get label() { return translate('elder.celebrations'); }, icon: 'gift-outline', get screen() { return translate('elder.celebrations'); } },
+  { id: 'reminders', get label() { return translate('events.reminders'); }, icon: 'alarm-outline', screen: 'EventReminders' },
+  { id: 'history', get label() { return translate('events.history2'); }, icon: 'time-outline', screen: 'EventHistory' },
+  { id: 'agenda', get label() { return translate('events.agenda'); }, icon: 'list-outline', get screen() { return translate('events.agenda'); } },
 ];
 
 function EventsQuickActionsComponent({ onNavigate, isMinor }) {

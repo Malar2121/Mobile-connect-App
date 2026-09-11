@@ -27,7 +27,7 @@ export default function SearchMemoriesScreen() {
 
   return (
     <Screen edges={['top']}>
-      <PageHeader title="Search" subtitle={t('memories.findAny')} onBack={() => navigation.goBack()} />
+      <PageHeader title={t('memories.quickSearch')} subtitle={t('memories.findAny')} onBack={() => navigation.goBack()} />
       <FlatList
         data={filtered}
         keyExtractor={(item) => String(item._id)}

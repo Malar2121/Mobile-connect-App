@@ -51,7 +51,7 @@ export default function EventAttachmentsScreen() {
         ...prev,
       ]);
     } catch (e) {
-      toast.error(e.message || 'Could not pick file');
+      toast.error(e.message || t('events.couldNotPickFile'));
     }
   }, [toast]);
 
@@ -61,7 +61,7 @@ export default function EventAttachmentsScreen() {
       await updateEvent(eventId, { attachments });
       toast.success(t('events.attachmentsSaved'));
     } catch (e) {
-      toast.error(e.message || 'Save failed');
+      toast.error(e.message || t('events.saveFailed'));
     } finally {
       setSaving(false);
     }
@@ -69,19 +69,19 @@ export default function EventAttachmentsScreen() {
 
   return (
     <Screen edges={['top']}>
-      <PageHeader title="Attachments" onBack={() => navigation.goBack()} />
+      <PageHeader title={t('events.attachments')} onBack={() => navigation.goBack()} />
       <ScrollView contentContainerStyle={{ paddingBottom: 32 }}>
         <Text style={{ color: colors.textSecondary, marginBottom: 16, fontSize: 14 * layout.fontScale }}>
-          Attach menus, tickets, or planning docs. (Note: using local URIs, true upload requires Cloudinary integration).
+          {t('events.attachMenusTicketsOrPlanningDocuments')}
         </Text>
         <Button title={t('events.addAttachment')} onPress={pickFile} />
         {attachments.map((a, i) => (
           <Card key={a._id || i} style={{ marginTop: 10 }}>
             <Text style={{ color: colors.text, fontFamily: 'Inter_600SemiBold' }}>{a.name}</Text>
-            <Text style={{ color: colors.textTertiary, fontSize: 12 }}>{a.type || 'file'}</Text>
+            <Text style={{ color: colors.textTertiary, fontSize: 12 }}>{a.type || t('events.file')}</Text>
           </Card>
         ))}
-        <Button title="Save" onPress={handleSave} loading={saving} style={{ marginTop: 16 }} />
+        <Button title={t('common.save')} onPress={handleSave} loading={saving} style={{ marginTop: 16 }} />
       </ScrollView>
     </Screen>
   );

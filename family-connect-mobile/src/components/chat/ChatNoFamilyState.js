@@ -4,23 +4,25 @@ import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import { Card } from '../Card';
 import { chatTypography } from '../../constants/chatTheme';
 import { useTheme } from '../../hooks/useTheme';
+import { useI18n } from '../../i18n';
 
 export function ChatNoFamilyState() {
+  const { t } = useI18n();
   const { colors, layout } = useTheme();
   const insets = useSafeAreaInsets();
 
   return (
     <View style={[styles.wrap, { backgroundColor: colors.background, paddingTop: insets.top + 24 }]}>
       <Text style={[styles.title, { color: colors.text, fontFamily: chatTypography.fontFamilyBold }]}>
-        Family Chat
+        {t('chat.familyChat2')}
       </Text>
       <View style={{ padding: layout.sectionGap, flex: 1, justifyContent: 'center' }}>
         <Card>
           <Text style={{ color: colors.text, fontWeight: '700', fontSize: 16 }}>
-            Join a family to start chatting
+            {t('chat.joinAFamilyToStartChatting')}
           </Text>
           <Text style={{ color: colors.textSecondary, marginTop: 8, lineHeight: 22 }}>
-            Create or join a family from your Profile to message everyone with a beautiful shared space.
+            {t('chat.createOrJoinAFamilyFrom')}
           </Text>
         </Card>
       </View>

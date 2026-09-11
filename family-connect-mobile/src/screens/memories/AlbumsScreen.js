@@ -32,7 +32,7 @@ export default function AlbumsScreen() {
       await refresh();
       toast.success(t('memories.albumCreated'));
     } catch (e) {
-      toast.error(e.message || 'Could not create album');
+      toast.error(e.message || t('memories.couldNotCreateAlbum'));
     } finally {
       setCreating(false);
     }
@@ -40,7 +40,7 @@ export default function AlbumsScreen() {
 
   return (
     <Screen edges={['top']}>
-      <PageHeader title="Albums" subtitle={`${albums.length} collections`} onBack={() => navigation.goBack()} />
+      <PageHeader title={t('memories.albums')} subtitle={t('memories.collections', { count: albums.length })} onBack={() => navigation.goBack()} />
       {showForm && !isMinor ? (
         <View style={{ marginBottom: 12 }}>
           <TextField label={t('memories.albumTitle')} value={title} onChangeText={setTitle} placeholder={t('memories.albumExample')} />

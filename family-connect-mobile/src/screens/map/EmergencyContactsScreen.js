@@ -31,15 +31,15 @@ export default function EmergencyContactsScreen() {
 
       <ScrollView contentContainerStyle={{ paddingBottom: 40 }} keyboardShouldPersistTaps="handled">
         <Text style={{ color: colors.textSecondary, fontSize: 14 * layout.fontScale, marginBottom: 16, lineHeight: 22 }}>
-          Stored on device until a family emergency contacts API is available.
+          {t('map.emergencyContactsAreSavedOnThis')}
         </Text>
 
         <SectionTitle title={t('map.addContact')} />
-        <TextField value={name} onChangeText={setName} placeholder="Name" />
+        <TextField value={name} onChangeText={setName} placeholder={t('auth.name')} />
         <TextField value={phone} onChangeText={setPhone} placeholder={t('map.phoneNumber')} keyboardType="phone-pad" style={{ marginTop: 10 }} />
         <Button title={t('map.saveContact')} onPress={addContact} style={{ marginTop: 14 }} />
 
-        <SectionTitle title="Contacts" subtitle={`${emergencyContacts.length} saved`} />
+        <SectionTitle title={t('map.contacts')} subtitle={t('map.countSaved', { count: emergencyContacts.length })} />
         {emergencyContacts.map((c) => (
           <View key={c.id} style={{ paddingVertical: 12, borderBottomWidth: 1, borderBottomColor: colors.border }}>
             <Text style={{ color: colors.text, fontFamily: 'Inter_600SemiBold' }}>{c.name}</Text>

@@ -2,8 +2,10 @@ import React, { memo } from 'react';
 import { Pressable, StyleSheet, Text, View } from 'react-native';
 import { Ionicons } from '@expo/vector-icons';
 import { useTheme } from '../../hooks/useTheme';
+import { useI18n } from '../../i18n';
 
 function MemoryMapCardComponent({ memory, locationLabel, onPress }) {
+  const { t } = useI18n();
   const { colors, layout, radii } = useTheme();
 
   return (
@@ -16,9 +18,9 @@ function MemoryMapCardComponent({ memory, locationLabel, onPress }) {
       </View>
       <View style={{ flex: 1, marginLeft: 12 }}>
         <Text style={{ color: colors.text, fontFamily: 'Inter_600SemiBold' }} numberOfLines={1}>
-          {memory.caption || 'Memory'}
+          {memory.caption || t('memories.memory')}
         </Text>
-        <Text style={{ color: colors.textSecondary, fontSize: 12, marginTop: 2 }}>{locationLabel || 'Location'}</Text>
+        <Text style={{ color: colors.textSecondary, fontSize: 12, marginTop: 2 }}>{locationLabel || t('events.locationField')}</Text>
       </View>
       <Ionicons name="chevron-forward" size={18} color={colors.textTertiary} />
     </Pressable>

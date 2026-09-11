@@ -44,8 +44,8 @@ export default function HeritageTimelineScreen() {
                 item={{
                   id: 'empty',
                   type: 'memory',
-                  title: 'Your timeline will grow',
-                  body: 'Add events, memories, and legacy profiles to build family history.',
+                  title: t('tree.yourTimelineWillGrow'),
+                  body: t('tree.addEventsMemoriesAndLegacyProfiles'),
                   icon: 'time-outline',
                 }}
               />

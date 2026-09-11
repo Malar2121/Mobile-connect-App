@@ -1,5 +1,6 @@
 import React, { useEffect } from 'react';
 import { StyleSheet, Text, View } from 'react-native';
+import { useI18n } from '../../i18n';
 import Animated, {
   useAnimatedStyle,
   useSharedValue,
@@ -35,6 +36,7 @@ function Dot({ delay, color }) {
 
 export function ChatTypingIndicator({ name }) {
   const { colors } = useTheme();
+  const { t } = useI18n();
   if (!name) return null;
 
   return (
@@ -51,7 +53,7 @@ export function ChatTypingIndicator({ name }) {
             { color: colors.textSecondary, fontFamily: chatTypography.fontFamilyRegular },
           ]}
         >
-          {name} is typing…
+          {t('chat.nameIsTyping', { name })}
         </Text>
       </View>
     </View>

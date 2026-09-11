@@ -3,8 +3,10 @@ import { Pressable, StyleSheet, Text, View } from 'react-native';
 import { Ionicons } from '@expo/vector-icons';
 import { Avatar, Card } from '../../design-system';
 import { useTheme } from '../../hooks/useTheme';
+import { useI18n } from '../../i18n';
 
 function PersonCardComponent({ person, subtitle, onPress, compact, selected }) {
+  const { t } = useI18n();
   const { colors, layout, radii } = useTheme();
   if (!person) return null;
 
@@ -26,7 +28,7 @@ function PersonCardComponent({ person, subtitle, onPress, compact, selected }) {
               {person.name ?? person.fullName}
             </Text>
             <Text style={{ color: colors.textSecondary, fontSize: 13 * layout.fontScale, marginTop: 2 }}>
-              {subtitle ?? person.relationshipLabel ?? person.nickname ?? 'Family member'}
+              {subtitle ?? person.relationshipLabel ?? person.nickname ?? t('tree.familyMember')}
             </Text>
           </View>
           {onPress ? (

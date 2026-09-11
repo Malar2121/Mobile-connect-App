@@ -18,8 +18,10 @@ import {
   resolveDisplayRole,
 } from '../utils/familyModuleHelpers';
 import { countLiveMembers } from '../utils/dashboardHelpers';
+import { useI18n } from '../i18n';
 
 export function useFamilyModuleData() {
+  const { t } = useI18n();
   const { user } = useAuth();
   const { uiMode } = useTheme();
   const { family, members, loading: familyLoading, refreshFamily } = useFamily();
@@ -73,7 +75,7 @@ export function useFamilyModuleData() {
       setMotto(localMotto);
       setJoinRequests(reqs?.requests || reqs || []);
     } catch (e) {
-      setError(e.message || 'Could not load family data.');
+      setError(e.message || t('common.couldNotLoadFamilyData'));
     } finally {
       setLoading(false);
     }
@@ -85,7 +87,7 @@ export function useFamilyModuleData() {
       await refreshFamily();
       await loadData();
     } catch (e) {
-      setError(e.message || 'Could not refresh family.');
+      setError(e.message || t('common.couldNotRefreshFamily'));
     } finally {
       setRefreshing(false);
     }

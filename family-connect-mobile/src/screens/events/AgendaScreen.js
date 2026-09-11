@@ -7,13 +7,13 @@ import { useEventsModuleData } from '../../hooks/useEventsModuleData';
 import { EVENT_CATEGORIES } from '../../utils/eventModuleHelpers';
 import { useTheme } from '../../hooks/useTheme';
 import { useResponsive } from '../../design-system';
-import { useI18n } from '../../i18n';
+import { useI18n, translate } from '../../i18n';
 
 const STATUS_FILTERS = [
-  { id: 'all', label: 'All' },
-  { id: 'upcoming', label: 'Upcoming' },
-  { id: 'today', label: 'Today' },
-  { id: 'past', label: 'Past' },
+  { id: 'all', get label() { return translate('events.all'); } },
+  { id: 'upcoming', get label() { return translate('events.upcoming'); } },
+  { id: 'today', get label() { return translate('dates.today'); } },
+  { id: 'past', get label() { return translate('events.past'); } },
   { id: 'pending_rsvp', label: t('events.pendingRsvp') },
 ];
 
@@ -54,7 +54,7 @@ export default function AgendaScreen() {
 
   return (
     <Screen edges={['top']}>
-      <PageHeader title="Agenda" subtitle={t('events.groupedByDate')} onBack={() => navigation.goBack()} />
+      <PageHeader title={t('events.agenda')} subtitle={t('events.groupedByDate')} onBack={() => navigation.goBack()} />
       <View style={{ marginBottom: 12 }}>
         <EventSearchBar value={query} onChangeText={setQuery} />
         <View style={styles.chips}>

@@ -38,7 +38,7 @@ function GreetingSectionComponent({
             uri={undefined}
             name={userName ?? 'You'}
             size={layout.avatarSize}
-            accessibilityLabel={`${userName} profile`}
+            accessibilityLabel={t('dash.usernameProfile', { userName })}
           />
           <View style={styles.copy}>
             <Text
@@ -61,7 +61,7 @@ function GreetingSectionComponent({
               }}
               numberOfLines={1}
             >
-              {userName ?? 'Welcome'}
+              {userName ?? t('dash.welcome')}
             </Text>
             <Text
               style={{
@@ -84,8 +84,8 @@ function GreetingSectionComponent({
               onPress={onNotifications}
               accessibilityLabel={
                 unreadCount > 0
-                  ? `Notifications, ${unreadCount} unread`
-                  : 'Notifications'
+                  ? t('dash.notificationsUnreadcountUnread', { unreadCount })
+                  : t('notifications.title')
               }
               size="md"
             />
@@ -98,7 +98,7 @@ function GreetingSectionComponent({
           <IconButton
             icon="settings-outline"
             onPress={onSettings}
-            accessibilityLabel="Settings"
+            accessibilityLabel={t('profile.settings')}
             size="md"
           />
         </View>
@@ -114,21 +114,6 @@ function GreetingSectionComponent({
         >
           {dateLine}
         </Text>
-        <View
-          style={[
-            styles.weatherSlot,
-            {
-              backgroundColor: colors.surfaceSecondary,
-              borderRadius: radii.pill,
-              borderColor: colors.border,
-            },
-          ]}
-          accessibilityLabel={t('dash.weatherUnavailable')}
-        >
-          <Text style={{ color: colors.textTertiary, fontSize: 12 * layout.fontScale }}>
-            Weather · —
-          </Text>
-        </View>
       </View>
     </Wrapper>
   );

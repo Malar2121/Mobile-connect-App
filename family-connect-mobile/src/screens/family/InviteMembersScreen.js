@@ -45,7 +45,7 @@ export default function InviteMembersScreen() {
       }
     } catch (e) {
       setInviteData(null);
-      setError(e.message || 'Could not load the family invite code.');
+      setError(e.message || t('family.couldNotLoadTheFamilyInvite'));
     } finally {
       setLoading(false);
     }
@@ -70,7 +70,7 @@ export default function InviteMembersScreen() {
       toast.success(t('family.newCodeGenerated'));
     } catch (e) {
       // Report the failure rather than showing a fabricated new code.
-      toast.error(e.message || 'Could not regenerate the invite code.');
+      toast.error(e.message || t('family.couldNotRegenerateTheInviteCode'));
     } finally {
       setRegenerating(false);
     }
@@ -82,8 +82,8 @@ export default function InviteMembersScreen() {
     try {
       await Share.share({
         message: link
-          ? `Join our family on Family Connect! Code: ${code}\n${link}`
-          : `Join our family on Family Connect! Use invite code: ${code}`,
+          ? t('family.joinOurFamilyOnFamilyConnect', { code, link })
+          : t('family.joinOurFamilyOnFamilyConnect2', { code }),
       });
       if (familyId) {
         await appendInviteHistory(familyId, { code, status: 'shared', action: 'share' });
@@ -155,7 +155,7 @@ export default function InviteMembersScreen() {
           <SectionTitle title={t('family.inviteHistory')} subtitle={t('family.recentOnDevice')} style={{ marginTop: 20 }} />
           {history.length === 0 ? (
             <Text style={{ color: colors.textSecondary, fontSize: 14 * layout.fontScale }}>
-              Share or regenerate an invite to build history.
+              {t('family.shareOrRegenerateAnInviteTo')}
             </Text>
           ) : (
             <FlatList
@@ -166,7 +166,7 @@ export default function InviteMembersScreen() {
             />
           )}
           <Text style={{ color: colors.textTertiary, fontSize: 11, marginTop: 12 }}>
-            Recent invite activity on this device. For links that expire and work only once, use email invitations.
+            {t('family.recentInviteActivityOnThisDevice')}
           </Text>
         </View>
       </ScrollView>

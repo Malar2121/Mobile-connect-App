@@ -10,10 +10,10 @@ function EmptyTreeStateComponent({ onAction, canManage }) {
       title={t('tree.emptyTitle')}
       message={
         canManage
-          ? 'Map relationships to visualize your family across generations.'
-          : 'Ask a family admin to map relationships so everyone can explore the tree.'
+          ? t('tree.mapRelationshipsToVisualizeYourFamily')
+          : t('tree.askAFamilyAdminToMap')
       }
-      actionLabel={canManage ? 'Map relationships' : undefined}
+      actionLabel={canManage ? t('tree.mapRelationships') : undefined}
       onAction={canManage ? onAction : undefined}
     />
   );

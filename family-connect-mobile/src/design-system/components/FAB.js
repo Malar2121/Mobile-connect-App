@@ -3,6 +3,7 @@ import { Pressable, StyleSheet, View } from 'react-native';
 import { LinearGradient } from 'expo-linear-gradient';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import { useTheme } from '../../hooks/useTheme';
+import { translate } from '../../i18n';
 
 /**
  * Floating action button — primary gradient with shadow.
@@ -10,7 +11,7 @@ import { useTheme } from '../../hooks/useTheme';
 export function FAB({
   onPress,
   icon,
-  accessibilityLabel = 'Action',
+  accessibilityLabel = translate('common.action'),
   bottom,
   right = 20,
   size,

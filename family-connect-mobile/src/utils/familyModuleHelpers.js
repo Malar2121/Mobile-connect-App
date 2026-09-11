@@ -3,67 +3,68 @@ import { formatNotificationTime, getNotificationIcon } from './notificationHelpe
 import { getUploaderId, getLikeCount } from './memoryHelpers';
 import { guestEntryUserId } from './eventFormat';
 import { getSenderId } from './chatHelpers';
+import { translate } from '../i18n';
 
 /** UI relationship labels mapped to backend family-tree enums */
 export const RELATIONSHIP_OPTIONS = [
-  { id: 'father', label: 'Father', backendType: 'parent', nickname: 'Father' },
-  { id: 'mother', label: 'Mother', backendType: 'parent', nickname: 'Mother' },
-  { id: 'brother', label: 'Brother', backendType: 'sibling', nickname: 'Brother' },
-  { id: 'sister', label: 'Sister', backendType: 'sibling', nickname: 'Sister' },
-  { id: 'grandparent', label: 'Grandparent', backendType: 'grandparent' },
-  { id: 'child', label: 'Child', backendType: 'child' },
-  { id: 'guardian', label: 'Guardian', backendType: 'other', nickname: 'Guardian' },
-  { id: 'relative', label: 'Relative', backendType: 'other', nickname: 'Relative' },
-  { id: 'friend', label: 'Friend of family', backendType: 'other', nickname: 'Friend' },
+  { id: 'father', get label() { return translate('family.father'); }, backendType: 'parent', get nickname() { return translate('family.father'); } },
+  { id: 'mother', get label() { return translate('family.mother'); }, backendType: 'parent', get nickname() { return translate('family.mother'); } },
+  { id: 'brother', get label() { return translate('family.brother'); }, backendType: 'sibling', get nickname() { return translate('family.brother'); } },
+  { id: 'sister', get label() { return translate('family.sister'); }, backendType: 'sibling', get nickname() { return translate('family.sister'); } },
+  { id: 'grandparent', get label() { return translate('family.grandparent'); }, backendType: 'grandparent' },
+  { id: 'child', get label() { return translate('auth.memberChild'); }, backendType: 'child' },
+  { id: 'guardian', get label() { return translate('family.guardian'); }, backendType: 'other', get nickname() { return translate('family.guardian'); } },
+  { id: 'relative', get label() { return translate('family.relative'); }, backendType: 'other', get nickname() { return translate('family.relative'); } },
+  { id: 'friend', get label() { return translate('family.friendOfFamily'); }, backendType: 'other', nickname: 'Friend' },
 ];
 
 export const ROLE_DEFINITIONS = [
   {
     id: 'guest',
-    label: 'Guest',
+    get label() { return translate('family.guest'); },
     mapsFrom: 'guest',
-    description: 'Extended relative with read-only access. Can view but not change anything.',
-    permissions: ['View events', 'View shared memories', 'Read chat'],
+    get description() { return translate('family.extendedRelativeWithReadOnlyAccess'); },
+    permissionKeys: ['family.permViewEvents', 'family.permViewSharedMemories', 'family.permReadChat'],
     readOnly: true,
   },
   {
     id: 'owner',
-    label: 'Owner',
+    get label() { return translate('family.owner'); },
     mapsFrom: 'admin',
-    description: 'Family creator with full control. Cannot leave without transferring ownership.',
-    permissions: ['All permissions', 'Regenerate invite', 'Manage relationships', 'Family settings'],
+    get description() { return translate('family.familyCreatorWithFullControlCannot'); },
+    permissionKeys: ['family.permAll', 'family.permRegenerateInvite', 'family.permManageRelationships', 'family.permFamilySettings'],
     readOnly: true,
   },
   {
     id: 'admin',
-    label: 'Admin',
+    get label() { return translate('family.admin'); },
     mapsFrom: 'admin',
-    description: 'Full family administration except ownership transfer.',
-    permissions: ['Invite members', 'Regenerate invite code', 'Manage relationships'],
+    get description() { return translate('family.fullFamilyAdministrationExceptOwnershipTransfer'); },
+    permissionKeys: ['family.permInviteMembers', 'family.permRegenerateInviteCode', 'family.permManageRelationships'],
     readOnly: true,
   },
   {
     id: 'parent',
-    label: 'Parent',
+    get label() { return translate('family.parent'); },
     mapsFrom: 'parent',
-    description: 'Can create events, upload memories, and invite members.',
-    permissions: ['Create events', 'Upload memories', 'View locations'],
+    get description() { return translate('family.canCreateEventsUploadMemoriesAnd'); },
+    permissionKeys: ['family.permCreateEvents', 'family.permUploadMemories', 'family.permViewLocations'],
     readOnly: true,
   },
   {
     id: 'member',
-    label: 'Member',
+    get label() { return translate('common.member'); },
     mapsFrom: 'member',
-    description: 'Standard family participant.',
-    permissions: ['Chat', 'RSVP events', 'View shared memories'],
+    get description() { return translate('family.standardFamilyParticipant'); },
+    permissionKeys: ['family.permChat', 'family.permRsvpEvents', 'family.permViewSharedMemories'],
     readOnly: true,
   },
   {
     id: 'child',
-    label: 'Child',
+    get label() { return translate('auth.memberChild'); },
     mapsFrom: 'child',
-    description: 'Restricted experience with minor-mode protections.',
-    permissions: ['Limited chat visibility', 'View family content'],
+    get description() { return translate('family.restrictedExperienceWithMinorModeProtections'); },
+    permissionKeys: ['family.permLimitedChat', 'family.permViewFamilyContent'],
     readOnly: true,
   },
 ];
@@ -161,7 +162,7 @@ export function mapTreeNodeToMember(nodes, userId) {
 }
 
 export function formatRelationshipType(type) {
-  if (!type || type === 'other') return 'Family member';
+  if (!type || type === 'other') return translate('family.familyMember');
   return type.charAt(0).toUpperCase() + type.slice(1);
 }
 
@@ -172,7 +173,7 @@ export function isMemberOnline(lastSeen, locationUpdatedAt) {
 }
 
 export function formatLastActive(lastSeen) {
-  if (!lastSeen) return 'Unknown';
+  if (!lastSeen) return translate('family.unknown');
   return formatNotificationTime(lastSeen);
 }
 
@@ -196,8 +197,8 @@ export function buildFamilyTimeline({ family, members, notifications, memories, 
   if (family?.createdAt) {
     items.push({
       id: 'family-created',
-      title: `${family.name} was created`,
-      body: 'Your family home was established',
+      title: translate('family.nameWasCreated', { name: family.name }),
+      body: translate('family.yourFamilyHomeWasEstablished'),
       time: formatNotificationTime(family.createdAt),
       timestamp: new Date(family.createdAt).getTime(),
       icon: 'home-outline',
@@ -208,8 +209,8 @@ export function buildFamilyTimeline({ family, members, notifications, memories, 
     if (String(m._id) === creatorId) return;
     items.push({
       id: `join-${m._id}`,
-      title: `${m.fullName} joined the family`,
-      body: 'Invite accepted',
+      title: translate('family.fullnameJoinedTheFamily', { fullName: m.fullName }),
+      body: translate('family.inviteAccepted'),
       time: formatNotificationTime(m.createdAt),
       timestamp: new Date(m.createdAt).getTime(),
       icon: 'person-add-outline',
@@ -233,11 +234,11 @@ export function buildFamilyTimeline({ family, members, notifications, memories, 
     });
 
   (memories ?? []).slice(0, 5).forEach((m) => {
-    const uploader = m.uploadedBy?.fullName ?? 'Someone';
+    const uploader = m.uploadedBy?.fullName ?? translate('family.someone');
     items.push({
       id: `m-${m._id}`,
-      title: `${uploader} uploaded a memory`,
-      body: m.caption || `${getLikeCount(m)} likes`,
+      title: translate('family.uploaderUploadedAMemory', { uploader }),
+      body: m.caption || translate('family.valueLikes', { value: getLikeCount(m) }),
       time: formatNotificationTime(m.createdAt),
       timestamp: new Date(m.createdAt).getTime(),
       icon: 'images-outline',

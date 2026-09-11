@@ -2,13 +2,15 @@ import React, { memo } from 'react';
 import { StyleSheet, Text, View } from 'react-native';
 import { EVENT_CATEGORIES } from '../../utils/eventModuleHelpers';
 import { useTheme } from '../../hooks/useTheme';
+import { useI18n } from '../../i18n';
 
 function CalendarLegendComponent() {
+  const { t } = useI18n();
   const { colors, layout } = useTheme();
 
   return (
     <View style={styles.wrap}>
-      <Text style={{ color: colors.textSecondary, fontSize: 12 * layout.fontScale, marginBottom: 8 }}>Categories</Text>
+      <Text style={{ color: colors.textSecondary, fontSize: 12 * layout.fontScale, marginBottom: 8 }}>{t('events.categories')}</Text>
       <View style={styles.row}>
         {EVENT_CATEGORIES.map((c) => (
           <View key={c.id} style={styles.item}>

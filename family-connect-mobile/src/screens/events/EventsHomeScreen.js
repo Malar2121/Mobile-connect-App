@@ -127,7 +127,7 @@ export default function EventsHomeScreen() {
               onPress={() => navigate('EventHistory')}
               style={{ color: colors.primary, fontFamily: 'Inter_600SemiBold', marginTop: 8 }}
             >
-              View full history →
+              {t('events.viewFullHistory')}
             </Text>
           </>
         ) : null}

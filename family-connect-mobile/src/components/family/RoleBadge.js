@@ -2,6 +2,7 @@ import React, { memo } from 'react';
 import { StyleSheet, Text, View } from 'react-native';
 import { useTheme } from '../../hooks/useTheme';
 import { getRoleDefinition } from '../../utils/familyModuleHelpers';
+import { useI18n } from '../../i18n';
 
 const ROLE_COLORS = {
   owner: '#7C3AED',
@@ -13,6 +14,7 @@ const ROLE_COLORS = {
 };
 
 function RoleBadgeComponent({ role, compact }) {
+  const { t } = useI18n();
   const { layout, radii } = useTheme();
   const def = getRoleDefinition(role);
   const color = ROLE_COLORS[def.id] ?? ROLE_COLORS.member;
@@ -28,7 +30,7 @@ function RoleBadgeComponent({ role, compact }) {
         },
         compact && styles.compact,
       ]}
-      accessibilityLabel={`Role: ${def.label}`}
+      accessibilityLabel={t('family.roleLabel', { label: def.label })}
     >
       <Text
         style={{

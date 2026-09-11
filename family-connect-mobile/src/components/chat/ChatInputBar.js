@@ -18,6 +18,7 @@ import Animated, {
 import * as Haptics from 'expo-haptics';
 import { QUICK_EMOJIS, STICKERS, chatRadii, chatTypography } from '../../constants/chatTheme';
 import { useTheme } from '../../hooks/useTheme';
+import { useI18n } from '../../i18n';
 
 export function ChatInputBar({
   draft,
@@ -30,6 +31,7 @@ export function ChatInputBar({
   sending,
   bottomInset,
 }) {
+  const { t } = useI18n();
   const { colors, isDark, uiMode } = useTheme();
   const [emojiOpen, setEmojiOpen] = useState(false);
   const [recording, setRecording] = useState(false);
@@ -86,7 +88,7 @@ export function ChatInputBar({
         <TextInput
           value={draft}
           onChangeText={onChangeText}
-          placeholder={uiMode === 'minor' ? 'Say hi! 💬' : 'Message your family…'}
+          placeholder={uiMode === 'minor' ? t('chat.sayHi') : t('chat.messageYourFamily')}
           placeholderTextColor={colors.textSecondary}
           multiline
           maxLength={2000}
@@ -132,7 +134,7 @@ export function ChatInputBar({
 
       {emojiOpen ? (
         <View style={[styles.emojiPanel, { backgroundColor: isDark ? colors.card : '#fff' }]}>
-          <Text style={[styles.emojiSection, { color: colors.textSecondary }]}>Emoji</Text>
+          <Text style={[styles.emojiSection, { color: colors.textSecondary }]}>{t('chat.emoji')}</Text>
           <ScrollView horizontal showsHorizontalScrollIndicator={false} contentContainerStyle={styles.emojiRow}>
             {QUICK_EMOJIS.map((e) => (
               <Pressable key={e} onPress={() => appendEmoji(e)} style={styles.emojiBtn}>
@@ -140,7 +142,7 @@ export function ChatInputBar({
               </Pressable>
             ))}
           </ScrollView>
-          <Text style={[styles.emojiSection, { color: colors.textSecondary }]}>Stickers</Text>
+          <Text style={[styles.emojiSection, { color: colors.textSecondary }]}>{t('chat.stickers')}</Text>
           <ScrollView horizontal showsHorizontalScrollIndicator={false} contentContainerStyle={styles.emojiRow}>
             {STICKERS.map((e) => (
               <Pressable key={e} onPress={() => appendEmoji(e)} style={styles.emojiBtn}>

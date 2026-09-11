@@ -3,8 +3,10 @@ import { Image, Pressable, StyleSheet, Text, View } from 'react-native';
 import { Ionicons } from '@expo/vector-icons';
 import { useTheme } from '../../hooks/useTheme';
 import { getAlbumCoverUri } from '../../utils/memoryModuleHelpers';
+import { useI18n } from '../../i18n';
 
 function AlbumCardComponent({ album, onPress }) {
+  const { t } = useI18n();
   const { colors, layout, radii, shadows } = useTheme();
   const cover = getAlbumCoverUri(album);
 
@@ -23,8 +25,8 @@ function AlbumCardComponent({ album, onPress }) {
             {album.title}
           </Text>
           <Text style={{ color: colors.textSecondary, fontSize: 12, marginTop: 4 }}>
-            {album.mediaCount ?? 0} items
-            {album.isShared ? ' · Shared' : ''}
+            {t('memories.countItems', { count: album.mediaCount ?? 0 })}
+            {album.isShared ? t('memories.shared2') : ''}
           </Text>
         </View>
       </View>
