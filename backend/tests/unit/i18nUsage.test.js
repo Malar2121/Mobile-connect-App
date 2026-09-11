@@ -76,8 +76,8 @@ describe('i18n usage across the app', () => {
     const localised = screens.filter((f) => /useI18n/.test(fs.readFileSync(f, 'utf8')));
     const pct = Math.round((localised.length / screens.length) * 100);
     // Informational, and a floor so coverage cannot silently regress.
-    // ChatScreen, FamilyDashboard and FamilyMapScreen only compose other
-    // components and have no text of their own, so 82 is every screen with copy.
+    // FamilyDashboard only composes other components and has no text of its
+    // own, so 82 is every screen with copy.
     console.log(`      localised screens: ${localised.length}/${screens.length} (${pct}%)`);
     expect(localised.length).toBeGreaterThanOrEqual(82);
   });
