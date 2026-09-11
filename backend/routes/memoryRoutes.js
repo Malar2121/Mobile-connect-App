@@ -1,12 +1,17 @@
 const express = require('express');
 const { requireParentalConsent } = require('../middleware/requireParentalConsent');
 const { denyGuestWrites } = require('../middleware/denyGuestWrites');
+const { enforceMediaQuota } = require('../middleware/mediaQuota');
 const router = express.Router();
 
 const {
   uploadMemory,
   getFamilyMemories,
+  getPendingMemories,
+  getMediaUsage,
   getMemoryDetails,
+  approveMemory,
+  rejectMemory,
   likeMemory,
   deleteMemory,
   getComments,
@@ -27,22 +32,37 @@ router.param('id', objectIdParam);
 
 // ──────────────────────────────────────────────────────────
 // POST /api/memories/upload
-// Upload image or video to Cloudinary
-// (expects form-data with field name 'media')
+// Upload image or video to Cloudinary (form-data field 'media').
+// The quota check runs first so a refused file never reaches Cloudinary.
 // ──────────────────────────────────────────────────────────
-router.post('/upload', memoryUpload.single('media'), uploadMemory);
+router.post('/upload', enforceMediaQuota, memoryUpload.single('media'), uploadMemory);
 
 // ──────────────────────────────────────────────────────────
 // GET /api/memories
-// Fetch memories for a family
+// Approved family memories plus the caller's own uploads
 // ──────────────────────────────────────────────────────────
 router.get('/', getFamilyMemories);
+
+// ──────────────────────────────────────────────────────────
+// GET /api/memories/pending — review queue (adult members)
+// GET /api/memories/usage   — family storage used / quota
+// Declared before '/:id' so they are not read as ids.
+// ──────────────────────────────────────────────────────────
+router.get('/pending', getPendingMemories);
+router.get('/usage', getMediaUsage);
 
 // ──────────────────────────────────────────────────────────
 // POST /api/memories/like
 // Toggle like
 // ──────────────────────────────────────────────────────────
 router.post('/like', likeMemory);
+
+// ──────────────────────────────────────────────────────────
+// POST /api/memories/:id/approve · POST /api/memories/:id/reject
+// Proposal §8 — members approve shared photos and videos
+// ──────────────────────────────────────────────────────────
+router.post('/:id/approve', approveMemory);
+router.post('/:id/reject', rejectMemory);
 
 // ──────────────────────────────────────────────────────────
 // GET /api/memories/:id/comments

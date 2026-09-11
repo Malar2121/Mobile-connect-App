@@ -1,5 +1,8 @@
 const Album = require('../models/Album');
+const mongoose = require('mongoose');
 const Memory = require('../models/Memory');
+const Event = require('../models/Event');
+const { approvedOnly } = require('../services/memoryPolicy');
 const asyncHandler = require('../utils/asyncHandler');
 const { successResponse, errorResponse, paginatedResponse } = require('../utils/apiResponse');
 const { getPaginationOptions } = require('../utils/helpers');
@@ -10,6 +13,14 @@ const { v4: uuidv4 } = require('uuid');
 // ──────────────────────────────────────────
 const createAlbum = asyncHandler(async (req, res) => {
   const { title, description, eventId } = req.body;
+
+  // An album may only be linked to an event in the caller's own family.
+  if (eventId) {
+    const event = mongoose.isValidObjectId(eventId)
+      ? await Event.findOne({ _id: eventId, familyId: req.user.familyId }).select('_id')
+      : null;
+    if (!event) return errorResponse(res, 'Event not found', 404);
+  }
 
   const album = await Album.create({
     family: req.user.familyId,
@@ -55,19 +66,19 @@ const getAlbum = asyncHandler(async (req, res) => {
   // Fetch media in album
   const { page, limit, skip } = getPaginationOptions(req.query);
   const albumIdStr = String(album._id);
+  // Pending and rejected memories never appear in an album.
+  const mediaFilter = {
+    familyId: req.user.familyId,
+    $or: [{ album: album._id }, { album: albumIdStr }],
+    ...approvedOnly(),
+  };
   const [media, mediaTotal] = await Promise.all([
-    Memory.find({
-      familyId: req.user.familyId,
-      $or: [{ album: album._id }, { album: albumIdStr }],
-    })
+    Memory.find(mediaFilter)
       .populate('uploadedBy', 'fullName avatar')
       .skip(skip)
       .limit(limit)
       .sort({ createdAt: -1 }),
-    Memory.countDocuments({
-      familyId: req.user.familyId,
-      $or: [{ album: album._id }, { album: albumIdStr }],
-    }),
+    Memory.countDocuments(mediaFilter),
   ]);
 
   return successResponse(res, {
@@ -91,7 +102,14 @@ const updateAlbum = asyncHandler(async (req, res) => {
   const { title, description, coverMemoryId } = req.body;
   if (title) album.title = title;
   if (description !== undefined) album.description = description;
-  if (coverMemoryId) album.coverMemory = coverMemoryId;
+  if (coverMemoryId) {
+    // The cover must be an approved memory from this family.
+    const cover = mongoose.isValidObjectId(coverMemoryId)
+      ? await Memory.findOne({ _id: coverMemoryId, familyId: req.user.familyId, ...approvedOnly() }).select('_id')
+      : null;
+    if (!cover) return errorResponse(res, 'Cover memory not found', 404);
+    album.coverMemory = cover._id;
+  }
 
   await album.save();
   return successResponse(res, { album }, 'Album updated');
@@ -111,7 +129,12 @@ const addMediaToAlbum = asyncHandler(async (req, res) => {
   if (!album) return errorResponse(res, 'Album not found', 404);
 
   const result = await Memory.updateMany(
-    { _id: { $in: memoryIds }, familyId: req.user.familyId },
+    // Only approved memories from this family can be filed in an album.
+    {
+      _id: { $in: memoryIds.filter((id) => mongoose.isValidObjectId(id)) },
+      familyId: req.user.familyId,
+      ...approvedOnly(),
+    },
     { album: String(album._id) },
   );
 
