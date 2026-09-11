@@ -1,4 +1,4 @@
-const ParentalConsent = require('../models/ParentalConsent');
+const { getConsentStatus } = require('../services/accessPolicy');
 
 /**
  * Gate family content behind guardian approval for minors.
@@ -10,25 +10,19 @@ const ParentalConsent = require('../models/ParentalConsent');
  *
  * Adults and elders are unaffected. The 403 carries a machine-readable
  * `code` so the app can show a "waiting for a guardian" screen rather than a
- * generic error.
+ * generic error. The rule itself lives in services/accessPolicy.js, which the
+ * Socket.IO server shares.
  */
 const requireParentalConsent = async (req, res, next) => {
   try {
-    if (req.user?.memberType !== 'child') return next();
-    if (!req.user.familyId) return next(); // no family yet — nothing to gate
-
-    const consent = await ParentalConsent.findOne({
-      familyId: req.user.familyId,
-      child: req.user._id,
-    }).select('status');
-
-    if (consent?.status === 'approved') return next();
+    const status = await getConsentStatus(req.user);
+    if (status === 'not_required' || status === 'approved') return next();
 
     return res.status(403).json({
       success: false,
-      code: consent?.status === 'rejected' ? 'CONSENT_REJECTED' : 'CONSENT_PENDING',
+      code: status === 'rejected' ? 'CONSENT_REJECTED' : 'CONSENT_PENDING',
       message:
-        consent?.status === 'rejected'
+        status === 'rejected'
           ? 'A guardian has not approved this account.'
           : 'This account is waiting for a parent or guardian to approve it.',
     });

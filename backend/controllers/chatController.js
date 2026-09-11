@@ -464,8 +464,9 @@ const getStarredMessages = async (req, res) => {
 };
 
 module.exports = {
-  // exported for unit testing
+  // shared with the Socket.IO server and unit tests
   parseMentions,
+  getMentionableMembers,
   sendMessage,
   getFamilyMessages,
   deleteMessage,

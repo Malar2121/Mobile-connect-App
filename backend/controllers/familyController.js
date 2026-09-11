@@ -4,6 +4,7 @@ const FamilyMember = require('../models/FamilyMember');
 const JoinRequest = require('../models/JoinRequest');
 const ParentalConsent = require('../models/ParentalConsent');
 const { requestConsentForChild } = require('./consentController');
+const { syncUserFamilyRoom } = require('../socket/familyRooms');
 const crypto = require('crypto');
 
 // ──────────────────────────────────────────────────────────
@@ -62,6 +63,7 @@ const createFamily = async (req, res) => {
       { family: family._id, user: req.user._id, role: 'admin', joinedVia: 'creator', isActive: true },
       { upsert: true, new: true, setDefaultsOnInsert: true },
     );
+    await syncUserFamilyRoom(req.app.get('io'), req.user._id);
 
     // Populate members for the response
     await family.populate('members', 'fullName email avatar role memberType dateOfBirth');
@@ -171,6 +173,7 @@ const joinFamilyByCode = async (req, res) => {
     // A minor joining opens a guardian-approval request; until a guardian
     // decides, the consent middleware keeps them out of family content.
     await requestConsentForChild(req.user, family._id);
+    await syncUserFamilyRoom(req.app.get('io'), req.user._id);
 
     await family.populate('members', 'fullName email avatar role memberType dateOfBirth');
     await family.populate('createdBy', 'fullName email');
@@ -271,6 +274,7 @@ const leaveFamily = async (req, res) => {
 
     // Remove their FamilyMember record so they no longer appear in the tree
     await FamilyMember.deleteOne({ family: family._id, user: req.user._id });
+    await syncUserFamilyRoom(req.app.get('io'), req.user._id);
 
     return res.status(200).json({
       success: true,
@@ -386,6 +390,7 @@ const updateMemberType = async (req, res) => {
       // No longer a minor: the consent gate no longer applies to them.
       await ParentalConsent.deleteOne({ familyId: req.user.familyId, child: target._id });
     }
+    await syncUserFamilyRoom(req.app.get('io'), target._id);
 
     const io = req.app.get('io');
     if (io) {
@@ -511,6 +516,10 @@ const approveJoinRequest = async (req, res) => {
       { family: req.user.familyId, user: request.user, role: 'member', joinedVia: 'admin_add', isActive: true },
       { upsert: true, new: true, setDefaultsOnInsert: true }
     );
+
+    const admitted = await User.findById(request.user);
+    if (admitted) await requestConsentForChild(admitted, req.user.familyId);
+    await syncUserFamilyRoom(req.app.get('io'), request.user);
 
     res.status(200).json({ success: true, message: 'Approved' });
   } catch (error) {

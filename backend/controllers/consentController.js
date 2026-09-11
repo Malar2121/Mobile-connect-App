@@ -1,6 +1,7 @@
 const ParentalConsent = require('../models/ParentalConsent');
 const User = require('../models/User');
 const { notifyUsers } = require('../services/notificationService');
+const { syncUserFamilyRoom } = require('../socket/familyRooms');
 const logger = require('../utils/logger');
 
 /** Admins and parents act as guardians for a family's minors. */
@@ -135,6 +136,10 @@ async function decide(req, res, status) {
     if (req.body?.note !== undefined) consent.note = String(req.body.note).trim();
     await consent.save();
     await consent.populate('child', 'fullName email avatar');
+
+    // Live chat follows the decision immediately: an approved child joins the
+    // family room, a rejected one is removed from it.
+    await syncUserFamilyRoom(req.app.get('io'), consent.child._id);
 
     notifyUsers({
       userIds: [consent.child._id],

@@ -4,6 +4,7 @@ const User = require('../models/User');
 const FamilyMember = require('../models/FamilyMember');
 const { sendInvitationEmail, isConfigured } = require('../services/mailService');
 const { requestConsentForChild } = require('./consentController');
+const { syncUserFamilyRoom } = require('../socket/familyRooms');
 
 const EXPIRY_HOURS = parseInt(process.env.INVITE_CODE_EXPIRY_HOURS, 10) || 48;
 const INVITABLE_ROLES = ['member', 'parent', 'guest'];
@@ -283,6 +284,7 @@ const acceptInvitation = async (req, res) => {
 
     // A minor accepting an invitation still needs guardian approval.
     await requestConsentForChild(req.user, family._id);
+    await syncUserFamilyRoom(req.app.get('io'), req.user._id);
 
     await family.populate('members', 'fullName email avatar role memberType dateOfBirth');
 
