@@ -34,8 +34,9 @@ const GLOBALS = new Set([
 ]);
 
 // Keys whose values are identifiers or stored data, never text shown to people.
+// `value` is not one of them: stat cards pair a label with a displayed value.
 const DATA_KEYS = new Set([
-  'screen', 'route', 'routeName', 'tab', 'id', 'key', 'value', 'type', 'backendType', 'relationshipType',
+  'screen', 'route', 'routeName', 'tab', 'id', 'key', 'type', 'backendType', 'relationshipType',
   'status', 'category', 'role', 'nickname',
 ]);
 const NAV_CALLS = new Set(['navigate', 'push', 'replace', 'jumpTo']);
