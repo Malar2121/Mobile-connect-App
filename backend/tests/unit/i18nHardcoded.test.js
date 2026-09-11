@@ -8,8 +8,8 @@ const path = require('path');
  * fragment.
  *
  * Only files the app actually loads (reachable from index.js) are checked.
- * Developer-only error messages (`new Error(...)`) are not user-facing and
- * are not flagged.
+ * Developer-only error messages (`new Error(...)`) and console output are not
+ * user-facing and are not flagged.
  */
 const MOBILE = path.join(__dirname, '../../../family-connect-mobile');
 const SRC = path.join(MOBILE, 'src');
@@ -37,6 +37,12 @@ const ALLOWED = new Set(['ABCD-EFGH', 'YYYY-MM-DD', 'SOS', 'QR', 'PDF', 'GIF', '
 // A template piece with a word beside a space is prose, e.g. `${n} items`.
 const PROSE_PIECE = /\s[A-Za-z]{2,}|[A-Za-z]{2,}\s/;
 
+// Two words together are a phrase wherever they appear, not an identifier.
+const PHRASE = /[A-Za-z][A-Za-z']+\s+[A-Za-z][A-Za-z']+/;
+// Phrases that are matched against but never shown: a network library's error
+// text, and the name an account gets when both name fields are missing.
+const PHRASE_ALLOWED = new Set(['network error', 'undefined undefined', 'Family Connect']);
+
 function resolveImport(from, spec) {
   if (typeof spec !== 'string' || !spec.startsWith('.')) return null;
   const base = path.resolve(path.dirname(from), spec);
@@ -63,9 +69,14 @@ function each(node, visit, parents = []) {
 const calleeName = (c) => {
   if (!c) return '';
   if (c.type === 'Identifier') return c.name;
-  if (c.type === 'MemberExpression') return `${calleeName(c.object)}.${c.property.name || ''}`;
+  if (/MemberExpression$/.test(c.type)) return `${calleeName(c.object)}.${c.property.name || ''}`;
   return '';
 };
+
+const isDeveloperOnly = (parents) =>
+  parents.some((p) =>
+    (p.type === 'NewExpression' && calleeName(p.callee) === 'Error') ||
+    (/CallExpression$/.test(p.type) && /^console\./.test(calleeName(p.callee))));
 
 // Plain words, not identifiers, icon names, colours or storage keys.
 function looksLikeWords(text) {
@@ -100,6 +111,7 @@ function collectReachable() {
   return asts;
 }
 
+// Single words and fragments in the places people read them.
 function findViolations(ast, rel) {
   const violations = [];
 
@@ -124,8 +136,7 @@ function findViolations(ast, rel) {
     } else {
       return;
     }
-    if (!words) return;
-    if (parents.some((p) => p.type === 'NewExpression' && calleeName(p.callee) === 'Error')) return;
+    if (!words || isDeveloperOnly(parents)) return;
 
     // Walk up through wrappers such as `cond ? 'a' : 'b'` and `a || 'b'`.
     let i = parents.length - 1;
@@ -149,9 +160,33 @@ function findViolations(ast, rel) {
   return violations;
 }
 
+// Whole English phrases anywhere: fallbacks, status maps, form defaults, helpers.
+function findPhrases(ast, rel) {
+  const found = [];
+
+  each(ast.program, (node, parents) => {
+    let pieces;
+    if (node.type === 'StringLiteral') pieces = [node.value];
+    else if (node.type === 'TemplateLiteral') pieces = node.quasis.map((q) => q.value.cooked ?? q.value.raw);
+    else return;
+    const phrase = pieces.find((piece) => PHRASE.test(piece) && !PHRASE_ALLOWED.has(piece.trim()));
+    if (!phrase) return;
+
+    const parent = parents[parents.length - 1];
+    if (parent && /^(ImportDeclaration|ExportAllDeclaration|ExportNamedDeclaration)$/.test(parent.type)) return;
+    if (parent?.type === 'ObjectProperty' && parent.key === node) return;
+    if (isDeveloperOnly(parents)) return;
+    found.push(`${rel}:${node.loc.start.line} "${phrase.replace(/\s+/g, ' ').trim().slice(0, 60)}"`);
+  });
+
+  return found;
+}
+
 describe('No hardcoded user-facing English in the mobile app', () => {
   const asts = collectReachable();
   const parse = (lines) => parser.parse(lines.join('\n'), { sourceType: 'module', plugins: PLUGINS });
+  const appFiles = () => [...asts].filter(([file]) => !file.startsWith(path.join(SRC, 'i18n')));
+  const relative = (file) => path.relative(MOBILE, file).replace(/\\/g, '/');
 
   it('checks the files the app actually loads', () => {
     expect(asts.size).toBeGreaterThan(200);
@@ -190,12 +225,31 @@ describe('No hardcoded user-facing English in the mobile app', () => {
     expect(findViolations(sample, 'sample.js')).toEqual([]);
   });
 
+  it('finds English phrases wherever they are, not only in known props', () => {
+    const sample = parse([
+      "const LABEL = { accepted: 'Going', declined: \"Can't go\" };",
+      'export function load(setError, msg) {',
+      "  if (msg.includes('network error')) return;",
+      "  setError('Could not load dashboard.');",
+      "  console.warn('Retrying the request now');",
+      "  throw new Error('Developer only message');",
+      '}',
+    ]);
+    expect(findPhrases(sample, 'sample.js')).toEqual([
+      'sample.js:1 "Can\'t go"',
+      'sample.js:4 "Could not load dashboard."',
+    ]);
+  });
+
   it('keeps every user-facing string in the translation bundles', () => {
     const violations = [];
-    for (const [file, ast] of asts) {
-      if (file.startsWith(path.join(SRC, 'i18n'))) continue;
-      violations.push(...findViolations(ast, path.relative(MOBILE, file).replace(/\\/g, '/')));
-    }
+    for (const [file, ast] of appFiles()) violations.push(...findViolations(ast, relative(file)));
     expect(violations).toEqual([]);
+  });
+
+  it('keeps English phrases out of the app code entirely', () => {
+    const phrases = [];
+    for (const [file, ast] of appFiles()) phrases.push(...findPhrases(ast, relative(file)));
+    expect(phrases).toEqual([]);
   });
 });
