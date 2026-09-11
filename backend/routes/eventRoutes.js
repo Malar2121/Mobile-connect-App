@@ -12,6 +12,7 @@ const {
   addComment,
 } = require('../controllers/eventController');
 
+const { getRecentEventNotes } = require('../controllers/eventNotesController');
 const { protect } = require('../middleware/authMiddleware');
 const { objectIdParam } = require('../middleware/validateObjectId');
 const { requireParentalConsent } = require('../middleware/requireParentalConsent');
@@ -34,6 +35,11 @@ router.post('/create', createEvent);
 // Get all events for a family
 // ──────────────────────────────────────────────────────────
 router.get('/', getFamilyEvents);
+
+// GET /api/events/notes
+// Recent notes across the family's events, for the memory archive.
+// Declared before '/:id' so "notes" is not read as an event id.
+router.get('/notes', getRecentEventNotes);
 
 // ──────────────────────────────────────────────────────────
 // POST /api/events/respond

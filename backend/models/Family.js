@@ -40,6 +40,18 @@ const familySchema = new mongoose.Schema(
         requireApproval: false,
       },
     },
+    // Shared family history journal: origins, traditions and the stories
+    // passed down through generations, identical on every member's device.
+    history: {
+      origins: { type: String, default: '', maxlength: 5000 },
+      traditions: { type: String, default: '', maxlength: 5000 },
+      culturalNotes: { type: String, default: '', maxlength: 5000 },
+      importantEvents: { type: String, default: '', maxlength: 5000 },
+      achievements: { type: String, default: '', maxlength: 5000 },
+      historicalMemories: { type: String, default: '', maxlength: 5000 },
+      updatedBy: { type: mongoose.Schema.Types.ObjectId, ref: 'User', default: null },
+      updatedAt: { type: Date, default: null },
+    },
   },
   {
     timestamps: true, // adds createdAt and updatedAt

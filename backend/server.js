@@ -30,6 +30,7 @@ const webhookRoutes = require('./routes/webhookRoutes');
 const safeZoneRoutes = require('./routes/safeZoneRoutes');
 const celebrationRoutes = require('./routes/celebrationRoutes');
 const consentRoutes = require('./routes/consentRoutes');
+const storyRoutes = require('./routes/storyRoutes');
 
 // ─── App setup ────────────────────────────────────────────────────────────
 const app = express();
@@ -141,6 +142,7 @@ app.use('/api/webhooks', webhookRoutes);
 app.use('/api/safezones', safeZoneRoutes);
 app.use('/api/celebrations', celebrationRoutes);
 app.use('/api/consent', consentRoutes);
+app.use('/api/stories', storyRoutes);
 
 // ─── 404 & Error Handlers ─────────────────────────────────────────────────
 app.use(notFound);

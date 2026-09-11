@@ -28,6 +28,15 @@ router.post('/create', createFamily);
 // ──────────────────────────────────────────────────────────
 router.get('/my-family', getMyFamily);
 
+// Shared family history journal. Family content, so consent-gated and
+// read-only for guests.
+const { getFamilyHistory, updateFamilyHistory } = require('../controllers/familyHistoryController');
+const { requireParentalConsent } = require('../middleware/requireParentalConsent');
+const { denyGuestWrites } = require('../middleware/denyGuestWrites');
+
+router.get('/history', requireParentalConsent, getFamilyHistory);
+router.put('/history', requireParentalConsent, denyGuestWrites, updateFamilyHistory);
+
 // ──────────────────────────────────────────────────────────
 // POST /api/family/join
 // Join a family using an invite code
