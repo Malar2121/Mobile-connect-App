@@ -9,7 +9,7 @@ import { EVENT_CATEGORIES, saveEventMeta } from '../../utils/eventModuleHelpers'
 
 const STEP_KEYS = ['events.stepGeneral', 'events.stepSchedule', 'events.stepDetails', 'events.stepReview'];
 const REPEAT_OPTIONS = [
-  { id: 'none', label: t('events.noRepeat') },
+  { id: 'none', get label() { return translate('events.noRepeat'); } },
   { id: 'weekly', get label() { return translate('events.weekly'); } },
   { id: 'monthly', get label() { return translate('events.monthly'); } },
 ];
@@ -35,8 +35,8 @@ export default function CreateEventScreen({ navigation }) {
 
   async function handleSubmit() {
     setError('');
-    const t = title.trim();
-    if (!t) {
+    const trimmedTitle = title.trim();
+    if (!trimmedTitle) {
       setError(t('events.titleRequired'));
       setStep(0);
       return;
@@ -60,7 +60,7 @@ export default function CreateEventScreen({ navigation }) {
       else if (repeat === 'monthly') recurrenceRule = 'FREQ=MONTHLY';
 
       const created = await createEvent({
-        title: t,
+        title: trimmedTitle,
         description: description.trim() || undefined,
         date: datePayload,
         startTime: startTime.trim() || undefined,

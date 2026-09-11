@@ -7,9 +7,9 @@ import { useResponsive } from '../../design-system';
 import { useI18n, translate } from '../../i18n';
 
 const ACTIONS = [
-  { id: 'tree', label: t('tree.interactive'), icon: 'git-network', screen: 'InteractiveTree' },
-  { id: 'ancestors', get label() { return translate('tree.ancestors'); }, icon: 'arrow-up', get screen() { return translate('tree.ancestors'); } },
-  { id: 'descendants', get label() { return translate('tree.descendants'); }, icon: 'arrow-down', get screen() { return translate('tree.descendants'); } },
+  { id: 'tree', get label() { return translate('tree.interactive'); }, icon: 'git-network', screen: 'InteractiveTree' },
+  { id: 'ancestors', get label() { return translate('tree.ancestors'); }, icon: 'arrow-up', screen: 'Ancestors' },
+  { id: 'descendants', get label() { return translate('tree.descendants'); }, icon: 'arrow-down', screen: 'Descendants' },
   { id: 'timeline', get label() { return translate('tree.heritage2'); }, icon: 'time', screen: 'HeritageTimeline' },
   { id: 'legacy', get label() { return translate('memories.quickLegacy'); }, icon: 'heart', screen: 'LegacyProfiles' },
   { id: 'history', get label() { return translate('tree.journal'); }, icon: 'book', screen: 'FamilyHistory' },

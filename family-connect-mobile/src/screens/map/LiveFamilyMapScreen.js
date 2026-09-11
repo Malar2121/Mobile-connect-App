@@ -21,7 +21,7 @@ import { MAP_DARK_STYLE } from '../../utils/locationHelpers';
 import { useI18n, translate } from '../../i18n';
 
 const SHORTCUTS = [
-  { id: 'zones', label: t('map.safeZones'), icon: 'shield', screen: 'SafeZones' },
+  { id: 'zones', get label() { return translate('map.safeZones'); }, icon: 'shield', screen: 'SafeZones' },
   { id: 'sos', label: 'SOS', icon: 'warning', screen: 'SOSScreen' },
   { id: 'trips', get label() { return translate('map.trips'); }, icon: 'car', screen: 'TripHistory' },
   { id: 'settings', get label() { return translate('profile.settings'); }, icon: 'settings', screen: 'LocationSettings' },

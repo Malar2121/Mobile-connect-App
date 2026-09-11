@@ -14,27 +14,27 @@ import { useTheme } from '../../hooks/useTheme';
 import { useI18n, translate } from '../../i18n';
 
 const PRIVACY_OPTIONS = [
-  { id: 'members_only', label: t('perms.membersOnly') },
-  { id: 'extended', label: t('perms.extendedFamily') },
+  { id: 'members_only', get label() { return translate('perms.membersOnly'); } },
+  { id: 'extended', get label() { return translate('perms.extendedFamily'); } },
   { id: 'private', get label() { return translate('family.private'); } },
 ];
 
 const MEMORY_OPTIONS = [
-  { id: 'family', label: t('perms.allFamily') },
-  { id: 'parents', label: t('perms.parentsAdmins') },
-  { id: 'self', label: t('perms.uploaderOnly') },
+  { id: 'family', get label() { return translate('perms.allFamily'); } },
+  { id: 'parents', get label() { return translate('perms.parentsAdmins'); } },
+  { id: 'self', get label() { return translate('perms.uploaderOnly'); } },
 ];
 
 const CHAT_OPTIONS = [
-  { id: 'all_members', label: t('perms.allMembers') },
-  { id: 'admins_only', label: t('perms.adminsOnly') },
-  { id: 'parents', label: t('perms.parentsAdmins') },
+  { id: 'all_members', get label() { return translate('perms.allMembers'); } },
+  { id: 'admins_only', get label() { return translate('perms.adminsOnly'); } },
+  { id: 'parents', get label() { return translate('perms.parentsAdmins'); } },
 ];
 
 const INVITE_OPTIONS = [
-  { id: 'admin_only', label: t('perms.adminsOnly') },
-  { id: 'parents', label: t('perms.parentsAdmins') },
-  { id: 'all_members', label: t('perms.allMembers') },
+  { id: 'admin_only', get label() { return translate('perms.adminsOnly'); } },
+  { id: 'parents', get label() { return translate('perms.parentsAdmins'); } },
+  { id: 'all_members', get label() { return translate('perms.allMembers'); } },
 ];
 
 export default function FamilyPermissionsScreen() {

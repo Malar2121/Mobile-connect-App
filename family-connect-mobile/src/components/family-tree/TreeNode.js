@@ -70,7 +70,7 @@ function TreeNodeComponent({
         </Text>
         {showNickname && node.nickname ? (
           <Text style={{ color: colors.textTertiary, fontSize: 10 * layout.fontScale, textAlign: 'center' }} numberOfLines={1}>
-            {node.nickname}
+            {node.nicknameLabel ?? node.nickname}
           </Text>
         ) : (
           <Text style={{ color: colors.primary, fontSize: 10 * layout.fontScale, textAlign: 'center' }} numberOfLines={1}>

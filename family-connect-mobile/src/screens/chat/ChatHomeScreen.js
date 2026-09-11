@@ -14,7 +14,7 @@ import { useResponsive } from '../../design-system';
 import { useI18n, translate } from '../../i18n';
 
 const SHORTCUTS = [
-  { id: 'conversation', label: t('chat.openChat'), icon: 'chatbubbles', screen: 'Conversation', primary: true },
+  { id: 'conversation', get label() { return translate('chat.openChat'); }, icon: 'chatbubbles', screen: 'Conversation', primary: true },
   { id: 'search', get label() { return translate('common.search'); }, icon: 'search', screen: 'ChatSearch' },
   { id: 'media', get label() { return translate('chat.media'); }, icon: 'images', screen: 'ChatMediaGallery' },
   { id: 'files', get label() { return translate('chat.files'); }, icon: 'folder', screen: 'SharedFiles' },

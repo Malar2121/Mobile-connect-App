@@ -1,22 +1,26 @@
 import AsyncStorage from '@react-native-async-storage/async-storage';
-import { findRelationshipOption } from './familyModuleHelpers';
+import { findRelationshipOption, RELATIONSHIP_OPTIONS } from './familyModuleHelpers';
 import { translate } from '../i18n';
 
 const TREE_SETTINGS_KEY = (familyId) => `fc_tree_settings_${familyId}`;
 const ACHIEVEMENTS_KEY = (familyId) => `fc_tree_achievements_${familyId}`;
 
-/** UI labels mapped to backend family-tree enums (extends family module options). */
+/**
+ * UI labels mapped to backend family-tree enums (extends family module options).
+ * `nickname` is stored and matched on read, so it stays a fixed identifier in
+ * every language; `label` is what people see.
+ */
 export const TREE_RELATIONSHIP_OPTIONS = [
-  { id: 'father', get label() { return translate('tree.father'); }, backendType: 'parent', get nickname() { return translate('tree.father'); } },
-  { id: 'mother', get label() { return translate('tree.mother'); }, backendType: 'parent', get nickname() { return translate('tree.mother'); } },
-  { id: 'brother', get label() { return translate('tree.brother'); }, backendType: 'sibling', get nickname() { return translate('tree.brother'); } },
-  { id: 'sister', get label() { return translate('tree.sister'); }, backendType: 'sibling', get nickname() { return translate('tree.sister'); } },
+  { id: 'father', get label() { return translate('tree.father'); }, backendType: 'parent', nickname: 'Father' },
+  { id: 'mother', get label() { return translate('tree.mother'); }, backendType: 'parent', nickname: 'Mother' },
+  { id: 'brother', get label() { return translate('tree.brother'); }, backendType: 'sibling', nickname: 'Brother' },
+  { id: 'sister', get label() { return translate('tree.sister'); }, backendType: 'sibling', nickname: 'Sister' },
   { id: 'grandparent', get label() { return translate('tree.grandparent'); }, backendType: 'grandparent' },
   { id: 'grandchild', get label() { return translate('tree.grandchild'); }, backendType: 'grandchild' },
-  { id: 'guardian', get label() { return translate('tree.guardian'); }, backendType: 'other', get nickname() { return translate('tree.guardian'); } },
+  { id: 'guardian', get label() { return translate('tree.guardian'); }, backendType: 'other', nickname: 'Guardian' },
   { id: 'spouse', get label() { return translate('tree.spouse'); }, backendType: 'spouse' },
   { id: 'child', get label() { return translate('auth.memberChild'); }, backendType: 'child' },
-  { id: 'relative', get label() { return translate('tree.relative'); }, backendType: 'other', get nickname() { return translate('tree.relative'); } },
+  { id: 'relative', get label() { return translate('tree.relative'); }, backendType: 'other', nickname: 'Relative' },
 ];
 
 export const DEFAULT_TREE_SETTINGS = {
@@ -36,6 +40,14 @@ export const DEFAULT_FAMILY_HISTORY = {
   achievements: '',
   historicalMemories: '',
 };
+
+// Fixed nicknames such as "Father" are stored in English; show them in the
+// reader's language. A nickname a family typed themselves is shown as written.
+function nicknameLabel(nickname) {
+  if (!nickname) return null;
+  const fixed = [...TREE_RELATIONSHIP_OPTIONS, ...RELATIONSHIP_OPTIONS].find((r) => r.nickname === nickname);
+  return fixed ? fixed.label : nickname;
+}
 
 function normalizeName(name) {
   if (!name || name === 'undefined undefined') return null;
@@ -57,7 +69,8 @@ export function enrichTreeNodes(treeNodes, members) {
       fullName: name,
       avatar: node.avatar || member?.avatar || null,
       role: node.role ?? member?.role ?? 'member',
-      relationshipLabel: findTreeRelationshipOption(node)?.label ?? node.nickname ?? 'Family member',
+      relationshipLabel: findTreeRelationshipOption(node)?.label ?? nicknameLabel(node.nickname) ?? translate('tree.familyMember'),
+      nicknameLabel: nicknameLabel(node.nickname),
       relatedTo: node.relatedTo ? String(node.relatedTo) : null,
     };
   });
@@ -75,7 +88,7 @@ export function enrichTreeNodes(treeNodes, members) {
         relationshipType: 'other',
         relatedTo: null,
         relatedToName: null,
-        relationshipLabel: 'Family member',
+        relationshipLabel: translate('tree.familyMember'),
         _synthetic: true,
       });
     }

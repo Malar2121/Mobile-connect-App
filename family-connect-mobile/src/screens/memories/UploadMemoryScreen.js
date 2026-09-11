@@ -27,7 +27,7 @@ async function ensureLibraryPermission() {
   const { status } = await ImagePicker.requestMediaLibraryPermissionsAsync();
   if (status !== 'granted') {
     Alert.alert(
-      t('memories.permissionNeeded'),
+      translate('memories.permissionNeeded'),
       translate('memories.allowAccessToYourPhotoLibrary'),
     );
     return false;
@@ -39,7 +39,7 @@ async function ensureCameraPermission() {
   const { status } = await ImagePicker.requestCameraPermissionsAsync();
   if (status !== 'granted') {
     Alert.alert(
-      t('memories.permissionNeeded'),
+      translate('memories.permissionNeeded'),
       translate('memories.allowCameraAccessToCaptureNew'),
     );
     return false;

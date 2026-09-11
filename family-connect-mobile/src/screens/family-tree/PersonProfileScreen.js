@@ -2,7 +2,7 @@ import React, { useCallback, useMemo } from 'react';
 import { FlatList, ScrollView, StyleSheet, Text, View } from 'react-native';
 import { useNavigation, useRoute } from '@react-navigation/native';
 import { Ionicons } from '@expo/vector-icons';
-import { PageHeader, Screen, SectionTitle, Loader } from '../../design-system';
+import { PageHeader, Screen, SectionTitle, Loader, Card } from '../../design-system';
 import { useFamilyTreeModuleData } from '../../hooks/useFamilyTreeModuleData';
 import { PersonCard, HeritageCard } from '../../components/family-tree';
 import { getMemoriesForMember, getEventsForMember } from '../../utils/familyTreeModuleHelpers';

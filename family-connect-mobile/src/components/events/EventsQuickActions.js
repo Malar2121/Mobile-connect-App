@@ -7,12 +7,12 @@ import { useI18n, translate } from '../../i18n';
 
 const ACTIONS = [
   { id: 'create', get label() { return translate('events.create2'); }, icon: 'add-circle-outline', screen: 'CreateEvent' },
-  { id: 'calendar', get label() { return translate('events.calendar'); }, icon: 'calendar-outline', get screen() { return translate('events.calendar'); } },
+  { id: 'calendar', get label() { return translate('events.calendar'); }, icon: 'calendar-outline', screen: 'Calendar' },
   { id: 'poll', get label() { return translate('events.poll'); }, icon: 'stats-chart-outline', screen: 'EventPoll', needsEvent: true },
-  { id: 'celebrations', get label() { return translate('elder.celebrations'); }, icon: 'gift-outline', get screen() { return translate('elder.celebrations'); } },
+  { id: 'celebrations', get label() { return translate('elder.celebrations'); }, icon: 'gift-outline', screen: 'Celebrations' },
   { id: 'reminders', get label() { return translate('events.reminders'); }, icon: 'alarm-outline', screen: 'EventReminders' },
   { id: 'history', get label() { return translate('events.history2'); }, icon: 'time-outline', screen: 'EventHistory' },
-  { id: 'agenda', get label() { return translate('events.agenda'); }, icon: 'list-outline', get screen() { return translate('events.agenda'); } },
+  { id: 'agenda', get label() { return translate('events.agenda'); }, icon: 'list-outline', screen: 'Agenda' },
 ];
 
 function EventsQuickActionsComponent({ onNavigate, isMinor }) {

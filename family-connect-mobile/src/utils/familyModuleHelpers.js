@@ -5,16 +5,20 @@ import { guestEntryUserId } from './eventFormat';
 import { getSenderId } from './chatHelpers';
 import { translate } from '../i18n';
 
-/** UI relationship labels mapped to backend family-tree enums */
+/**
+ * UI relationship labels mapped to backend family-tree enums. `nickname` is
+ * stored with the relationship and matched when it is read back, so it is a
+ * fixed identifier in every language; `label` is what people see.
+ */
 export const RELATIONSHIP_OPTIONS = [
-  { id: 'father', get label() { return translate('family.father'); }, backendType: 'parent', get nickname() { return translate('family.father'); } },
-  { id: 'mother', get label() { return translate('family.mother'); }, backendType: 'parent', get nickname() { return translate('family.mother'); } },
-  { id: 'brother', get label() { return translate('family.brother'); }, backendType: 'sibling', get nickname() { return translate('family.brother'); } },
-  { id: 'sister', get label() { return translate('family.sister'); }, backendType: 'sibling', get nickname() { return translate('family.sister'); } },
+  { id: 'father', get label() { return translate('family.father'); }, backendType: 'parent', nickname: 'Father' },
+  { id: 'mother', get label() { return translate('family.mother'); }, backendType: 'parent', nickname: 'Mother' },
+  { id: 'brother', get label() { return translate('family.brother'); }, backendType: 'sibling', nickname: 'Brother' },
+  { id: 'sister', get label() { return translate('family.sister'); }, backendType: 'sibling', nickname: 'Sister' },
   { id: 'grandparent', get label() { return translate('family.grandparent'); }, backendType: 'grandparent' },
   { id: 'child', get label() { return translate('auth.memberChild'); }, backendType: 'child' },
-  { id: 'guardian', get label() { return translate('family.guardian'); }, backendType: 'other', get nickname() { return translate('family.guardian'); } },
-  { id: 'relative', get label() { return translate('family.relative'); }, backendType: 'other', get nickname() { return translate('family.relative'); } },
+  { id: 'guardian', get label() { return translate('family.guardian'); }, backendType: 'other', nickname: 'Guardian' },
+  { id: 'relative', get label() { return translate('family.relative'); }, backendType: 'other', nickname: 'Relative' },
   { id: 'friend', get label() { return translate('family.friendOfFamily'); }, backendType: 'other', nickname: 'Friend' },
 ];
 

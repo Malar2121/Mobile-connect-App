@@ -98,8 +98,8 @@ export default function FamilyHomeScreen() {
         />
 
         <View style={[styles.statsRow, { paddingHorizontal: horizontalPadding }]}>
-          <FamilyStatCard label={t('tabs.memories')} value={analytics.totalMemories} icon="images-outline" onPress={() => navigation.getParent()?.navigate(t('tabs.memories'))} />
-          <FamilyStatCard label={t('tabs.events')} value={analytics.totalEvents} icon="calendar-outline" onPress={() => navigation.getParent()?.navigate(t('tabs.events'))} />
+          <FamilyStatCard label={t('tabs.memories')} value={analytics.totalMemories} icon="images-outline" onPress={() => navigation.getParent()?.navigate('Memories')} />
+          <FamilyStatCard label={t('tabs.events')} value={analytics.totalEvents} icon="calendar-outline" onPress={() => navigation.getParent()?.navigate('Events')} />
           <FamilyStatCard label={t('family.thisWeek')} value={analytics.activityThisWeek} icon="pulse-outline" accent="#10B981" />
         </View>
 

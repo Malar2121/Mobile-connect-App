@@ -14,7 +14,7 @@ const STATUS_FILTERS = [
   { id: 'upcoming', get label() { return translate('events.upcoming'); } },
   { id: 'today', get label() { return translate('dates.today'); } },
   { id: 'past', get label() { return translate('events.past'); } },
-  { id: 'pending_rsvp', label: t('events.pendingRsvp') },
+  { id: 'pending_rsvp', get label() { return translate('events.pendingRsvp'); } },
 ];
 
 export default function AgendaScreen() {
