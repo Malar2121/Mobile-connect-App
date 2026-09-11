@@ -7,6 +7,7 @@ const logger = require('../utils/logger');
 const errorHandler = (err, req, res, next) => {
   let statusCode = err.statusCode || 500;
   let message = err.message || 'Internal Server Error';
+  let code;
 
   // Mongoose duplicate key error
   if (err.code === 11000) {
@@ -40,6 +41,18 @@ const errorHandler = (err, req, res, next) => {
     statusCode = 401;
   }
 
+  // Upload limits from multer. A file over MAX_FILE_SIZE_MB is the member's
+  // mistake, not a server fault, so answer 413 with a code the app translates.
+  if (err.name === 'MulterError') {
+    if (err.code === 'LIMIT_FILE_SIZE') {
+      statusCode = 413;
+      code = 'FILE_TOO_LARGE';
+      message = 'That file is too large.';
+    } else {
+      statusCode = 400;
+    }
+  }
+
   logger.error(`[${req.method}] ${req.path} — ${statusCode}: ${message}`);
   if (process.env.NODE_ENV === 'development') {
     logger.error(err.stack);
@@ -48,6 +61,7 @@ const errorHandler = (err, req, res, next) => {
   res.status(statusCode).json({
     success: false,
     message,
+    ...(code && { code }),
     ...(process.env.NODE_ENV === 'development' && { stack: err.stack }),
   });
 };
