@@ -67,7 +67,9 @@ async function sendInvitationEmail({ to, familyName, inviterName, token, expires
   const text = [
     `${inviterName} has invited you to join the ${familyName} family on Family Connect.`,
     '',
-    link ? `Open this link to accept: ${link}` : `Your invitation code is: ${token}`,
+    'To accept, open Family Connect, choose "Join family" and paste this invitation code:',
+    token,
+    ...(link ? ['', `Or open this link on your phone: ${link}`] : []),
     '',
     `This invitation expires on ${expiryText} and can be used once.`,
     'If you were not expecting this, you can ignore this email.',
@@ -84,9 +86,10 @@ async function sendInvitationEmail({ to, familyName, inviterName, token, expires
           ? `<p style="margin:0 0 20px"><a href="${escapeHtml(link)}"
                style="background:#35429E;color:#fff;padding:12px 22px;border-radius:6px;
                text-decoration:none;display:inline-block">Accept invitation</a></p>`
-          : `<p style="margin:0 0 20px">Your invitation code is:
-               <strong style="letter-spacing:1px">${escapeHtml(token)}</strong></p>`
+          : ''
       }
+      <p style="margin:0 0 20px;line-height:1.6">To accept in the app, open Family Connect, choose “Join family” and paste this invitation code:<br>
+        <strong style="letter-spacing:1px;word-break:break-all">${escapeHtml(token)}</strong></p>
       <p style="margin:0;color:#5d6b80;font-size:13px;line-height:1.6">
         This invitation expires on ${escapeHtml(expiryText)} and can only be used once.<br>
         If you were not expecting this, you can safely ignore this email.

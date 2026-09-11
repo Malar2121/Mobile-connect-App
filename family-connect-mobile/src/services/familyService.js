@@ -7,6 +7,7 @@ function normalizeAxiosError(error) {
       `Server error (${error.response.status})`;
     const err = new Error(msg);
     err.status = error.response.status;
+    err.code = error.response.data?.code;
     return err;
   }
   if (error.request) {

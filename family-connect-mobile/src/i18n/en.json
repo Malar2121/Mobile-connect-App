@@ -281,7 +281,19 @@
     "mostActive": "Most active",
     "timeline": "Family timeline",
     "membersInFamily": "{{count}} in your family",
-    "heroA11y": "{{family}} family overview. {{members}} members, {{online}} online."
+    "heroA11y": "{{family}} family overview. {{members}} members, {{online}} online.",
+    "inviteCodeOrLinkField": "Family code or invitation",
+    "joinHintEmail": "Type the family code, or paste the invitation link or code from your email.",
+    "inviteNotRecognised": "That is not a family code or an invitation. Check what you pasted.",
+    "inviteCodeInvalid": "That family code was not found.",
+    "alreadyInFamily": "You already belong to a family. Leave it before joining another.",
+    "alreadyMember": "You are already a member of this family.",
+    "joinNetworkError": "Could not reach Family Connect. Check your connection and try again.",
+    "invitationInvalid": "This invitation is not valid.",
+    "invitationRevoked": "This invitation has been cancelled.",
+    "invitationUsed": "This invitation has already been used.",
+    "invitationExpired": "This invitation has expired. Ask for a new one.",
+    "invitationWrongAccount": "This invitation was sent to a different email address. Sign in with that email to accept it."
   },
   "events": {
     "title": "Events",

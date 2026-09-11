@@ -41,6 +41,11 @@ export function parseInviteScan(raw) {
   if (CODE_PATTERN.test(upper)) return { kind: 'code', value: upper };
   if (TOKEN_PATTERN.test(text)) return { kind: 'token', value: text };
 
+  // Text pasted from an invitation email carries the one-time token among other
+  // words. A run of exactly 64 hex characters is unambiguous enough to pick out.
+  const embedded = /(?:^|[^a-f0-9])([a-f0-9]{64})(?![a-f0-9])/i.exec(text);
+  if (embedded) return { kind: 'token', value: embedded[1] };
+
   // A link that is ours in shape but carries nothing usable.
   if (/\/join\b/i.test(text)) return { kind: 'invalid', reason: 'link_missing_code' };
 
