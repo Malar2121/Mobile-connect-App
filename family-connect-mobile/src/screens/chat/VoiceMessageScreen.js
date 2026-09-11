@@ -36,17 +36,14 @@ export default function VoiceMessageScreen() {
     const uri = recording.getURI();
     const duration = startRef.current ? Math.round((Date.now() - startRef.current) / 1000) : null;
     recordingRef.current = null;
-    
-    // Generate a simple simulated waveform
-    const waveform = Array.from({ length: 40 }, () => Math.floor(Math.random() * 100));
 
     if (uri) {
-      await sendTextMessage('🎤 Voice message', {
-        mediaOptions: { mediaUri: uri, mimeType: 'audio/m4a', mediaType: 'audio', mediaDuration: duration, waveform },
+      await sendTextMessage(`🎤 ${t('chat.voiceMessage')}`, {
+        mediaOptions: { mediaUri: uri, mimeType: 'audio/m4a', mediaType: 'audio', mediaDuration: duration },
       });
       navigation.navigate('Conversation');
     }
-  }, [sendTextMessage, navigation]);
+  }, [sendTextMessage, navigation, t]);
 
   return (
     <Screen edges={['top']}>
