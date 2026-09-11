@@ -6,6 +6,7 @@ const cors = require('cors');
 const helmet = require('helmet');
 const morgan = require('morgan');
 const rateLimit = require('express-rate-limit');
+const jwt = require('jsonwebtoken');
 
 const connectDB = require('./config/db');
 const { initFirebase } = require('./config/firebase');
@@ -86,12 +87,50 @@ app.use(
 );
 
 // ─── Rate Limiting ────────────────────────────────────────────────────────
-const limiter = rateLimit({
-  windowMs: parseInt(process.env.RATE_LIMIT_WINDOW_MS) || 15 * 60 * 1000,
-  max: parseInt(process.env.RATE_LIMIT_MAX) || 100,
+// Requests are counted per signed-in member where possible, so family members
+// sharing one Wi-Fi network do not use up each other's allowance. Requests
+// without a valid token fall back to the client IP address.
+function rateLimitKey(req) {
+  const header = req.headers.authorization || '';
+  if (header.startsWith('Bearer ')) {
+    try {
+      const { id } = jwt.verify(header.slice(7), process.env.JWT_SECRET);
+      if (id) return `user:${id}`;
+    } catch {
+      // invalid or expired token — count against the IP address instead
+    }
+  }
+  return req.ip;
+}
+
+const SAFE_METHODS = new Set(['GET', 'HEAD', 'OPTIONS']);
+const rateLimitWindowMs = parseInt(process.env.RATE_LIMIT_WINDOW_MS) || 15 * 60 * 1000;
+const rateLimitResponse = {
+  success: false,
+  code: 'RATE_LIMITED',
+  message: 'Too many requests, please try again later.',
+};
+
+// Every screen makes several reads when it opens, so reads get a generous
+// allowance of their own and never use up the budget for changes.
+const readLimiter = rateLimit({
+  windowMs: rateLimitWindowMs,
+  max: parseInt(process.env.READ_RATE_LIMIT_MAX) || 2000,
   standardHeaders: true,
   legacyHeaders: false,
-  message: { success: false, message: 'Too many requests, please try again later.' },
+  keyGenerator: rateLimitKey,
+  skip: (req) => !SAFE_METHODS.has(req.method),
+  message: rateLimitResponse,
+});
+
+const writeLimiter = rateLimit({
+  windowMs: rateLimitWindowMs,
+  max: parseInt(process.env.RATE_LIMIT_MAX) || 300,
+  standardHeaders: true,
+  legacyHeaders: false,
+  keyGenerator: rateLimitKey,
+  skip: (req) => SAFE_METHODS.has(req.method),
+  message: rateLimitResponse,
 });
 
 // Deliberately stricter than the general limiter. Configurable the same way,
@@ -100,10 +139,10 @@ const limiter = rateLimit({
 const authLimiter = rateLimit({
   windowMs: parseInt(process.env.AUTH_RATE_LIMIT_WINDOW_MS) || 15 * 60 * 1000,
   max: parseInt(process.env.AUTH_RATE_LIMIT_MAX) || 20,
-  message: { success: false, message: 'Too many login attempts, please try again in 15 minutes.' },
+  message: { success: false, code: 'RATE_LIMITED', message: 'Too many login attempts, please try again in 15 minutes.' },
 });
 
-app.use('/api/', limiter);
+app.use('/api/', readLimiter, writeLimiter);
 app.use('/api/auth/login', authLimiter);
 app.use('/api/auth/register', authLimiter);
 

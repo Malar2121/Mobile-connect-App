@@ -12,6 +12,7 @@ process.env.JWT_REFRESH_EXPIRE = '7d';
 // Rate limiting would reject the suite's rapid registrations; the limiter
 // itself is covered by its own assertions rather than left to throttle here.
 process.env.RATE_LIMIT_MAX = '1000000';
+process.env.READ_RATE_LIMIT_MAX = '1000000';
 process.env.AUTH_RATE_LIMIT_MAX = '1000000';
 process.env.DISABLE_REMINDER_SCHEDULER = 'true';
 
