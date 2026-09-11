@@ -1,25 +1,9 @@
 import { Platform } from 'react-native';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import { api } from './api';
+import { normalizeApiError as normalizeAxiosError, apiFailure } from './apiError';
 
 const PUSH_TOKEN_KEY = 'fc_push_token';
-
-function normalizeAxiosError(error) {
-  if (error.response) {
-    const msg =
-      error.response.data?.message ||
-      `Server error (${error.response.status})`;
-    const err = new Error(msg);
-    err.status = error.response.status;
-    return err;
-  }
-  if (error.request) {
-    return new Error(
-      'Network error. Check your connection and EXPO_PUBLIC_API_URL.',
-    );
-  }
-  return error instanceof Error ? error : new Error(String(error));
-}
 
 /**
  * GET /api/notifications
@@ -29,7 +13,7 @@ export async function getNotifications() {
   try {
     const { data } = await api.get('/notifications');
     if (!data.success) {
-      throw new Error(data.message || 'Could not load notifications');
+      throw apiFailure(data);
     }
     return Array.isArray(data.data) ? data.data : [];
   } catch (e) {
@@ -46,7 +30,7 @@ export async function markNotificationRead(id) {
   try {
     const { data } = await api.put(`/notifications/read/${encodeURIComponent(id)}`);
     if (!data.success || !data.data) {
-      throw new Error(data.message || 'Could not mark notification as read');
+      throw apiFailure(data);
     }
     return data.data;
   } catch (e) {

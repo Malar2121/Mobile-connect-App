@@ -118,6 +118,21 @@ export function useI18n() {
   return ctx;
 }
 
+/** The language the app last applied through I18nProvider. */
+export function getCurrentLocale() {
+  const locale = global.__fcLocale;
+  return locale === 'ta' || locale === 'si' ? locale : 'en';
+}
+
+/**
+ * Translate outside React — for services and utilities that cannot call the
+ * useI18n hook. Falls back to English, then to the key, exactly like t().
+ */
+export function translate(key, params) {
+  const val = getNested(loadBundle(getCurrentLocale()), key) ?? getNested(enBundle, key);
+  return typeof val === 'string' ? interpolate(val, params) : key;
+}
+
 /** Non-hook accessor for format utilities. */
 export function getLocaleTag() {
   return LOCALE_TAGS[global.__fcLocale ?? 'en'] ?? 'en-US';

@@ -1,18 +1,7 @@
 import { api } from './api';
+import { normalizeApiError as normalizeAxiosError, apiFailure } from './apiError';
 import { enqueueOfflineRequest, isNetworkError } from '../utils/offlineQueue';
-
-function normalizeAxiosError(error) {
-  if (error.response) {
-    const msg = error.response.data?.message || `Server error (${error.response.status})`;
-    const err = new Error(msg);
-    err.status = error.response.status;
-    return err;
-  }
-  if (error.request) {
-    return new Error('Network error. Check your connection and EXPO_PUBLIC_API_URL.');
-  }
-  return error instanceof Error ? error : new Error(String(error));
-}
+import { translate } from '../i18n';
 
 export async function getAllMessages() {
   const { messages } = await getMessages({ limit: 200 });
@@ -26,7 +15,7 @@ export async function getAllMessages() {
 export async function getMessages(params = {}) {
   try {
     const { data } = await api.get('/chat/messages', { params });
-    if (!data.success) throw new Error(data.message || 'Could not load messages');
+    if (!data.success) throw apiFailure(data);
     return {
       messages: Array.isArray(data.data) ? data.data : [],
       hasMore: data.meta?.hasMore ?? false,
@@ -67,7 +56,7 @@ export async function sendMessage(text, options = {}) {
         headers: { 'Content-Type': 'multipart/form-data' },
         timeout: 90000,
       });
-      if (!data.success || !data.data) throw new Error(data.message || 'Could not send message');
+      if (!data.success || !data.data) throw apiFailure(data);
       return data.data;
     }
 
@@ -75,7 +64,7 @@ export async function sendMessage(text, options = {}) {
     if (options.replyTo) body.replyTo = String(options.replyTo);
 
     const { data } = await api.post('/chat/send', body);
-    if (!data.success || !data.data) throw new Error(data.message || 'Could not send message');
+    if (!data.success || !data.data) throw apiFailure(data);
     return data.data;
   } catch (e) {
     // BUG-M2 fix: text messages sent while offline are queued and replayed
@@ -86,7 +75,7 @@ export async function sendMessage(text, options = {}) {
         type: 'chat_message',
         payload: { text: text.trim(), ...(options.replyTo ? { replyTo: String(options.replyTo) } : {}) },
       }).catch(() => {});
-      const queuedErr = new Error('You are offline — the message was saved and will send automatically.');
+      const queuedErr = new Error(translate('chat.queuedOffline'));
       queuedErr.queued = true;
       throw queuedErr;
     }
@@ -97,7 +86,7 @@ export async function sendMessage(text, options = {}) {
 export async function deleteMessage(messageId) {
   try {
     const { data } = await api.delete(`/chat/${messageId}`);
-    if (!data.success) throw new Error(data.message || 'Could not delete message');
+    if (!data.success) throw apiFailure(data);
     return true;
   } catch (e) {
     throw normalizeAxiosError(e);
@@ -107,7 +96,7 @@ export async function deleteMessage(messageId) {
 export async function editMessage(messageId, text) {
   try {
     const { data } = await api.patch(`/chat/${messageId}`, { text });
-    if (!data.success) throw new Error(data.message || 'Could not edit message');
+    if (!data.success) throw apiFailure(data);
     return data.data;
   } catch (e) {
     throw normalizeAxiosError(e);
@@ -117,7 +106,7 @@ export async function editMessage(messageId, text) {
 export async function reactToMessage(messageId, emoji) {
   try {
     const { data } = await api.post(`/chat/${messageId}/react`, { emoji });
-    if (!data.success) throw new Error(data.message || 'Could not react');
+    if (!data.success) throw apiFailure(data);
     return data.data;
   } catch (e) {
     throw normalizeAxiosError(e);
@@ -127,7 +116,7 @@ export async function reactToMessage(messageId, emoji) {
 export async function pinMessage(messageId) {
   try {
     const { data } = await api.post(`/chat/${messageId}/pin`);
-    if (!data.success) throw new Error(data.message || 'Could not pin message');
+    if (!data.success) throw apiFailure(data);
     return data.data;
   } catch (e) {
     throw normalizeAxiosError(e);
@@ -137,7 +126,7 @@ export async function pinMessage(messageId) {
 export async function unpinMessage(messageId) {
   try {
     const { data } = await api.delete(`/chat/${messageId}/pin`);
-    if (!data.success) throw new Error(data.message || 'Could not unpin message');
+    if (!data.success) throw apiFailure(data);
     return data.data;
   } catch (e) {
     throw normalizeAxiosError(e);
@@ -147,7 +136,7 @@ export async function unpinMessage(messageId) {
 export async function toggleStarMessage(messageId) {
   try {
     const { data } = await api.post(`/chat/${messageId}/star`);
-    if (!data.success) throw new Error(data.message || 'Could not star message');
+    if (!data.success) throw apiFailure(data);
     return data.data;
   } catch (e) {
     throw normalizeAxiosError(e);
@@ -157,7 +146,7 @@ export async function toggleStarMessage(messageId) {
 export async function searchChatMessages(filters = {}) {
   try {
     const { data } = await api.get('/chat/search', { params: filters });
-    if (!data.success) throw new Error(data.message || 'Search failed');
+    if (!data.success) throw apiFailure(data);
     return data.data ?? [];
   } catch (e) {
     throw normalizeAxiosError(e);
@@ -167,7 +156,7 @@ export async function searchChatMessages(filters = {}) {
 export async function getPinnedMessages() {
   try {
     const { data } = await api.get('/chat/pinned');
-    if (!data.success) throw new Error(data.message || 'Could not load pinned messages');
+    if (!data.success) throw apiFailure(data);
     return data.data ?? [];
   } catch (e) {
     throw normalizeAxiosError(e);
@@ -177,7 +166,7 @@ export async function getPinnedMessages() {
 export async function getStarredMessages() {
   try {
     const { data } = await api.get('/chat/starred');
-    if (!data.success) throw new Error(data.message || 'Could not load starred messages');
+    if (!data.success) throw apiFailure(data);
     return data.data ?? [];
   } catch (e) {
     throw normalizeAxiosError(e);

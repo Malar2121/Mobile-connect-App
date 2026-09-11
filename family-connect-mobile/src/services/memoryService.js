@@ -1,22 +1,5 @@
 import { api } from './api';
-
-function normalizeAxiosError(error) {
-  if (error.response) {
-    const msg =
-      error.response.data?.message ||
-      `Server error (${error.response.status})`;
-    const err = new Error(msg);
-    err.status = error.response.status;
-    err.code = error.response.data?.code;
-    return err;
-  }
-  if (error.request) {
-    return new Error(
-      'Network error. Check your connection and EXPO_PUBLIC_API_URL.',
-    );
-  }
-  return error instanceof Error ? error : new Error(String(error));
-}
+import { normalizeApiError as normalizeAxiosError, apiFailure } from './apiError';
 
 /**
  * GET /api/memories
@@ -26,7 +9,7 @@ export async function getFamilyMemories() {
   try {
     const { data } = await api.get('/memories');
     if (!data.success) {
-      throw new Error(data.message || 'Could not load memories');
+      throw apiFailure(data);
     }
     return Array.isArray(data.data) ? data.data : [];
   } catch (e) {
@@ -41,7 +24,7 @@ export async function getMemoryDetails(id) {
   try {
     const { data } = await api.get(`/memories/${encodeURIComponent(id)}`);
     if (!data.success || !data.data) {
-      throw new Error(data.message || 'Memory not found');
+      throw apiFailure(data);
     }
     return data.data;
   } catch (e) {
@@ -61,7 +44,7 @@ export async function uploadMemory(formData) {
       timeout: 120000,
     });
     if (!data.success || !data.data) {
-      throw new Error(data.message || 'Could not upload memory');
+      throw apiFailure(data);
     }
     return data.data;
   } catch (e) {
@@ -78,7 +61,7 @@ export async function likeMemory(memoryId) {
   try {
     const { data } = await api.post('/memories/like', { memoryId });
     if (!data.success) {
-      throw new Error(data.message || 'Could not like memory');
+      throw apiFailure(data);
     }
     return data.data;
   } catch (error) {
@@ -93,7 +76,7 @@ export async function getMemoryComments(id) {
   try {
     const { data } = await api.get(`/memories/${id}/comments`);
     if (!data.success) {
-      throw new Error(data.message || 'Could not fetch comments');
+      throw apiFailure(data);
     }
     return data.data.comments;
   } catch (error) {
@@ -108,7 +91,7 @@ export async function addMemoryComment(id, content) {
   try {
     const { data } = await api.post(`/memories/${id}/comments`, { content });
     if (!data.success) {
-      throw new Error(data.message || 'Could not add comment');
+      throw apiFailure(data);
     }
     return data.data.comment;
   } catch (error) {
@@ -124,7 +107,7 @@ export async function deleteMemory(memoryId) {
   try {
     const { data } = await api.delete(`/memories/${encodeURIComponent(memoryId)}`);
     if (!data.success) {
-      throw new Error(data.message || 'Could not delete memory');
+      throw apiFailure(data);
     }
   } catch (e) {
     throw normalizeAxiosError(e);

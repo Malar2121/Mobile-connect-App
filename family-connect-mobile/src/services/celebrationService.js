@@ -1,21 +1,5 @@
 import { api } from './api';
-
-function normalizeAxiosError(error) {
-  if (error.response) {
-    const msg =
-      error.response.data?.message ||
-      `Server error (${error.response.status})`;
-    const err = new Error(msg);
-    err.status = error.response.status;
-    return err;
-  }
-  if (error.request) {
-    return new Error(
-      'Network error. Check your connection and EXPO_PUBLIC_API_URL.',
-    );
-  }
-  return error instanceof Error ? error : new Error(String(error));
-}
+import { normalizeApiError as normalizeAxiosError, apiFailure } from './apiError';
 
 /**
  * GET /api/celebrations?days=365
@@ -26,7 +10,7 @@ function normalizeAxiosError(error) {
 export async function getCelebrations(days = 365) {
   try {
     const { data } = await api.get('/celebrations', { params: { days } });
-    if (!data.success) throw new Error(data.message || 'Could not load celebrations');
+    if (!data.success) throw apiFailure(data);
     return Array.isArray(data.data) ? data.data : [];
   } catch (e) {
     throw normalizeAxiosError(e);
@@ -42,7 +26,7 @@ export async function getCelebrations(days = 365) {
 export async function createCelebration(payload) {
   try {
     const { data } = await api.post('/celebrations', payload);
-    if (!data.success) throw new Error(data.message || 'Could not create celebration');
+    if (!data.success) throw apiFailure(data);
     return data.data;
   } catch (e) {
     throw normalizeAxiosError(e);
@@ -52,7 +36,7 @@ export async function createCelebration(payload) {
 export async function getCelebration(id) {
   try {
     const { data } = await api.get(`/celebrations/${encodeURIComponent(id)}`);
-    if (!data.success) throw new Error(data.message || 'Celebration not found');
+    if (!data.success) throw apiFailure(data);
     return data.data;
   } catch (e) {
     throw normalizeAxiosError(e);
@@ -62,7 +46,7 @@ export async function getCelebration(id) {
 export async function updateCelebration(id, payload) {
   try {
     const { data } = await api.put(`/celebrations/${encodeURIComponent(id)}`, payload);
-    if (!data.success) throw new Error(data.message || 'Could not update celebration');
+    if (!data.success) throw apiFailure(data);
     return data.data;
   } catch (e) {
     throw normalizeAxiosError(e);
@@ -72,7 +56,7 @@ export async function updateCelebration(id, payload) {
 export async function deleteCelebration(id) {
   try {
     const { data } = await api.delete(`/celebrations/${encodeURIComponent(id)}`);
-    if (!data.success) throw new Error(data.message || 'Could not delete celebration');
+    if (!data.success) throw apiFailure(data);
     return true;
   } catch (e) {
     throw normalizeAxiosError(e);

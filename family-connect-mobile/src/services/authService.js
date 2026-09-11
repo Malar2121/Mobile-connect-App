@@ -1,21 +1,5 @@
 import { api } from './api';
-
-function normalizeAxiosError(error) {
-  if (error.response) {
-    const msg =
-      error.response.data?.message ||
-      `Server error (${error.response.status})`;
-    const err = new Error(msg);
-    err.status = error.response.status;
-    return err;
-  }
-  if (error.request) {
-    return new Error(
-      'Network error. Check your connection and EXPO_PUBLIC_API_URL.',
-    );
-  }
-  return error instanceof Error ? error : new Error(String(error));
-}
+import { normalizeApiError as normalizeAxiosError, apiFailure } from './apiError';
 
 /**
  * POST /api/auth/login
@@ -25,7 +9,7 @@ export async function loginUser(email, password) {
   try {
     const { data } = await api.post('/auth/login', { email, password });
     if (!data.success || !data.data) {
-      throw new Error(data.message || 'Login failed');
+      throw apiFailure(data);
     }
     // Accounts with 2FA enabled get a short-lived tempToken instead of tokens
     if (data.data.requires2FA) {
@@ -46,7 +30,7 @@ export async function loginWith2FA(tempToken, code) {
   try {
     const { data } = await api.post('/auth/2fa/login', { tempToken, code });
     if (!data.success || !data.data) {
-      throw new Error(data.message || 'Two-factor login failed');
+      throw apiFailure(data);
     }
     const { accessToken, refreshToken, user } = data.data;
     return { accessToken, refreshToken, user };
@@ -63,7 +47,7 @@ export async function setup2FA() {
   try {
     const { data } = await api.post('/auth/2fa/setup');
     if (!data.success || !data.data) {
-      throw new Error(data.message || 'Could not start 2FA setup');
+      throw apiFailure(data);
     }
     return data.data;
   } catch (e) {
@@ -78,7 +62,7 @@ export async function verify2FA(code) {
   try {
     const { data } = await api.post('/auth/2fa/verify', { code });
     if (!data.success) {
-      throw new Error(data.message || 'Verification failed');
+      throw apiFailure(data);
     }
     return data.data;
   } catch (e) {
@@ -93,7 +77,7 @@ export async function disable2FA(code) {
   try {
     const { data } = await api.post('/auth/2fa/disable', { code });
     if (!data.success) {
-      throw new Error(data.message || 'Could not disable 2FA');
+      throw apiFailure(data);
     }
     return data.data;
   } catch (e) {
@@ -115,7 +99,7 @@ export async function registerUser(name, email, password, memberType = 'adult') 
       memberType,
     });
     if (!data.success || !data.data) {
-      throw new Error(data.message || 'Registration failed');
+      throw apiFailure(data);
     }
     const { accessToken, refreshToken, user } = data.data;
     return { accessToken, refreshToken, user };
@@ -131,7 +115,7 @@ export async function getCurrentUser() {
   try {
     const { data } = await api.get('/auth/me');
     if (!data.success || !data.data?.user) {
-      throw new Error(data.message || 'Could not load profile');
+      throw apiFailure(data);
     }
     return data.data.user;
   } catch (e) {
@@ -146,7 +130,7 @@ export async function updateProfile(payload) {
   try {
     const { data } = await api.patch('/auth/me', payload);
     if (!data.success || !data.data?.user) {
-      throw new Error(data.message || 'Could not update profile');
+      throw apiFailure(data);
     }
     return data.data.user;
   } catch (e) {

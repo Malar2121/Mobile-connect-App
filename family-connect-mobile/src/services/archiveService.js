@@ -1,4 +1,5 @@
 import { api } from './api';
+import { normalizeApiError as normalizeAxiosError } from './apiError';
 
 /**
  * Family stories, event notes and the shared family history journal
@@ -10,21 +11,6 @@ export const STORY_CATEGORIES = ['story', 'tradition', 'origin', 'milestone', 'r
 export const STORY_LIMITS = { title: 120, body: 5000 };
 export const HISTORY_FIELDS = ['origins', 'traditions', 'culturalNotes', 'importantEvents', 'achievements', 'historicalMemories'];
 export const HISTORY_FIELD_MAX = 5000;
-
-function normalizeAxiosError(error) {
-  if (error.response) {
-    const err = new Error(error.response.data?.message || `HTTP ${error.response.status}`);
-    err.status = error.response.status;
-    err.code = error.response.data?.code;
-    return err;
-  }
-  if (error.request) {
-    const err = new Error('Network error');
-    err.isNetworkError = true;
-    return err;
-  }
-  return error instanceof Error ? error : new Error(String(error));
-}
 
 async function call(request) {
   try {

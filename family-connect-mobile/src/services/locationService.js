@@ -1,22 +1,10 @@
 import { api } from './api';
-
-function normalizeAxiosError(error) {
-  if (error.response) {
-    const msg = error.response.data?.message || `Server error (${error.response.status})`;
-    const err = new Error(msg);
-    err.status = error.response.status;
-    return err;
-  }
-  if (error.request) {
-    return new Error('Network error. Check your connection and EXPO_PUBLIC_API_URL.');
-  }
-  return error instanceof Error ? error : new Error(String(error));
-}
+import { normalizeApiError as normalizeAxiosError, apiFailure } from './apiError';
 
 export async function getFamilyLocations() {
   try {
     const { data } = await api.get('/location/family');
-    if (!data.success) throw new Error(data.message || 'Could not load family locations');
+    if (!data.success) throw apiFailure(data);
     return Array.isArray(data.data) ? data.data : [];
   } catch (e) {
     throw normalizeAxiosError(e);
@@ -26,7 +14,7 @@ export async function getFamilyLocations() {
 export async function getUserLocation(userId) {
   try {
     const { data } = await api.get(`/location/${encodeURIComponent(userId)}`);
-    if (!data.success || !data.data) throw new Error(data.message || 'Location not available');
+    if (!data.success || !data.data) throw apiFailure(data);
     return data.data;
   } catch (e) {
     throw normalizeAxiosError(e);
@@ -36,7 +24,7 @@ export async function getUserLocation(userId) {
 export async function updateLocation(coords) {
   try {
     const { data } = await api.post('/location/update', coords);
-    if (!data.success || !data.data) throw new Error(data.message || 'Could not update location');
+    if (!data.success || !data.data) throw apiFailure(data);
     return data.data;
   } catch (e) {
     throw normalizeAxiosError(e);
@@ -46,7 +34,7 @@ export async function updateLocation(coords) {
 export async function sendSOSAlert(payload) {
   try {
     const { data } = await api.post('/location/sos', payload);
-    if (!data.success) throw new Error(data.message || 'Could not send SOS');
+    if (!data.success) throw apiFailure(data);
     return data.data;
   } catch (e) {
     throw normalizeAxiosError(e);
@@ -58,7 +46,7 @@ export async function sendSOSAlert(payload) {
 export async function setLocationSharing(enabled) {
   try {
     const { data } = await api.post('/location/sharing', { enabled });
-    if (!data.success) throw new Error(data.message || 'Could not update sharing');
+    if (!data.success) throw apiFailure(data);
     return data.data;
   } catch (e) {
     throw normalizeAxiosError(e);
@@ -70,7 +58,7 @@ export async function setLocationSharing(enabled) {
 export async function getLocationHistory(userId, hours = 24) {
   try {
     const { data } = await api.get(`/location/history/${encodeURIComponent(userId)}?hours=${hours}`);
-    if (!data.success) throw new Error(data.message || 'Could not load history');
+    if (!data.success) throw apiFailure(data);
     return data.data;
   } catch (e) {
     throw normalizeAxiosError(e);
@@ -82,7 +70,7 @@ export async function getLocationHistory(userId, hours = 24) {
 export async function getSafeZones() {
   try {
     const { data } = await api.get('/safezones');
-    if (!data.success) throw new Error(data.message || 'Could not load safe zones');
+    if (!data.success) throw apiFailure(data);
     return Array.isArray(data.data) ? data.data : [];
   } catch (e) {
     throw normalizeAxiosError(e);
@@ -92,7 +80,7 @@ export async function getSafeZones() {
 export async function createSafeZone(zone) {
   try {
     const { data } = await api.post('/safezones', zone);
-    if (!data.success) throw new Error(data.message || 'Could not create safe zone');
+    if (!data.success) throw apiFailure(data);
     return data.data;
   } catch (e) {
     throw normalizeAxiosError(e);
@@ -102,7 +90,7 @@ export async function createSafeZone(zone) {
 export async function updateSafeZone(zoneId, updates) {
   try {
     const { data } = await api.put(`/safezones/${encodeURIComponent(zoneId)}`, updates);
-    if (!data.success) throw new Error(data.message || 'Could not update safe zone');
+    if (!data.success) throw apiFailure(data);
     return data.data;
   } catch (e) {
     throw normalizeAxiosError(e);
@@ -112,7 +100,7 @@ export async function updateSafeZone(zoneId, updates) {
 export async function deleteSafeZone(zoneId) {
   try {
     const { data } = await api.delete(`/safezones/${encodeURIComponent(zoneId)}`);
-    if (!data.success) throw new Error(data.message || 'Could not delete safe zone');
+    if (!data.success) throw apiFailure(data);
     return data.data;
   } catch (e) {
     throw normalizeAxiosError(e);

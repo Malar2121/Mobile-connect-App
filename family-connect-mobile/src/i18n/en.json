@@ -600,7 +600,8 @@
     "darkMode": "Dark mode",
     "sharedMedia": "Shared media",
     "photoVideo": "Photo or video",
-    "playbackSpeed": "Change playback speed"
+    "playbackSpeed": "Change playback speed",
+    "queuedOffline": "You are offline. The message was saved and will be sent automatically."
   },
   "map": {
     "title": "Live map",
@@ -963,5 +964,25 @@
     "byAuthor": "By {{name}}",
     "onEvent": "On {{title}}",
     "readOnlyGuest": "Guests can read stories but cannot add them."
+  },
+  "errors": {
+    "generic": "Something went wrong. Please try again.",
+    "network": "Could not reach Family Connect. Check your internet connection and try again.",
+    "server": "Family Connect is having a problem right now. Please try again shortly.",
+    "badRequest": "Some details are not valid. Check them and try again.",
+    "sessionExpired": "Your session has ended. Please sign in again.",
+    "invalidCredentials": "The email or password is incorrect.",
+    "forbidden": "You do not have permission to do that.",
+    "notFound": "That could not be found. It may have been removed.",
+    "conflict": "That has already been done.",
+    "gone": "That is no longer available.",
+    "tooLarge": "That file is too large.",
+    "rateLimited": "Too many requests. Wait a moment and try again.",
+    "guestReadOnly": "Guests can view family content but cannot change it.",
+    "consentPending": "Your account is waiting for a parent or guardian to approve it.",
+    "consentRejected": "A guardian has not approved this account.",
+    "selfReview": "Another family member must review your upload.",
+    "reviewForbidden": "Only adult family members can review shared memories.",
+    "alreadyReviewed": "This memory has already been reviewed."
   }
 }

@@ -1,17 +1,5 @@
 import { api } from './api';
-
-function normalizeAxiosError(error) {
-  if (error.response) {
-    const msg = error.response.data?.message || `Server error (${error.response.status})`;
-    const err = new Error(msg);
-    err.status = error.response.status;
-    return err;
-  }
-  if (error.request) {
-    return new Error('Network error. Check your connection and EXPO_PUBLIC_API_URL.');
-  }
-  return error instanceof Error ? error : new Error(String(error));
-}
+import { normalizeApiError as normalizeAxiosError, apiFailure } from './apiError';
 
 /**
  * GET /api/family-tree
@@ -21,7 +9,7 @@ export async function getFamilyTree() {
   try {
     const { data } = await api.get('/family-tree');
     if (!data.success) {
-      throw new Error(data.message || 'Could not load family tree');
+      throw apiFailure(data);
     }
     return data.data?.nodes ?? [];
   } catch (e) {
@@ -37,7 +25,7 @@ export async function updateMemberRelationship(payload) {
   try {
     const { data } = await api.put('/family-tree/relationship', payload);
     if (!data.success) {
-      throw new Error(data.message || 'Could not update relationship');
+      throw apiFailure(data);
     }
     return data.data;
   } catch (e) {

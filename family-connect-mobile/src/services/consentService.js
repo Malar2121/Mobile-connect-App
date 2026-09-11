@@ -1,20 +1,5 @@
 import { api } from './api';
-
-function normalizeAxiosError(error) {
-  if (error.response) {
-    const msg =
-      error.response.data?.message ||
-      `Server error (${error.response.status})`;
-    const err = new Error(msg);
-    err.status = error.response.status;
-    err.code = error.response.data?.code;
-    return err;
-  }
-  if (error.request) {
-    return new Error('Network error. Check your connection and EXPO_PUBLIC_API_URL.');
-  }
-  return error instanceof Error ? error : new Error(String(error));
-}
+import { normalizeApiError as normalizeAxiosError, apiFailure } from './apiError';
 
 /**
  * GET /api/consent/me — the signed-in account's own consent state.
@@ -24,7 +9,7 @@ function normalizeAxiosError(error) {
 export async function getMyConsent() {
   try {
     const { data } = await api.get('/consent/me');
-    if (!data.success) throw new Error(data.message || 'Could not load consent status');
+    if (!data.success) throw apiFailure(data);
     return data.data;
   } catch (e) {
     throw normalizeAxiosError(e);
@@ -35,7 +20,7 @@ export async function getMyConsent() {
 export async function getPendingConsents() {
   try {
     const { data } = await api.get('/consent/pending');
-    if (!data.success) throw new Error(data.message || 'Could not load pending approvals');
+    if (!data.success) throw apiFailure(data);
     return Array.isArray(data.data) ? data.data : [];
   } catch (e) {
     throw normalizeAxiosError(e);
@@ -45,7 +30,7 @@ export async function getPendingConsents() {
 export async function approveConsent(id, note) {
   try {
     const { data } = await api.post(`/consent/${encodeURIComponent(id)}/approve`, { note });
-    if (!data.success) throw new Error(data.message || 'Could not approve');
+    if (!data.success) throw apiFailure(data);
     return data.data;
   } catch (e) {
     throw normalizeAxiosError(e);
@@ -55,7 +40,7 @@ export async function approveConsent(id, note) {
 export async function rejectConsent(id, note) {
   try {
     const { data } = await api.post(`/consent/${encodeURIComponent(id)}/reject`, { note });
-    if (!data.success) throw new Error(data.message || 'Could not reject');
+    if (!data.success) throw apiFailure(data);
     return data.data;
   } catch (e) {
     throw normalizeAxiosError(e);

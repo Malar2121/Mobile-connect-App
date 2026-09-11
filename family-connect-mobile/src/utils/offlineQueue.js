@@ -62,6 +62,9 @@ export async function flushOfflineQueue() {
 export function isNetworkError(error) {
   if (!error) return false;
   if (error.isNetworkError) return true;
+  // An error carrying an HTTP status came back from the server. The request
+  // reached it, so queueing it for later would only repeat the refusal.
+  if (typeof error.status === 'number') return false;
   const msg = String(error.message || '').toLowerCase();
   return msg.includes('network error') || error.code === 'ERR_NETWORK' || !error.response;
 }

@@ -1,17 +1,5 @@
 import { api } from './api';
-
-function normalizeAxiosError(error) {
-  if (error.response) {
-    const err = new Error(error.response.data?.message || `Server error (${error.response.status})`);
-    err.status = error.response.status;
-    err.code = error.response.data?.code;
-    return err;
-  }
-  if (error.request) {
-    return new Error('Network error. Check your connection and EXPO_PUBLIC_API_URL.');
-  }
-  return error instanceof Error ? error : new Error(String(error));
-}
+import { normalizeApiError as normalizeAxiosError, apiFailure } from './apiError';
 
 /**
  * POST /api/family/invitations
@@ -22,7 +10,7 @@ function normalizeAxiosError(error) {
 export async function createEmailInvitation(email, role = 'member') {
   try {
     const { data } = await api.post('/family/invitations', { email, role });
-    if (!data.success) throw new Error(data.message || 'Could not create the invitation');
+    if (!data.success) throw apiFailure(data);
     return data.data;
   } catch (e) {
     throw normalizeAxiosError(e);
@@ -32,7 +20,7 @@ export async function createEmailInvitation(email, role = 'member') {
 export async function listInvitations() {
   try {
     const { data } = await api.get('/family/invitations');
-    if (!data.success) throw new Error(data.message || 'Could not load invitations');
+    if (!data.success) throw apiFailure(data);
     return Array.isArray(data.data) ? data.data : [];
   } catch (e) {
     throw normalizeAxiosError(e);
@@ -42,7 +30,7 @@ export async function listInvitations() {
 export async function revokeInvitation(id) {
   try {
     const { data } = await api.delete(`/family/invitations/${encodeURIComponent(id)}`);
-    if (!data.success) throw new Error(data.message || 'Could not revoke the invitation');
+    if (!data.success) throw apiFailure(data);
     return data.data;
   } catch (e) {
     throw normalizeAxiosError(e);
@@ -53,7 +41,7 @@ export async function revokeInvitation(id) {
 export async function verifyInvitation(token) {
   try {
     const { data } = await api.get(`/family/invitations/verify/${encodeURIComponent(token)}`);
-    if (!data.success) throw new Error(data.message || 'This invitation is not valid');
+    if (!data.success) throw apiFailure(data);
     return data.data;
   } catch (e) {
     throw normalizeAxiosError(e);
@@ -63,7 +51,7 @@ export async function verifyInvitation(token) {
 export async function acceptInvitation(token) {
   try {
     const { data } = await api.post('/family/invitations/accept', { token });
-    if (!data.success) throw new Error(data.message || 'Could not accept the invitation');
+    if (!data.success) throw apiFailure(data);
     return data.data;
   } catch (e) {
     throw normalizeAxiosError(e);

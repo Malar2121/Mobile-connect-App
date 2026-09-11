@@ -1,21 +1,5 @@
 import { api } from './api';
-
-function normalizeAxiosError(error) {
-  if (error.response) {
-    const msg =
-      error.response.data?.message ||
-      `Server error (${error.response.status})`;
-    const err = new Error(msg);
-    err.status = error.response.status;
-    return err;
-  }
-  if (error.request) {
-    return new Error(
-      'Network error. Check your connection and EXPO_PUBLIC_API_URL.',
-    );
-  }
-  return error instanceof Error ? error : new Error(String(error));
-}
+import { normalizeApiError as normalizeAxiosError, apiFailure } from './apiError';
 
 /**
  * GET /api/events
@@ -25,7 +9,7 @@ export async function getFamilyEvents() {
   try {
     const { data } = await api.get('/events');
     if (!data.success) {
-      throw new Error(data.message || 'Could not load events');
+      throw apiFailure(data);
     }
     return Array.isArray(data.data) ? data.data : [];
   } catch (e) {
@@ -40,7 +24,7 @@ export async function getEventDetails(id) {
   try {
     const { data } = await api.get(`/events/${encodeURIComponent(id)}`);
     if (!data.success || !data.data) {
-      throw new Error(data.message || 'Event not found');
+      throw apiFailure(data);
     }
     return data.data;
   } catch (e) {
@@ -56,7 +40,7 @@ export async function createEvent(payload) {
   try {
     const { data } = await api.post('/events/create', payload);
     if (!data.success || !data.data) {
-      throw new Error(data.message || 'Could not create event');
+      throw apiFailure(data);
     }
     return data.data;
   } catch (e) {
@@ -76,7 +60,7 @@ export async function respondToEvent(id, status) {
       status,
     });
     if (!data.success || !data.data) {
-      throw new Error(data.message || 'Could not update RSVP');
+      throw apiFailure(data);
     }
     return data.data;
   } catch (e) {
@@ -91,7 +75,7 @@ export async function deleteEvent(id) {
   try {
     const { data } = await api.delete(`/events/${encodeURIComponent(id)}`);
     if (!data.success) {
-      throw new Error(data.message || 'Could not delete event');
+      throw apiFailure(data);
     }
   } catch (e) {
     throw normalizeAxiosError(e);
@@ -105,7 +89,7 @@ export async function updateEvent(eventId, eventData) {
   try {
     const { data } = await api.patch(`/events/${eventId}`, eventData);
     if (!data.success) {
-      throw new Error(data.message || 'Could not update event');
+      throw apiFailure(data);
     }
     return data.data;
   } catch (error) {
@@ -121,7 +105,7 @@ export async function getEventComments(eventId) {
   try {
     const { data } = await api.get(`/events/${eventId}/comments`);
     if (!data.success) {
-      throw new Error(data.message || 'Could not fetch comments');
+      throw apiFailure(data);
     }
     return data.data.comments;
   } catch (error) {
@@ -137,7 +121,7 @@ export async function addEventComment(eventId, content) {
   try {
     const { data } = await api.post(`/events/${eventId}/comments`, { content });
     if (!data.success) {
-      throw new Error(data.message || 'Could not add comment');
+      throw apiFailure(data);
     }
     return data.data.comment;
   } catch (error) {

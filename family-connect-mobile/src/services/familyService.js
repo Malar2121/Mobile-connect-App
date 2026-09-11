@@ -1,22 +1,5 @@
 import { api } from './api';
-
-function normalizeAxiosError(error) {
-  if (error.response) {
-    const msg =
-      error.response.data?.message ||
-      `Server error (${error.response.status})`;
-    const err = new Error(msg);
-    err.status = error.response.status;
-    err.code = error.response.data?.code;
-    return err;
-  }
-  if (error.request) {
-    return new Error(
-      'Network error. Check your connection and EXPO_PUBLIC_API_URL.',
-    );
-  }
-  return error instanceof Error ? error : new Error(String(error));
-}
+import { normalizeApiError as normalizeAxiosError, apiFailure } from './apiError';
 
 /**
  * GET /api/family/my-family
@@ -26,7 +9,7 @@ export async function getMyFamily() {
   try {
     const { data } = await api.get('/family/my-family');
     if (!data.success || !data.data?.family) {
-      throw new Error(data.message || 'Could not load family');
+      throw apiFailure(data);
     }
     return {
       family: data.data.family,
@@ -45,7 +28,7 @@ export async function createFamily(name) {
   try {
     const { data } = await api.post('/family/create', { name: name.trim() });
     if (!data.success || !data.data?.family) {
-      throw new Error(data.message || 'Could not create family');
+      throw apiFailure(data);
     }
     return { family: data.data.family };
   } catch (e) {
@@ -64,7 +47,7 @@ export async function joinFamily(inviteCode) {
     });
     const { data } = response;
     if (!data.success) {
-      throw new Error(data.message || 'Could not join family');
+      throw apiFailure(data);
     }
     if (response.status === 202 || data.data?.request) {
       return {
@@ -74,7 +57,7 @@ export async function joinFamily(inviteCode) {
       };
     }
     if (!data.data?.family) {
-      throw new Error(data.message || 'Could not join family');
+      throw apiFailure(data);
     }
     return { family: data.data.family, pending: false };
   } catch (e) {
@@ -92,7 +75,7 @@ export async function createInviteCode(regenerate = false) {
     const body = regenerate ? { regenerate: true } : {};
     const { data } = await api.post('/family/invite', body);
     if (!data.success || !data.data?.inviteCode) {
-      throw new Error(data.message || 'Could not get invite code');
+      throw apiFailure(data);
     }
     return data.data;
   } catch (e) {
@@ -107,7 +90,7 @@ export async function leaveFamily() {
   try {
     const { data } = await api.delete('/family/leave');
     if (!data.success) {
-      throw new Error(data.message || 'Could not leave family');
+      throw apiFailure(data);
     }
     return data.data;
   } catch (e) {
@@ -118,7 +101,7 @@ export async function leaveFamily() {
 export async function updateFamily(data) {
   try {
     const response = await api.patch('/family', data);
-    if (!response.data.success) throw new Error(response.data.message);
+    if (!response.data.success) throw apiFailure(response.data);
     return response.data.data;
   } catch (e) {
     throw normalizeAxiosError(e);
@@ -128,7 +111,7 @@ export async function updateFamily(data) {
 export async function updateMemberRole(userId, role) {
   try {
     const response = await api.put(`/family/members/${userId}/role`, { role });
-    if (!response.data.success) throw new Error(response.data.message);
+    if (!response.data.success) throw apiFailure(response.data);
     return response.data.data;
   } catch (e) {
     throw normalizeAxiosError(e);
@@ -145,7 +128,7 @@ export async function updateMemberType(userId, memberType, dateOfBirth) {
     const body = { memberType };
     if (dateOfBirth !== undefined) body.dateOfBirth = dateOfBirth;
     const response = await api.put(`/family/members/${userId}/type`, body);
-    if (!response.data.success) throw new Error(response.data.message);
+    if (!response.data.success) throw apiFailure(response.data);
     return response.data.data;
   } catch (e) {
     throw normalizeAxiosError(e);
@@ -155,7 +138,7 @@ export async function updateMemberType(userId, memberType, dateOfBirth) {
 export async function addLifeEvent(userId, lifeEvent) {
   try {
     const response = await api.post(`/family/members/${userId}/life-events`, lifeEvent);
-    if (!response.data.success) throw new Error(response.data.message);
+    if (!response.data.success) throw apiFailure(response.data);
     return response.data.data;
   } catch (e) {
     throw normalizeAxiosError(e);
@@ -170,7 +153,7 @@ export async function addLifeEvent(userId, lifeEvent) {
 export async function createJoinRequest(inviteCode) {
   try {
     const response = await api.post('/family/join-requests', { inviteCode });
-    if (!response.data.success) throw new Error(response.data.message);
+    if (!response.data.success) throw apiFailure(response.data);
     return response.data.data;
   } catch (e) {
     throw normalizeAxiosError(e);
@@ -180,7 +163,7 @@ export async function createJoinRequest(inviteCode) {
 export async function getJoinRequests() {
   try {
     const response = await api.get('/family/join-requests');
-    if (!response.data.success) throw new Error(response.data.message);
+    if (!response.data.success) throw apiFailure(response.data);
     return response.data.data;
   } catch (e) {
     throw normalizeAxiosError(e);
@@ -190,7 +173,7 @@ export async function getJoinRequests() {
 export async function approveJoinRequest(requestId) {
   try {
     const response = await api.post(`/family/join-requests/${requestId}/approve`);
-    if (!response.data.success) throw new Error(response.data.message);
+    if (!response.data.success) throw apiFailure(response.data);
     return response.data.data;
   } catch (e) {
     throw normalizeAxiosError(e);
@@ -200,7 +183,7 @@ export async function approveJoinRequest(requestId) {
 export async function rejectJoinRequest(requestId) {
   try {
     const response = await api.post(`/family/join-requests/${requestId}/reject`);
-    if (!response.data.success) throw new Error(response.data.message);
+    if (!response.data.success) throw apiFailure(response.data);
     return response.data.data;
   } catch (e) {
     throw normalizeAxiosError(e);
