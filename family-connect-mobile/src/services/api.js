@@ -1,11 +1,26 @@
 import axios from 'axios';
 import * as SecureStore from 'expo-secure-store';
+import Constants from 'expo-constants';
 
 const PRODUCTION_API_ORIGIN = 'https://mobile-connect-app-production.up.railway.app';
 const isDevelopment = process.env.NODE_ENV === 'development';
 const configuredApiUrl = (process.env.EXPO_PUBLIC_API_URL || '').trim();
 
-const raw = configuredApiUrl || (isDevelopment ? 'http://localhost:5000' : PRODUCTION_API_ORIGIN);
+const API_PORT = (process.env.EXPO_PUBLIC_API_PORT || '5000').trim();
+
+/**
+ * On a physical phone "localhost" is the phone itself. When no URL is
+ * configured in development, use the computer Metro is serving from — the
+ * developer's machine on the same Wi-Fi — with the API port. This keeps working
+ * when the computer's IP address changes.
+ */
+function developmentOrigin() {
+  const hostUri = Constants.expoConfig?.hostUri ?? '';
+  const host = String(hostUri).split(':')[0];
+  return host ? `http://${host}:${API_PORT}` : `http://localhost:${API_PORT}`;
+}
+
+const raw = configuredApiUrl || (isDevelopment ? developmentOrigin() : PRODUCTION_API_ORIGIN);
 
 /** Server origin without trailing slash (for Socket.IO, etc.). */
 export const API_ORIGIN = raw.replace(/\/$/, '');
