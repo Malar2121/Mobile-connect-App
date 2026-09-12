@@ -1,186 +1,203 @@
-# Family Connect — Deployment Guide
+# Family Connect — deployment guide
 
 ## Prerequisites
 
 - Node.js 18+
-- MongoDB Atlas cluster (or local MongoDB)
-- Cloudinary account (media uploads)
-- Firebase project (push notifications)
-- Android Studio (mobile) or EAS Build account
+- MongoDB — Atlas (proposal §5.1) or a local MongoDB for development
+- Cloudinary account (photos, videos, chat files)
+- Firebase project (push notifications) — optional; without it push is disabled and logged
+- SMTP provider (email invitations) — optional; without it invitations are created but not emailed
+- Android Studio (emulator) or an EAS Build account
 
 ---
 
-## Backend Deployment
+## Backend
 
-### 1. Environment Variables
+### 1. Environment variables
 
-Copy `backend/.env.example` to `backend/.env` and set:
+Copy `backend/.env.example` to `backend/.env`. **Never commit `.env`.**
 
-| Variable | Required | Description |
-|----------|----------|-------------|
-| `NODE_ENV` | Yes | `production` in prod |
-| `PORT` | Yes | Default `5000` |
-| `MONGO_URI` | Yes | MongoDB connection string |
-| `JWT_SECRET` | Yes | Min 32 characters |
-| `JWT_REFRESH_SECRET` | Yes | Refresh token secret |
-| `CLOUDINARY_*` | Yes | Media storage |
-| `FIREBASE_*` | Yes | FCM push |
-| `CLIENT_URL` | Yes | Mobile app origin (no `*` in prod) |
+| Variable | Required | Default | Description |
+|----------|----------|---------|-------------|
+| `NODE_ENV` | Yes | — | `production` in production |
+| `PORT` | Local only | `5000` | Hosting platforms inject it — do not set it there |
+| `MONGO_URI` | Yes | — | MongoDB connection string |
+| `JWT_SECRET` | Yes | — | At least 32 random characters |
+| `JWT_REFRESH_SECRET` | Yes | — | A different long random value |
+| `JWT_EXPIRE`, `JWT_REFRESH_EXPIRE` | No | `30d`, `90d` in the example | Token lifetimes |
+| `CLOUDINARY_CLOUD_NAME`, `CLOUDINARY_API_KEY`, `CLOUDINARY_API_SECRET` | Yes | — | Media storage |
+| `CLIENT_URL` | Yes in production | — | CORS allowlist entry (no `*`) |
+| `MAX_FILE_SIZE_MB` | No | `10` | Largest single upload; larger files get `413 FILE_TOO_LARGE` |
+| `FAMILY_MEDIA_QUOTA_MB` | No | `2048` | Photo and video storage per family; beyond it uploads get `413 MEDIA_QUOTA_EXCEEDED` |
+| `RATE_LIMIT_WINDOW_MS` | No | `900000` | Window for the two limits below |
+| `RATE_LIMIT_MAX` | No | `300` | Writes per signed-in member per window |
+| `READ_RATE_LIMIT_MAX` | No | `2000` | Reads per signed-in member per window |
+| `AUTH_RATE_LIMIT_MAX`, `AUTH_RATE_LIMIT_WINDOW_MS` | No | `20`, 15 min | Login and register attempts per IP |
+| `FIREBASE_PROJECT_ID`, `FIREBASE_CLIENT_EMAIL`, `FIREBASE_PRIVATE_KEY` | For push | — | Firebase Admin service account |
+| `SMTP_HOST`, `SMTP_PORT`, `SMTP_SECURE`, `SMTP_USER`, `SMTP_PASS`, `MAIL_FROM` | For email invitations | — | Outgoing mail |
+| `INVITE_LINK_BASE_URL` | For email invitations | `CLIENT_URL` | Base of the link in the email |
+| `INVITE_CODE_EXPIRY_HOURS` | No | `48` | Email invitation lifetime |
+| `REMINDER_CRON` | No | hourly | Reminder sweep schedule |
+| `DISABLE_REMINDER_SCHEDULER` | No | `false` | Set `true` to stop the sweep |
 
-### 2. Install & Run
+### 2. Install and run
 
 ```bash
-cd backend
-npm install
-npm start
+cd backend && npm install
 ```
 
-Verify: `GET https://your-api.example.com/health`
+```bash
+cd backend && npm start
+```
 
-### 3. Production Checklist
+Verify:
+
+```bash
+curl -s http://localhost:5000/health
+```
+
+### 3. Production checklist
 
 - [ ] `NODE_ENV=production`
-- [ ] Restrict `CLIENT_URL` to app origins
-- [ ] Use strong JWT secrets (rotate from dev)
-- [ ] Enable MongoDB IP allowlist
-- [ ] Configure reverse proxy (nginx) with TLS
-- [ ] Set `RATE_LIMIT_MAX` appropriate for traffic
-- [ ] Monitor logs (morgan → logger)
-- [ ] Process manager (PM2, systemd, or container orchestrator)
-
-### 4. Docker (optional)
-
-Containerize `backend/` with Node 18 Alpine, expose `PORT`, inject env via secrets manager.
+- [ ] `CLIENT_URL` restricted to real app origins
+- [ ] New, strong JWT secrets (not the development ones)
+- [ ] MongoDB Atlas network access allows the host's egress
+- [ ] TLS in front of the API (the platform's, or nginx)
+- [ ] Rate limits reviewed for the expected number of members
+- [ ] Logs monitored
+- [ ] A process manager or the platform's restart policy
 
 ---
 
-## Mobile Deployment
+## External services
 
-### 1. Environment
+### MongoDB Atlas
 
-Create `family-connect-mobile/.env`:
+1. Create a cluster and a database user.
+2. **Network Access:** allow the hosting platform's outbound addresses, or the app boots and then fails every request.
+3. Set `MONGO_URI` to the `mongodb+srv://…` string, with the database name `family_connect`.
+4. Restart and check `/health`, then sign in from the app.
 
-```
-EXPO_PUBLIC_API_URL=https://your-api.example.com
-```
+Atlas encrypts data at rest. The local development database does not.
 
-For Android emulator against local backend:
+### Firebase Cloud Messaging (push)
 
-```
-EXPO_PUBLIC_API_URL=http://10.0.2.2:5000
-```
+The server sends push through Firebase Admin, and through the Expo push service
+for Expo tokens. Both need a native build — **Expo Go on Android cannot receive
+remote push**, so the app skips registration there.
 
-Run `npm run reload` or `adb reverse` for port forwarding.
+1. In the Firebase console, create a project and add an Android app with the package name from `app.json`.
+2. **Project settings → Service accounts → Generate new private key.** Put its values in `FIREBASE_PROJECT_ID`, `FIREBASE_CLIENT_EMAIL` and `FIREBASE_PRIVATE_KEY` (keep the `\n` sequences, and the quotes).
+3. Download `google-services.json` for the Android app and configure it for the build (for EAS, upload the FCM V1 credentials with `eas credentials`).
+4. Build a development or preview build and install it on a phone.
+5. Sign in, allow notifications, and check that `/api/notifications/register-device` receives a token.
+6. Trigger a mention or a reminder with the app closed; a system notification should arrive.
 
-### 2. Development
+Until these steps are done, notifications still appear inside the app, and push is **not verified**.
+
+### SMTP (email invitations)
+
+1. Choose a provider: a transactional service, or a mailbox with an app password.
+2. Set `SMTP_HOST`, `SMTP_PORT` (`587` with `SMTP_SECURE=false`, or `465` with `true`), `SMTP_USER`, `SMTP_PASS` and `MAIL_FROM`.
+3. Set `INVITE_LINK_BASE_URL`.
+4. Restart, send an invitation to an address you control, and confirm that it arrives and the API reports `emailSent: true`.
+
+Without SMTP the API reports `emailSent: false` and returns the token, which can be pasted into **Join a family**.
+
+---
+
+## Mobile
+
+### Development
 
 ```bash
-cd family-connect-mobile
-npm install
-npm run android    # Emulator
-npm start          # Physical device via Expo
+cd family-connect-mobile && npm install
 ```
-
-### 3. Production Build (EAS)
 
 ```bash
-npx eas-cli build --platform android
-npx eas-cli build --platform ios
+cd family-connect-mobile && npm start
 ```
 
-Configure `app.json` / `eas.json` with:
-- Bundle identifier
-- Push notification credentials
-- Location permissions strings (Map module)
+In development the app finds the API by itself: it uses the address of the computer
+running Metro, on port 5000. The phone must be on the same Wi-Fi network as that
+computer and able to open `http://<that address>:5000/health` in its browser.
+Set `EXPO_PUBLIC_API_URL` only to override that address.
 
-### 4. Mobile Checklist
+Use **Expo Go for SDK 54** — see `DEVICE_READINESS_AUDIT.md` for installing that
+version.
 
-- [ ] `EXPO_PUBLIC_API_URL` points to production API
-- [ ] Google Maps API key (if using native maps features)
-- [ ] Firebase `google-services.json` / `GoogleService-Info.plist`
-- [ ] Expo notifications configured
-- [ ] Location permissions in `app.json`
-- [ ] Test on physical device (push, GPS, camera)
+### Production build (EAS)
+
+```bash
+cd family-connect-mobile && npx eas-cli build --platform android
+```
+
+Before a production build, `EXPO_PUBLIC_API_URL` must point at a working hosted
+API.
+
+### Mobile checklist
+
+- [ ] `EXPO_PUBLIC_API_URL` points to the production API, and `/health` answers there
+- [ ] Google Maps API key restricted to the Android package
+- [ ] Firebase `google-services.json` and FCM credentials configured
+- [ ] Location, camera, photos and notification permissions described in `app.json`
+- [ ] Tested on a physical device (`DEVICE_TEST_MATRIX.md`)
 
 ---
 
-## Socket.io in Production
+## Socket.IO in production
 
-- Socket.io shares the HTTP server port.
-- Ensure load balancer supports WebSocket sticky sessions if scaling horizontally.
-- Mobile client uses `API_ORIGIN` for socket connection (same host as REST).
-
----
-
-## Recommended Release Versioning
-
-| Stage | Version | Tag |
-|-------|---------|-----|
-| RC1 | `1.0.0-rc.1` | Map module complete |
-| **RC2** | **`1.0.0-rc.2`** | **Production hardening (this release)** |
-| GA | `1.0.0` | After QA sign-off |
-
-Update `family-connect-mobile/package.json` version before store submission.
+- Socket.IO shares the HTTP server's port.
+- Behind a load balancer with more than one instance, enable WebSocket sticky sessions.
+- The app connects the socket to the same origin as the REST API.
 
 ---
 
 ## Rollback
 
-- Backend: redeploy previous container/image; MongoDB migrations are schema-less (Mongoose).
-- Mobile: publish previous EAS build to stores; API must remain backward compatible.
-
----
+- **Backend:** redeploy the previous build. Mongoose schemas are additive, so older code still reads newer documents.
+- **Mobile:** publish the previous build. Keep the API backward compatible.
 
 ## Monitoring
 
-- Health endpoint: `/health`
-- Watch for `Unhandled Rejection` in server logs
-- Track 401/403 rates (auth issues)
-- Monitor Cloudinary quota and Firebase delivery reports
+- `/health`
+- Unhandled rejections in the server log
+- 401, 403 and 429 rates
+- Cloudinary storage and Firebase delivery reports
 
 ---
 
 ## Current deployment status — BLOCKED
 
-**As of commit `d2ad793`, there is no live deployment.** This section is kept
-accurate deliberately; nothing in this project claims a working production
-backend.
+**Re-checked on 2026-09-11: there is no live deployment.** Nothing in this
+project claims a working production backend.
 
 ### The evidence
 
-`https://mobile-connect-app-production.up.railway.app` returns 404 on every
-path, with these response headers:
+`https://mobile-connect-app-production.up.railway.app/health` returns:
 
 ```
+HTTP/1.1 404 Not Found
 Server: railway-hikari
 x-railway-fallback: true
-{"status":"error","code":404,"message":"Application not found"}
 ```
 
-`x-railway-fallback: true` means Railway's **edge router had no upstream service
-to route to**. This is not the application returning 404 — a running instance
-would answer `/health` with 200, and a genuine miss would come back in the app's
-own envelope from `middleware/errorHandler.js`. **No service is bound to that
-hostname**: the Railway service or project no longer exists.
+`x-railway-fallback: true` means Railway's edge router had **no service to route
+to**. A running instance would answer `/health` with 200, and an application 404
+would come back in the app's own JSON envelope.
 
 ### This is not a code problem
 
-The backend is verified deployable:
-
-- `server.listen(process.env.PORT || 5000)` — the correct pattern for a
-  platform-assigned port
+- `server.listen(process.env.PORT || 5000)` — the correct pattern for a platform-assigned port
 - `start: node server.js`, `engines: { node: ">=18" }`
-- No `Dockerfile` or `Procfile` needed; Nixpacks auto-detects a Node app
-- Verified working locally: 20/20 smoke tests, 170/170 Jest tests
+- No `Dockerfile` or `Procfile` needed
+- The backend test suite passes locally — see `TEST_REPORT_FINAL.md`
 
 ### The blocker
 
-`npx @railway/cli whoami` returns **`Unauthorized`**, and no `RAILWAY_TOKEN` is
-present. `railway login` is an interactive browser flow that requires the
-account owner. **This needs a human with account access.**
-
-The production MongoDB URI is also required and is not in this repository —
-`backend/.env` points at a local database, and `.env` is correctly gitignored.
+The Railway CLI is not authorised on this machine, and `railway login` is an
+interactive browser flow that needs the account owner. The production MongoDB
+URI is also not in the repository, as it should not be.
 
 ### To restore it
 
@@ -202,23 +219,11 @@ cd backend && npx @railway/cli link
 cd backend && npx @railway/cli up
 ```
 
-If `list` shows nothing, the project is gone — use `railway init` instead, or
-deploy to Render or AWS as the proposal (§6.5) actually names.
+If `list` shows nothing, the project is gone. Run `railway init`, or deploy to
+Render or AWS, the platforms the proposal names (§6.5).
 
-Set these in the platform dashboard before the first boot. **Do not set `PORT`**
-— the platform injects it:
-
-`NODE_ENV=production`, `MONGO_URI`, `JWT_SECRET`, `JWT_REFRESH_SECRET`,
-`JWT_EXPIRE`, `JWT_REFRESH_EXPIRE`, `CLOUDINARY_CLOUD_NAME`,
-`CLOUDINARY_API_KEY`, `CLOUDINARY_API_SECRET`, `CLIENT_URL`, `MAX_FILE_SIZE_MB`,
-`RATE_LIMIT_WINDOW_MS`, `RATE_LIMIT_MAX`.
-
-Optional: `FIREBASE_*` (without them push is disabled and logged, not failed),
-`SMTP_*` and `INVITE_LINK_BASE_URL` (without them email invitations are created
-but not sent).
-
-In MongoDB Atlas, allow the host's egress in Network Access, or the app will
-boot and then fail every request.
+Set the variables from the table above in the platform dashboard before the first
+boot. **Do not set `PORT`.**
 
 ### Verify before touching the mobile config
 
@@ -237,12 +242,11 @@ service still is not bound.
 4. `family-connect-mobile/src/services/api.js` — `PRODUCTION_API_ORIGIN`
 5. `backend/server.js` — `productionOrigin` (the CORS allowlist)
 
-Missing one produces a confusing partial failure. Note that React Native sends
-no `Origin` header, so the mobile app works even if (5) is stale — but browser
-clients will not.
+React Native sends no `Origin` header, so the mobile app works even if (5) is
+stale, but browser clients do not.
 
 ### Only then mark deployment complete
 
-After deploying, verify health, login, family, events, memories, chat, family
-tree, authorisation and CORS against the live URL. Until every one of those
-passes, deployment remains **BLOCKED**.
+After deploying, verify health, sign-in, family, events, memories, chat,
+authorisation and CORS against the live URL. Until all of those pass, deployment
+remains **BLOCKED**.
