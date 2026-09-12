@@ -1,99 +1,129 @@
-# Family Connect — Language Support
+# Family Connect — language support
 
-## Supported Languages
+Proposal §6.3: "Support English, Sinhala, and Tamil languages."
+
+## Supported languages
 
 | Code | Language | Locale tag | Script |
 |------|----------|------------|--------|
 | `en` | English | `en-US` | Latin |
-| `ta` | Tamil | `ta-LK` | Tamil |
 | `si` | Sinhala | `si-LK` | Sinhala |
+| `ta` | Tamil | `ta-LK` | Tamil |
 
-## Architecture
+Each bundle has **1,471 keys**, and the three are kept identical in shape by tests.
+
+## Changing language
+
+**Profile → Language** → English, සිංහල or தமிழ். The change applies at once,
+without restarting, and is remembered on the phone. The app also tells the server,
+so notifications follow the same choice.
+
+---
+
+## How it works in the app
 
 ```
 src/i18n/
-├── en.json          # Default bundle (always loaded)
-├── ta.json          # Tamil (lazy-loaded on first use)
-├── si.json          # Sinhala (lazy-loaded on first use)
-└── index.js         # I18nProvider, useI18n(), setLocale()
+├── en.json      # English, loaded at start-up
+├── si.json      # Sinhala, loaded the first time it is chosen
+├── ta.json      # Tamil, loaded the first time it is chosen
+└── index.js     # I18nProvider, useI18n(), translate(), getCurrentLocale()
 ```
 
-### Provider
+`I18nProvider` stores the choice in AsyncStorage under `fc_locale`.
 
-`I18nProvider` wraps the app inside `UIModeProvider` (`App.js`). It:
-
-- Persists locale to AsyncStorage (`fc_locale`)
-- Loads `ta` / `si` bundles on first selection (English eager-loaded)
-- Memoizes context value to avoid unnecessary re-renders
-- Exposes `t(key, params)` with `{{placeholder}}` interpolation
-
-### Usage
+### In components
 
 ```javascript
 import { useI18n } from '../i18n';
 
 function MyScreen() {
-  const { t, locale, setLocale } = useI18n();
-  return <Text>{t('profile.title')}</Text>;
+  const { t } = useI18n();
+  return <Text>{t('events.newEvent')}</Text>;
 }
 ```
 
-### Date & number formatting
+### Outside React
+
+Helpers, services and module-level constants cannot call a hook. They use
+`translate()`, which reads the current language:
 
 ```javascript
-import { useFormat } from '../hooks/useFormat';
+import { translate } from '../i18n';
 
-const { formatDate, formatRelative, formatNumber, calendarWeekdays } = useFormat();
+export const RSVP_LABEL = {
+  get accepted() { return translate('events.rsvpLabel.accepted'); },
+};
 ```
 
-Utilities in `src/utils/i18nFormat.js` use BCP-47 locale tags (`ta-LK`, `si-LK`).
+A **getter** matters here. A plain `label: translate('…')` would be evaluated once,
+when the file loads, and would stay in that language.
 
-## Changing Language
+### Interpolation
 
-**Profile → Language** → select:
+`{{name}}` placeholders: `t('family.joinedDate', { date })`. There are no plural
+rules; where a count changes the wording, there are separate keys.
 
-- English
-- தமிழ்
-- සිංහල
+### What stays untranslated
 
-Changes apply **immediately** without app restart. Tab labels update via `useTabConfig()`.
+- **Words people write:** names, messages, captions, stories, event titles. They
+  are shown exactly as written, in any script.
+- **Data:** route names, relationship nicknames that are stored and matched
+  (`Father`, `Mother`), status codes. The label shown for them is translated.
+- **Text sent on a member's behalf** when a field is left blank (the SOS message,
+  the voice message label, a scheduled message). It is written in the
+  **sender's** language.
+- **Language-neutral examples:** the invite code pattern `ABCD-EFGH` and example
+  email addresses.
 
-## Translation Coverage
+---
 
-| Area | Coverage |
-|------|----------|
-| Common actions | ✅ Full (en/ta/si) |
-| Tab navigation | ✅ Full |
-| Authentication (login) | ✅ Full |
-| Profile / settings | ✅ Full |
-| Language screen | ✅ Full |
-| Dashboard greetings | ✅ Full |
-| Map settings / SOS | ✅ Partial |
-| Family / Events / Chat / Tree | ⚠️ Keys defined; screens migrating incrementally |
-| Dynamic API content | N/A (user-generated, not translated) |
+## Server-side text
 
-### Fallback behavior
+- **Notifications and push messages.** `User.language` (`en`, `si`, `ta`) is set
+  by the app after sign-in and whenever the language changes (`PATCH /api/auth/me`).
+  `backend/services/notificationText.js` writes each notification's title and body
+  in the recipient's language.
+- **API errors.** `src/services/apiError.js` maps an error's `code`
+  (`GUEST_READ_ONLY`, `MEDIA_QUOTA_EXCEEDED`, …) or its HTTP status to a translated
+  message. English readers see the server's own wording.
 
-If a key is missing in `ta` or `si`, English is used automatically.
+---
 
-## Adding Translations
+## Automated guards
 
-1. Add key to `en.json`
-2. Mirror key in `ta.json` and `si.json`
-3. Replace hardcoded string with `t('your.key')`
+All of these run with the backend suite (`cd backend && npm test`).
 
-Nested keys use dot notation: `t('profile.themeLight')`.
+| Test | Fails when |
+|---|---|
+| `tests/unit/i18nBundles.test.js` | A key is missing from a language; placeholders differ; a Sinhala or Tamil value is copied English, empty, or lacks its own script |
+| `tests/unit/i18nUsage.test.js` | A `t()` or `translate()` key does not exist; a file calls `t()` without obtaining it; fewer screens are localised than before |
+| `tests/unit/i18nHardcoded.test.js` | English appears in JSX text, a user-facing prop or key, an alert or toast, a template literal, or **as a phrase anywhere** in the app code |
+| `tests/unit/mobileScope.test.js` | `t` is used where it is not defined or has been shadowed, or translated text is used as a route name or stored value |
+| `tests/unit/notificationText.test.js` | A notification type cannot be written in all three languages |
 
-## Performance
+The hardcoded-English and scope tests each include a self-test, proving they
+catch the mistake they are meant to catch.
 
-- English bundle loaded at startup (~4KB JSON)
-- Tamil/Sinhala loaded once on first switch, then cached in memory
-- `t()` callback memoized on `[locale, bundleVersion]`
-- `useTabConfig()` memoized on `[t]`
+## Adding text
 
-## Remaining Work
+1. Add the key to `en.json`, `si.json` and `ta.json`, with the same placeholders.
+2. Use `t('section.key')` in a component, or a `translate()` getter elsewhere.
+3. Run the guards:
 
-- Migrate remaining ~200 screens/components to `t()` keys
-- Localize `RegisterScreen`, module home screens, empty states
-- Pass `locale` into all `eventFormat` / `chatHelpers` call sites
-- RTL support not required for ta/si (both LTR in this app)
+```bash
+cd backend && npx jest tests/unit
+```
+
+---
+
+## Known limitations
+
+- **No fluent-speaker review.** The Sinhala and Tamil text has not been checked
+  by a native speaker. Do that before a pilot.
+- **Fonts.** The Inter typeface has no Sinhala or Tamil glyphs, so Android uses a
+  system font for those scripts. Line height and clipping need checking on a
+  phone (`DEVICE_TEST_MATRIX.md`, LANG-05 and LANG-06).
+- **Voice prompts** in Sinhala or Tamil depend on the phone having those
+  text-to-speech voices installed.
+- Sinhala and Tamil are left-to-right, so no right-to-left layout is needed.

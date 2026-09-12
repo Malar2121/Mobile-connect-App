@@ -22,15 +22,15 @@ You can change this later, and an admin can change it for you.
 
 ### Start a family, or join one
 
-**To start one:** tap **Create a family**, give it a name. You become the admin.
+**To start one:** tap **Create a family** and give it a name. You become the admin.
 
 **To join one:** you need an invitation. There are three ways:
 
 | Method | How |
 |---|---|
 | **Invite code** | Someone shares a code like `ABCD-EFGH`. Tap **Join a family** and type it |
-| **QR code** | Tap **Scan a QR invite**, point your camera at their screen |
-| **Email** | You receive a link. Open it, or paste the code into the app |
+| **QR code** | Tap **Scan a QR invite** and point your camera at their screen |
+| **Email** | You receive a link. Open it, or paste the invitation into **Join a family** |
 
 Nobody can find or join your family without an invitation. Families are not
 searchable.
@@ -41,15 +41,16 @@ searchable.
 
 From the **Family** tab:
 
-- **Invite** shows your family's code and a QR code. The QR is generated on your
-  phone — your invite code is never sent to any outside service.
+- **Invite** shows your family's code and a QR code. The QR is drawn on your
+  phone — your invite code is never sent to any outside service. The code keeps
+  working until you generate a new one.
 - **Email invite** sends a one-time link to an address you choose. The link
   expires, works once, and only for the person you sent it to. You can revoke it
   at any time.
 
-> If your family's server has no email set up, the app will tell you plainly
-> that nothing was sent and give you the code to share yourself. It will never
-> pretend an email went out.
+> If your family's server has no email set up, the app tells you plainly that
+> nothing was sent and gives you the invitation to share yourself. The person can
+> paste it into **Join a family**. The app never pretends an email went out.
 
 ### Roles
 
@@ -57,7 +58,7 @@ From the **Family** tab:
 |---|---|
 | **Admin** | Everything, including managing members and settings |
 | **Parent** | Everything a member can, plus inviting people and approving child accounts |
-| **Member** | Create events, upload memories, chat, vote in polls |
+| **Member** | Create events, upload memories, review others' photos and videos, write stories, chat, vote in polls |
 | **Child** | A simplified view, once a guardian has approved the account |
 | **Guest** | Can see everything shared with the family, but cannot change anything |
 
@@ -77,9 +78,9 @@ a cover image. Everyone in the family is invited automatically and can RSVP.
 
 If you are not sure when to meet, create an **availability poll**:
 
-1. Open the event, tap **Availability poll**.
+1. Open the event and tap **Availability poll**.
 2. Propose two or more dates.
-3. Everyone votes **Yes**, **Maybe** or **No** on each.
+3. Everyone votes **Yes**, **Maybe** or **No** on each. You can change your vote.
 
 The app then suggests the best date. It does not simply pick the most popular:
 
@@ -90,6 +91,8 @@ The app then suggests the best date. It does not simply pick the most popular:
   two yes votes in a family of six shows as 33%, not 100%.
 - It tells you how confident it is, based on how many people have answered.
 - If nobody has voted yet, it says so rather than guessing.
+
+Whoever created the poll, or an admin, can close it and record the chosen date.
 
 ### Event notes
 
@@ -111,19 +114,48 @@ Add **anniversaries** and **cultural events** yourself. Give the original date
 how many years it has been.
 
 Reminders are sent by the server, so they arrive whether or not the app is open,
-and you get each one only once.
+and you get each one only once. You do not get a reminder for your own birthday.
 
 ---
 
 ## Memories
 
-**Memories** is your family's private photo and video archive.
+**Memories** is your family's private archive of photos, videos and stories.
 
-- Tap **Upload** to add a photo or video, with a caption.
-- Group them into **albums**.
-- Comment on any memory.
+### Photos and videos
 
-Only your family can see them.
+- Tap **Upload** to add a photo or video (up to 10 MB), with a caption.
+- Group them into **albums**, and comment on any memory.
+
+**Your family approves what is shared.** A new photo or video waits for another
+adult in the family to approve it:
+
+1. You see your upload straight away, marked as waiting.
+2. The others who can review are notified, and a **Review** button appears on
+   Memories.
+3. A reviewer approves it, or declines with an optional reason.
+4. Once approved, the whole family sees it. If it is declined, you are told why.
+
+You cannot approve your own upload, and guests and children do not review. If
+nobody else in the family could review it — for example, you are the only adult —
+it is shared straight away.
+
+Each family has a storage allowance. When it is full, the app says so; delete
+some memories to make room.
+
+### Stories
+
+**Memories → Stories** holds written memories: how the family began, a
+tradition, a milestone, a recipe. Anyone in the family can read them. Only the
+person who wrote a story, or an admin, can change or delete it.
+
+### Family history journal
+
+**Family tree → Journal** is one shared record of your family's origins,
+traditions, cultural notes, important events, achievements and historical
+memories. Everyone sees the same copy; guests can read it but not edit.
+
+Only your family can see any of this.
 
 ---
 
@@ -132,8 +164,9 @@ Only your family can see them.
 **Chat** is a single conversation for the whole family.
 
 - **Mention someone** by typing `@` and picking their name. They get their own
-  notification, so it is not lost in the general chatter.
-- **Share files** — photos, videos, voice messages, documents.
+  notification, so it is not lost in the general chatter. Adding a mention by
+  editing a message notifies them too.
+- **Share files** — photos, videos, voice messages, documents, up to 10 MB each.
 - **Pin a message** to keep something important at the top.
 - **React** with an emoji, **reply** to a specific message, or **star** one to
   find it later.
@@ -147,9 +180,8 @@ Messages arrive instantly on everyone's phone.
 **Profile → Language** switches between **English**, **සිංහල** (Sinhala) and
 **தமிழ்** (Tamil). Your choice is remembered.
 
-> Some of the less-used screens are still in English only. The main
-> journeys — signing up, your family, events, polls, celebrations — are
-> translated.
+The whole app follows your choice, and so do your notifications. What people
+write — messages, captions, stories, names — stays exactly as they wrote it.
 
 ---
 
@@ -165,7 +197,7 @@ Messages arrive instantly on everyone's phone.
 
 Spoken prompts can be turned off in the same place. They only ever run in Elder
 Mode, and they are designed not to interfere with your phone's own screen
-reader.
+reader. Sinhala and Tamil prompts need those voices installed on the phone.
 
 ---
 
@@ -191,6 +223,7 @@ them — but **SOS always works**, for everyone, in every mode.
 
 - Your family's content is visible only to your family.
 - Joining requires an invitation.
+- Photos and videos are shared with the family only after a member approves them.
 - Passwords are stored hashed, never in plain text.
 - Invitation links are single-use and expire.
 - QR codes are made on your phone and not sent anywhere.
@@ -209,8 +242,15 @@ code.
 **A child cannot see anything.** They are waiting for approval. An admin or
 parent approves them under Family → Child approvals.
 
-**Nothing loads.** Check your connection. If it persists, the server may be
-unreachable — the app will show an error rather than stale or invented data.
+**My photo is not showing for everyone.** It is waiting for another member to
+approve it. Anyone who can review sees a **Review** button on Memories.
 
-**My language did not change everywhere.** Some secondary screens are not
-translated yet.
+**The app says the family storage is full.** Delete some photos or videos you no
+longer need, then try again.
+
+**Nothing loads.** Check your connection. If it persists, the server may be
+unreachable — the app shows an error rather than stale or invented data.
+
+**I see English while using Sinhala or Tamil.** Messages, names and captions stay
+as people wrote them. If a button, label or message from the app itself is in
+English, please report the screen — that is a bug.
