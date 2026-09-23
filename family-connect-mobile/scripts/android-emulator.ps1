@@ -17,10 +17,17 @@ $env:NODE_ENV = 'development'
 $env:EXPO_PUBLIC_API_URL = 'http://10.0.2.2:5000'
 $env:REACT_NATIVE_PACKAGER_HOSTNAME = '10.0.2.2'
 
-function Test-EmulatorReady {
+function Get-EmulatorSerial {
   $list = & $adb devices 2>&1 | Out-String
-  if ($list -notmatch 'emulator-\d+\s+device') { return $false }
-  $booted = (& $adb shell getprop sys.boot_completed 2>$null | Out-String).Trim()
+  $match = [regex]::Match($list, '(emulator-\d+)\s+device')
+  if ($match.Success) { return $match.Groups[1].Value }
+  return $null
+}
+
+function Test-EmulatorReady {
+  $serial = Get-EmulatorSerial
+  if (-not $serial) { return $false }
+  $booted = (& $adb -s $serial shell getprop sys.boot_completed 2>$null | Out-String).Trim()
   return ($booted -eq '1')
 }
 
@@ -111,8 +118,9 @@ Try manually:
 }
 
 Write-Host ">>> Connecting emulator to Metro + backend..."
-& $adb reverse tcp:8081 tcp:8081 | Out-Null
-& $adb reverse tcp:5000 tcp:5000 | Out-Null
+$serial = Get-EmulatorSerial
+& $adb -s $serial reverse tcp:8081 tcp:8081 | Out-Null
+& $adb -s $serial reverse tcp:5000 tcp:5000 | Out-Null
 
 Set-Location (Split-Path $PSScriptRoot -Parent)
 Write-Host ">>> Starting Expo Metro (clear cache)..."

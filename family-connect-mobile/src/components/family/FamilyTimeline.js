@@ -7,7 +7,7 @@ import { useTheme } from '../../hooks/useTheme';
 import { useResponsive } from '../../design-system';
 import { useI18n } from '../../i18n';
 
-function FamilyTimelineComponent({ items, title = t('family.timeline'), subtitle }) {
+function FamilyTimelineComponent({ items, title, subtitle }) {
   const { colors, layout, radii } = useTheme();
 
   const { t } = useI18n();
@@ -15,7 +15,7 @@ function FamilyTimelineComponent({ items, title = t('family.timeline'), subtitle
 
   return (
     <View style={{ paddingHorizontal: horizontalPadding, marginBottom: layout.sectionGap }}>
-      <SectionTitle title={title} subtitle={subtitle} />
+      <SectionTitle title={title ?? t('family.timeline')} subtitle={subtitle} />
       {items.length === 0 ? (
         <View
           style={[
