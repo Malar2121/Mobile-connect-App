@@ -12,7 +12,8 @@ import { GestureHandlerRootView } from 'react-native-gesture-handler';
 import { useNavigation } from '@react-navigation/native';
 import * as DocumentPicker from 'expo-document-picker';
 import * as ImagePicker from 'expo-image-picker';
-import { Audio } from 'expo-av';
+import { Audio } from '../../utils/avShim';
+
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import { Loader } from '../../components/Loader';
 import { ChatActionSheet } from '../../components/chat/ChatActionSheet';

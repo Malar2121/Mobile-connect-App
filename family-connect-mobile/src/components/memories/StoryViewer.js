@@ -1,7 +1,8 @@
 import React, { memo, useEffect, useRef, useState } from 'react';
 import { Modal, Pressable, StyleSheet, Text, View } from 'react-native';
 import { Image } from 'expo-image';
-import { Video, ResizeMode } from 'expo-av';
+import { Video, ResizeMode } from '../../utils/avShim';
+
 import Animated, { useAnimatedStyle, useSharedValue, withTiming } from 'react-native-reanimated';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import { Ionicons } from '@expo/vector-icons';

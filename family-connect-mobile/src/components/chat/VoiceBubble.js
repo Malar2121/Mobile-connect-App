@@ -1,7 +1,8 @@
 import React, { memo, useCallback, useEffect, useRef, useState } from 'react';
 import { Pressable, StyleSheet, Text, View } from 'react-native';
 import { Ionicons } from '@expo/vector-icons';
-import { Audio } from 'expo-av';
+import { Audio } from '../../utils/avShim';
+
 import { useTheme } from '../../hooks/useTheme';
 import { formatDuration } from '../../utils/chatModuleHelpers';
 import { useI18n } from '../../i18n';

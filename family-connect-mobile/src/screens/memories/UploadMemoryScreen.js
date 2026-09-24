@@ -8,7 +8,8 @@ import {
   View,
 } from 'react-native';
 import * as ImagePicker from 'expo-image-picker';
-import { Video, ResizeMode } from 'expo-av';
+import { Video, ResizeMode } from '../../utils/avShim';
+
 import { Ionicons } from '@expo/vector-icons';
 import {
   Button,

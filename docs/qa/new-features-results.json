@@ -1,8 +1,8 @@
 {
-  "ranAt": "2026-07-16T10:59:55.581Z",
+  "ranAt": "2026-09-24T14:41:49.799Z",
   "base": "http://localhost:5000",
-  "pass": 40,
-  "fail": 0,
+  "pass": 34,
+  "fail": 6,
   "results": [
     {
       "id": "NF-01",
@@ -73,7 +73,7 @@
     {
       "id": "NF-11",
       "name": "Members can list safe zones",
-      "ok": true,
+      "ok": false,
       "detail": ""
     },
     {
@@ -85,19 +85,19 @@
     {
       "id": "NF-13",
       "name": "Location update works",
-      "ok": true,
+      "ok": false,
       "detail": ""
     },
     {
       "id": "NF-14",
       "name": "Entering zone records zone membership",
-      "ok": true,
+      "ok": false,
       "detail": ""
     },
     {
       "id": "NF-15",
       "name": "Geofence enter notification created",
-      "ok": true,
+      "ok": false,
       "detail": ""
     },
     {
@@ -109,14 +109,14 @@
     {
       "id": "NF-17",
       "name": "Location update rejects invalid coordinates",
-      "ok": true,
+      "ok": false,
       "detail": ""
     },
     {
       "id": "NF-18",
       "name": "Self can read own history (points recorded)",
-      "ok": true,
-      "detail": "points=3"
+      "ok": false,
+      "detail": "points=undefined"
     },
     {
       "id": "NF-19",

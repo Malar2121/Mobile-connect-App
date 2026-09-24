@@ -42,4 +42,4 @@ Write-Host "  $env:EXPO_PUBLIC_API_URL/health" -ForegroundColor Cyan
 Write-Host ''
 
 Set-Location (Split-Path $PSScriptRoot -Parent)
-npx expo start --offline --port 8081
+npx expo start -c --port 8081

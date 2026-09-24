@@ -1,7 +1,8 @@
 import React, { useState } from 'react';
 import { Image, Pressable, StyleSheet, Text, View } from 'react-native';
 import { Ionicons } from '@expo/vector-icons';
-import { Video, ResizeMode } from 'expo-av';
+import { Video, ResizeMode } from '../../utils/avShim';
+
 import { useTheme } from '../../hooks/useTheme';
 
 import { VoiceBubble } from './VoiceBubble';

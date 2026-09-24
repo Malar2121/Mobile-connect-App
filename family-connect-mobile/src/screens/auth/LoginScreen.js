@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { KeyboardAvoidingView, Platform, Pressable, StyleSheet, Text, View } from 'react-native';
+import { Image, KeyboardAvoidingView, Platform, Pressable, StyleSheet, Text, View } from 'react-native';
 import { Ionicons } from '@expo/vector-icons';
 import {
   Button,
@@ -51,7 +51,11 @@ export default function LoginScreen({ navigation }) {
             <GlassCard noPadding={false} intensity={80}>
               <View style={[styles.brandRow, { marginBottom: layout.sectionGap * 1.2 }]}>
                 <View style={[styles.logoRing, { backgroundColor: colors.primarySubtle }]}>
-                  <Ionicons name="people" size={32} color={colors.primary} />
+                  <Image
+                    source={require('../../../assets/logo.png')}
+                    style={styles.logoImage}
+                    resizeMode="contain"
+                  />
                 </View>
                 <Text
                   style={[
@@ -127,6 +131,11 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     justifyContent: 'center',
     marginBottom: 20,
+    overflow: 'hidden',
+  },
+  logoImage: {
+    width: 56,
+    height: 56,
   },
   title: { fontFamily: 'Inter_700Bold', fontWeight: '800', textAlign: 'center' },
   sub: { textAlign: 'center', lineHeight: 22, marginTop: 8 },

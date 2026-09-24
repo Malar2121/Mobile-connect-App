@@ -1,7 +1,8 @@
 import React, { useCallback, useRef } from 'react';
 import { Text, View } from 'react-native';
 import { useNavigation } from '@react-navigation/native';
-import { Audio } from 'expo-av';
+import { Audio } from '../../utils/avShim';
+
 import { PageHeader, Screen, Button } from '../../design-system';
 import { useChatModule } from '../../contexts/ChatModuleContext';
 import { VoiceBubble } from '../../components/chat/VoiceBubble';

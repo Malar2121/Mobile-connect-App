@@ -1,14 +1,13 @@
 {
   "expo": {
-
     "name": "Family Connect",
     "slug": "family-connect-mobile",
     "version": "1.0.0",
     "orientation": "portrait",
-    "icon": "./assets/icon.png",
+    "icon": "./assets/logo.png",
     "userInterfaceStyle": "automatic",
     "splash": {
-      "image": "./assets/splash-icon.png",
+      "image": "./assets/logo.png",
       "resizeMode": "contain",
       "backgroundColor": "#ffffff"
     },
@@ -30,14 +29,14 @@
         }
       },
       "adaptiveIcon": {
-        "foregroundImage": "./assets/adaptive-icon.png",
+        "foregroundImage": "./assets/logo.png",
         "backgroundImage": "./assets/adaptive-icon-bg.png",
         "backgroundColor": "#4F46E5"
       },
       "edgeToEdgeEnabled": true
     },
     "web": {
-      "favicon": "./assets/favicon.png"
+      "favicon": "./assets/logo.png"
     },
     "plugins": [
       "expo-secure-store",
@@ -51,7 +50,7 @@
       [
         "expo-notifications",
         {
-          "icon": "./assets/icon.png",
+          "icon": "./assets/logo.png",
           "color": "#6366F1",
           "sounds": [],
           "mode": "production"
@@ -63,7 +62,9 @@
           "locationWhenInUsePermission": "Allow Family Connect to show your location to family members while the app is open."
         }
       ],
-      "expo-font"
+      "expo-font",
+      "expo-image",
+      "expo-status-bar"
     ],
     "extra": {
       "eas": {

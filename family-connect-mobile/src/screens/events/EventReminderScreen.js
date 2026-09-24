@@ -1,7 +1,7 @@
-import React, { useCallback, useEffect, useState } from 'react';
-import { ScrollView, StyleSheet, Switch, Text, View } from 'react-native';
+import React, { useCallback, useEffect, useRef, useState } from 'react';
+import { Platform, ScrollView, StyleSheet, Switch, Text, View } from 'react-native';
 import { useRoute, useNavigation } from '@react-navigation/native';
-import * as Notifications from 'expo-notifications';
+import { isRunningInExpoGo } from 'expo';
 import { Button, Card, PageHeader, Screen, TextField, useToast } from '../../design-system';
 import { ReminderCard } from '../../components/events';
 import { deriveReminders } from '../../utils/dashboardHelpers';
@@ -12,13 +12,18 @@ import { useTheme } from '../../hooks/useTheme';
 import { useResponsive } from '../../design-system';
 import { useI18n } from '../../i18n';
 
-Notifications.setNotificationHandler({
-  handleNotification: async () => ({
-    shouldShowAlert: true,
-    shouldPlaySound: true,
-    shouldSetBadge: false,
-  }),
-});
+/** Returns false when running inside Android Expo Go (no FCM push support). */
+function canUseLocalNotifications() {
+  if (Platform.OS === 'android') {
+    try { if (isRunningInExpoGo()) return false; } catch { return false; }
+  }
+  return true;
+}
+
+/** Lazily load expo-notifications only when supported. */
+async function getNotifications() {
+  return import('expo-notifications');
+}
 
 export default function EventReminderScreen() {
   const route = useRoute();
@@ -35,25 +40,40 @@ export default function EventReminderScreen() {
   const [reminders, setReminders] = useState([]);
   const [customTitle, setCustomTitle] = useState('');
   const [customAt, setCustomAt] = useState('');
-  const [pushEnabled, setPushEnabled] = useState(true);
+  const [pushEnabled, setPushEnabled] = useState(canUseLocalNotifications());
   const [saving, setSaving] = useState(false);
 
   const eventReminders = deriveReminders(upcomingEvents);
 
+  // Request notification permissions once on mount (skip in Android Expo Go)
   useEffect(() => {
-    if (family?._id) loadEventReminders(family._id).then(setReminders);
-  }, [family?._id]);
+    if (!canUseLocalNotifications()) return;
+    getNotifications()
+      .then((Notifications) => {
+        try {
+          Notifications.setNotificationHandler({
+            handleNotification: async () => ({
+              shouldShowAlert: true,
+              shouldPlaySound: true,
+              shouldSetBadge: false,
+            }),
+          });
+        } catch { /* ignore */ }
 
-  useEffect(() => {
-    if (pushEnabled) {
-      Notifications.requestPermissionsAsync().then(({ status }) => {
-        if (status !== 'granted') {
+        return Notifications.requestPermissionsAsync();
+      })
+      .then((result) => {
+        if (result && result.status !== 'granted') {
           toast.error(t('events.pushDenied'));
           setPushEnabled(false);
         }
-      });
-    }
-  }, [pushEnabled, toast]);
+      })
+      .catch(() => setPushEnabled(false));
+  }, []);
+
+  useEffect(() => {
+    if (family?._id) loadEventReminders(family._id).then(setReminders);
+  }, [family?._id]);
 
   const addCustom = useCallback(async () => {
     const title = customTitle.trim();
@@ -73,8 +93,9 @@ export default function EventReminderScreen() {
     // Event, birthday and celebration reminders are dispatched server-side by
     // the reminder scheduler, so they arrive on every device and do not depend
     // on this screen having been opened.
-    if (pushEnabled) {
+    if (pushEnabled && canUseLocalNotifications()) {
       try {
+        const Notifications = await getNotifications();
         await Notifications.scheduleNotificationAsync({
           content: { title: t('events.familyConnectReminder'), body: title },
           trigger: { type: 'date', date: when },

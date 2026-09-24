@@ -2,7 +2,8 @@ import React, { memo } from 'react';
 import { StyleSheet, Text, View } from 'react-native';
 import { Image } from 'expo-image';
 import { LinearGradient } from 'expo-linear-gradient';
-import { Video, ResizeMode } from 'expo-av';
+import { Video, ResizeMode } from '../../utils/avShim';
+
 import { Avatar } from '../../design-system';
 import { useTheme } from '../../hooks/useTheme';
 import { formatMemoryDate, getLikeCount, getUploader } from '../../utils/memoryHelpers';

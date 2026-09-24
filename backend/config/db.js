@@ -21,10 +21,7 @@ const connectDB = async () => {
   const safeUri = uri.replace(/:([^:@/]+)@/, ':****@');
 
   try {
-    const conn = await mongoose.connect(uri, {
-      useNewUrlParser: true,
-      useUnifiedTopology: true,
-    });
+    const conn = await mongoose.connect(uri);
 
     logger.info(`MongoDB Connected: ${conn.connection.host} (${safeUri})`);
 
