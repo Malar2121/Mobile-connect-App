@@ -7,7 +7,6 @@ import {
   GradientBackground,
   Screen,
   TextField,
-  useDialog,
   useToast,
   GlassCard,
 } from '../../design-system';
@@ -21,7 +20,6 @@ export default function RegisterScreen({ navigation }) {
   const { t } = useI18n();
   const { isTablet } = useResponsive();
   const toast = useToast();
-  const dialog = useDialog();
   const { signUp } = useAuth();
   const [name, setName] = useState('');
   const [email, setEmail] = useState('');
@@ -51,15 +49,10 @@ export default function RegisterScreen({ navigation }) {
     }
     setLoading(true);
     try {
+      // signUp now establishes the session automatically (auto sign-in after register).
+      // The navigator will redirect to the home screen once the user state is set.
       await signUp(n, em, password, memberType);
       toast.success(t('auth.accountCreated'));
-      const go = await dialog.confirm({
-        title: t('auth.accountCreated2'),
-        message: t('auth.youCanSignInNowWith'),
-        confirmLabel: t('auth.signIn'),
-        cancelLabel: t('auth.later'),
-      });
-      if (go) navigation.navigate('Login');
     } catch (e) {
       const msg = e.message || t('auth.registrationFailed');
       setError(msg);

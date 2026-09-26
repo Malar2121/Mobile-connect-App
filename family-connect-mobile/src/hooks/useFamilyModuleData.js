@@ -10,6 +10,7 @@ import { getFamilyLocations } from '../services/locationService';
 import { getNotifications } from '../services/notificationService';
 import { getAllMessages } from '../services/chatService';
 import { getJoinRequests } from '../services/familyService';
+import { getPendingConsents } from '../services/consentService';
 import {
   buildFamilyAnalytics,
   buildFamilyTimeline,
@@ -37,6 +38,7 @@ export function useFamilyModuleData() {
   const [messages, setMessages] = useState([]);
   const [motto, setMotto] = useState('');
   const [joinRequests, setJoinRequests] = useState([]);
+  const [pendingConsents, setPendingConsents] = useState([]);
 
   const familyId = family?._id;
 
@@ -51,12 +53,13 @@ export function useFamilyModuleData() {
       setMotto('');
       setJoinRequests([]);
       setLoading(false);
+      setPendingConsents([]);
       return;
     }
 
     setError('');
     try {
-      const [tree, ev, mem, loc, notif, msgs, localMotto, reqs] = await Promise.all([
+      const [tree, ev, mem, loc, notif, msgs, localMotto, reqs, consents] = await Promise.all([
         getFamilyTree().catch(() => []),
         getFamilyEvents().catch(() => []),
         getFamilyMemories().catch(() => []),
@@ -65,6 +68,10 @@ export function useFamilyModuleData() {
         getAllMessages().catch(() => []),
         loadFamilyMotto(family._id),
         getJoinRequests().catch(() => []),
+        // Guardians (admin/parent) load pending child approvals; others get []
+        (user?.role === 'admin' || user?.role === 'parent')
+          ? getPendingConsents().catch(() => [])
+          : Promise.resolve([]),
       ]);
       setTreeNodes(tree);
       setEvents(ev);
@@ -74,6 +81,7 @@ export function useFamilyModuleData() {
       setMessages(msgs);
       setMotto(localMotto);
       setJoinRequests(reqs?.requests || reqs || []);
+      setPendingConsents(Array.isArray(consents) ? consents : []);
     } catch (e) {
       setError(e.message || t('common.couldNotLoadFamilyData'));
     } finally {
@@ -143,6 +151,8 @@ export function useFamilyModuleData() {
   );
 
   const isAdmin = user?.role === 'admin';
+  // Guardians = admin OR parent — matches backend isGuardian() logic
+  const isGuardian = user?.role === 'admin' || user?.role === 'parent';
   const isOwner =
     family?.createdBy &&
     String(family.createdBy._id ?? family.createdBy) === String(user?._id);
@@ -173,11 +183,14 @@ export function useFamilyModuleData() {
     onlineCount,
     pendingJoinRequests: joinRequests.length,
     joinRequests,
+    pendingConsents,
+    pendingConsentCount: pendingConsents.length,
     timeline,
     analytics,
     uiMode,
     isAdmin,
     isOwner,
-    canManage: isAdmin && uiMode !== 'minor',
+    // ChildApprovals is visible to both admin and parent (both are guardians)
+    canManage: isGuardian && uiMode !== 'minor',
   };
 }

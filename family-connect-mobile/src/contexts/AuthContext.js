@@ -96,8 +96,11 @@ export function AuthProvider({ children }) {
   }, [establishSession]);
 
   const signUp = useCallback(async (name, email, password, memberType = 'adult') => {
-    await authService.registerUser(name, email, password, memberType);
-  }, []);
+    // registerUser returns tokens + user — establish the session immediately
+    // so the user lands on the home screen instead of having to log in again.
+    const result = await authService.registerUser(name, email, password, memberType);
+    await establishSession(result);
+  }, [establishSession]);
 
   const signOut = useCallback(async () => {
     try {

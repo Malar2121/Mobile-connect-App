@@ -84,7 +84,6 @@ export function usePushNotifications(enabled) {
               importance: Notifications.AndroidImportance.HIGH,
               vibrationPattern: [0, 250, 250, 250],
               lightColor: '#6366F1',
-              sound: 'default',
             });
           } catch { /* ignore */ }
         }

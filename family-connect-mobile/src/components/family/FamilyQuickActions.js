@@ -20,7 +20,7 @@ const ACTIONS = [
   { id: 'settings', get label() { return translate('profile.settings'); }, icon: 'settings-outline', screen: 'FamilySettings', admin: true },
 ];
 
-function FamilyQuickActionsComponent({ onNavigate, canManage }) {
+function FamilyQuickActionsComponent({ onNavigate, canManage, pendingConsentCount = 0 }) {
   const { colors, layout, radii } = useTheme();
 
   const { t } = useI18n();
@@ -49,8 +49,13 @@ function FamilyQuickActionsComponent({ onNavigate, canManage }) {
             accessibilityRole="button"
             accessibilityLabel={action.label}
           >
-            <View style={[styles.icon, { backgroundColor: colors.primarySubtle, borderRadius: radii.md }]}>
+                      <View style={[styles.icon, { backgroundColor: colors.primarySubtle, borderRadius: radii.md }]}>
               <Ionicons name={action.icon} size={22} color={colors.primary} />
+              {action.id === 'approvals' && pendingConsentCount > 0 ? (
+                <View style={[styles.badge, { backgroundColor: colors.error ?? '#EF4444' }]}>
+                  <Text style={styles.badgeText}>{pendingConsentCount > 9 ? '9+' : pendingConsentCount}</Text>
+                </View>
+              ) : null}
             </View>
             <Text
               style={{
@@ -80,4 +85,16 @@ const styles = StyleSheet.create({
     justifyContent: 'center',
   },
   icon: { width: 44, height: 44, alignItems: 'center', justifyContent: 'center' },
+  badge: {
+    position: 'absolute',
+    top: -4,
+    right: -4,
+    minWidth: 18,
+    height: 18,
+    borderRadius: 9,
+    alignItems: 'center',
+    justifyContent: 'center',
+    paddingHorizontal: 3,
+  },
+  badgeText: { color: '#fff', fontSize: 10, fontFamily: 'Inter_700Bold' },
 });

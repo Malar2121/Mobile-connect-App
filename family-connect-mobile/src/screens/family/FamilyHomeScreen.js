@@ -27,6 +27,7 @@ export default function FamilyHomeScreen() {
     memberCount,
     onlineCount,
     pendingJoinRequests,
+    pendingConsentCount,
     familyLoading,
     loading,
     refreshing,
@@ -93,6 +94,7 @@ export default function FamilyHomeScreen() {
           memberCount={memberCount}
           onlineCount={onlineCount}
           pendingRequests={pendingJoinRequests}
+          pendingConsents={pendingConsentCount}
           onInvite={() => navigate('InviteMembers')}
           onSettings={() => navigate('FamilySettings')}
         />
@@ -103,7 +105,7 @@ export default function FamilyHomeScreen() {
           <FamilyStatCard label={t('family.thisWeek')} value={analytics.activityThisWeek} icon="pulse-outline" accent="#10B981" />
         </View>
 
-        <FamilyQuickActions onNavigate={navigate} canManage={canManage} />
+        <FamilyQuickActions onNavigate={navigate} canManage={canManage} pendingConsentCount={pendingConsentCount} />
 
         {loading && !refreshing ? (
           <Loader />

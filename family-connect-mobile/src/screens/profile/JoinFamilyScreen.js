@@ -1,6 +1,5 @@
 import React, { useState } from 'react';
 import { Text } from 'react-native';
-import { CommonActions } from '@react-navigation/native';
 import {
   Button,
   Card,
@@ -47,7 +46,7 @@ export default function JoinFamilyScreen({ navigation }) {
   }
 
   function goToDashboard() {
-    navigation.dispatch(CommonActions.navigate({ name: 'Dashboard' }));
+    navigation.navigate('Dashboard');
   }
 
   async function handleJoin() {

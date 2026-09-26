@@ -14,7 +14,17 @@ const {
 } = require('../controllers/locationController');
 
 // All location routes require authentication
-router.use(protect, requireParentalConsent, denyGuestWrites);
+router.use(protect);
+
+// ── SOS is intentionally BEFORE the consent gate ──────────
+// A child whose account is still pending guardian approval must be able
+// to send an emergency alert. Blocking SOS behind consent would leave
+// a minor unable to call for help — that is a safety defect.
+router.post('/sos', sendSOS);
+
+// All other routes also require parental consent (child accounts must
+// be approved before accessing family location data) and deny guest writes.
+router.use(requireParentalConsent, denyGuestWrites);
 
 // Reject malformed ids with 400 before controllers run (BUG-L1 fix)
 const { objectIdParam } = require('../middleware/validateObjectId');
@@ -25,10 +35,10 @@ router.param('userId', objectIdParam);
 // Update the user's location and broadcast live to family
 // ──────────────────────────────────────────────────────────
 router.post('/update', updateLocation);
-router.post('/sos', sendSOS);
 router.post('/sharing', setSharing);
 router.get('/family', getFamilyLocations);
 router.get('/history/:userId', getLocationHistory);
+
 
 // ──────────────────────────────────────────────────────────
 // GET /api/location/:userId
