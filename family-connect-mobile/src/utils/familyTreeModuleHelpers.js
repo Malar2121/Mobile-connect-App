@@ -156,14 +156,17 @@ export function buildAdjacency(nodes) {
 
 export function computeGenerations(nodes) {
   const gens = {};
-  const { childrenOf, parentsOf } = buildAdjacency(nodes);
+  const { childrenOf, parentsOf, spousesOf } = buildAdjacency(nodes);
   const ids = (nodes ?? []).map((n) => String(n.id));
 
   ids.forEach((id) => {
     gens[id] = 1;
   });
 
-  const roots = ids.filter((id) => !(parentsOf.get(id)?.length));
+  // A spouse whose partner has parents is placed through that partner, not as a root.
+  const roots = ids.filter(
+    (id) => !(parentsOf.get(id)?.length) && !(spousesOf.get(id) ?? []).some((sid) => parentsOf.get(sid)?.length),
+  );
   const queue = roots.map((id) => ({ id, gen: 0 }));
   const visited = new Set();
 
@@ -171,13 +174,16 @@ export function computeGenerations(nodes) {
     const { id, gen } = queue.shift();
     if (visited.has(id)) continue;
     visited.add(id);
-    gens[id] = Math.min(gens[id] ?? gen, gen);
+    gens[id] = gen;
 
     (childrenOf.get(id) ?? []).forEach((childId) => {
       queue.push({ id: childId, gen: gen + 1 });
     });
     (parentsOf.get(id) ?? []).forEach((parentId) => {
       queue.push({ id: parentId, gen: gen - 1 });
+    });
+    (spousesOf.get(id) ?? []).forEach((spouseId) => {
+      queue.push({ id: spouseId, gen });
     });
   }
 
@@ -207,7 +213,10 @@ export function layoutTree(nodes, collapsedIds = new Set()) {
     const id = String(n.id);
     if (!n.relatedTo) return true;
     let p = String(n.relatedTo);
-    while (p) {
+    // Stop on a relationship loop (A -> B -> A) instead of walking forever.
+    const seen = new Set([id]);
+    while (p && !seen.has(p)) {
+      seen.add(p);
       if (collapsedIds.has(p)) return false;
       const parent = nodes.find((x) => String(x.id) === p);
       p = parent?.relatedTo ? String(parent.relatedTo) : null;

@@ -41,9 +41,13 @@ export function useFamilyModuleData() {
   const [pendingConsents, setPendingConsents] = useState([]);
 
   const familyId = family?._id;
+  const isGuardianRole = user?.role === 'admin' || user?.role === 'parent';
 
+  // Keyed on familyId, not the family object: every refreshFamily() yields a
+  // new object, and depending on it re-created loadData, which re-ran the focus
+  // effect below, which refreshed the family again — an endless refetch loop.
   const loadData = useCallback(async () => {
-    if (!family) {
+    if (!familyId) {
       setTreeNodes([]);
       setEvents([]);
       setMemories([]);
@@ -66,10 +70,10 @@ export function useFamilyModuleData() {
         getFamilyLocations().catch(() => []),
         getNotifications().catch(() => []),
         getAllMessages().catch(() => []),
-        loadFamilyMotto(family._id),
+        loadFamilyMotto(familyId),
         getJoinRequests().catch(() => []),
         // Guardians (admin/parent) load pending child approvals; others get []
-        (user?.role === 'admin' || user?.role === 'parent')
+        isGuardianRole
           ? getPendingConsents().catch(() => [])
           : Promise.resolve([]),
       ]);
@@ -87,7 +91,7 @@ export function useFamilyModuleData() {
     } finally {
       setLoading(false);
     }
-  }, [family]);
+  }, [familyId, isGuardianRole]);
 
   const refresh = useCallback(async () => {
     setRefreshing(true);

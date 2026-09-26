@@ -85,12 +85,18 @@ const registerDevice = async (req, res) => {
       return res.status(404).json({ success: false, message: 'User not found' });
     }
 
-    const existingIndex = user.fcmTokens.findIndex((entry) => entry.token === normalizedToken);
-    if (existingIndex >= 0) {
-      user.fcmTokens[existingIndex].device = normalizedDevice;
-      user.fcmTokens[existingIndex].createdAt = new Date();
+    // If it's an Expo Push Token, save to pushToken field (used by notifyFamilyMembers)
+    if (normalizedToken.startsWith('ExponentPushToken')) {
+      user.pushToken = normalizedToken;
     } else {
-      user.fcmTokens.push({ token: normalizedToken, device: normalizedDevice });
+      // Native FCM/APNs token → save to fcmTokens array
+      const existingIndex = user.fcmTokens.findIndex((entry) => entry.token === normalizedToken);
+      if (existingIndex >= 0) {
+        user.fcmTokens[existingIndex].device = normalizedDevice;
+        user.fcmTokens[existingIndex].createdAt = new Date();
+      } else {
+        user.fcmTokens.push({ token: normalizedToken, device: normalizedDevice });
+      }
     }
 
     await user.save();

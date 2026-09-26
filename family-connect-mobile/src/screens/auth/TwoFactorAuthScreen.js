@@ -1,10 +1,11 @@
 import React, { useState } from 'react';
-import { Image, KeyboardAvoidingView, Platform, StyleSheet, Text, View } from 'react-native';
+import { KeyboardAvoidingView, Platform, StyleSheet, Text, View } from 'react-native';
 import { Ionicons } from '@expo/vector-icons';
 import { Button, GradientBackground, Screen, useToast, useResponsive, GlassCard } from '../../design-system';
 import { useI18n } from '../../i18n';
 import { useTheme } from '../../hooks/useTheme';
 import { useAuth } from '../../contexts/AuthContext';
+import { BrandLogo } from '../../components/auth/BrandLogo';
 import { OtpInput } from '../../components/auth/OtpInput';
 
 export default function TwoFactorAuthScreen({ navigation, route }) {
@@ -52,13 +53,7 @@ export default function TwoFactorAuthScreen({ navigation, route }) {
           <View style={[styles.inner, isTablet && styles.innerTablet]}>
             <GlassCard noPadding={false} intensity={80}>
               <View style={[styles.brandRow, { marginBottom: layout.sectionGap * 1.2 }]}>
-                <View style={[styles.logoRing, { backgroundColor: colors.primarySubtle }]}>
-                  <Image
-                    source={require('../../../assets/logo.png')}
-                    style={styles.logoImage}
-                    resizeMode="contain"
-                  />
-                </View>
+                <BrandLogo size={84} />
                 <Text
                   style={[
                     styles.title,
@@ -100,20 +95,7 @@ const styles = StyleSheet.create({
   flex: { flex: 1, justifyContent: 'center' },
   inner: { flex: 1, justifyContent: 'center', maxWidth: 440, width: '100%', alignSelf: 'center' },
   innerTablet: { paddingVertical: 40 },
-  brandRow: { alignItems: 'center' },
-  logoRing: {
-    width: 72,
-    height: 72,
-    borderRadius: 36,
-    alignItems: 'center',
-    justifyContent: 'center',
-    marginBottom: 20,
-    overflow: 'hidden',
-  },
-  logoImage: {
-    width: 56,
-    height: 56,
-  },
+  brandRow: { alignItems: 'center' },
   title: { fontFamily: 'Inter_700Bold', fontWeight: '800', textAlign: 'center' },
   sub: { textAlign: 'center', lineHeight: 22, marginTop: 8 },
   cta: { marginTop: 16 },

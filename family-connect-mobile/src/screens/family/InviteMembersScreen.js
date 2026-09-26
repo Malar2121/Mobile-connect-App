@@ -18,7 +18,7 @@ export default function InviteMembersScreen() {
 
   const { t } = useI18n();
   const { horizontalPadding } = useResponsive();
-  const { family, inviteCode, canManage, refresh, familyId } = useFamilyModuleData();
+  const { inviteCode, canManage, refresh, familyId } = useFamilyModuleData();
 
   const [inviteData, setInviteData] = useState(null);
   const [loading, setLoading] = useState(true);
@@ -36,11 +36,16 @@ export default function InviteMembersScreen() {
       const data = await createInviteCode(false);
       setInviteData(data);
       if (familyId) {
-        await appendInviteHistory(familyId, {
-          code: data.inviteCode,
-          status: 'active',
-          action: 'loaded',
-        }).catch(() => {});
+        // Only record a load when the code differs from the latest entry, so
+        // simply reopening the screen doesn't flood the history.
+        const existing = await loadInviteHistory(familyId).catch(() => []);
+        if (existing[0]?.code !== data.inviteCode) {
+          await appendInviteHistory(familyId, {
+            code: data.inviteCode,
+            status: 'active',
+            action: 'loaded',
+          }).catch(() => {});
+        }
         setHistory(await loadInviteHistory(familyId).catch(() => []));
       }
     } catch (e) {
@@ -51,9 +56,11 @@ export default function InviteMembersScreen() {
     }
   }, [familyId]);
 
+  // Keyed on familyId: the family object is replaced on every refresh, which
+  // would re-run this and flash the loader each time.
   useEffect(() => {
-    if (family) loadInvite();
-  }, [family, loadInvite]);
+    if (familyId) loadInvite();
+  }, [familyId, loadInvite]);
 
   const handleRegenerate = useCallback(async () => {
     setRegenerating(true);

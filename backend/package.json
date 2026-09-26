@@ -9,6 +9,9 @@
     "seed:dev-user": "node scripts/seedDevUser.js",
     "seed:demo": "node scripts/seedDemoData.js",
     "seed:demo:reset": "node scripts/seedDemoData.js --reset",
+    "demo:seed": "node scripts/demoSeed.js --demo-mode",
+    "demo:verify": "node scripts/demoSeed.js --demo-mode --verify",
+    "demo:reset": "node scripts/demoSeed.js --demo-mode --reset",
     "test": "jest --runInBand",
     "test:coverage": "jest --runInBand --coverage",
     "test:watch": "jest --watch"

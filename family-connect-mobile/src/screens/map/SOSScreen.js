@@ -28,6 +28,7 @@ export default function SOSScreen() {
   const cancelSOS = useCallback(() => setCountdown(0), []);
 
   const confirmSOS = useCallback(async () => {
+    setCountdown(0);
     setSending(true);
     try {
       await sendSOS(message.trim() || t('map.sosDefaultMessage'));
@@ -37,21 +38,26 @@ export default function SOSScreen() {
       toast.error(e.message || t('map.couldNotSendSos'));
     } finally {
       setSending(false);
-      setCountdown(0);
     }
   }, [message, sendSOS, toast, navigation, t]);
+
+  // confirmSOS changes identity whenever the map context re-renders (every
+  // live location update). Keep it in a ref so those re-renders don't reset
+  // the countdown timer before it can fire.
+  const confirmRef = React.useRef(confirmSOS);
+  confirmRef.current = confirmSOS;
 
   React.useEffect(() => {
     if (countdown <= 0) return undefined;
     const timer = setTimeout(() => {
       if (countdown <= 1) {
-        confirmSOS();
+        confirmRef.current();
       } else {
         setCountdown((c) => c - 1);
       }
     }, 1000);
     return () => clearTimeout(timer);
-  }, [countdown, confirmSOS]);
+  }, [countdown]);
 
   const timeline = (sosHistory ?? []).map((h) => ({
     id: h.id,
