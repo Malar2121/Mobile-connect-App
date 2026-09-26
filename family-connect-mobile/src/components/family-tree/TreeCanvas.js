@@ -1,12 +1,21 @@
-import React, { memo, useCallback, useMemo, useState } from 'react';
+import React, { forwardRef, memo, useCallback, useImperativeHandle, useMemo, useState } from 'react';
 import { StyleSheet, View } from 'react-native';
 import { Gesture, GestureDetector } from 'react-native-gesture-handler';
-import Animated, { useAnimatedStyle, useSharedValue, withSpring } from 'react-native-reanimated';
+import Animated, { useAnimatedStyle, useSharedValue, withSpring, withTiming } from 'react-native-reanimated';
 import { TreeNode } from './TreeNode';
 import { RelationshipLine } from './RelationshipLine';
 import { GenerationHeader } from './GenerationHeader';
 import { layoutTree, buildAdjacency } from '../../utils/familyTreeModuleHelpers';
 import { useTheme } from '../../hooks/useTheme';
+
+// Zoom buttons use the same limits as the pinch gesture.
+const MIN_ZOOM = 0.4;
+const MAX_ZOOM = 2.5;
+const ZOOM_STEP = 1.25;
+const ZOOM_ANIMATION = { duration: 200 };
+const FIT_MARGIN = 24;
+const CANVAS_TOP = 24; // matches marginTop on the canvas below
+const clampZoom = (value) => Math.min(MAX_ZOOM, Math.max(MIN_ZOOM, value));
 
 function TreeCanvasComponent({
   nodes,
@@ -19,7 +28,7 @@ function TreeCanvasComponent({
   animateConnections,
   largeNodes,
   settings,
-}) {
+}, ref) {
   const { colors } = useTheme();
   const collapsed = collapsedIds ?? new Set();
   const layout = useMemo(() => layoutTree(nodes, collapsed), [nodes, collapsed]);
@@ -71,6 +80,38 @@ function TreeCanvasComponent({
     setViewport({ width, height });
   }, []);
 
+  // Used by the TreeControls buttons on the screen.
+  useImperativeHandle(
+    ref,
+    () => ({
+      zoomIn() {
+        scale.value = withTiming(clampZoom(scale.value * ZOOM_STEP), ZOOM_ANIMATION);
+      },
+      zoomOut() {
+        scale.value = withTiming(clampZoom(scale.value / ZOOM_STEP), ZOOM_ANIMATION);
+      },
+      reset() {
+        scale.value = withTiming(settings?.defaultZoom ?? 1, ZOOM_ANIMATION);
+        translateX.value = withTiming(0, ZOOM_ANIMATION);
+        translateY.value = withTiming(0, ZOOM_ANIMATION);
+      },
+      fit() {
+        const fitScale = clampZoom(
+          Math.min(
+            (viewport.width - FIT_MARGIN * 2) / layout.canvasWidth,
+            (viewport.height - FIT_MARGIN * 2) / layout.canvasHeight,
+          ),
+        );
+        // Scaling keeps the canvas centre in place. It is already centred horizontally,
+        // so only move its centre down/up to the middle of the viewport.
+        scale.value = withTiming(fitScale, ZOOM_ANIMATION);
+        translateX.value = withTiming(0, ZOOM_ANIMATION);
+        translateY.value = withTiming(viewport.height / 2 - (CANVAS_TOP + layout.canvasHeight / 2), ZOOM_ANIMATION);
+      },
+    }),
+    [scale, translateX, translateY, settings?.defaultZoom, viewport, layout.canvasWidth, layout.canvasHeight],
+  );
+
   const lines = useMemo(() => {
     const result = [];
     nodes.forEach((n) => {
@@ -119,7 +160,7 @@ function TreeCanvasComponent({
               width: layout.canvasWidth,
               height: layout.canvasHeight,
               marginLeft: (viewport.width - layout.canvasWidth) / 2,
-              marginTop: 24,
+              marginTop: CANVAS_TOP,
             },
             canvasStyle,
           ]}
@@ -175,7 +216,7 @@ function TreeCanvasComponent({
   );
 }
 
-export const TreeCanvas = memo(TreeCanvasComponent);
+export const TreeCanvas = memo(forwardRef(TreeCanvasComponent));
 
 const styles = StyleSheet.create({
   container: { flex: 1, overflow: 'hidden' },

@@ -1,4 +1,4 @@
-import React, { useCallback, useMemo, useState } from 'react';
+import React, { useCallback, useMemo, useRef, useState } from 'react';
 import { StyleSheet, View } from 'react-native';
 import { useNavigation, useRoute } from '@react-navigation/native';
 import { PageHeader, Screen } from '../../design-system';
@@ -18,6 +18,7 @@ export default function InteractiveTreeScreen() {
   const { t } = useI18n();
   const [selectedId, setSelectedId] = useState(initialId);
   const [collapsedIds, setCollapsedIds] = useState(() => new Set());
+  const canvasRef = useRef(null);
 
   const layout = useMemo(() => layoutTree(enrichedNodes, collapsedIds), [enrichedNodes, collapsedIds]);
 
@@ -54,6 +55,7 @@ export default function InteractiveTreeScreen() {
       </View>
 
       <TreeCanvas
+        ref={canvasRef}
         nodes={enrichedNodes}
         selectedId={selectedId}
         onSelectNode={handleSelect}
@@ -70,7 +72,12 @@ export default function InteractiveTreeScreen() {
         <TreeMiniMap layout={layout} selectedId={selectedId} />
       </View>
 
-      <TreeControls />
+      <TreeControls
+        onZoomIn={() => canvasRef.current?.zoomIn()}
+        onZoomOut={() => canvasRef.current?.zoomOut()}
+        onFit={() => canvasRef.current?.fit()}
+        onReset={() => canvasRef.current?.reset()}
+      />
     </Screen>
   );
 }

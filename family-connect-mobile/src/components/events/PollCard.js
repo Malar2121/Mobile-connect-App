@@ -21,7 +21,7 @@ const CONFIDENCE_TEXT = {
   get none() { return translate('events.pollConfidence.none'); },
 };
 
-function PollCardComponent({ poll, results, suggestion, suggestionReason, onVote, onClose, canManage, voting }) {
+function PollCardComponent({ poll, results, suggestion, suggestionReason, onVote, onClose, canManage, voting, userId }) {
   const { t } = useI18n();
   const { colors, layout, radii } = useTheme();
   if (!poll) return null;
@@ -58,7 +58,9 @@ function PollCardComponent({ poll, results, suggestion, suggestionReason, onVote
               key={String(opt._id)}
               option={opt}
               result={result}
-              disabled={poll.isClosed || voting}
+              disabled={poll.isClosed}
+              busy={voting}
+              userId={userId}
               onVote={(vote) => onVote?.(opt._id, vote)}
             />
           );

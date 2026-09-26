@@ -43,10 +43,29 @@ const allowedOrigins = isDevelopment
   ? [configuredClientOrigin, productionOrigin, 'http://localhost:3000', 'http://127.0.0.1:3000'].filter(Boolean)
   : [configuredClientOrigin, productionOrigin].filter(Boolean);
 
+// Development only: phones and emulators reach the API over the local network, and
+// React Native's WebSocket sends that address (e.g. http://192.168.1.5:5000) as Origin.
+const isLocalNetworkOrigin = (origin) => {
+  try {
+    const { protocol, hostname } = new URL(origin);
+    if (protocol !== 'http:') return false;
+    return (
+      hostname === 'localhost' ||
+      hostname === '127.0.0.1' ||
+      /^10\.\d{1,3}\.\d{1,3}\.\d{1,3}$/.test(hostname) ||
+      /^192\.168\.\d{1,3}\.\d{1,3}$/.test(hostname) ||
+      /^172\.(1[6-9]|2\d|3[01])\.\d{1,3}\.\d{1,3}$/.test(hostname)
+    );
+  } catch {
+    return false;
+  }
+};
+
 const corsOrigin = (origin, callback) => {
   // Allow non-browser clients (no Origin header) and same-origin requests.
   if (!origin) return callback(null, true);
   if (allowedOrigins.includes(origin)) return callback(null, true);
+  if (isDevelopment && isLocalNetworkOrigin(origin)) return callback(null, true);
   return callback(new Error('Not allowed by CORS'));
 };
 

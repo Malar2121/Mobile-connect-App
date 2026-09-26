@@ -62,7 +62,7 @@ export function getNavigationTarget(notification) {
   switch (type) {
     case 'chat_message':
     case 'chat_mention':
-      return { tab: 'Chat' };
+      return { tab: 'Chat', screen: 'Conversation' };
     case 'memory_review_requested':
       return { tab: 'Memories', screen: 'MemoryApprovals' };
     case 'memory_uploaded':

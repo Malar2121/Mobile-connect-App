@@ -6,6 +6,7 @@ import { useFamily } from '../contexts/FamilyContext';
 import { useTheme } from './useTheme';
 import {
   getFamilyLocations,
+  getUserLocation,
   updateLocation,
   sendSOSAlert,
   setLocationSharing,
@@ -18,6 +19,7 @@ import {
   fitRegionToLocations,
   locationsToArray,
   mergeLocationsList,
+  normalizeLocation,
   upsertLocationInMap,
 } from '../utils/locationHelpers';
 import {
@@ -308,7 +310,12 @@ export function useMapModuleData() {
         loadSafeZonesFromServer();
       }),
       subscribeSocketEvent('location_sharing_changed', ({ userId, isSharing }) => {
-        if (!isSharing) {
+        if (isSharing) {
+          // Sharing resumed: bring their pin back without waiting for the next map refresh.
+          getUserLocation(String(userId))
+            .then((raw) => setLocationMap((prev) => upsertLocationInMap(prev, raw)))
+            .catch(() => {});
+        } else {
           setLocationMap((prev) => {
             const next = { ...prev };
             delete next[String(userId)];
@@ -316,9 +323,26 @@ export function useMapModuleData() {
           });
         }
       }),
+      // An SOS carries the sender's emergency position: move their pin there, keeping name/avatar.
+      subscribeSocketEvent('sos_alert', (payload) => {
+        if (!payload?.userId || String(payload.userId) === String(user?._id)) return;
+        const id = String(payload.userId);
+        const sos = normalizeLocation({
+          userId: id,
+          latitude: payload.latitude,
+          longitude: payload.longitude,
+          updatedAt: payload.createdAt,
+        });
+        setLocationMap((prev) => ({
+          ...prev,
+          [id]: prev[id]
+            ? { ...prev[id], latitude: sos.latitude, longitude: sos.longitude, updatedAt: sos.updatedAt }
+            : { ...sos, user: { ...sos.user, fullName: payload.fullName || sos.user.fullName } },
+        }));
+      }),
     ];
     return () => unsubs.forEach((u) => u());
-  }, [token, family, loadSafeZonesFromServer]);
+  }, [token, family, loadSafeZonesFromServer, user?._id]);
 
   // Children and elders share automatically so guardians can always
   // find them (supervisor requirement: elder & child location tracking).

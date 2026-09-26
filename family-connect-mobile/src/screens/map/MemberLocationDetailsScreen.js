@@ -1,5 +1,5 @@
 import React, { useCallback, useEffect, useMemo, useState } from 'react';
-import { Linking, Platform, Pressable, ScrollView, Text, View } from 'react-native';
+import { ActivityIndicator, Linking, Platform, Pressable, ScrollView, Text, View } from 'react-native';
 import { useNavigation, useRoute } from '@react-navigation/native';
 import * as Location from 'expo-location';
 import { Ionicons } from '@expo/vector-icons';
@@ -7,7 +7,8 @@ import { PageHeader, Screen, Avatar, Card } from '../../design-system';
 import { useMapModule } from '../../contexts/MapModuleContext';
 import { LocationTimeline } from '../../components/map';
 import { memberLocationSummary, haversineKm, formatDistance } from '../../utils/mapModuleHelpers';
-import { getLocationHistory } from '../../services/locationService';
+import { getLocationHistory, getUserLocation } from '../../services/locationService';
+import { normalizeLocation } from '../../utils/locationHelpers';
 import { useTheme } from '../../hooks/useTheme';
 import { useResponsive } from '../../design-system';
 import { useI18n, translate } from '../../i18n';
@@ -30,9 +31,56 @@ export default function MemberLocationDetailsScreen() {
   const [address, setAddress] = useState('');
   const [history, setHistory] = useState(null);
 
-  const location = locationMap[userId];
+  const { sosLatitude, sosLongitude, sosName, sosAt } = route.params ?? {};
+  const hasSos = sosLatitude != null && sosLongitude != null && Number.isFinite(Number(sosLatitude)) && Number.isFinite(Number(sosLongitude));
+  const [fetched, setFetched] = useState(null);
+  const [fetching, setFetching] = useState(() => !hasSos && !locationMap[userId] && Boolean(userId));
+
+  const mapped = locationMap[userId];
   const member = members?.find((m) => String(m._id) === userId);
+
+  // Opened from an SOS: show the emergency position the sender shared.
+  const sosLocation = useMemo(() => {
+    if (!hasSos) return null;
+    return {
+      id: `sos-${userId}-${sosAt}`,
+      userId,
+      user: {
+        _id: userId,
+        fullName: mapped?.user?.fullName ?? member?.fullName ?? sosName ?? t('map.familyMember'),
+        avatar: mapped?.user?.avatar ?? member?.avatar ?? null,
+      },
+      latitude: Number(sosLatitude),
+      longitude: Number(sosLongitude),
+      accuracy: null,
+      heading: null,
+      speed: null,
+      battery: null,
+      memberType: mapped?.memberType ?? member?.memberType ?? null,
+      updatedAt: sosAt ?? null,
+    };
+  }, [hasSos, userId, sosLatitude, sosLongitude, sosName, sosAt, mapped?.user, mapped?.memberType, member]);
+
+  const location = sosLocation ?? mapped ?? fetched;
   const memberType = location?.memberType ?? member?.memberType ?? 'adult';
+
+  // Not on the family map yet (e.g. the map never loaded): fetch this member once.
+  useEffect(() => {
+    if (hasSos || mapped || !userId) return undefined;
+    let cancelled = false;
+    setFetching(true);
+    getUserLocation(userId)
+      .then((raw) => {
+        if (!cancelled) setFetched(normalizeLocation(raw));
+      })
+      .catch(() => {})
+      .finally(() => {
+        if (!cancelled) setFetching(false);
+      });
+    return () => {
+      cancelled = true;
+    };
+  }, [userId, hasSos]);
 
   // Server-persisted 24h trail (guardians see children/elders, self sees self)
   useEffect(() => {
@@ -90,7 +138,11 @@ export default function MemberLocationDetailsScreen() {
     return (
       <Screen edges={['top']}>
         <PageHeader title={t('common.member')} onBack={() => navigation.goBack()} />
-        <Text style={{ padding: horizontalPadding, color: colors.textSecondary }}>{t('map.locationUnavailable')}</Text>
+        {fetching ? (
+          <ActivityIndicator color={colors.primary} style={{ marginTop: 24 }} />
+        ) : (
+          <Text style={{ padding: horizontalPadding, color: colors.textSecondary }}>{t('map.locationUnavailable')}</Text>
+        )}
       </Screen>
     );
   }

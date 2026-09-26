@@ -26,13 +26,18 @@ function ThemedStatusBar() {
 // Keeps the UI mode in sync with the account's server-side member type:
 // child accounts are locked into minor mode, elders default to elder mode.
 function MemberTypeSync() {
-  const { user } = useAuth();
-  const { applyMemberType, ready } = useUIMode();
+  const { user, hydrated } = useAuth();
+  const { applyAccount, ready } = useUIMode();
+  const userId = user?._id ? String(user._id) : null;
+  const memberType = user?.memberType ?? 'adult';
+  const elderMode = user?.elderMode === true;
 
+  // UIModeProvider sits above AuthProvider, so the signed-in account is handed to it here.
+  // Runs on every sign-in, sign-out and account switch (not on unrelated profile edits).
   React.useEffect(() => {
-    if (!ready || !user) return;
-    applyMemberType(user.memberType ?? 'adult');
-  }, [ready, user, applyMemberType]);
+    if (!ready || !hydrated) return;
+    applyAccount(userId ? { id: userId, memberType, elderMode } : null);
+  }, [ready, hydrated, userId, memberType, elderMode, applyAccount]);
 
   return null;
 }

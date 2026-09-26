@@ -295,9 +295,12 @@ const getUserLocation = async (req, res) => {
       return res.status(403).json({ success: false, message: 'You must belong to a family' });
     }
 
-    const location = await Location.findOne({ userId, familyId }).populate('userId', 'fullName avatar memberType');
+    const location = await Location.findOne({ userId, familyId }).populate('userId', 'fullName avatar memberType locationSharingPaused');
 
-    if (!location) {
+    // Same rule as the family map: a member who paused sharing is hidden from everyone else.
+    const hidden = location?.userId?.locationSharingPaused && String(location.userId._id) !== String(req.user._id);
+
+    if (!location || hidden) {
       return res.status(404).json({ success: false, message: 'Location unavailable or user not in family' });
     }
 

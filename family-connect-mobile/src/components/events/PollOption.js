@@ -1,13 +1,18 @@
 import React, { memo } from 'react';
 import { Pressable, StyleSheet, Text, View } from 'react-native';
+import { Ionicons } from '@expo/vector-icons';
 import { useTheme } from '../../hooks/useTheme';
 import { useI18n } from '../../i18n';
 
-function PollOptionComponent({ option, result, onVote, disabled }) {
+function PollOptionComponent({ option, result, onVote, disabled, busy, userId }) {
   const { t } = useI18n();
   const { colors, layout, radii } = useTheme();
   const score = result?.availabilityScore ?? 0;
   const votes = result?.votes ?? { yes: 0, maybe: 0, no: 0, total: 0 };
+  // vote.user is populated ({ _id, fullName }) by the poll API, or a plain id.
+  const myVote = userId
+    ? (option.votes ?? []).find((v) => String(v.user?._id ?? v.user) === String(userId))?.vote
+    : null;
 
   return (
     <View style={[styles.wrap, { backgroundColor: colors.surfaceSecondary, borderRadius: radii.lg, borderColor: colors.border }]}>
@@ -27,18 +32,42 @@ function PollOptionComponent({ option, result, onVote, disabled }) {
 
       {!disabled ? (
         <View style={styles.voteRow}>
-          {['yes', 'maybe', 'no'].map((v) => (
-            <Pressable
-              key={v}
-              onPress={() => onVote?.(v)}
-              style={[styles.voteBtn, { backgroundColor: colors.primarySubtle, borderRadius: radii.md, minHeight: layout.minTouch }]}
-              accessibilityLabel={t('events.voteV', { v })}
-            >
-              <Text style={{ color: colors.primary, fontFamily: 'Inter_600SemiBold', fontSize: 13, textTransform: 'capitalize' }}>
-                {v}
-              </Text>
-            </Pressable>
-          ))}
+          {['yes', 'maybe', 'no'].map((v) => {
+            const selected = myVote === v;
+            return (
+              <Pressable
+                key={v}
+                onPress={() => {
+                  if (!selected) onVote?.(v); // same answer again: nothing to change
+                }}
+                disabled={Boolean(busy)}
+                style={[
+                  styles.voteBtn,
+                  {
+                    backgroundColor: selected ? colors.primary : colors.primarySubtle,
+                    borderRadius: radii.md,
+                    minHeight: layout.minTouch,
+                    opacity: busy ? 0.5 : 1,
+                  },
+                ]}
+                accessibilityRole="button"
+                accessibilityLabel={t('events.voteV', { v })}
+                accessibilityState={{ selected, disabled: Boolean(busy) }}
+              >
+                {selected ? <Ionicons name="checkmark" size={16} color={colors.textInverse} style={styles.check} /> : null}
+                <Text
+                  style={{
+                    color: selected ? colors.textInverse : colors.primary,
+                    fontFamily: 'Inter_600SemiBold',
+                    fontSize: 13,
+                    textTransform: 'capitalize',
+                  }}
+                >
+                  {v}
+                </Text>
+              </Pressable>
+            );
+          })}
         </View>
       ) : null}
     </View>
@@ -52,5 +81,6 @@ const styles = StyleSheet.create({
   bar: { height: 6, overflow: 'hidden' },
   fill: { height: 6 },
   voteRow: { flexDirection: 'row', gap: 8, marginTop: 12 },
-  voteBtn: { flex: 1, alignItems: 'center', justifyContent: 'center', paddingVertical: 10 },
+  voteBtn: { flex: 1, flexDirection: 'row', alignItems: 'center', justifyContent: 'center', paddingVertical: 10 },
+  check: { marginRight: 4 },
 });

@@ -19,6 +19,8 @@ const PAGE_SIZE = 60;
 
 const TYPING_EMIT_MS = 400;
 const TYPING_HIDE_MS = 2500;
+// Re-send 'typing' while someone keeps typing, before the other phone's hide timer runs out.
+const TYPING_REFRESH_MS = 2000;
 
 export function useChat({ user, token, family, members, prefs, chatActions }) {
   const { t } = useI18n();
@@ -43,6 +45,7 @@ export function useChat({ user, token, family, members, prefs, chatActions }) {
   const typingDisplayTimer = useRef(null);
   const typingStopEmitTimer = useRef(null);
   const isTypingRef = useRef(false);
+  const lastTypingEmitRef = useRef(0);
   const scheduleTimers = useRef([]);
   const hasMessagesRef = useRef(false);
 
@@ -205,6 +208,11 @@ export function useChat({ user, token, family, members, prefs, chatActions }) {
   }, [prefs?.scheduledMessages, user, chatActions]);
 
   const emitStopTyping = useCallback(() => {
+    // A 'typing' still waiting to go out would show the indicator after the stop.
+    if (typingEmitTimer.current) {
+      clearTimeout(typingEmitTimer.current);
+      typingEmitTimer.current = null;
+    }
     if (!token || !isTypingRef.current) return;
     const socket = connectSocket(token);
     socket.emit('stop_typing');
@@ -221,14 +229,22 @@ export function useChat({ user, token, family, members, prefs, chatActions }) {
         return;
       }
 
-      if (typingEmitTimer.current) clearTimeout(typingEmitTimer.current);
-      typingEmitTimer.current = setTimeout(() => {
-        const socket = connectSocket(token);
-        if (!isTypingRef.current) {
-          socket.emit('typing');
-          isTypingRef.current = true;
+      const emitTyping = () => {
+        connectSocket(token).emit('typing');
+        isTypingRef.current = true;
+        lastTypingEmitRef.current = Date.now();
+      };
+      if (!isTypingRef.current) {
+        // Start once, TYPING_EMIT_MS after the first keystroke; later keystrokes do not postpone it.
+        if (!typingEmitTimer.current) {
+          typingEmitTimer.current = setTimeout(() => {
+            typingEmitTimer.current = null;
+            emitTyping();
+          }, TYPING_EMIT_MS);
         }
-      }, TYPING_EMIT_MS);
+      } else if (Date.now() - lastTypingEmitRef.current >= TYPING_REFRESH_MS) {
+        emitTyping();
+      }
 
       if (typingStopEmitTimer.current) clearTimeout(typingStopEmitTimer.current);
       typingStopEmitTimer.current = setTimeout(emitStopTyping, TYPING_HIDE_MS);

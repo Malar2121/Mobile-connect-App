@@ -5,6 +5,7 @@ import { useUIMode } from '../contexts/UIModeContext';
 import { Loader } from '../components/Loader';
 import { OfflineBanner } from '../components/OfflineBanner';
 import { NotificationRegistrar } from '../components/NotificationRegistrar';
+import { SosAlertOverlay } from '../components/SosAlertOverlay';
 import AuthNavigator from './AuthNavigator';
 import TabNavigator from './TabNavigator';
 import ChildTabNavigator from './ChildTabNavigator';
@@ -33,6 +34,7 @@ export default function AppNavigator() {
           ) : (
             <TabNavigator />
           )}
+          <SosAlertOverlay />
         </NotificationRegistrar>
       ) : (
         <AuthNavigator />

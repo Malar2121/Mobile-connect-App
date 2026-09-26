@@ -23,12 +23,18 @@ import {
 import { useAuth } from '../../contexts/AuthContext';
 import { useTheme } from '../../hooks/useTheme';
 import { getEventDetails, respondToEvent, deleteEvent, getEventComments, addEventComment } from '../../services/eventService';
-import { getPollByEvent } from '../../services/pollService';
+import { getPollByEvent, castPollVote } from '../../services/pollService';
 import { getFamilyMemories } from '../../services/memoryService';
 import { formatEventDateLong, getMyRsvpStatus } from '../../utils/eventFormat';
 import { getEventCountdown, isEventPast } from '../../utils/eventModuleHelpers';
 import { useResponsive } from '../../design-system';
 import { useI18n } from '../../i18n';
+
+const RSVP_OPTIONS = [
+  { status: 'accepted', labelKey: 'events.accept', idleVariant: 'primary' },
+  { status: 'maybe', labelKey: 'events.maybe', idleVariant: 'secondary' },
+  { status: 'declined', labelKey: 'events.decline', idleVariant: 'outline' },
+];
 
 export default function EventDetailsScreen({ route, navigation }) {
   const { id } = route.params ?? {};
@@ -49,6 +55,7 @@ export default function EventDetailsScreen({ route, navigation }) {
   const [postingComment, setPostingComment] = useState(false);
   const [loading, setLoading] = useState(true);
   const [submitting, setSubmitting] = useState(null);
+  const [voting, setVoting] = useState(false);
   const [deleting, setDeleting] = useState(false);
 
   const load = useCallback(async () => {
@@ -88,6 +95,7 @@ export default function EventDetailsScreen({ route, navigation }) {
   useFocusEffect(useCallback(() => { setLoading(true); load(); }, [load]));
 
   const respond = useCallback(async (status) => {
+    if (status === getMyRsvpStatus(event, userId)) return; // already their answer
     setSubmitting(status);
     try {
       await respondToEvent(id, status);
@@ -98,7 +106,23 @@ export default function EventDetailsScreen({ route, navigation }) {
     } finally {
       setSubmitting(null);
     }
-  }, [id, load, toast]);
+  }, [id, load, toast, event, userId]);
+
+  // Same flow as EventPollScreen.handleVote, so members can vote without leaving the event.
+  const handleVote = useCallback(async (optionId, vote) => {
+    const pollId = pollData?.poll?._id;
+    if (!pollId || voting) return;
+    setVoting(true);
+    try {
+      await castPollVote(pollId, optionId, vote);
+      setPollData(await getPollByEvent(id));
+      toast.success(t('poll.voteRecorded'));
+    } catch (e) {
+      toast.error(e.message || t('events.voteFailed'));
+    } finally {
+      setVoting(false);
+    }
+  }, [id, pollData, voting, toast]);
 
   const handlePostComment = useCallback(async () => {
     if (!newComment.trim()) return;
@@ -193,9 +217,24 @@ export default function EventDetailsScreen({ route, navigation }) {
           <>
             <SectionTitle title={t('events.yourRsvp')} style={{ marginTop: 20 }} />
             <Badge label={myStatus} variant={myStatus === 'accepted' ? 'success' : myStatus === 'declined' ? 'danger' : 'default'} style={{ marginBottom: 12 }} />
-            <Button title={t('events.accept')} onPress={() => respond('accepted')} loading={submitting === 'accepted'} disabled={Boolean(submitting)} />
-            <Button title={t('events.maybe')} variant="secondary" onPress={() => respond('maybe')} loading={submitting === 'maybe'} style={{ marginTop: 8 }} disabled={Boolean(submitting)} />
-            <Button title={t('events.decline')} variant="outline" onPress={() => respond('declined')} loading={submitting === 'declined'} style={{ marginTop: 8 }} disabled={Boolean(submitting)} />
+            {RSVP_OPTIONS.map((opt, index) => {
+              // Until they answer, keep Accept as the clear call to action; after that, fill only their choice.
+              const selected = myStatus === opt.status;
+              const variant = myStatus === 'pending' ? opt.idleVariant : selected ? 'primary' : 'outline';
+              return (
+                <Button
+                  key={opt.status}
+                  title={t(opt.labelKey)}
+                  variant={variant}
+                  selected={selected}
+                  icon={selected ? <Ionicons name="checkmark-circle" size={20} color={colors.textInverse} /> : null}
+                  onPress={() => respond(opt.status)}
+                  loading={submitting === opt.status}
+                  disabled={Boolean(submitting)}
+                  style={index ? { marginTop: 8 } : undefined}
+                />
+              );
+            })}
           </>
         ) : null}
 
@@ -204,7 +243,11 @@ export default function EventDetailsScreen({ route, navigation }) {
           <PollCard
             poll={pollData.poll}
             results={pollData.results}
-            onVote={() => navigation.navigate('EventPoll', { eventId: id, pollId: pollData.poll._id })}
+            onVote={handleVote}
+            voting={voting}
+            userId={userId}
+            // Voting no longer leaves this screen, so hosts reach the poll screen (to close it) from here.
+            onClose={() => navigation.navigate('EventPoll', { eventId: id, pollId: pollData.poll._id })}
             canManage={isHost}
           />
         ) : (

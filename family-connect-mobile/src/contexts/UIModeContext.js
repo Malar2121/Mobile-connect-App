@@ -4,6 +4,7 @@ import React, {
   useContext,
   useEffect,
   useMemo,
+  useRef,
   useState,
 } from 'react';
 import { AccessibilityInfo, Appearance, useColorScheme as useRNColorScheme } from 'react-native';
@@ -13,10 +14,13 @@ import { resolveTheme } from '../design-system/theme/resolveTheme';
 export const UIModeContext = createContext(undefined);
 
 const STORAGE_KEYS = {
-  uiMode: 'fc_ui_mode',
+  uiMode: 'fc_ui_mode', // last mode on this device, only for the first render before sign-in resolves
   themePref: 'fc_theme_pref',
-  uiModeSource: 'fc_ui_mode_source', // 'manual' | 'auto'
+  // The old device-wide 'fc_ui_mode_source' key is ignored: it made one person's choice stick for everyone.
 };
+// A mode picked in Profile belongs to that account only.
+const modePrefKey = (userId) => `fc_ui_mode_pref:${userId}`;
+const isMode = (m) => m === 'standard' || m === 'minor' || m === 'elder';
 
 /** @typedef {'standard' | 'minor' | 'elder'} UIMode */
 /** @typedef {'light' | 'dark' | 'system' | 'highContrast'} ThemePreference */
@@ -31,23 +35,22 @@ export function UIModeProvider({ children }) {
   const [ready, setReady] = useState(false);
   // Child accounts are locked into minor mode by the account's memberType
   const [modeLocked, setModeLocked] = useState(false);
-  const [modeSource, setModeSource] = useState('auto');
+  const accountIdRef = useRef(null); // signed-in user whose manual choice setUiMode saves
+  const applySeq = useRef(0); // ignores a slower, older applyAccount when accounts switch quickly
 
   useEffect(() => {
     let cancelled = false;
     (async () => {
       try {
-        const [m, t, src] = await Promise.all([
+        const [m, t] = await Promise.all([
           AsyncStorage.getItem(STORAGE_KEYS.uiMode),
           AsyncStorage.getItem(STORAGE_KEYS.themePref),
-          AsyncStorage.getItem(STORAGE_KEYS.uiModeSource),
         ]);
         if (!cancelled) {
-          if (m === 'standard' || m === 'minor' || m === 'elder') setUiModeState(m);
+          if (isMode(m)) setUiModeState(m);
           if (t === 'light' || t === 'dark' || t === 'system' || t === 'highContrast') {
             setThemePreferenceState(t);
           }
-          if (src === 'manual' || src === 'auto') setModeSource(src);
         }
       } finally {
         if (!cancelled) setReady(true);
@@ -82,40 +85,39 @@ export function UIModeProvider({ children }) {
     // A child account cannot switch itself out of minor mode
     if (modeLocked && mode !== 'minor' && source === 'manual') return;
     setUiModeState(mode);
-    setModeSource(source);
     await AsyncStorage.setItem(STORAGE_KEYS.uiMode, mode);
-    await AsyncStorage.setItem(STORAGE_KEYS.uiModeSource, source);
+    // A manual choice is remembered for the signed-in account only.
+    if (source === 'manual' && accountIdRef.current) {
+      await AsyncStorage.setItem(modePrefKey(accountIdRef.current), mode);
+    }
   }, [modeLocked]);
 
   /**
-   * Sync the UI mode with the account's server-side memberType:
+   * Set the UI mode for the signed-in account (null when signed out):
    * - child  → forced into minor mode (locked)
-   * - elder  → defaults to elder mode unless the user manually chose another
-   * - adult  → unlock; a previously forced minor mode falls back to standard
+   * - others → their own saved Profile choice if any, otherwise elder for
+   *            elder accounts (memberType or server elderMode) and standard for adults
+   * - signed out → standard for the login screens; saved choices are kept
    */
-  const applyMemberType = useCallback(
-    async (memberType) => {
-      if (memberType === 'child') {
-        setModeLocked(true);
-        if (uiMode !== 'minor') {
-          setUiModeState('minor');
-          setModeSource('auto');
-          await AsyncStorage.setItem(STORAGE_KEYS.uiMode, 'minor');
-          await AsyncStorage.setItem(STORAGE_KEYS.uiModeSource, 'auto');
-        }
-        return;
-      }
-      setModeLocked(false);
-      if (memberType === 'elder' && modeSource !== 'manual' && uiMode !== 'elder') {
-        setUiModeState('elder');
-        await AsyncStorage.setItem(STORAGE_KEYS.uiMode, 'elder');
-      } else if ((!memberType || memberType === 'adult') && modeSource === 'auto' && uiMode === 'minor') {
-        setUiModeState('standard');
-        await AsyncStorage.setItem(STORAGE_KEYS.uiMode, 'standard');
-      }
-    },
-    [uiMode, modeSource],
-  );
+  const applyAccount = useCallback(async (account) => {
+    applySeq.current += 1;
+    const seq = applySeq.current;
+    accountIdRef.current = account?.id ?? null;
+
+    let mode = 'standard';
+    if (account?.memberType === 'child') {
+      mode = 'minor';
+    } else if (account) {
+      const saved = await AsyncStorage.getItem(modePrefKey(account.id)).catch(() => null);
+      if (seq !== applySeq.current) return;
+      if (isMode(saved)) mode = saved;
+      else if (account.memberType === 'elder' || account.elderMode === true) mode = 'elder';
+    }
+
+    setModeLocked(account?.memberType === 'child');
+    setUiModeState(mode);
+    await AsyncStorage.setItem(STORAGE_KEYS.uiMode, mode);
+  }, []);
 
   const setThemePreference = useCallback(async (pref) => {
     setThemePreferenceState(pref);
@@ -131,7 +133,7 @@ export function UIModeProvider({ children }) {
     () => ({
       uiMode,
       setUiMode,
-      applyMemberType,
+      applyAccount,
       modeLocked,
       themePreference,
       setThemePreference,
@@ -149,7 +151,7 @@ export function UIModeProvider({ children }) {
     [
       uiMode,
       setUiMode,
-      applyMemberType,
+      applyAccount,
       modeLocked,
       themePreference,
       setThemePreference,

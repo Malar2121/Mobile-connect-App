@@ -95,6 +95,8 @@ export function connectSocket(token) {
     socket.disconnect();
     socket = null;
     activeToken = null;
+    // The relays were attached to the old socket; clear so they re-attach to the new one below.
+    attachedEvents.clear();
   }
 
   if (!socket) {

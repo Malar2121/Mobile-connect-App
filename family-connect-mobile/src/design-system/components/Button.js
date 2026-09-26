@@ -34,6 +34,7 @@ export function Button({
   style,
   textStyle: textStyleProp,
   accessibilityLabel,
+  selected,
   fullWidth = true,
 }) {
   const { colors, layout, isDark, gradients, radii, shadows } = useTheme();
@@ -116,7 +117,7 @@ export function Button({
     <Pressable
       accessibilityRole="button"
       accessibilityLabel={accessibilityLabel ?? text}
-      accessibilityState={{ disabled: disabled || loading }}
+      accessibilityState={{ disabled: disabled || loading, selected }}
       onPress={onPress}
       disabled={disabled || loading}
       style={({ pressed }) => [

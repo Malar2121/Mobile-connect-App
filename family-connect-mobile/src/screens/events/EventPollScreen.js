@@ -3,6 +3,7 @@ import { ScrollView, StyleSheet, Text, View } from 'react-native';
 import { useRoute, useNavigation } from '@react-navigation/native';
 import { Button, PageHeader, Screen, TextField, useToast, useDialog } from '../../design-system';
 import { PollCard } from '../../components/events';
+import { useAuth } from '../../contexts/AuthContext';
 import { useTheme } from '../../hooks/useTheme';
 import { useI18n } from '../../i18n';
 import { createPoll, getPoll, getPollByEvent, castPollVote, closePoll } from '../../services/pollService';
@@ -16,6 +17,7 @@ export default function EventPollScreen() {
   const { colors, layout } = useTheme();
   const { t } = useI18n();
   const { horizontalPadding } = useResponsive();
+  const { user } = useAuth();
   const { eventId, pollId: initialPollId } = route.params ?? {};
 
   const [pollData, setPollData] = useState(null);
@@ -119,6 +121,7 @@ export default function EventPollScreen() {
             onClose={handleClose}
             canManage
             voting={voting}
+            userId={user?._id}
           />
         ) : (
           <>

@@ -69,10 +69,13 @@ const notifyFamilyMembers = async ({ familyId, excludeUserId, skipUserIds = [], 
       });
 
       if (shouldPush) {
+        // The phone needs the type to open the right screen when the push is tapped.
+        const pushData = { ...data, type };
+
         // 3. Send via FCM if appropriate
         if (user.fcmTokens && user.fcmTokens.length > 0) {
           const tokens = user.fcmTokens.map((t) => t.token);
-          await sendPush({ tokens, title, body, data });
+          await sendPush({ tokens, title, body, data: pushData });
         }
 
         // 4. Send via Expo Push if appropriate
@@ -90,7 +93,7 @@ const notifyFamilyMembers = async ({ familyId, excludeUserId, skipUserIds = [], 
                 sound: 'default',
                 title,
                 body,
-                data,
+                data: pushData,
               }),
             });
           } catch (error) {
@@ -122,9 +125,11 @@ const notifyUsers = async ({ userIds, familyId, excludeUserId, type, title, body
     for (const user of users) {
       const { title, body } = renderNotification(type, params, user.language) ?? fallback;
       await Notification.create({ recipient: user._id, familyId, type, title, body, data });
+      // The phone needs the type to open the right screen when the push is tapped.
+      const pushData = { ...data, type };
 
       if (user.fcmTokens?.length) {
-        await sendPush({ tokens: user.fcmTokens.map((t) => t.token), title, body, data });
+        await sendPush({ tokens: user.fcmTokens.map((t) => t.token), title, body, data: pushData });
       }
 
       if (user.pushToken && user.pushToken.startsWith('ExponentPushToken')) {
@@ -136,7 +141,7 @@ const notifyUsers = async ({ userIds, familyId, excludeUserId, type, title, body
               'Accept-encoding': 'gzip, deflate',
               'Content-Type': 'application/json',
             },
-            body: JSON.stringify({ to: user.pushToken, sound: 'default', title, body, data }),
+            body: JSON.stringify({ to: user.pushToken, sound: 'default', title, body, data: pushData }),
           });
         } catch (error) {
           logger.error(`Expo push error: ${error.message}`);
