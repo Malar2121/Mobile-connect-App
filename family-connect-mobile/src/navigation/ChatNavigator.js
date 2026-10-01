@@ -5,6 +5,7 @@ import { useFamily } from '../contexts/FamilyContext';
 import { ChatModuleProvider } from '../contexts/ChatModuleContext';
 import { useChat } from '../hooks/useChat';
 import { useChatPreferences } from '../hooks/useChatPreferences';
+import { useTheme } from '../hooks/useTheme';
 import ChatHomeScreen from '../screens/chat/ChatHomeScreen';
 import ConversationScreen from '../screens/chat/ConversationScreen';
 import ChatMediaGalleryScreen from '../screens/chat/ChatMediaGalleryScreen';
@@ -20,6 +21,7 @@ const Stack = createNativeStackNavigator();
 function ChatModuleRoot() {
   const { user, token } = useAuth();
   const { family, members } = useFamily();
+  const { uiMode } = useTheme();
   const chatPrefs = useChatPreferences(family?._id);
   const {
     prefs,
@@ -57,7 +59,11 @@ function ChatModuleRoot() {
 
   return (
     <ChatModuleProvider value={value}>
-      <Stack.Navigator screenOptions={{ headerShown: false }}>
+      {/* Elder mode skips the chat hub and opens the family conversation straight away. */}
+      <Stack.Navigator
+        initialRouteName={uiMode === 'elder' ? 'Conversation' : 'ChatHome'}
+        screenOptions={{ headerShown: false }}
+      >
         <Stack.Screen name="ChatHome" component={ChatHomeScreen} />
         <Stack.Screen name="Conversation" component={ConversationScreen} />
         <Stack.Screen name="ChatMediaGallery" component={ChatMediaGalleryScreen} />

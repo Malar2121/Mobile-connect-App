@@ -155,6 +155,7 @@
   "elder": {
     "hello": "Hello",
     "membersOnline": "{{count}} family members sharing their location",
+    "membersOnlineOne": "1 family member is sharing their location",
     "sos": "I need help",
     "familyMap": "Family map",
     "messages": "Messages",

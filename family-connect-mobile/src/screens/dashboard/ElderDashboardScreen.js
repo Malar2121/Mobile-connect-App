@@ -126,7 +126,7 @@ export default function ElderDashboardScreen() {
           {t('elder.hello')}{firstName ? `, ${firstName}` : ''}
         </Text>
         <Text style={{ color: colors.textSecondary, fontSize: 18 * layout.fontScale, marginTop: 8 }}>
-          {t('elder.membersOnline', { count: liveCount ?? 0 })}
+          {liveCount === 1 ? t('elder.membersOnlineOne') : t('elder.membersOnline', { count: liveCount ?? 0 })}
         </Text>
 
         {/* SOS — the most important elder action, always first and huge */}

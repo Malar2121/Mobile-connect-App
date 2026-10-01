@@ -236,7 +236,8 @@ export default function ConversationScreen() {
         onlineCount={onlineCount}
         onSearch={() => navigation.navigate('ChatSearch')}
         onMore={() => navigation.navigate('ChatSettings')}
-        onBack={() => navigation.goBack()}
+        // As the first chat screen (elder mode, or opened from a notification) there may be nothing to go back to.
+        onBack={() => (navigation.canGoBack() ? navigation.goBack() : navigation.navigate('Dashboard'))}
         showBack
       />
 

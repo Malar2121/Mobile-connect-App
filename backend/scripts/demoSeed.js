@@ -46,6 +46,7 @@ const LocationHistory = require('../models/LocationHistory');
 const Comment = require('../models/Comment');
 const Story = require('../models/Story');
 const SentReminder = require('../models/SentReminder');
+const ParentalConsent = require('../models/ParentalConsent');
 const { resolveMongoUri } = require('../config/db');
 
 // ─── Demo definition ──────────────────────────────────────────────────────
@@ -58,19 +59,23 @@ const SEEDED_USERS = [
   { key: 'nadeesha', fullName: 'Nadeesha Perera', email: 'demo.member1@familyconnect.test', memberType: 'adult', family: 'A' },
   { key: 'kavindu', fullName: 'Kavindu Perera', email: 'demo.member2@familyconnect.test', memberType: 'adult', family: 'A' },
   { key: 'kamala', fullName: 'Kamala Perera', email: 'demo.elder@familyconnect.test', memberType: 'elder', family: 'A' },
+  // A real child account (about 10 years old): the app locks it into minor mode. Like the
+  // Register screen, only memberType marks it as a child; a guardian approval follows below.
+  { key: 'nethmi', fullName: 'Nethmi Perera', email: 'demo.child@familyconnect.test', memberType: 'child', family: 'A', dateOfBirth: new Date('2016-05-14T00:00:00Z') },
   { key: 'ravi', fullName: 'Ravi Silva', email: 'demo.outsider@familyconnect.test', memberType: 'adult', family: 'B' },
 ];
 
 // Family tree. The app reads "relationshipType of relatedTo":
 // Kamala is Arjun's mother, Arjun and Nadeesha are her children,
-// Kavindu is Arjun's son. This gives three clean generations.
-// Each member stores one link, so the tree is Kamala -> Arjun (+ Nadeesha) -> Kavindu.
+// Kavindu is Arjun's son and Nethmi his daughter. This gives three clean generations.
+// Each member stores one link, so the tree is Kamala -> Arjun (+ Nadeesha) -> Kavindu, Nethmi.
 // Kamala is the root with no link: pointing her back at Arjun would make a loop.
 const TREE = {
   kamala: { relationshipType: 'parent', relatedTo: null, nickname: 'Mother' },
   arjun: { relationshipType: 'child', relatedTo: 'kamala', nickname: 'Son' },
   nadeesha: { relationshipType: 'spouse', relatedTo: 'arjun', nickname: 'Wife' },
   kavindu: { relationshipType: 'child', relatedTo: 'arjun', nickname: 'Son' },
+  nethmi: { relationshipType: 'child', relatedTo: 'arjun', nickname: 'Daughter' },
 };
 
 // Dummy coordinates in public areas of Colombo - not anyone's real location.
@@ -79,6 +84,7 @@ const LOCATIONS = {
   nadeesha: { latitude: 6.9108, longitude: 79.8612 },
   kavindu: { latitude: 6.8731, longitude: 79.8890 },
   kamala: { latitude: 6.9344, longitude: 79.8428 },
+  nethmi: { latitude: 6.9270, longitude: 79.8450 }, // Galle Face Green
 };
 
 const CHAT = [
@@ -224,13 +230,22 @@ async function ensureUsers() {
         role: 'member',
         memberType: spec.memberType,
         elderMode: spec.memberType === 'elder',
+        ...(spec.dateOfBirth ? { dateOfBirth: spec.dateOfBirth } : {}),
       });
       stats.created += 1;
       console.log(`  + user ${spec.fullName} <${spec.email}>`);
     } else {
       const res = await User.updateOne(
         { _id: u._id },
-        { $set: { fullName: spec.fullName, memberType: spec.memberType, elderMode: spec.memberType === 'elder', isActive: true } },
+        {
+          $set: {
+            fullName: spec.fullName,
+            memberType: spec.memberType,
+            elderMode: spec.memberType === 'elder',
+            isActive: true,
+            ...(spec.dateOfBirth ? { dateOfBirth: spec.dateOfBirth } : {}),
+          },
+        },
       );
       stats[res.modifiedCount ? 'updated' : 'unchanged'] += 1;
     }
@@ -274,7 +289,7 @@ async function ensureFamilies(arjun, familyA, users) {
     },
     { upsert: true, new: true, setDefaultsOnInsert: true },
   );
-  for (const key of ['nadeesha', 'kavindu', 'kamala']) {
+  for (const key of ['nadeesha', 'kavindu', 'kamala', 'nethmi']) {
     await addToFamily(users[key], familyA, 'member', 'invite_code', treeFor(key));
   }
 
@@ -292,6 +307,32 @@ async function ensureFamilies(arjun, familyA, users) {
   }
   await addToFamily(users.ravi, familyB, 'admin', 'creator');
   return familyB;
+}
+
+// ─── Guardian consent for the child ───────────────────────────────────────
+// The record consentController.decide() leaves after a guardian taps Approve:
+// status 'approved', decidedBy the guardian, decidedAt the time. With it the child
+// passes requireParentalConsent and the socket server puts her in the family room.
+async function ensureChildConsent(familyA, all) {
+  const child = all.nethmi;
+  const consent = await ParentalConsent.findOne({ familyId: familyA._id, child: child._id });
+  if (!consent) {
+    await ParentalConsent.create({
+      familyId: familyA._id,
+      child: child._id,
+      status: 'approved',
+      decidedBy: all.arjun._id,
+      decidedAt: new Date(),
+    });
+    stats.created += 1;
+    console.log(`  + guardian consent for ${child.fullName} (approved by Arjun)`);
+  } else if (consent.status !== 'approved' || id(consent.decidedBy) !== id(all.arjun)) {
+    consent.set({ status: 'approved', decidedBy: all.arjun._id, decidedAt: new Date() });
+    await consent.save();
+    stats.updated += 1;
+  } else {
+    stats.unchanged += 1;
+  }
 }
 
 // ─── Events and poll ──────────────────────────────────────────────────────
@@ -604,6 +645,7 @@ async function seed() {
   const users = await ensureUsers();
   const familyB = await ensureFamilies(arjun, familyA, users);
   const all = { arjun, ...users };
+  await ensureChildConsent(familyA, all);
   await ensureAvatars(all);
   const events = await ensureEvents(familyA, familyB, all);
   await ensureChat(familyA, familyB, all);
@@ -646,7 +688,7 @@ async function verify() {
   const users = {};
   for (const spec of SEEDED_USERS) users[spec.key] = await User.findOne({ email: spec.email }).select('+password');
   const all = { arjun, ...users };
-  const aKeys = ['arjun', 'nadeesha', 'kavindu', 'kamala'];
+  const aKeys = ['arjun', 'nadeesha', 'kavindu', 'kamala', 'nethmi'];
   const aIds = new Set(aKeys.filter((k) => all[k]).map((k) => id(all[k])));
 
   for (const key of aKeys) {
@@ -658,8 +700,21 @@ async function verify() {
     );
     if (u && key !== 'arjun') check(await u.comparePassword(PASSWORD), `${u.fullName} signs in with Demo@12345`);
   }
-  check(familyA.members.length === 4, `${FAMILY_A} has 4 members (found ${familyA.members.length})`);
+  check(familyA.members.length === 5, `${FAMILY_A} has 5 members (found ${familyA.members.length})`);
   check(users.kamala?.memberType === 'elder' && users.kamala?.elderMode === true, 'Kamala is an elder account (memberType elder, elderMode on)');
+
+  const nethmi = users.nethmi;
+  check(Boolean(nethmi), 'Nethmi exists (demo.child@familyconnect.test)');
+  check(nethmi?.memberType === 'child' && nethmi?.elderMode === false, 'Nethmi is a child account (memberType child, elderMode off)');
+  const consent = nethmi ? await ParentalConsent.findOne({ familyId: familyA._id, child: nethmi._id }) : null;
+  check(
+    Boolean(consent) && consent.status === 'approved' && id(consent.decidedBy) === id(arjun) && Boolean(consent.decidedAt),
+    'Nethmi: guardian consent approved by Arjun',
+  );
+  check(
+    Boolean(nethmi) && (await ParentalConsent.countDocuments({ child: nethmi._id })) === 1,
+    'Nethmi: exactly one consent record (no duplicate)',
+  );
 
   const tree = await FamilyMember.find({ family: familyA._id });
   check(tree.every((m) => !m.relatedTo || aIds.has(id(m.relatedTo))), 'family tree: every relationship points to a Perera family member');
@@ -682,6 +737,7 @@ async function verify() {
     linkIs('kamala', 'parent', null) && linkIs('arjun', 'child', 'kamala') && linkIs('nadeesha', 'spouse', 'arjun') && linkIs('kavindu', 'child', 'arjun'),
     'family tree: Kamala -> Arjun + Nadeesha (spouse) -> Kavindu',
   );
+  check(linkIs('nethmi', 'child', 'arjun'), 'family tree: Nethmi is a child of Arjun');
 
   const withPhoto = AVATAR_KEYS.filter((k) => findLocalMedia(avatarFile(k)));
   if (withPhoto.length) {
@@ -805,6 +861,7 @@ async function reset() {
   await del('stories', Story, { familyId: { $in: familyIds } });
   await del('sent reminders', SentReminder, { familyId: { $in: familyIds } });
   await del('membership records', FamilyMember, { user: { $in: seededIds } });
+  await del('parental consents', ParentalConsent, { child: { $in: seededIds } });
 
   if (familyA) {
     await Family.updateOne({ _id: familyA._id }, { $pullAll: { members: seededIds } });
